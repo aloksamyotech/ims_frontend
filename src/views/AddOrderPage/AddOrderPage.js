@@ -34,9 +34,10 @@ const TAX_RATE = 0.07;
 
 const OrderForm = (props) => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
-  const [productList, setProductList] = useState([]);
-  const [customerList, setCustomerList] = useState([]);
+  const [products, setProducts] = useState([]); 
+  const [productList, setProductList] = useState([]); 
+  const [customerList, setCustomerList] = useState([]); 
+  const [quantity, setQuantity] = useState({}); 
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isWalkIn, setIsWalkIn] = useState(false);
   const [isWholesale, setIsWholesale] = useState(false);
@@ -48,7 +49,7 @@ const OrderForm = (props) => {
   });
 
   const validationSchema = yup.object({
-    date: yup.date().required('Date is required').min(new Date(), 'Date cannot be in the past').required('Date is required'),
+    date: yup.date().required('Date is required').min(new Date(), 'Date cannot be in the past'),
     customernm: yup.string().required('Customer is required'),
     email: yup.string().email('Invalid email format').required('Email is required'),
     phone: yup
@@ -93,53 +94,23 @@ const OrderForm = (props) => {
     fetchData();
   }, []);
 
-  const handleSelectProduct = (product) => {
-    const existingProductIndex = products.findIndex((p) => p._id === product._id);
-
-    if (existingProductIndex !== -1) {
-      const updatedProducts = [...products];
-      const newQuantity = Math.max(1, formik.values.quantity);
-      const maxQuantity = updatedProducts[existingProductIndex].availableQuantity;
-      
-      if (newQuantity > maxQuantity) {
-        alert(`Quantity limit exceeded! Maximum available quantity is ${maxQuantity}`);
-        return;
-      }
-
-      updatedProducts[existingProductIndex].quantity = newQuantity;
-      updatedProducts[existingProductIndex].subtotal = newQuantity * updatedProducts[existingProductIndex].sellingPrice;
-      setProducts(updatedProducts);
-    } else {
-      const newProduct = {
-        _id: product._id,
-        productnm: product.productnm,
-        quantity: 1,
-        sellingPrice: product.sellingPrice,
-        subtotal: product.sellingPrice,
-        availableQuantity: product.quantity
-      };
-      setProducts([...products, newProduct]);
-    }
+  const handleQuantityChange = (productId, newQuantity) => {
+    if (newQuantity < 1) return;
+    setQuantity((prev) => ({ ...prev, [productId]: newQuantity }));
   };
 
-  const handleQuantityChange = (index, quantity) => {
-    const updatedProducts = [...products];
-    const newQuantity = Math.max(1, quantity);
-    const maxQuantity = updatedProducts[index].availableQuantity;
+  const handleSelectProduct = (product) => {
+    const selectedQuantity = quantity[product._id] || 1;
 
-    if (newQuantity > maxQuantity) {
-      alert(`Quantity limit exceeded! Maximum available quantity is ${maxQuantity}`);
+    if (selectedQuantity > product.availableQuantity) {
+      setAlertMessage('Quantity exceeds available stock');
+      setOpenAlert(true);
       return;
     }
-    updatedProducts[index].quantity = newQuantity;
-    updatedProducts[index].subtotal = newQuantity * updatedProducts[index].sellingPrice;
 
+  const handleRemoveProduct = (productId) => {
+    const updatedProducts = products.filter((product) => product._id !== productId);
     setProducts(updatedProducts);
-  };
-
-  const handleRemoveProduct = (index) => {
-    const newProducts = products.filter((_, i) => i !== index);
-    setProducts(newProducts);
   };
 
   const calculateSubtotal = () => {
@@ -153,32 +124,30 @@ const OrderForm = (props) => {
   const handleCustomerChange = (event) => {
     const customerName = event.target.value;
     const customer = customerList?.find((c) => c.customernm === customerName);
-    console.log(customer);
     setSelectedCustomer(customer);
     formik.setFieldValue('customernm', customerName);
   };
 
   const handleCreateInvoice = async () => {
     let customerData = {};
-  
     if (isWalkIn) {
       customerData = {
         customernm: `Walk-in ${walkInData.customernm}`,
         email: walkInData.email,
         phone: walkInData.phone,
         address: walkInData.address,
-        isWholesale: false,  
+        isWholesale: false
       };
-  
-      const savedCustomer = await addCustomer(customerData); 
+
+      const savedCustomer = await addCustomer(customerData);
       customerData._id = savedCustomer?.data?._id;
     } else if (isWholesale && selectedCustomer) {
       customerData = {
         ...selectedCustomer,
-        isWholesale: true , 
+        isWholesale: true
       };
     }
-  
+
     const orderData = {
       date: formik.values.date,
       customer: customerData,
@@ -191,9 +160,10 @@ const OrderForm = (props) => {
       subtotal: invoiceSubtotal,
       total: invoiceTotal
     };
+
     navigate('/dashboard/orders/add-order/create-invoice', { state: { orderData, products } });
   };
-  
+
   return (
     <Container>
       <Link to="/dashboard/orders">
@@ -226,25 +196,24 @@ const OrderForm = (props) => {
                 <Grid item xs={12} sm={6}>
                   <FormLabel>Customer Type *</FormLabel>
                   <FormControl>
-                  <FormGroup row>
-                    <FormControlLabel
-                      control={<Checkbox checked={isWalkIn} onChange={(e) => {
-                        setIsWalkIn(e.target.checked);
-                        setIsWholesale(false);
-                      }} />}
-                      label="Walk-in"
-                    />
-                    <FormControlLabel
-                      control={<Checkbox checked={isWholesale} onChange={(e) => {
-                        setIsWholesale(e.target.checked);
-                        setIsWalkIn(false);
-                      }} disabled={isWalkIn} />}
-                      label="Wholesale"
-                    />
-                     </FormGroup>
+                    <FormGroup row>
+                      <FormControlLabel
+                        control={<Checkbox checked={isWalkIn} onChange={(e) => {
+                          setIsWalkIn(e.target.checked);
+                          setIsWholesale(false);
+                        }} />}
+                        label="Walk-in"
+                      />
+                      <FormControlLabel
+                        control={<Checkbox checked={isWholesale} onChange={(e) => {
+                          setIsWholesale(e.target.checked);
+                          setIsWalkIn(false);
+                        }} disabled={isWalkIn} />}
+                        label="Wholesale"
+                      />
+                    </FormGroup>
                   </FormControl>
                 </Grid>
-
                 {isWalkIn && (
                   <>
                     <Grid item xs={12} sm={4}>
@@ -323,40 +292,15 @@ const OrderForm = (props) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {products.map((product, index) => (
+                      {products.map((product) => (
                         <TableRow key={product._id} hover sx={{ borderBottom: '1px solid #e0e0e0' }}>
                           <TableCell>{product.productnm}</TableCell>
-                          <TableCell>
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                              <IconButton
-                                onClick={() => handleQuantityChange(index, product.quantity - 1)}
-                                color="primary"
-                                disabled={product.quantity <= 1}
-                              >
-                                <span>-</span>
-                              </IconButton>
-                              <TextField
-                                type="number"
-                                value={product.quantity}
-                                onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
-                                inputProps={{ min: 1 }}
-                                size="small"
-                                sx={{ width: '50px', textAlign: 'center' }}
-                              />
-                              <IconButton
-                                onClick={() => handleQuantityChange(index, product.quantity + 1)}
-                                color="primary"
-                                disabled={product.quantity >= product.availableQuantity}
-                              >
-                                <span>+</span>
-                              </IconButton>
-                            </Box>
-                          </TableCell>
+                          <TableCell>{product.quantity}</TableCell>
                           <TableCell>{product.sellingPrice.toFixed(2)}</TableCell>
                           <TableCell>{product.subtotal.toFixed(2)}</TableCell>
                           <TableCell>
                             <IconButton
-                              onClick={() => handleRemoveProduct(index)}
+                              onClick={() => handleRemoveProduct(product._id)}
                               color="error"
                               sx={{
                                 width: '40px',
@@ -398,7 +342,7 @@ const OrderForm = (props) => {
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
                 <Button
                   variant="contained"
-                  color = "secondary"
+                  color="secondary"
                   onClick={handleCreateInvoice}
                 >
                   Create Invoice
@@ -417,9 +361,9 @@ const OrderForm = (props) => {
                   <TableHead sx={{ backgroundColor: '#1976d2' }}>
                     <TableRow>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Name</TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Quantity</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Unit</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Price</TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Quantity</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Action</TableCell>
                     </TableRow>
                   </TableHead>
@@ -427,25 +371,51 @@ const OrderForm = (props) => {
                     {productList.map((product) => (
                       <TableRow key={product._id} hover sx={{ borderBottom: '1px solid #e0e0e0' }}>
                         <TableCell>{product.productnm}</TableCell>
-                        <TableCell>{product.quantity}</TableCell>
                         <TableCell>{product.unitName}</TableCell>
                         <TableCell>{product.sellingPrice.toFixed(2)}</TableCell>
                         <TableCell>
-                          <IconButton
-                            onClick={() => handleSelectProduct(product)}
-                            // onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
-                            color="primary"
-                            sx={{
-                              width: '40px',
-                              height: '40px',
-                              '&:hover': {
-                                backgroundColor: '#206bc4',
-                                color: '#ffffff'
-                              }
-                            }}
-                          >
-                            <IconShoppingCart />
-                          </IconButton>
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <IconButton
+                              onClick={() => handleQuantityChange(product._id, (quantity[product._id] || 1) - 1)}
+                              color="primary"
+                              disabled={(quantity[product._id] || 1) <= 1}
+                            >
+                              <span>-</span>
+                            </IconButton>
+                            <TextField
+                              type="number"
+                              value={quantity[product._id] || 1}
+                              onChange={(e) => handleQuantityChange(product._id, parseInt(e.target.value))}
+                              inputProps={{ min: 1 }}
+                              size="small"
+                              sx={{ width: '60px', textAlign: 'center' }}
+                            />
+                            <IconButton
+                              onClick={() => handleQuantityChange(product._id, (quantity[product._id] || 1) + 1)}
+                              color="primary"
+                              disabled={(quantity[product._id] || 1) >= product.availableQuantity}
+                            >
+                              <span>+</span>
+                            </IconButton>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <IconButton
+                              onClick={() => handleSelectProduct(product)}
+                              color="primary"
+                              sx={{
+                                width: '40px',
+                                height: '40px',
+                                '&:hover': {
+                                  backgroundColor: '#206bc4',
+                                  color: '#ffffff'
+                                }
+                              }}
+                            >
+                              <IconShoppingCart />
+                            </IconButton>
+                          </Box>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -459,5 +429,5 @@ const OrderForm = (props) => {
     </Container>
   );
 };
-
+}
 export default OrderForm;
