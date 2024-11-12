@@ -1,0 +1,1 @@
+export const _categoryapiurl="http://localhost:3001/category/";
