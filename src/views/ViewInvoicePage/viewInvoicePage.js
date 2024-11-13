@@ -61,7 +61,7 @@ const InvoicePage = () => {
                 <Typography variant="body1"><strong>Invoice No:</strong> {invoice_no}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="body1"><strong>Date:</strong> {moment(date).format('DD/MM/YYYY')}</Typography>
+                <Typography variant="body1"><strong>Date:</strong> {moment(date).format('DD-MM-YYYY')}</Typography>
               </Grid>
               <Grid item xs={12}>
                 <Typography variant="body1"><strong>Name:</strong> {customerName}</Typography>

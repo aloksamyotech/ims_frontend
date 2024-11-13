@@ -11,22 +11,20 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { updateProduct } from 'apis/api.js';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = yup.object({
-    productnm: yup.string().min(3, 'Min 3 characters are required').max(20, 'Max 20 characters are allowed').required('Product name is required'),
+    productnm: yup.string().max(20, 'Max 20 characters are allowed').required('Product name is required'),
     buyingPrice: yup.number()
       .required('Buying Price is required')
       .positive('Must be a positive number')
-      .min(20000, 'Price must be at least Rs.20000')
-      .max(200000, 'Price cannot exceed Rs.200000'),
+      .max(1000000, 'Price cannot exceed Rs.1000000'),
     sellingPrice: yup.number()
       .required('Selling price is required')
       .positive('Must be a positive number')
-      .min(20000, 'Price must be at least Rs.20000')
-      .max(200000, 'Price cannot exceed Rs.200000')
       .moreThan(yup.ref('buyingPrice'), 'Selling price must be greater than buying price'),
     quantity: yup.number()
       .max(100, 'Max 100 quantity are allowed')
@@ -35,7 +33,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
       .max(20, 'Max 20% tax is allowed')
       .required('Tax is required'),
     margin: yup.number()
-      .max(20, 'Max 20% margin is allowed')
+      .max(10000, 'Max 10000 margin is allowed')
       .required('Margin is required'),
     notes: yup.string()
       .max(400, 'Max 400 words are allowed'),
@@ -63,11 +61,9 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
 
         const response = await updateProduct({ ...values, _id: product._id });
         onProductUpdated(response.data);
-        console.log(response.data);
         toast.success('Product updated successfully');
         handleClose();
       } catch (error) {
-        console.error(error);
         toast.error(error.response?.data?.message || 'Failed to update product');
       } finally {
         setIsSubmitting(false);
@@ -85,6 +81,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h3">Update Product</Typography>
+        <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
       </DialogTitle>
 
       <DialogContent dividers>
@@ -151,7 +148,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
                 required
                 id="tax"
                 name="tax"
-                label="Tax"
+                label="Tax(%)"
                 type="number"
                 fullWidth
                 value={formik.values.tax}
@@ -164,7 +161,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
               <TextField
                 id="margin"
                 name="margin"
-                label="Margin"
+                label="Margin(%)"
                 type="number"
                 fullWidth
                 value={formik.values.margin}

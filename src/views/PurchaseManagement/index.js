@@ -66,8 +66,14 @@ const Purchase = () => {
     },
     {
       field: 'total',
-      headerName: 'Total',
-      flex: 1.2,
+      headerName: 'Total Price',
+      flex: 1.5,
+      valueFormatter: ({ value }) => {
+        if (value != null) {
+          return `$${value.toLocaleString()}`; 
+        }
+        return '$0'; 
+      }
     },
     {
       field: 'status',
@@ -172,7 +178,7 @@ const Purchase = () => {
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
           <Typography variant="h4" paddingTop={5}>
-            Purchases
+            Purchases List
           </Typography>
           <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2}>
             <Link to="/dashboard/purchases/add-purchase">

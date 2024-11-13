@@ -8,7 +8,6 @@ const Employee = Loadable(lazy(() => import('views/EmployeeManagement')));
 const Orders = Loadable(lazy(() => import('views/OrderManagement')));
 const Purchase = Loadable(lazy(() => import('views/PurchaseManagement')));
 const Products = Loadable(lazy(() => import('views/ProductManagement')));
-const AddProduct = Loadable(lazy(() => import('views/AddProductPage/AddProductPage')));
 const Reports = Loadable(lazy(() => import('views/Report')));
 const Customers = Loadable(lazy(() => import('views/Customer')));
 const Suppliers = Loadable(lazy(() => import('views/Supplier')));
@@ -17,7 +16,6 @@ const Unit = Loadable(lazy(() => import('views/AddUnit')));
 const AddOrder = Loadable(lazy(() => import('views/AddOrderPage/AddOrderPage')));
 const CreateInvoice = Loadable(lazy(() => import('views/CreateInvoice/createInvoice')))
 const AddPurchase = Loadable(lazy(() => import('views/AddPurchasePage/AddPurchasePage')));
-const AddQuotation = Loadable(lazy(() => import('views/AddQuotationPage/AddQuotationPage')));
 const ViewInvoice = Loadable(lazy(() => import('views/ViewInvoicePage/viewInvoicePage')))
 const DownloadInvoice = Loadable(lazy(() => import('views/DownloadInvoicePage/downloadInvoicePage')))
 const ViewPurchase = Loadable(lazy(() => import('views/PurchasePage/viewPurchasePage')))
@@ -42,6 +40,10 @@ const MainRoutes = {
         {
           path: 'users',
           element: <Employee />
+        },
+        {
+          path: 'products',
+          element: <Products />
         },
         {
           path: 'orders',
@@ -75,19 +77,6 @@ const MainRoutes = {
           ]
         },
         {
-          path: 'products',
-          children: [
-            {
-              path: '',
-              element: <Products />
-            },
-            {
-              path: 'add-product',
-              element: <AddProduct />
-            },
-          ]
-        },
-        {
           path: 'purchases',
           children: [
             {
@@ -106,16 +95,7 @@ const MainRoutes = {
         },
         {
           path: 'reports',
-          children: [
-            {
-              path: '',
-              element: <Reports />
-            },
-            {
-              path: 'add-quotation',
-              element: <AddQuotation />
-            },
-          ]
+          element: <Reports />
         },
         {
           path: 'suppliers',

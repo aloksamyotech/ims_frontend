@@ -97,7 +97,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
           justifyContent: 'space-between'
         }}
       >
-        <Typography variant="h3">{supplier ? 'Edit Supplier' : 'Create Supplier'}</Typography>
+        <Typography variant="h3">{supplier ? 'Edit Supplier' : 'Add Supplier'}</Typography>
         <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
       </DialogTitle>
 
@@ -248,7 +248,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
       </DialogContent>
       <DialogActions>
         <Button type="submit" disabled={isSubmitting} variant="contained" color="secondary" onClick={formik.handleSubmit}>
-          {isSubmitting ? 'Submitting...' :  'Create'}
+          {isSubmitting ? 'Submitting...' :  'Add'}
         </Button>
         <Button
          variant="contained"

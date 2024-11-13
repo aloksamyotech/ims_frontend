@@ -9,11 +9,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from 'react-toastify'; 
 import UpdateProduct from './updateProduct.js'; 
+import AddProductPage from './AddProducts';
 import { deleteProduct, fetchProducts} from 'apis/api.js';
 import ViewProduct from './viewProduct.js';
 
 const Product = () => {
   const [products, setProducts] = useState([]);
+  const [openAdd, setOpenAdd] = useState(false);
   const [openView, setOpenView] = useState(false); 
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -32,19 +34,40 @@ const Product = () => {
   }, []);
 
   const columns = [
-    { field: 'productnm', headerName: 'Name', flex: 1.5 },
-    { field: 'quantity', headerName: 'Quantity', flex: 1.5 },
+    { field: 'productnm', headerName: 'Name', flex: 2 },
+    { 
+      field: 'quantity', 
+      headerName: 'Quantity', 
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => {
+        const quantity = params.row.quantity;
+        return (
+          <div
+            style={{
+              backgroundColor: quantity < 5 ? '#d91656' : 'transparent', 
+              color: quantity < 5 ? 'white' : 'black', 
+              padding: '8px 12px',
+              borderRadius: '4px',
+              textAlign: 'center'
+            }}
+          >
+            {quantity}
+          </div>
+        );
+      }
+    },
     {
       field: 'categoryName',
       headerName: 'Category',
-      flex: 1.5,
-      minWidth: 250 ,
+      flex: 1,
+      minWidth: 200 ,
       valueGetter: (params) => params.row.categoryName || 'N/A', 
     },
     {
       field: 'unitName',
       headerName: 'Unit',
-      flex: 1.5,
+      flex: 1,
       valueGetter: (params) => params.row.unitName || 'N/A',
     },
     {
@@ -112,6 +135,11 @@ const Product = () => {
     },
   ];
 
+  const handleOpenAdd = () => {
+    setSelectedProduct(null);
+    setOpenAdd(true);
+  };
+
   const handleView = (product) => {
     setSelectedProduct(product);
     setOpenView(true);
@@ -129,26 +157,29 @@ const Product = () => {
         setProducts((prev) => prev.filter((product) => product._id !== _id));
         toast.success('Product deleted successfully');
       } catch (error) {
-        console.error('Failed to delete product:', error);
         toast.error('Failed to delete product');
       }
     }
   };
 
+  const handleProductAdded = (newproduct) => {
+    setProducts((prev) => [...prev, newproduct]);
+    setOpenAdd(false);
+  };
+
   return (
     <>
+    <AddProductPage open={openAdd} handleClose={() =>setOpenAdd(false) } onProductAdded={handleProductAdded}/>
       <ViewProduct open={openView} handleClose={() => setOpenView(false)} product={selectedProduct} />
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent="space-between">
           <Typography variant="h4" paddingTop={5}>
-            Products
+             Products List
           </Typography>
           <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2}>
-            <Link to="/dashboard/products/add-product">
-              <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
                 Add Product
               </Button>
-            </Link>
           </Stack>
         </Stack>
         <TableStyle>

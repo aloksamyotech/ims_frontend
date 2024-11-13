@@ -22,22 +22,25 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  InputAdornment,
   IconButton
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { IconTrash, IconShoppingCart } from '@tabler/icons';
+import { IconTrash, IconShoppingCart, IconSearch } from '@tabler/icons';
 import { Link } from 'react-router-dom';
 import { fetchProducts, fetchCustomers, addCustomer } from 'apis/api.js';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 
 const TAX_RATE = 0.07;
 
 const OrderForm = (props) => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]); 
-  const [productList, setProductList] = useState([]); 
-  const [customerList, setCustomerList] = useState([]); 
-  const [quantity, setQuantity] = useState({}); 
+  const [products, setProducts] = useState([]);
+  const [productList, setProductList] = useState([]);
+  const [customerList, setCustomerList] = useState([]);
+  const [quantity, setQuantity] = useState({});
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isWalkIn, setIsWalkIn] = useState(false);
   const [isWholesale, setIsWholesale] = useState(false);
@@ -47,9 +50,11 @@ const OrderForm = (props) => {
     email: '',
     address: ''
   });
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0];
 
   const validationSchema = yup.object({
-    date: yup.date().required('Date is required').min(new Date(), 'Date cannot be in the past'),
+    date: yup.date().required('Date is required'),
     customernm: yup.string().required('Customer is required'),
     email: yup.string().email('Invalid email format').required('Email is required'),
     phone: yup
@@ -58,7 +63,6 @@ const OrderForm = (props) => {
       .required('Phone number is required'),
     address: yup
       .string()
-      .min(10, 'Address must be at least 10 characters')
       .max(50, 'Max 50 characters are allowed')
       .required('Address is required'),
     quantity: yup.number().min(1, 'Quantity must be at least 1').required('Quantity is required'),
@@ -67,7 +71,7 @@ const OrderForm = (props) => {
 
   const formik = useFormik({
     initialValues: {
-      date: '',
+      date: formattedDate,
       customernm: '',
       phone: '',
       email: '',
@@ -94,19 +98,64 @@ const OrderForm = (props) => {
     fetchData();
   }, []);
 
+  const filteredProducts = productList.filter((product) => product.productnm.toLowerCase().includes(searchTerm.toLowerCase()));
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
   const handleQuantityChange = (productId, newQuantity) => {
+    const product = productList.find((prod) => prod._id === productId);
+
+    if (!product) {
+      console.error('Product not found');
+      return;
+    }
     if (newQuantity < 1) return;
-    setQuantity((prev) => ({ ...prev, [productId]: newQuantity }));
+    if (newQuantity > product.quantity) {
+      toast.info('Quantity exceeds available stock');
+      return;
+    }
+    setQuantity((prev) => ({
+      ...prev,
+      [productId]: newQuantity
+    }));
   };
 
   const handleSelectProduct = (product) => {
     const selectedQuantity = quantity[product._id] || 1;
-
-    if (selectedQuantity > product.availableQuantity) {
-      setAlertMessage('Quantity exceeds available stock');
-      setOpenAlert(true);
+    if (selectedQuantity > product.quantity) {
+      toast.info('Quantity exceeds available stock');
       return;
     }
+    const productInCart = products.find((item) => item._id === product._id);
+
+    if (productInCart) {
+      const updatedProducts = products.map((item) =>
+        item._id === product._id
+          ? {
+              ...item,
+              quantity: item.quantity + selectedQuantity,
+              subtotal: (item.quantity + selectedQuantity) * item.sellingPrice
+            }
+          : item
+      );
+      setProducts(updatedProducts);
+    } else {
+      setProducts((prevProducts) => [
+        ...prevProducts,
+        {
+          ...product,
+          quantity: selectedQuantity,
+          subtotal: selectedQuantity * product.sellingPrice
+        }
+      ]);
+    }
+    setQuantity((prev) => ({
+      ...prev,
+      [product._id]: 1
+    }));
+  };
 
   const handleRemoveProduct = (productId) => {
     const updatedProducts = products.filter((product) => product._id !== productId);
@@ -172,11 +221,11 @@ const OrderForm = (props) => {
         </Button>
       </Link>
       <form onSubmit={formik.handleSubmit}>
-        <Typography marginTop={5} variant="h4" gutterBottom>
-          New Order
+        <Typography marginTop={5} variant="h3" gutterBottom>
+          Add Order
         </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+        <Grid container spacing={3} sx={{marginTop : '8px'}}>
+          <Grid item xs={12}>
             <Paper style={{ padding: '10px', borderRadius: '8px', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
@@ -195,22 +244,35 @@ const OrderForm = (props) => {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <FormLabel>Customer Type *</FormLabel>
-                  <FormControl>
+                  <FormControl component="fieldset" sx={{ width: '100%' }}>
                     <FormGroup row>
-                      <FormControlLabel
-                        control={<Checkbox checked={isWalkIn} onChange={(e) => {
-                          setIsWalkIn(e.target.checked);
-                          setIsWholesale(false);
-                        }} />}
-                        label="Walk-in"
-                      />
-                      <FormControlLabel
-                        control={<Checkbox checked={isWholesale} onChange={(e) => {
-                          setIsWholesale(e.target.checked);
-                          setIsWalkIn(false);
-                        }} disabled={isWalkIn} />}
-                        label="Wholesale"
-                      />
+                      <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={isWalkIn}
+                              onChange={(e) => {
+                                setIsWalkIn(e.target.checked);
+                                setIsWholesale(false);
+                              }}
+                            />
+                          }
+                          label="Walk-in"
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={isWholesale}
+                              onChange={(e) => {
+                                setIsWholesale(e.target.checked);
+                                setIsWalkIn(false);
+                              }}
+                              disabled={isWalkIn}
+                            />
+                          }
+                          label="Wholesale"
+                        />
+                      </Box>
                     </FormGroup>
                   </FormControl>
                 </Grid>
@@ -280,7 +342,7 @@ const OrderForm = (props) => {
               </Grid>
 
               <Grid item xs={12} margin={2}>
-                <TableContainer component={Paper} elevation={3} style={{ maxWidth: '800px' }}>
+                <TableContainer component={Paper} elevation={3} style={{ maxWidth: '1000px' }}>
                   <Table>
                     <TableHead sx={{ backgroundColor: '#1976d2' }}>
                       <TableRow>
@@ -340,23 +402,43 @@ const OrderForm = (props) => {
               </Grid>
 
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleCreateInvoice}
-                >
+                <Button variant="contained" color="secondary" onClick={handleCreateInvoice}>
                   Create Invoice
                 </Button>
               </Box>
             </Paper>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12}>
             <Paper style={{ padding: '20px', borderRadius: '8px', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}>
-              <Typography variant="h4" gutterBottom>
-                Product List
-              </Typography>
-              <TableContainer component={Paper} elevation={3} style={{ maxWidth: '600px' }}>
+              <Box sx={{ marginTop: '10px', marginLeft: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h4" gutterBottom>
+                  Product List
+                </Typography>
+
+                <TextField
+                  label="Search Products"
+                  variant="outlined"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  margin="normal"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <IconSearch />
+                      </InputAdornment>
+                    )
+                  }}
+                  sx={{ maxWidth: '300px' }}
+                />
+              </Box>
+
+              <TableContainer
+                component={Paper}
+                elevation={3}
+                sx={{ marginLeft: '8px', alignContent: 'center' }}
+                style={{ maxWidth: '1000px' }}
+              >
                 <Table>
                   <TableHead sx={{ backgroundColor: '#1976d2' }}>
                     <TableRow>
@@ -368,7 +450,7 @@ const OrderForm = (props) => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {productList.map((product) => (
+                    {filteredProducts.map((product) => (
                       <TableRow key={product._id} hover sx={{ borderBottom: '1px solid #e0e0e0' }}>
                         <TableCell>{product.productnm}</TableCell>
                         <TableCell>{product.unitName}</TableCell>
@@ -382,6 +464,7 @@ const OrderForm = (props) => {
                             >
                               <span>-</span>
                             </IconButton>
+
                             <TextField
                               type="number"
                               value={quantity[product._id] || 1}
@@ -390,10 +473,11 @@ const OrderForm = (props) => {
                               size="small"
                               sx={{ width: '60px', textAlign: 'center' }}
                             />
+
                             <IconButton
                               onClick={() => handleQuantityChange(product._id, (quantity[product._id] || 1) + 1)}
                               color="primary"
-                              disabled={(quantity[product._id] || 1) >= product.availableQuantity}
+                              disabled={(quantity[product._id] || 1) >= product.quantity}
                             >
                               <span>+</span>
                             </IconButton>
@@ -426,8 +510,9 @@ const OrderForm = (props) => {
           </Grid>
         </Grid>
       </form>
+      <ToastContainer />
     </Container>
   );
 };
-}
+
 export default OrderForm;

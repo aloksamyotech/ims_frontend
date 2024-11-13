@@ -1,35 +1,39 @@
 import React from 'react';
-import { Dialog, DialogTitle, DialogContent,Typography, DialogActions, Button, TextField } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, Typography, DialogActions, Button, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { updateUnits } from 'apis/api.js';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const UpdateUnit = ({ open, handleClose, unit, onUnitUpdated }) => {
   const formik = useFormik({
     initialValues: {
       unitnm: unit?.unitnm || '',
-      shortcode: unit?.shortcode || '',
+      shortcode: unit?.shortcode || ''
     },
-    enableReinitialize: true, 
+    enableReinitialize: true,
     validationSchema: yup.object().shape({
-      unitnm: yup.string().min(5 , 'Min 5 characters are required').max(10, 'Max 10 characters are allowed').required('Unit name is required'),
-      shortcode: yup.string().max(5, 'Max 5 characters are required').required('Shortcode is required'),
+      unitnm: yup.string().max(10, 'Max 10 characters are allowed').required('Unit name is required'),
+      shortcode: yup.string().max(5, 'Max 5 characters are required').required('Shortcode is required')
     }),
     onSubmit: async (values) => {
       try {
         const response = await updateUnits({ ...unit, ...values });
-        onUnitUpdated(response.data); 
+        onUnitUpdated(response.data);
         toast.success('Unit updated successfully');
       } catch (error) {
         toast.error('Failed to update unit');
       }
-    },
+    }
   });
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>  <Typography variant="h4">Update Unit</Typography></DialogTitle>
+     <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant="h3">Update Unit</Typography>
+        <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
+      </DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
@@ -52,11 +56,12 @@ const UpdateUnit = ({ open, handleClose, unit, onUnitUpdated }) => {
         />
       </DialogContent>
       <DialogActions>
-      <Button type="submit"  variant="contained" color="secondary" onClick={formik.handleSubmit}>
-          Update</Button>
-            <Button onClick={handleClose} variant="contained" color="error">
-              Cancel
-            </Button>
+        <Button type="submit" variant="contained" color="secondary" onClick={formik.handleSubmit}>
+          Update
+        </Button>
+        <Button onClick={handleClose} variant="contained" color="error">
+          Cancel
+        </Button>
       </DialogActions>
     </Dialog>
   );

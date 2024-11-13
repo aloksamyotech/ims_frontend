@@ -30,11 +30,18 @@ const Customer = () => {
 
   const columns = [
     { field: 'customernm', headerName: 'Name', flex: 1.5, minWidth: 150 },
-    { field: 'email', headerName: 'Email', flex: 2, minWidth: 300 },
+    { field: 'email', headerName: 'Email', flex: 1.5, minWidth: 250 },
     { field: 'phone', headerName: 'Phone', flex: 1.5, minWidth: 150 },
-    { field: 'bankName', headerName: 'Bank Name', flex: 1.5, minWidth: 100 },
-    { field: 'typeOfCustomer', headerName: 'Type Of Customer', flex: 1.5, minWidth: 150 },
-    { field: 'address', headerName: 'Address', flex: 1.5, minWidth: 350 },
+    { 
+      field: 'customerType', 
+      headerName: 'Type of Customer', 
+      flex: 1.5, 
+      minWidth: 150,
+      valueGetter: (params) => {
+        return params.row.isWholesale ? 'Wholesale' : 'Walk-in';
+      }
+    },
+    { field: 'address', headerName: 'Address', flex: 1.5, minWidth: 200 },
     { field: 'createdAt', headerName: 'Created At', 
       flex: 1,minWidth : 150,
       valueGetter: (params) => {
@@ -112,7 +119,7 @@ const Customer = () => {
 
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
-          <Typography variant="h4" paddingTop={5}>Customers Lists</Typography>
+          <Typography variant="h4" paddingTop={5}>Customers List</Typography>
           <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
             Add Customer
           </Button>
