@@ -106,13 +106,13 @@ const Supplier = () => {
 
   return (
     <>
-    <AddSupplier open={openAdd}handleClose={() => setOpenAdd(false)} onSupplierAdded={handleSupplierAdded} />
+    <AddSupplier open={openAdd} handleClose={() => setOpenAdd(false)} onSupplierAdded={handleSupplierAdded} />
       <UpdateSupplier open={openUpdate} handleClose={() => setOpenUpdate(false)} supplier={currentSupplier}  onSupplierUpdated={handleSupplierUpdated} />
       <ViewSupplier open={openView} handleClose={() => setOpenView(false)} supplier={currentSupplier} />
 
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
-          <Typography variant="h4" paddingTop={5}>Suppliers Lists</Typography>
+          <Typography variant="h4" paddingTop={5}>Suppliers List</Typography>
           <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
             Add Supplier
           </Button>

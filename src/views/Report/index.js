@@ -140,7 +140,7 @@ const SupplierProductReport = () => {
         </Box>
       </Box>
 
-      <TableContainer component={Paper} elevation={3} sx={{ marginTop: 5 }}>
+      <TableContainer component={Paper} elevation={3} sx={{ marginTop: 5 }} >
         <Table>
           <TableHead sx={{ backgroundColor: '#1976d2' }}>
             <TableRow>
@@ -161,7 +161,7 @@ const SupplierProductReport = () => {
                 <TableCell>{report.productName}</TableCell>
                 <TableCell>{report.categoryName}</TableCell>
                 <TableCell>{report.quantity}</TableCell>
-                <TableCell>{report.price}</TableCell>
+                <TableCell>{report.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
                 <TableCell>{report.total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
               </TableRow>
             ))}

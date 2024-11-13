@@ -69,20 +69,12 @@ const dashboard = {
     },
     {
       id: '05',
-      title: 'Reports',
-      type: 'item',
-      url: '/dashboard/reports',
-      icon: icons.IconChecklist,
-      breadcrumbs: false
-    },
-    {
-      id: '06',
       title: 'Clients',
       type: 'collapse',
       icon: icons.IconBoxMultiple,
       children: [
         {
-          id: '07',
+          id: '06',
           title: 'Suppliers',
           type: 'item',
           url: '/dashboard/suppliers',
@@ -90,7 +82,7 @@ const dashboard = {
           breadcrumbs: false
         },
         {
-          id: '08',
+          id: '07',
           title: 'Customers',
           type: 'item',
           url: '/dashboard/customers',
@@ -100,13 +92,13 @@ const dashboard = {
       ]
     },
     {
-      id: '09',
+      id: '08',
       title: 'Classification',
       type: 'collapse',
       icon: icons.IconSettingsAutomation,
       children: [
         {
-          id: '10',
+          id: '09',
           title: 'Category',
           type: 'item',
           url: '/dashboard/category',
@@ -114,14 +106,22 @@ const dashboard = {
           breadcrumbs: false
         },
         {
-          id: '11',
+          id: '10',
           title: 'Unit',
           type: 'item',
           url: '/dashboard/unit',
           icon: icons.IconSettingsAutomation,
           breadcrumbs: false
-        }
+        },
       ]
+    },
+    {
+      id: '11',
+      title: 'Reports',
+      type: 'item',
+      url: '/dashboard/reports',
+      icon: icons.IconChecklist,
+      breadcrumbs: false
     },
   ]
 };

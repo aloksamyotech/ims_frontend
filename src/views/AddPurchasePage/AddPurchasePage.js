@@ -41,16 +41,18 @@ const PurchaseForm = () => {
   const [supplierList, setSupplierList] = useState([]);
   const [productList, setProductList] = useState([]);
   const [rows, setRows] = useState([{ product: '', quantity: 1, price: 0, subtotal: 0 }]);
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0];
 
-  const validationSchema = yup.object({
-    date: yup.date().required('Date is required').min(new Date(), 'Date cannot be in the past'),
-    supplierId: yup.string().required('Supplier is required') // Changed to supplierId
+  const validationSchema = yup.object({ 
+    date: yup.date().required('Date is required'),
+    supplierId: yup.string().required('Supplier is required')
   });
 
   const formik = useFormik({
     validationSchema,
     initialValues: {
-      date: '',
+      date: formattedDate,
       supplierId: '',
       reference: 'LRS',
       total: 0,
@@ -79,11 +81,9 @@ const PurchaseForm = () => {
       try {
         const response = await addPurchase(purchaseData);
         toast.success('Purchase added successfully');
-
         formik.resetForm();
         setRows([{ product: '', quantity: 1, price: 0, subtotal: 0 }]);
       } catch (error) {
-        console.error('Error adding purchase:', error);
         toast.error('Failed to add purchase');
       }
     }
@@ -149,9 +149,9 @@ const PurchaseForm = () => {
         </Button>
       </Link>
       <Typography marginTop={5} variant="h3" gutterBottom>
-        Create Purchase
+        Add Purchase
       </Typography>
-      <Grid container spacing={3}>
+      <Grid container spacing={3} sx={{marginTop:'8px'}}>
         <Grid item xs={12} sm={4} md={4}>
           <FormLabel>Purchase Date</FormLabel>
           <TextField
@@ -300,7 +300,7 @@ const PurchaseForm = () => {
         <Grid item xs={12}>
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.5 }}>
           <Button  variant="contained" color="secondary" type="submit">
-            Purchase
+           Add Purchase
           </Button>
           </ Box>
         </Grid>

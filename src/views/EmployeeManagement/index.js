@@ -148,7 +148,7 @@ const User = () => {
 
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
-          <Typography variant="h4" paddingTop={5}>Users</Typography>
+          <Typography variant="h4" paddingTop={5}>Users List</Typography>
         </Stack>
         <TableStyle>
           <Box width="100%" overflow="hidden">

@@ -35,7 +35,6 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
       .matches(/^[1-9][0-9]{9}$/, 'Phone number must be 12 digits and cannot start with 0')
       .required('Phone number is required'),
     address: yup.string().min(10, 'Address must be at least 10 characters').max(50, 'Max 50 characters are allowed').required('Address is required'),
-    typeOfCustomer: yup.string().required('Type of customer is required'),
     accountHolder: yup
       .string()
       .matches(/^[a-zA-Z\s]*$/, 'Only letters and spaces are allowed')
@@ -50,7 +49,6 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
     phone: '',
     email: '',
     address: '',
-    typeOfCustomer: '',
     accountHolder: '',
     accountNumber: '',
     bankName: '',
@@ -93,7 +91,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
         id="scroll-dialog-title"
         style={{ display: 'flex', justifyContent: 'space-between' }}
       >
-        <Typography variant="h3">Create Customer</Typography>
+        <Typography variant="h3">Add Customer</Typography>
         <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
       </DialogTitle>
 
@@ -114,7 +112,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 helperText={formik.touched.customernm && formik.errors.customernm}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <FormLabel>Email</FormLabel>
               <TextField
                 required
@@ -127,7 +125,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <FormLabel>Phone number</FormLabel>
               <TextField
                 required
@@ -139,26 +137,6 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 error={formik.touched.phone && Boolean(formik.errors.phone)}
                 helperText={formik.touched.phone && formik.errors.phone}
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <FormLabel>Type of Customer</FormLabel>
-                <Select
-                  required
-                  id="typeOfCustomer"
-                  name="typeOfCustomer"
-                  value={formik.values.typeOfCustomer}
-                  onChange={formik.handleChange}
-                  error={formik.touched.typeOfCustomer && Boolean(formik.errors.typeOfCustomer)}
-                >
-                  <MenuItem value="">Select a type</MenuItem>
-                  <MenuItem value="Walk-in">Walk-in</MenuItem>
-                  <MenuItem value="Wholesaler">Wholesale</MenuItem>
-                </Select>
-                <FormHelperText error={formik.touched.typeOfCustomer && Boolean(formik.errors.typeOfCustomer)}>
-                  {formik.touched.typeOfCustomer && formik.errors.typeOfCustomer}
-                </FormHelperText>
-              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
@@ -224,7 +202,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
           </Grid>
           <DialogActions>
             <Button type="submit" disabled={isSubmitting} variant="contained" color="secondary">
-              {isSubmitting ? 'Submitting...' : 'Create'}
+              {isSubmitting ? 'Submitting...' : 'Add'}
             </Button>
             <Button
               variant="contained"

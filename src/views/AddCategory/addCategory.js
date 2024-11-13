@@ -10,8 +10,8 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = yup.object({
-    catnm: yup.string().min(5 , 'Min 5 characters are required').max(30, 'Max 30 characters are allowed').required('Category name is required'),
-    desc: yup.string().min(10, 'Description must be at least 10 characters').max(100, 'Max 100 characters are allowed').required('Description is required')
+    catnm: yup.string().max(30, 'Max 30 characters are allowed').required('Category name is required'),
+    desc: yup.string().max(100, 'Max 100 characters are allowed').required('Description is required')
   });
 
   const formik = useFormik({
@@ -44,7 +44,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
     id="scroll-dialog-title"
     style={{ display: 'flex', justifyContent: 'space-between' }}
   >
-    <Typography variant="h3">Create Category</Typography>
+    <Typography variant="h3">Add Product Category</Typography>
     <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
   </DialogTitle>
 
@@ -88,7 +88,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
 
           <DialogActions>
             <Button type="submit" disabled={isSubmitting} variant="contained" color="secondary">
-              {isSubmitting ? 'Submitting...' : 'Create'}{' '}
+              {isSubmitting ? 'Submitting...' : 'Add Product Category'}{' '}
             </Button>
             <Button onClick={handleClose} variant="contained" color="error">
               Cancel

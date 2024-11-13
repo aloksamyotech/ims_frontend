@@ -68,7 +68,13 @@ const Order = () => {
     {
       field: 'total',
       headerName: 'Total Price',
-      flex: 1.2,
+      flex: 1.5,
+      valueFormatter: ({ value }) => {
+        if (value != null) {
+          return `$${value.toLocaleString()}`; 
+        }
+        return '$0'; 
+      }
     },
     {
       field: 'order_status',
@@ -195,7 +201,7 @@ const Order = () => {
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
           <Typography variant="h4" paddingTop={5}>
-            Orders 
+            Orders List
           </Typography>
           <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2}>
             <Link to="/dashboard/orders/add-order">
