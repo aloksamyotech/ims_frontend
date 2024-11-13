@@ -161,7 +161,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
               <TextField
                 id="margin"
                 name="margin"
-                label="Margin"
+                label="Margin(%)"
                 type="number"
                 fullWidth
                 value={formik.values.margin}
