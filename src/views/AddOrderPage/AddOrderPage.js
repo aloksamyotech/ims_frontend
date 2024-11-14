@@ -41,6 +41,7 @@ const OrderForm = (props) => {
   const [customerList, setCustomerList] = useState([]);
   const [quantity, setQuantity] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isWalkIn, setIsWalkIn] = useState(false);
   const [isWholesale, setIsWholesale] = useState(false);
@@ -61,10 +62,7 @@ const OrderForm = (props) => {
       .string()
       .matches(/^[1-9][0-9]{9}$/, 'Phone number must be 12 digits and cannot start with 0')
       .required('Phone number is required'),
-    address: yup
-      .string()
-      .max(50, 'Max 50 characters are allowed')
-      .required('Address is required'),
+    address: yup.string().max(50, 'Max 50 characters are allowed').required('Address is required'),
     quantity: yup.number().min(1, 'Quantity must be at least 1').required('Quantity is required'),
     tax: yup.number().min(5, 'Min 5% is allowed').max(12, 'Max 12% is allowed').required('Tax is required')
   });
@@ -113,7 +111,6 @@ const OrderForm = (props) => {
     }
     if (newQuantity < 1) return;
     if (newQuantity > product.quantity) {
-      toast.info('Quantity exceeds available stock');
       return;
     }
     setQuantity((prev) => ({
@@ -128,8 +125,8 @@ const OrderForm = (props) => {
       toast.info('Quantity exceeds available stock');
       return;
     }
-    const productInCart = products.find((item) => item._id === product._id);
 
+    const productInCart = products.find((item) => item._id === product._id);
     if (productInCart) {
       const updatedProducts = products.map((item) =>
         item._id === product._id
@@ -151,6 +148,18 @@ const OrderForm = (props) => {
         }
       ]);
     }
+
+    setSelectedProductId(product._id);
+
+    const updatedProductList = productList.map((prod) =>
+      prod._id === product._id
+        ? {
+            ...prod,
+            quantity: prod.quantity - selectedQuantity
+          }
+        : prod
+    );
+    setProductList(updatedProductList);
     setQuantity((prev) => ({
       ...prev,
       [product._id]: 1
@@ -159,6 +168,7 @@ const OrderForm = (props) => {
 
   const handleRemoveProduct = (productId) => {
     const updatedProducts = products.filter((product) => product._id !== productId);
+    window.confirm('Are you sure you want to delete?');
     setProducts(updatedProducts);
   };
 
@@ -181,7 +191,7 @@ const OrderForm = (props) => {
     let customerData = {};
     if (isWalkIn) {
       customerData = {
-        customernm: `Walk-in ${walkInData.customernm}`,
+        customernm: walkInData.customernm,
         email: walkInData.email,
         phone: walkInData.phone,
         address: walkInData.address,
@@ -224,10 +234,10 @@ const OrderForm = (props) => {
         <Typography marginTop={5} variant="h3" gutterBottom>
           Add Order
         </Typography>
-        <Grid container spacing={3} sx={{marginTop : '8px'}}>
+        <Grid container spacing={2} sx={{ marginTop: '8px' }}>
           <Grid item xs={12}>
             <Paper style={{ padding: '10px', borderRadius: '8px', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}>
-              <Grid container spacing={3}>
+              <Grid container spacing={3} sx={{ margin: '1px' }}>
                 <Grid item xs={12} sm={6}>
                   <FormLabel>Date *</FormLabel>
                   <TextField
@@ -278,7 +288,7 @@ const OrderForm = (props) => {
                 </Grid>
                 {isWalkIn && (
                   <>
-                    <Grid item xs={12} sm={4}>
+                    <Grid item xs={12} sm={5}>
                       <FormLabel>Name *</FormLabel>
                       <TextField
                         fullWidth
@@ -288,7 +298,7 @@ const OrderForm = (props) => {
                         onChange={(e) => setWalkInData({ ...walkInData, customernm: e.target.value })}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={4}>
+                    <Grid item xs={12} sm={5}>
                       <FormLabel>Phone *</FormLabel>
                       <TextField
                         fullWidth
@@ -298,7 +308,7 @@ const OrderForm = (props) => {
                         onChange={(e) => setWalkInData({ ...walkInData, phone: e.target.value })}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={4}>
+                    <Grid item xs={12} sm={5}>
                       <FormLabel>Email *</FormLabel>
                       <TextField
                         fullWidth
@@ -308,7 +318,7 @@ const OrderForm = (props) => {
                         onChange={(e) => setWalkInData({ ...walkInData, email: e.target.value })}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={4}>
+                    <Grid item xs={12} sm={5}>
                       <FormLabel>Address *</FormLabel>
                       <TextField
                         fullWidth
@@ -322,7 +332,7 @@ const OrderForm = (props) => {
                 )}
 
                 {isWholesale && (
-                  <Grid item xs={12} sm={4}>
+                  <Grid item xs={12} sm={6}>
                     <FormLabel>Wholesale Customer</FormLabel>
                     <Select
                       value={formik.values.customernm}
@@ -331,11 +341,13 @@ const OrderForm = (props) => {
                       fullWidth
                     >
                       <MenuItem value="">Select a customer</MenuItem>
-                      {customerList.map((customer) => (
-                        <MenuItem key={customer._id} value={customer.customernm}>
-                          {customer.customernm}
-                        </MenuItem>
-                      ))}
+                      {customerList
+                        .filter((customer) => customer.isWholesale === true)
+                        .map((customer) => (
+                          <MenuItem key={customer._id} value={customer.customernm}>
+                            {customer.customernm}
+                          </MenuItem>
+                        ))}
                     </Select>
                   </Grid>
                 )}
@@ -382,26 +394,26 @@ const OrderForm = (props) => {
                         <TableCell colSpan={4} align="right">
                           Subtotal
                         </TableCell>
-                        <TableCell align="right">{invoiceSubtotal.toFixed(2)}</TableCell>
+                        <TableCell align="center">{invoiceSubtotal.toFixed(2)}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell colSpan={4} align="right">
                           Tax
                         </TableCell>
-                        <TableCell align="right">{invoiceTaxes.toFixed(2)}</TableCell>
+                        <TableCell align="center">{invoiceTaxes.toFixed(2)}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell colSpan={4} align="right" sx={{ fontWeight: 'bold', color: 'black' }}>
                           Total
                         </TableCell>
-                        <TableCell align="right">{invoiceTotal.toFixed(2)}</TableCell>
+                        <TableCell align="center">{invoiceTotal.toFixed(2)}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
                 </TableContainer>
               </Grid>
 
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1, marginRight: '12px' }}>
                 <Button variant="contained" color="secondary" onClick={handleCreateInvoice}>
                   Create Invoice
                 </Button>
@@ -411,7 +423,16 @@ const OrderForm = (props) => {
 
           <Grid item xs={12}>
             <Paper style={{ padding: '20px', borderRadius: '8px', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}>
-              <Box sx={{ marginTop: '10px', marginLeft: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box
+                sx={{
+                  marginTop: '10px',
+                  marginRight: '10px',
+                  marginLeft: '8px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}
+              >
                 <Typography variant="h4" gutterBottom>
                   Product List
                 </Typography>
@@ -429,7 +450,7 @@ const OrderForm = (props) => {
                       </InputAdornment>
                     )
                   }}
-                  sx={{ maxWidth: '300px' }}
+                  sx={{ maxWidth: '350px' }}
                 />
               </Box>
 
@@ -437,24 +458,40 @@ const OrderForm = (props) => {
                 component={Paper}
                 elevation={3}
                 sx={{ marginLeft: '8px', alignContent: 'center' }}
-                style={{ maxWidth: '1000px' }}
+                style={{ maxWidth: '975px' }}
               >
                 <Table>
                   <TableHead sx={{ backgroundColor: '#1976d2' }}>
                     <TableRow>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Name</TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Available Quantity</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Unit</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Price</TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Selected Quantity</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Quantity</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Action</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {filteredProducts.map((product) => (
-                      <TableRow key={product._id} hover sx={{ borderBottom: '1px solid #e0e0e0' }}>
+                      <TableRow
+                        key={product._id}
+                        hover
+                        sx={{
+                          borderBottom: '1px solid #e0e0e0',
+                          backgroundColor: selectedProductId === product._id ? '#e3f2fd' : 'transparent',
+                          '&:hover': {
+                            backgroundColor: selectedProductId === product._id ? '#c1e1fc' : 'transparent'
+                          }
+                        }}
+                      >
                         <TableCell>{product.productnm}</TableCell>
+                        <TableCell>{product.quantity}</TableCell>
                         <TableCell>{product.unitName}</TableCell>
                         <TableCell>{product.sellingPrice.toFixed(2)}</TableCell>
+                        <TableCell>
+                          {quantity[product._id] || 0} 
+                        </TableCell>
                         <TableCell>
                           <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <IconButton
