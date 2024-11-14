@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Dialog,
@@ -45,18 +45,16 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
       .positive('Must be a positive number')
       .moreThan(yup.ref('buyingPrice'), 'Selling price must be greater than buying price'),
     tax: yup.number().max(20, 'Max 20% tax is allowed').required('Tax is required'),
-    margin: yup.number().max(10000, 'Max 10000 is allowed').required('Margin is required'),
     notes: yup.string().max(400, 'Max 400 words are allowed')
   });
 
   const initialValues = {
     productnm: '',
     catnm: '',
-    unitnm: '',
+    unitnm: 'pieces',
     buyingPrice: '',
     sellingPrice: '',
     tax: '',
-    margin: '',
     notes: ''
   };
 
@@ -113,6 +111,14 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const { buyingPrice, sellingPrice } = formik.values;
+    if (buyingPrice && sellingPrice) {
+      const margin = ((sellingPrice - buyingPrice) / sellingPrice) * 100;
+      formik.setFieldValue('margin', margin.toFixed(2));
+    }
+  }, [formik.values.buyingPrice, formik.values.sellingPrice]); 
 
   return (
     <Dialog open={open} onClose={handleClose}
@@ -236,7 +242,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <FormLabel>Margin</FormLabel>
+              <FormLabel>Margin(%)</FormLabel>
               <TextField
                 required
                 id="margin"
@@ -247,6 +253,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 onChange={formik.handleChange}
                 error={formik.touched.margin && Boolean(formik.errors.margin)}
                 helperText={formik.touched.margin && formik.errors.margin}
+                disabled 
               />
             </Grid>
 
@@ -263,7 +270,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} sx={{ marginTop : '15px'}}>
               <Box
                 display="flex"
                 alignItems="center"
@@ -277,7 +284,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 {image ? (
                   <img src={URL.createObjectURL(image)} alt="product" style={{ maxWidth: '100%', maxHeight: '100%' }} />
                 ) : (
-                  <Typography variant="body2" color="textSecondary">Upload Product Image</Typography>
+                  <Typography variant="body2" color="textSecondary">Preview Image</Typography>
                 )}
               </Box>
               <input
@@ -287,9 +294,11 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 style={{ display: 'none' }}
                 id="image-upload"
               />
+              <Box sx={{marginTop:'12px'}}>
               <Button variant="contained" color="primary" component="label" htmlFor="image-upload">
                 Choose Image
               </Button>
+              </Box>
             </Grid>
           </Grid>
         </form>

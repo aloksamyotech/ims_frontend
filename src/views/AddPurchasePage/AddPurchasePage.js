@@ -76,7 +76,6 @@ const PurchaseForm = () => {
         tax: purchaseTaxes,
         total: purchaseTotal,
       };
-    
 
       try {
         const response = await addPurchase(purchaseData);
@@ -104,6 +103,13 @@ const PurchaseForm = () => {
   }, []);
 
   const handleAddRow = () => {
+    const productNotSelected = rows.some(row => !row.product);
+
+    if (productNotSelected) {
+      toast.error('Product not selected! Please select a product before adding a row.');
+      return;
+    }
+
     setRows([...rows, { product: '', quantity: 1, price: 0, subtotal: 0 }]);
   };
 
@@ -111,12 +117,13 @@ const PurchaseForm = () => {
     const productId = event.target.value;
     const selectedProduct = productList.find((product) => product._id === productId);
     const newRows = [...rows];
-    
+
     newRows[index].product = productId;
+    newRows[index].productName = selectedProduct ? selectedProduct.productnm : '';
     newRows[index].categoryName = selectedProduct ? selectedProduct.categoryName : '';
-    newRows[index].price = selectedProduct ? selectedProduct.buyingPrice : 0; 
+    newRows[index].price = selectedProduct ? selectedProduct.buyingPrice : 0;
     newRows[index].subtotal = newRows[index].quantity * newRows[index].price;
-    
+
     setRows(newRows);
   };
 
@@ -207,7 +214,7 @@ const PurchaseForm = () => {
             }} />
           </FormControl>
         </Grid>
-        <Grid item xs={12} margin={2}>
+        <Grid item xs={12} margin={2} sx={{margin:'5px'}}>
           <TableContainer component={Paper} elevation={3}>
             <Table>
               <TableHead sx={{ backgroundColor:'#1976d2'}}>
@@ -231,11 +238,14 @@ const PurchaseForm = () => {
                         displayEmpty
                       >
                         <MenuItem value="">Select a product</MenuItem>
-                        {productList.map((product) => (
-                          <MenuItem key={product._id} value={product._id}>
-                            {product.productnm}
-                          </MenuItem>
-                        ))}
+                        {productList
+                          .filter(product => 
+                            !rows.some(r => r.product === product._id) || row.product === product._id)
+                          .map((product) => (
+                            <MenuItem key={product._id} value={product._id}>
+                              {product.productnm}
+                            </MenuItem>
+                          ))}
                       </Select>
                     </TableCell>
                     <TableCell>
@@ -261,7 +271,11 @@ const PurchaseForm = () => {
                       />
                     </TableCell>
                     <TableCell>
-                      <Typography>{row.subtotal.toFixed(2)}</Typography>
+                      <TextField
+                        type="number"
+                        value={(row.subtotal || 0).toFixed(2)}
+                        inputProps={{ readOnly: true }}
+                      />
                     </TableCell>
                     <TableCell>
                       <IconButton onClick={() => handleRemoveRow(index)} color="error">
@@ -270,39 +284,41 @@ const PurchaseForm = () => {
                     </TableCell>
                   </TableRow>
                 ))}
-            <TableCell colSpan={6} align="right">
-          <Button variant="contained" color="primary" onClick={handleAddRow}>
-            +
-          </Button>
-          </TableCell>
-          <TableRow>
-            <TableCell colSpan={5} align="right">
-              Subtotal
-            </TableCell>
-            <TableCell align="right">{purchaseSubtotal.toFixed(2)}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={5} align="right">
-              Tax
-            </TableCell>
-            <TableCell align="right">{purchaseTaxes.toFixed(2)}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={5} align="right" sx={{ fontWeight: 'bold', color: 'black' }}>
-              Total
-            </TableCell>
-            <TableCell align="right">{purchaseTotal.toFixed(2)}</TableCell>
-          </TableRow>
-          </TableBody>
+                <TableRow>
+                  <TableCell colSpan={6} align="right">
+                    <Button variant="contained" color="primary" onClick={handleAddRow}>
+                      +
+                    </Button>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={5} align="right">
+                    Subtotal
+                  </TableCell>
+                  <TableCell align="right">{purchaseSubtotal.toFixed(2)}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={5} align="right">
+                    Tax
+                  </TableCell>
+                  <TableCell align="right">{purchaseTaxes.toFixed(2)}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={5} align="right" sx={{ fontWeight: 'bold', color: 'black' }}>
+                    Total
+                  </TableCell>
+                  <TableCell align="right">{purchaseTotal.toFixed(2)}</TableCell>
+                </TableRow>
+              </TableBody>
             </Table>
           </TableContainer>
         </Grid>
         <Grid item xs={12}>
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.5 }}>
-          <Button  variant="contained" color="secondary" type="submit">
-           Add Purchase
-          </Button>
-          </ Box>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginRight: '5px' }}>
+            <Button variant="contained" color="secondary" type="submit">
+              Add Purchase
+            </Button>
+          </Box>
         </Grid>
       </Grid>
     </form>
