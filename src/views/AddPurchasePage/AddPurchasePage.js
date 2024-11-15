@@ -113,6 +113,17 @@ const PurchaseForm = () => {
     setRows([...rows, { product: '', quantity: 1, price: 0, subtotal: 0 }]);
   };
 
+
+  const handleAddPurchase = (event) => {
+    event.preventDefault();
+    const productNotSelected = rows.some(row => !row.product);
+    if (productNotSelected) {
+      toast.error('Product not selected! Please select a product before adding the purchase.');
+      return;
+    }
+    formik.submitForm();
+  };
+  
   const handleProductChange = (index, event) => {
     const productId = event.target.value;
     const selectedProduct = productList.find((product) => product._id === productId);
@@ -315,7 +326,7 @@ const PurchaseForm = () => {
         </Grid>
         <Grid item xs={12}>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginRight: '5px' }}>
-            <Button variant="contained" color="secondary" type="submit">
+            <Button variant="contained" color="secondary" type="submit" onClick={handleAddPurchase}>
               Add Purchase
             </Button>
           </Box>

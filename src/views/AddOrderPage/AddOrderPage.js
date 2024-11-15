@@ -41,7 +41,7 @@ const OrderForm = (props) => {
   const [customerList, setCustomerList] = useState([]);
   const [quantity, setQuantity] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isWalkIn, setIsWalkIn] = useState(false);
   const [isWholesale, setIsWholesale] = useState(false);
@@ -102,70 +102,75 @@ const OrderForm = (props) => {
     setSearchTerm(event.target.value);
   };
 
-  const handleQuantityChange = (productId, newQuantity) => {
-    const product = productList.find((prod) => prod._id === productId);
-
-    if (!product) {
-      console.error('Product not found');
-      return;
-    }
-    if (newQuantity < 1) return;
-    if (newQuantity > product.quantity) {
-      return;
-    }
-    setQuantity((prev) => ({
-      ...prev,
-      [productId]: newQuantity
-    }));
-  };
-
   const handleSelectProduct = (product) => {
     const selectedQuantity = quantity[product._id] || 1;
+
+    if (product.quantity <= 0) {
+      toast.error("This product is out of stock.");
+      return; 
+    }
+
     if (selectedQuantity > product.quantity) {
-      toast.info('Quantity exceeds available stock');
+      return;
+    }
+  
+    const productInCart = products.find((item) => item._id === product._id);
+    if (productInCart) {
+      toast.info('Product is already added to the cart');
       return;
     }
 
-    const productInCart = products.find((item) => item._id === product._id);
-    if (productInCart) {
-      const updatedProducts = products.map((item) =>
-        item._id === product._id
-          ? {
-              ...item,
-              quantity: item.quantity + selectedQuantity,
-              subtotal: (item.quantity + selectedQuantity) * item.sellingPrice
-            }
-          : item
-      );
-      setProducts(updatedProducts);
+    setProducts((prevProducts) => [
+      ...prevProducts,
+      {
+        ...product,
+        quantity: selectedQuantity,
+        subtotal: selectedQuantity * product.sellingPrice
+      }
+    ]);
+  
+    const isAlreadySelected = selectedProductIds.includes(product._id);
+    if (isAlreadySelected) {
+      setSelectedProductIds(selectedProductIds.filter(id => id !== product._id));
     } else {
-      setProducts((prevProducts) => [
-        ...prevProducts,
-        {
-          ...product,
-          quantity: selectedQuantity,
-          subtotal: selectedQuantity * product.sellingPrice
-        }
-      ]);
+      setSelectedProductIds([...selectedProductIds, product._id]);
     }
-
-    setSelectedProductId(product._id);
-
-    const updatedProductList = productList.map((prod) =>
-      prod._id === product._id
-        ? {
-            ...prod,
-            quantity: prod.quantity - selectedQuantity
-          }
-        : prod
-    );
-    setProductList(updatedProductList);
     setQuantity((prev) => ({
       ...prev,
       [product._id]: 1
     }));
   };
 
+  const handleQuantityChange = (productId, newQuantity) => {
+    const product = products.find((prod) => prod._id === productId);
+    
+    if (!product) {
+      console.error('Product not found');
+      return;
+    }
+
+    const availableStock = productList.find((prod) => prod._id === productId)?.quantity;
+    if (newQuantity < 1) return; 
+    if (newQuantity > availableStock) {
+      toast.info(`Quantity exceeds available stock (: ${availableStock})`);
+      return;
+    }
+    const updatedProducts = products.map((item) =>
+      item._id === productId
+        ? {
+            ...item,
+            quantity: newQuantity,
+            subtotal: newQuantity * item.sellingPrice
+          }
+        : item
+    );
+    setProducts(updatedProducts);
+    setQuantity((prev) => ({
+      ...prev,
+      [productId]: newQuantity
+    }));
+  };
+  
   const handleRemoveProduct = (productId) => {
     const updatedProducts = products.filter((product) => product._id !== productId);
     window.confirm('Are you sure you want to delete?');
@@ -188,6 +193,12 @@ const OrderForm = (props) => {
   };
 
   const handleCreateInvoice = async () => {
+
+    if (!isWalkIn && !isWholesale && !selectedCustomer) {
+      toast.error("Please select a customer before creating the invoice.");
+      return; 
+    }
+
     let customerData = {};
     if (isWalkIn) {
       customerData = {
@@ -369,7 +380,18 @@ const OrderForm = (props) => {
                       {products.map((product) => (
                         <TableRow key={product._id} hover sx={{ borderBottom: '1px solid #e0e0e0' }}>
                           <TableCell>{product.productnm}</TableCell>
-                          <TableCell>{product.quantity}</TableCell>
+                          <TableCell>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              <TextField
+                                type="number"
+                                value={quantity[product._id] || 1}
+                                onChange={(e) => handleQuantityChange(product._id, parseInt(e.target.value))}
+                                inputProps={{ min: 1 }}
+                                size="small"
+                                sx={{ width: '60px', textAlign: 'center' }}
+                              />
+                            </Box>
+                          </TableCell>
                           <TableCell>{product.sellingPrice.toFixed(2)}</TableCell>
                           <TableCell>{product.subtotal.toFixed(2)}</TableCell>
                           <TableCell>
@@ -467,8 +489,6 @@ const OrderForm = (props) => {
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Available Quantity</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Unit</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Price</TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Selected Quantity</TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Quantity</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Action</TableCell>
                     </TableRow>
                   </TableHead>
@@ -479,9 +499,9 @@ const OrderForm = (props) => {
                         hover
                         sx={{
                           borderBottom: '1px solid #e0e0e0',
-                          backgroundColor: selectedProductId === product._id ? '#e3f2fd' : 'transparent',
+                          backgroundColor: selectedProductIds.includes(product._id) ? '#e3f2fd' : 'transparent',  // Highlight selected rows
                           '&:hover': {
-                            backgroundColor: selectedProductId === product._id ? '#c1e1fc' : 'transparent'
+                            backgroundColor: selectedProductIds.includes(product._id) ? '#c1e1fc' : 'transparent'
                           }
                         }}
                       >
@@ -490,54 +510,16 @@ const OrderForm = (props) => {
                         <TableCell>{product.unitName}</TableCell>
                         <TableCell>{product.sellingPrice.toFixed(2)}</TableCell>
                         <TableCell>
-                          {quantity[product._id] || 0} 
-                        </TableCell>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <IconButton
-                              onClick={() => handleQuantityChange(product._id, (quantity[product._id] || 1) - 1)}
-                              color="primary"
-                              disabled={(quantity[product._id] || 1) <= 1}
-                            >
-                              <span>-</span>
-                            </IconButton>
+                              <Button
+                                onClick={() => handleSelectProduct(product)}
+                                variant="contained"
+                                color="primary"
+                                startIcon={<IconShoppingCart />}
+                              >
+                                Add
+                              </Button>
+                            </TableCell>
 
-                            <TextField
-                              type="number"
-                              value={quantity[product._id] || 1}
-                              onChange={(e) => handleQuantityChange(product._id, parseInt(e.target.value))}
-                              inputProps={{ min: 1 }}
-                              size="small"
-                              sx={{ width: '60px', textAlign: 'center' }}
-                            />
-
-                            <IconButton
-                              onClick={() => handleQuantityChange(product._id, (quantity[product._id] || 1) + 1)}
-                              color="primary"
-                              disabled={(quantity[product._id] || 1) >= product.quantity}
-                            >
-                              <span>+</span>
-                            </IconButton>
-                          </Box>
-                        </TableCell>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <IconButton
-                              onClick={() => handleSelectProduct(product)}
-                              color="primary"
-                              sx={{
-                                width: '40px',
-                                height: '40px',
-                                '&:hover': {
-                                  backgroundColor: '#206bc4',
-                                  color: '#ffffff'
-                                }
-                              }}
-                            >
-                              <IconShoppingCart />
-                            </IconButton>
-                          </Box>
-                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

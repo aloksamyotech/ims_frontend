@@ -19,19 +19,17 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import ClearIcon from '@mui/icons-material/Clear';
+import axios from 'axios';
 import { addProduct, fetchCategories, fetchUnits } from 'apis/api.js';
 
 const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState('');
   const [clist, setCatList] = useState([]);
   const [ulist, setUnitList] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = yup.object({
-    productnm: yup
-      .string()
-      .max(50, 'Max 50 characters are allowed')
-      .required('Product name is required'),
+    productnm: yup.string().max(50, 'Max 50 characters are allowed').required('Product name is required'),
     catnm: yup.string().required('Product Category is required'),
     unitnm: yup.string().required('Unit is required'),
     buyingPrice: yup
@@ -39,11 +37,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
       .required('Buying Price is required')
       .positive('Must be a positive number')
       .max(1000000, 'Price cannot exceed Rs.1000000'),
-    sellingPrice: yup
-      .number()
-      .required('Selling price is required')
-      .positive('Must be a positive number')
-      .moreThan(yup.ref('buyingPrice'), 'Selling price must be greater than buying price'),
+    sellingPrice: yup.number().required('Selling price is required').max(1500000, 'Price cannot exceed Rs.1500000'),
     tax: yup.number().max(20, 'Max 20% tax is allowed').required('Tax is required'),
     notes: yup.string().max(400, 'Max 400 words are allowed')
   });
@@ -55,13 +49,16 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
     buyingPrice: '',
     sellingPrice: '',
     tax: '',
-    notes: ''
+    notes: '',
+    image: null
   };
 
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
+      console.log('values : ', values); 
+
       setIsSubmitting(true);
       try {
         const formData = new FormData();
@@ -73,30 +70,30 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
         formData.append('tax', values.tax);
         formData.append('margin', values.margin);
         formData.append('notes', values.notes);
-        if (image) {
-          formData.append('file', image);
+        if (values.image) {
+          formData.append('image', values.image);
         }
-
-        await addProduct(formData);
+        formData.forEach((value, key) => {
+          console.log(`${key}: ${value}`);
+        });
+        const response = await axios.post('http://localhost:4200/product/save', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data', 
+          },
+        });
+        console.log('Product added successfully:', response.data);
         toast.success('Product added successfully');
         resetForm();
         setImage(null);
         handleClose();
       } catch (error) {
+        console.error('Error:', error); 
         toast.error('Failed to add product');
       } finally {
-        setIsSubmitting(false);
+        setIsSubmitting(false); 
       }
     }
   });
-
-  const handleImageChange = (event) => {
-    const file = event.currentTarget.files[0];
-    if (file) {
-      setImage(file);
-      toast.success('Image added successfully!');
-    }
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -118,20 +115,21 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
       const margin = ((sellingPrice - buyingPrice) / sellingPrice) * 100;
       formik.setFieldValue('margin', margin.toFixed(2));
     }
-  }, [formik.values.buyingPrice, formik.values.sellingPrice]); 
+  }, [formik.values.buyingPrice, formik.values.sellingPrice]);
 
   return (
-    <Dialog open={open} onClose={handleClose}
+    <Dialog
+      open={open}
+      onClose={handleClose}
       PaperProps={{
         style: {
           width: '900px',
           height: '900px',
-          maxWidth: 'none',
-        },
-      }}>
-      <DialogTitle
-        style={{ display: 'flex', justifyContent: 'space-between' }}
-      >
+          maxWidth: 'none'
+        }
+      }}
+    >
+      <DialogTitle style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h3">{product ? 'Edit Product' : 'Add Product'}</Typography>
         <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
       </DialogTitle>
@@ -159,13 +157,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <FormLabel>Product Category</FormLabel>
-                <Select
-                  required
-                  id="catnm"
-                  name="catnm"
-                  value={formik.values.catnm}
-                  onChange={formik.handleChange}
-                >
+                <Select required id="catnm" name="catnm" value={formik.values.catnm} onChange={formik.handleChange}>
                   {clist.map((category) => (
                     <MenuItem key={category._id} value={category._id}>
                       {category.catnm}
@@ -179,13 +171,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <FormLabel>Unit</FormLabel>
-                <Select
-                  required
-                  id="unitnm"
-                  name="unitnm"
-                  value={formik.values.unitnm}
-                  onChange={formik.handleChange}
-                >
+                <Select required id="unitnm" name="unitnm" value={formik.values.unitnm} onChange={formik.handleChange}>
                   {ulist.map((unit) => (
                     <MenuItem key={unit._id} value={unit._id}>
                       {unit.unitnm}
@@ -253,7 +239,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 onChange={formik.handleChange}
                 error={formik.touched.margin && Boolean(formik.errors.margin)}
                 helperText={formik.touched.margin && formik.errors.margin}
-                disabled 
+                disabled
               />
             </Grid>
 
@@ -270,7 +256,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
               />
             </Grid>
 
-            <Grid item xs={12} sm={6} sx={{ marginTop : '15px'}}>
+            <Grid item xs={12} sm={6} sx={{ marginTop: '15px' }}>
               <Box
                 display="flex"
                 alignItems="center"
@@ -281,24 +267,15 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 borderRadius={1}
                 bgcolor="background.paper"
               >
-                {image ? (
-                  <img src={URL.createObjectURL(image)} alt="product" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+                {formik.values.image ? (
+                  <img src={URL.createObjectURL(formik.values.image)} alt="product" style={{ maxWidth: '100%', maxHeight: '100%' }} />
                 ) : (
-                  <Typography variant="body2" color="textSecondary">Preview Image</Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Preview Image
+                  </Typography>
                 )}
               </Box>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                style={{ display: 'none' }}
-                id="image-upload"
-              />
-              <Box sx={{marginTop:'12px'}}>
-              <Button variant="contained" color="primary" component="label" htmlFor="image-upload">
-                Choose Image
-              </Button>
-              </Box>
+              <input type="file" name="image" accept="image/*" onChange={(event) => formik.setFieldValue('image', event.target.files[0])} />
             </Grid>
           </Grid>
         </form>
@@ -306,10 +283,10 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
 
       <DialogActions>
         <Button type="submit" disabled={isSubmitting} variant="contained" color="secondary" onClick={formik.handleSubmit}>
-          {isSubmitting ? 'Submitting...' :  'Add'}
+          {isSubmitting ? 'Submitting...' : 'Add'}
         </Button>
         <Button
-         variant="contained"
+          variant="contained"
           color="error"
           onClick={() => {
             formik.resetForm();
