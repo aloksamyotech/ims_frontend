@@ -46,7 +46,7 @@ const PurchaseForm = () => {
 
   const validationSchema = yup.object({ 
     date: yup.date().required('Date is required'),
-    supplierId: yup.string().required('Supplier is required')
+    supplierId: yup.string().required('Supplier is required'),
   });
 
   const formik = useFormik({
@@ -139,7 +139,15 @@ const PurchaseForm = () => {
   };
 
   const handleQuantityChange = (index, event) => {
-    const quantity = event.target.value;
+    let quantity = parseInt(event.target.value, 10);
+
+    if (quantity > 1000) {
+      toast.error("Quantity cannot be more than 1000!"); 
+      quantity = 1000;
+    } else if (quantity < 1) {
+      quantity = 1; 
+    }
+
     const newRows = [...rows];
     newRows[index].quantity = quantity;
     newRows[index].subtotal = quantity * newRows[index].price;
@@ -163,7 +171,6 @@ const PurchaseForm = () => {
     <form onSubmit={formik.handleSubmit}>
       <Link to="/dashboard/purchases">
         <Button  sx={{marginTop:'5px'}} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
-          Back
         </Button>
       </Link>
       <Typography marginTop={5} variant="h3" gutterBottom>
@@ -269,9 +276,12 @@ const PurchaseForm = () => {
                     <TableCell>
                       <TextField
                         type="number"
+                        inputProps={{
+                          min: 1, 
+                          max: 1000 
+                        }}
                         value={row.quantity}
-                        onChange={(event) => handleQuantityChange(index, event)}
-                        inputProps={{ min: 1 }}
+                        onChange={(event) => handleQuantityChange(0, event)} 
                       />
                     </TableCell>
                     <TableCell>

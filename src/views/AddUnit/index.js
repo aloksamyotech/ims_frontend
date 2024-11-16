@@ -101,7 +101,11 @@ const Unit = () => {
     
         <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
           <Typography variant="h4"  paddingTop={5}>Unit Lists</Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>Add Unit</Button>
+          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2} marginTop={3}>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+              Add Unit
+            </Button>
+          </Stack>
         </Stack>
         <TableStyle>
         <Box width="100%" overflow="hidden">

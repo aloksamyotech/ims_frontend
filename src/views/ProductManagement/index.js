@@ -34,7 +34,34 @@ const Product = () => {
   }, []);
 
   const columns = [
+    {
+      field: 'product_no',
+      headerName: 'Code',
+      flex: 1.5
+    },
     { field: 'productnm', headerName: 'Name', flex: 2 },
+    {
+      field: 'imageUrl',
+      headerName: 'Image',
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => {
+        const imageUrl = params.row.imageUrl; 
+        return (
+          <Box
+            component="img"
+            src={imageUrl || 'https://via.placeholder.com/150'} 
+            alt={params.row.productnm}
+            sx={{
+              width: '50px',
+              height: '50px',
+              objectFit: 'cover',
+              borderRadius: '8px',
+            }}
+          />
+        );
+      }
+    },
     {
       field: 'quantity',
       headerName: 'Quantity',
@@ -42,25 +69,32 @@ const Product = () => {
       minWidth: 120,
       renderCell: (params) => {
         const quantity = params.row.quantity;
+        const isLowQuantity = quantity <= 5;
+    
         return (
-          <div>
-            {quantity}
+          <div
+            style={{
+              backgroundColor: isLowQuantity ? '#f44336' : '', 
+              color: isLowQuantity ? 'white' : '',  
+              padding: '0.5rem 1rem',
+              borderRadius: '5px',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: '14px',
+              width: '60px', 
+            }}
+          >
+            {quantity} 
           </div>
         );
       }
-    },
+    },      
     {
       field: 'categoryName',
       headerName: 'Category',
       flex: 1,
       minWidth: 200,
       valueGetter: (params) => params.row.categoryName || 'N/A'
-    },
-    {
-      field: 'unitName',
-      headerName: 'Unit',
-      flex: 1,
-      valueGetter: (params) => params.row.unitName || 'N/A'
     },
     {
       field: 'actions',
@@ -168,7 +202,7 @@ const Product = () => {
           <Typography variant="h4" paddingTop={5}>
             Products List
           </Typography>
-          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2}>
+          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2} marginTop={3}>
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
               Add Product
             </Button>
@@ -180,16 +214,10 @@ const Product = () => {
               <DataGrid
                 rows={products}
                 columns={columns}
-                getRowClassName={(params) => (params.row.quantity < 5 ? 'highlight-row' : '')}
                 checkboxSelection
                 getRowId={(row) => row._id}
                 components={{ Toolbar: GridToolbar }}
                 componentsProps={{ toolbar: { showQuickFilter: true } }}
-                sx={{
-                  '.highlight-row': {
-                    backgroundColor: '#ede7f6',
-                  }
-                }}
               />
             </Card>
           </Box>

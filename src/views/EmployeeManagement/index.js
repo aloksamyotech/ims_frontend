@@ -8,14 +8,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { fetchUsers, deleteUser } from 'apis/api.js';
 import { toast } from 'react-toastify';
 import ViewUser from './view.js';
-import UpdateUser from './updateEmployee.js'; 
+import UpdateUser from './updateEmployee.js';
 import moment from 'moment';
-import ChangePassword from './changePassword.js'; 
+import ChangePassword from './changePassword.js';
 
 const User = () => {
   const [users, setUsers] = useState([]);
   const [openView, setOpenView] = useState(false);
-  const [openUpdate, setOpenUpdate] = useState(false); 
+  const [openUpdate, setOpenUpdate] = useState(false);
   const [openChangePassword, setOpenChangePassword] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -32,20 +32,19 @@ const User = () => {
   }, []);
 
   const columns = [
-    { field: 'name', headerName: 'Name', flex: 1, minWidth: 150 },
-    { field: 'email', headerName: 'Email', flex: 1, minWidth: 200 },
-    { field: 'phone', headerName: 'Phone', flex: 1, minWidth: 100 },
+    { field: 'name', headerName: 'Name', flex: 0.8},
+    { field: 'email', headerName: 'Email', flex: 1},
+    { field: 'phone', headerName: 'Phone', flex: 0.8},
     {
       field: 'date',
       headerName: 'Date',
-      flex: 1,
+      flex: 0.7,
       valueGetter: (params) => moment(params.row.createdAt).format('DD-MM-YYYY')
     },
     {
       field: 'actions',
       headerName: 'Actions',
       flex: 2,
-      minWidth: 250,
       renderCell: (params) => (
         <Stack direction="row" spacing={2}>
           <Box
@@ -58,8 +57,9 @@ const User = () => {
               alignItems: 'center',
               justifyContent: 'center',
               width: '40px',
-              height: '40px',
-            }}>
+              height: '40px'
+            }}
+          >
             <IconButton size="small" onClick={() => handleView(params.row)} color="primary" sx={{ padding: 0 }}>
               <VisibilityIcon />
             </IconButton>
@@ -74,8 +74,9 @@ const User = () => {
               alignItems: 'center',
               justifyContent: 'center',
               width: '40px',
-              height: '40px',
-            }}>
+              height: '40px'
+            }}
+          >
             <IconButton size="small" onClick={() => handleEdit(params.row)}>
               <EditIcon sx={{ color: '#ff9800' }} />
             </IconButton>
@@ -90,20 +91,42 @@ const User = () => {
               alignItems: 'center',
               justifyContent: 'center',
               width: '40px',
-              height: '40px',
-            }}>
+              height: '40px'
+            }}
+          >
             <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
               <DeleteIcon />
             </IconButton>
           </Box>
-          <Box sx={{ backgroundColor: '#4CAF50', borderRadius: '5px', padding: '5px' }}>
-            <IconButton size="small" onClick={() => handleChangePassword(params.row)}>
-              <Typography variant="body2"  sx={{color:'white'}}>Change Password</Typography>
-            </IconButton>
+          <Box
+            sx={{
+              backgroundColor: '#34a853',
+              borderRadius: '5px',
+              padding: '0.5rem 1rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '180px',
+              height: '30px', 
+              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+              cursor: 'pointer',
+            }}
+            onClick={() => handleChangePassword(params.row)}
+          >
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'white',
+                textTransform: 'uppercase',
+                fontWeight: 'bold'
+              }}
+            >
+              Change Password
+            </Typography>
           </Box>
         </Stack>
-      ),
-    },
+      )
+    }
   ];
 
   const handleView = (user) => {
@@ -144,11 +167,18 @@ const User = () => {
     <>
       <UpdateUser open={openUpdate} handleClose={() => setOpenUpdate(false)} user={currentUser} onUpdateUser={handleUserUpdated} />
       <ViewUser open={openView} handleClose={() => setOpenView(false)} user={currentUser} />
-      <ChangePassword open={openChangePassword} handleClose={() => setOpenChangePassword(false)} user={currentUser}  onchangePassword={handleChangePassword}/>
+      <ChangePassword
+        open={openChangePassword}
+        handleClose={() => setOpenChangePassword(false)}
+        user={currentUser}
+        onchangePassword={handleChangePassword}
+      />
 
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
-          <Typography variant="h4" paddingTop={5}>Users List</Typography>
+          <Typography variant="h4" paddingTop={5}>
+            Users List
+          </Typography>
         </Stack>
         <TableStyle>
           <Box width="100%" overflow="hidden">

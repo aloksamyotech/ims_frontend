@@ -83,7 +83,7 @@ const ViewProduct = ({ open, handleClose, product }) => {
           <Typography variant="body1">Tax: {product.tax}%</Typography>
         </Box>
         <Box mb={2}>
-          <Typography variant="body1">Margin: {product.margin}</Typography>
+          <Typography variant="body1">Margin: {product.margin}%</Typography>
         </Box>
         <Box mb={2}>
           <Typography variant="body1">Notes: {product.notes || 'No notes available'}</Typography>

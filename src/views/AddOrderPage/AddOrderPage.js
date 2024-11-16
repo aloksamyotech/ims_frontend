@@ -238,7 +238,6 @@ const OrderForm = (props) => {
     <Container>
       <Link to="/dashboard/orders">
         <Button sx={{ marginTop: '5px' }} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
-          Back
         </Button>
       </Link>
       <form onSubmit={formik.handleSubmit}>
@@ -387,8 +386,8 @@ const OrderForm = (props) => {
                                 value={quantity[product._id] || 1}
                                 onChange={(e) => handleQuantityChange(product._id, parseInt(e.target.value))}
                                 inputProps={{ min: 1 }}
-                                size="small"
-                                sx={{ width: '60px', textAlign: 'center' }}
+                                size="large"
+                                sx={{ width: '80px', textAlign: 'center' }}
                               />
                             </Box>
                           </TableCell>

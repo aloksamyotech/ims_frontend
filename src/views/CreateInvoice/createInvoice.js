@@ -10,7 +10,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
+  Paper
 } from '@mui/material';
 import { useLocation, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -20,44 +20,40 @@ const CreateInvoice = () => {
   const location = useLocation();
   const { orderData, products } = location.state || {};
   const customer = orderData.customer;
-  console.log('customer',customer)
 
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = async () => {
     setLoading(true);
     try {
       const invoiceData = {
         date: orderData.date,
-        customerId: customer._id,  
+        customerId: customer._id,
         customerName: customer.customernm,
-        products: products.map(product => ({
+        products: products.map((product) => ({
           productId: product._id,
           productName: product.productnm,
-          quantity: product.quantity,
+          quantity: product.quantity
         })),
         subtotal: orderData.subtotal,
         tax: orderData.tax,
-        total: orderData.total,
+        total: orderData.total
       };
-  
+
       const response = await addOrder(invoiceData);
-      console.log(response);
       if (response) {
         toast.success('Invoice saved successfully! A confirmation email has been sent.');
-        console.log('Invoice saved successfully!');
+        setIsSubmitted(true);
       } else {
         toast.error('Error saving invoice');
-        console.error('Failed to save the invoice:', response);
       }
     } catch (error) {
-      console.error('Error saving invoice:', error);
       toast.error('An error occurred while saving the invoice. Please try again.');
     } finally {
       setLoading(false);
     }
   };
-  
 
   return (
     <Container>
@@ -139,19 +135,14 @@ const CreateInvoice = () => {
               sx={{
                 backgroundColor: '#f1c40f',
                 marginRight: 2,
-                '&:hover': { backgroundColor: '#f39c12' },
+                '&:hover': { backgroundColor: '#f39c12' }
               }}
             >
               Back to previous
             </Button>
           </Link>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            {loading ? 'Submitting...' : 'Submit'} 
+          <Button variant="contained" color="secondary" onClick={handleSubmit} disabled={loading || isSubmitted}>
+            {isSubmitted ? 'Submitted' : loading ? 'Submitting...' : 'Submit'}
           </Button>
         </Grid>
       </Grid>

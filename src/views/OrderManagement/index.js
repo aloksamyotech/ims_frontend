@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, Container, Typography, Card, Box, IconButton } from '@mui/material';
+import { Stack, Button, Container, Typography, Card, Box, MenuItem, Select, IconButton, FormControl } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Iconify from '../../ui-component/iconify';
@@ -16,13 +16,15 @@ const Order = () => {
   const navigate = useNavigate();
   const [openAdd, setOpenAdd] = useState(false);
   const [orderDetails, setOrderDetails] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [filterStatus, setFilterStatus] = useState('All');
 
   useEffect(() => {
     const loadOrders = async () => {
       try {
         const response = await fetchOrders();
         setOrderDetails(response.data);
-        console.log('Invoice data:', response.data);
+        setFilteredOrders(response.data);
       } catch (error) {
         console.error('Failed to fetch orders data:', error);
         toast.error('Failed to fetch orders data');
@@ -30,6 +32,16 @@ const Order = () => {
     };
     loadOrders();
   }, []);
+
+  const handleFilterChange = (event) => {
+    const status = event.target.value;
+    setFilterStatus(status);
+    if (status === 'All') {
+      setFilteredOrders(orderDetails);
+    } else {
+      setFilteredOrders(orderDetails.filter((order) => order.order_status === status));
+    }
+  };
 
   const columns = [
     {
@@ -43,7 +55,7 @@ const Order = () => {
     {
       field: 'invoice_no',
       headerName: 'Invoice no',
-      flex: 1.2,
+      flex: 1.2
     },
     {
       field: 'customerName',
@@ -58,9 +70,7 @@ const Order = () => {
       flex: 3,
       valueGetter: (params) => {
         if (params.row.products && params.row.products.length > 0) {
-          return params.row.products
-            .map((product) => `${product.productName}(${product.quantity})`)
-            .join(', ');
+          return params.row.products.map((product) => `${product.productName}(${product.quantity})`).join(', ');
         }
         return 'N/A';
       }
@@ -71,9 +81,9 @@ const Order = () => {
       flex: 1.5,
       valueFormatter: ({ value }) => {
         if (value != null) {
-          return `$${value.toLocaleString()}`; 
+          return `$${value.toLocaleString()}`;
         }
-        return '$0'; 
+        return '$0';
       }
     },
     {
@@ -81,32 +91,30 @@ const Order = () => {
       headerName: 'Status',
       flex: 2,
       renderCell: (params) => {
-        const status = params.row.order_status; 
+        const status = params.row.order_status;
         return (
           <Box
-          sx={{
-            backgroundColor: 
-              status === 'Completed' 
-                ? '#4CAF50' 
-                : status === 'Pending' 
-                ? '#d91656'
-                : '#D32F2F',
-            color: 'white',
-            padding: '0.5rem 1rem',
-            borderRadius: 1,
-            width: '150px', 
-            height: '40px', 
-            display: 'flex', 
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 'bold', 
-          }}
-        >
-          {status}  
-        </Box>
-        
+            sx={{
+              backgroundColor: status === 'Completed' ? '#34a853' : status === 'Pending' ? '#f44336' : '',
+              color: status === 'Completed' ? 'white' : 'white',
+              padding: '0.5rem 1rem',
+              borderRadius: '5px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 'bold',
+              width: '110px',
+              height: '25px', 
+              textTransform: 'uppercase',
+              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+              gap: '0.5rem',
+              fontSize: '12px',  
+            }}
+          >
+            {status}
+          </Box>
         );
-      },
+      }
     },
     {
       field: 'actions',
@@ -131,52 +139,55 @@ const Order = () => {
               <VisibilityIcon />{' '}
             </IconButton>
           </Box>
-          <Box
-        sx={{
-          backgroundColor: '#ede7f6',
-          borderRadius: '8px',
-          padding: '8px',
-          '&:hover': { backgroundColor: '#a695c9' },
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '40px',
-          height: '40px'
-        }}
-      >
-        <IconButton size="small" onClick={() => handleDownload(params.row._id)} color="secondary" sx={{ padding: 0 }}>
-          <Iconify icon="eva:download-fill" />
-        </IconButton>
-      </Box>
-          <Box
-            sx={{
-              backgroundColor: '#ffebee',
-              borderRadius: '8px',
-              padding: '8px',
-              paddingTop: '8 px',
-              '&:hover': { backgroundColor: '#ef9a9a' },
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '40px',
-              height: '40px'
-            }}
-          >
-            <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
-              <DeleteIcon />
-            </IconButton>
-          </Box>
+          {params.row.order_status === 'Completed' && (
+            <Box
+              sx={{
+                backgroundColor: '#ede7f6',
+                borderRadius: '8px',
+                padding: '8px',
+                '&:hover': { backgroundColor: '#a695c9' },
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '40px',
+                height: '40px'
+              }}
+            >
+              <IconButton size="small" onClick={() => handleDownload(params.row._id)} color="secondary" sx={{ padding: 0 }}>
+                <Iconify icon="eva:download-fill" />
+              </IconButton>
+            </Box>
+          )}
+          {params.row.order_status === 'Pending' && (
+            <Box
+              sx={{
+                backgroundColor: '#ffebee',
+                borderRadius: '8px',
+                padding: '8px',
+                '&:hover': { backgroundColor: '#ef9a9a' },
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '40px',
+                height: '40px'
+              }}
+            >
+              <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+          )}
         </Stack>
       )
     }
   ];
 
   const handleView = (_id) => {
-    navigate(`/dashboard/orders/view-invoice/${_id}`); 
+    navigate(`/dashboard/orders/view-invoice/${_id}`);
   };
 
   const handleDownload = (_id) => {
-    navigate(`/dashboard/orders/download-invoice/${_id}`); 
+    navigate(`/dashboard/orders/download-invoice/${_id}`);
   };
 
   const handleOpenAdd = () => setOpenAdd(true);
@@ -186,7 +197,7 @@ const Order = () => {
     if (window.confirm('Are you sure you want to delete this order?')) {
       try {
         await deleteOrder(_id);
-        setOrderDetails((prev) => prev.filter(order => order._id !== _id));
+        setOrderDetails((prev) => prev.filter((order) => order._id !== _id));
         toast.success('Order deleted successfully');
       } catch (error) {
         console.error('Failed to delete order:', error);
@@ -201,9 +212,25 @@ const Order = () => {
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
           <Typography variant="h4" paddingTop={5}>
-            Orders List
+            Order Lists
           </Typography>
-          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2}>
+          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2} marginTop={3}>
+            <FormControl>
+              <Select
+                value={filterStatus}
+                onChange={handleFilterChange}
+                sx={{
+                  width: '140px',
+                  height: '40px',
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '8px'
+                }}
+              >
+                <MenuItem value="All">All</MenuItem>
+                <MenuItem value="Pending">Pending</MenuItem>
+                <MenuItem value="Completed">Completed</MenuItem>
+              </Select>
+            </FormControl>
             <Link to="/dashboard/orders/add-order">
               <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
                 Add Order
@@ -213,15 +240,15 @@ const Order = () => {
         </Stack>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '15px' , overflow : 'auto' }}>
+            <Card style={{ height: '600px', paddingTop: '15px', overflow: 'auto' }}>
               <DataGrid
-                rows={orderDetails}
+                rows={filteredOrders}
                 columns={columns}
                 checkboxSelection
                 getRowId={(row) => row._id}
                 components={{ Toolbar: GridToolbar }}
                 stickyHeader
-                style={{ minWidth: '800px' }} 
+                style={{ minWidth: '800px' }}
               />
             </Card>
           </Box>

@@ -29,15 +29,20 @@ const PurchasePage = () => {
   const handleApprove = async () => {
     try {
       const response = await axios.patch(`http://localhost:4200/purchase/approve/${id}`);
-
+  
       if (response.status === 200) {
-        setPurchaseData((prev) => ({ ...prev, status: response.data.status }));
-        window.confirm('Purchase approved successfully!');
-      } 
+        setPurchaseData((prev) => ({
+          ...prev,
+          status: 'Completed', 
+        }));
+        window.alert('Purchase approved successfully!');
+      }
     } catch (error) {
       console.error('Error during approval:', error);
+      window.alert('Failed to approve purchase');
     }
   };
+  
 
   if (loading) return <Typography variant="h6">Loading...</Typography>;
   if (error)
@@ -69,19 +74,25 @@ const PurchasePage = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
         <Typography variant="h4">
           <strong>Status:</strong>
-        </Typography>
+        </Typography> &nbsp;&nbsp;
         <Box
           sx={{
-            backgroundColor: status === 'Completed' ? '#4CAF50' : '#F44336', 
-            color: 'white',
-            padding: '0.5rem 1rem',
-            borderRadius: 1,
-            marginLeft: 2 
+            backgroundColor: status === 'Completed' ? '#34a853' : status === 'Pending' ? '#f44336' : '',
+            color: status === 'Completed' ? 'white' : 'white',
+            padding: '0.3rem 1rem',
+            borderRadius: '5px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 'bold',
+            width: 'fit-content',
+            textTransform: 'uppercase',
+            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+            gap: '0.5rem',
+            fontSize: '12px'
           }}
         >
-          <Typography variant="h4" sx={{ color: 'white', fontWeight: 'bold' }}>
-            {status || 'Pending'}
-          </Typography>
+          {status || 'Pending'}
         </Box>
       </Box>
 

@@ -30,11 +30,40 @@ const Supplier = () => {
 
   const columns = [
     { field: 'suppliernm', headerName: 'Name', flex: 1.5, minWidth: 150 },
-    { field: 'email', headerName: 'Email', flex: 2, minWidth: 300 },
+    { field: 'email', headerName: 'Email', flex: 2, minWidth: 250 },
     { field: 'phone', headerName: 'Phone', flex: 1.5, minWidth: 150 },
     { field: 'shopName', headerName: 'Shop Name', flex: 1.5, minWidth: 200 },
-    { field: 'typeOfSupplier', headerName: 'Type Of Supplier', flex: 1.5, minWidth: 150 },
-    { field: 'address', headerName: 'Address', flex: 1.5, minWidth: 300 },
+    {
+      field: 'typeOfSupplier',
+      headerName: 'Type Of Supplier',
+      flex: 1.5,
+      minWidth: 150,
+      renderCell: (params) => {
+        return (
+          <Box
+            sx={{
+              backgroundColor: '#0054a6',  
+              color: 'white', 
+              padding: '0.5rem 1rem',
+              borderRadius: '5px', 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: '400',
+              width: '105px',
+              height: '25px',
+              textTransform: 'uppercase',
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 
+              gap: '0.5rem',
+              fontSize: '12px',
+              letterSpacing: '0.5px', 
+            }}
+          >
+            {params.value}
+          </Box>
+        );
+      }
+    },    
     { field: 'createdAt', headerName: 'Created At', 
       flex: 1,minWidth : 150,
       valueGetter: (params) => {
@@ -113,9 +142,11 @@ const Supplier = () => {
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
           <Typography variant="h4" paddingTop={5}>Suppliers List</Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-            Add Supplier
-          </Button>
+          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2} marginTop={3}>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+              Add Supplier
+            </Button>
+          </Stack>
         </Stack>
         <TableStyle>
           <Box width="100%" overflow="hidden">
