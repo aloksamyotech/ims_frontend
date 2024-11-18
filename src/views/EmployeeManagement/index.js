@@ -46,7 +46,7 @@ const User = () => {
       headerName: 'Actions',
       flex: 2,
       renderCell: (params) => (
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
           <Box
             sx={{
               backgroundColor: '#e3f2fd',
@@ -102,14 +102,15 @@ const User = () => {
             sx={{
               backgroundColor: '#34a853',
               borderRadius: '5px',
-              padding: '0.5rem 1rem',
+              padding: '8px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '180px',
-              height: '30px', 
+              width: '160px',
+              height: '25px', 
               boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
               cursor: 'pointer',
+              fontSize : '12px',
             }}
             onClick={() => handleChangePassword(params.row)}
           >
@@ -182,8 +183,7 @@ const User = () => {
         </Stack>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '15px', overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
+            <Card style={{ height: '600px', paddingTop: '5px', overflow: 'auto' }}>
                 <DataGrid
                   rows={users}
                   columns={columns}
@@ -194,7 +194,6 @@ const User = () => {
                   stickyHeader
                   style={{ minWidth: '800px', overflow: 'auto' }}
                 />
-              </div>
             </Card>
           </Box>
         </TableStyle>

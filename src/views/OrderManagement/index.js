@@ -121,7 +121,7 @@ const Order = () => {
       headerName: 'Actions',
       flex: 2,
       renderCell: (params) => (
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
           <Box
             sx={{
               backgroundColor: '#e3f2fd',
@@ -240,7 +240,7 @@ const Order = () => {
         </Stack>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '15px', overflow: 'auto' }}>
+            <Card style={{ height: '600px', paddingTop: '5px', overflow: 'auto' }}>
               <DataGrid
                 rows={filteredOrders}
                 columns={columns}

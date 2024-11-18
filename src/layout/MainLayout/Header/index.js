@@ -58,11 +58,11 @@ const Header = ({ handleLeftDrawerToggle }) => {
 <Box
   sx={{
     flexGrow: 1,
-    fontSize: '22px',
-    fontWeight: 700,
+    fontSize: '20px',
+    fontWeight: 600,
     fontFamily: 'Playfair Display, serif', 
-    textAlign: 'center',
-    color: 'transparent',
+    textAlign: 'left',
+    color: '#0054a6',
     backgroundImage: 'linear-gradient(90deg, #2b2d42, #3a3d5e)', 
     textShadow: '2px 2px 8px rgba(43, 45, 66, 0.3)', 
     backgroundClip: 'text',

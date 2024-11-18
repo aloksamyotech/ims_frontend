@@ -19,7 +19,7 @@ const TableStyle = styled('div')({
     textDecoration: 'underline'
   },
   '& .MuiDataGrid-columnHeaders': {
-    backgroundColor: '#F5F7F8',
+    backgroundColor: '#FEF9F2',
     borderBottom: 'none',
     outline: 'none !important',
     borderRadius: '0px'

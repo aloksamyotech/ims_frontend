@@ -35,7 +35,7 @@ const Unit = () => {
       headerName: 'Actions',
       flex: 2,
       renderCell: (params) => (
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
          <Box
           sx={{backgroundColor: '#e3f2fd', borderRadius: '8px',padding: '8px', paddingTop:'8 px','&:hover': { backgroundColor: '#bbdefb' },
                display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>

@@ -53,8 +53,8 @@ const Product = () => {
             src={imageUrl || 'https://via.placeholder.com/150'} 
             alt={params.row.productnm}
             sx={{
-              width: '50px',
-              height: '50px',
+              width: '40px',
+              height: '40px',
               objectFit: 'cover',
               borderRadius: '8px',
             }}
@@ -101,7 +101,7 @@ const Product = () => {
       headerName: 'Actions',
       flex: 2,
       renderCell: (params) => (
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
           <Box
             sx={{
               backgroundColor: '#e3f2fd',
@@ -210,7 +210,7 @@ const Product = () => {
         </Stack>
         <TableStyle>
           <Box width="100%">
-            <Card style={{ height: '600px', paddingTop: '15px' }}>
+            <Card style={{ height: '600px', paddingTop: '5px',  overflow: 'auto' }}>
               <DataGrid
                 rows={products}
                 columns={columns}

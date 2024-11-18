@@ -140,7 +140,7 @@ const SupplierProductReport = () => {
         </Box>
       </Box>
 
-      <TableContainer component={Paper} elevation={3} sx={{ marginTop: 5 }} >
+      <TableContainer component={Paper} elevation={3} sx={{ marginTop: 5 , marginLeft : 3 , maxWidth : 1050 }} >
         <Table>
           <TableHead sx={{ backgroundColor: '#1976d2' }}>
             <TableRow>

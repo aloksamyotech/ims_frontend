@@ -1,6 +1,6 @@
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
-import inventoryLogo from 'assets/images/inventory-logo.png';
+import inventoryLogo from 'assets/images/invento.png';
 
 const Logo = () => {
   const theme = useTheme();
@@ -10,8 +10,8 @@ const Logo = () => {
       <img
         src={inventoryLogo}
         alt="Inventory Management"
-        width="180" 
-        height='80'
+        width="190" 
+        height='90'
       />
     </Box>
   );

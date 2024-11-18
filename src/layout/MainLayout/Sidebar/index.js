@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Box, Chip, Drawer, Stack, useMediaQuery } from '@mui/material';
+import { Box, Chip, Drawer, Stack, useMediaQuery, Typography } from '@mui/material';
 
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -33,7 +33,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
           style={{
             height: !matchUpMd ? 'calc(100vh - 56px)' : 'calc(100vh - 88px)',
             paddingLeft: '16px',
-            paddingRight: '16px'
+            paddingRight: '16px',
           }}
         >
           <MenuList />
@@ -44,7 +44,23 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
           <MenuList />
           <MenuCard />
           <Stack direction="row" justifyContent="center" sx={{ mb: 2 }}>
-            <Chip label={process.env.REACT_APP_VERSION} disabled chipcolor="secondary" size="small" sx={{ cursor: 'pointer' }} />
+            <Chip
+              label={process.env.REACT_APP_VERSION}
+              disabled
+              chipcolor="secondary"
+              size="small"
+              sx={{
+                cursor: 'pointer',
+                color: 'secondary', 
+                '&.Mui-disabled': {
+                  color: 'rgba(255, 255, 255, 0.5)', 
+                },
+                '&:hover': {
+                  backgroundColor: '#3f51b5', 
+                  color: '#3f51b5', 
+                },
+              }}
+            />
           </Stack>
         </Box>
       </MobileView>
@@ -64,13 +80,19 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
         sx={{
           '& .MuiDrawer-paper': {
             width: drawerWidth,
-            background: theme.palette.beige.light,
-            color: theme.palette.text.primary,
+            background: '#ffff',
+            color: 'black', 
             borderRight: 'none',
             [theme.breakpoints.up('md')]: {
-              top: '88px'
-            }
-          }
+              top: '88px',
+            },
+            '& .MuiTypography-root': {
+              color: 'secondary', 
+            },
+            '& .MuiChip-root': {
+              color: 'black', 
+            },
+          },
         }}
         ModalProps={{ keepMounted: true }}
         color="inherit"
@@ -84,7 +106,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
 Sidebar.propTypes = {
   drawerOpen: PropTypes.bool,
   drawerToggle: PropTypes.func,
-  window: PropTypes.object
+  window: PropTypes.object,
 };
 
 export default Sidebar;
