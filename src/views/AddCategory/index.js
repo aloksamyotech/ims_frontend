@@ -46,7 +46,7 @@ const Category = () => {
       flex: 2,
       minWidth: 250,
       renderCell: (params) => (
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
          <Box
           sx={{backgroundColor: '#e3f2fd', borderRadius: '8px',padding: '8px', paddingTop:'8 px','&:hover': { backgroundColor: '#bbdefb' },
                display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
@@ -118,13 +118,11 @@ const Category = () => {
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
           <Typography variant="h4" paddingTop={5}>Category Lists</Typography>
-          <Button
-            variant="contained"
-            onClick={handleOpenAdd}
-            startIcon={<Iconify icon="eva:plus-fill" />}
-          >
-            Add Category
-          </Button>
+          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2} marginTop={3}>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+              Add Category
+            </Button>
+          </Stack>
         </Stack>
         <TableStyle>
           <Box width="100%" overflow="hidden">

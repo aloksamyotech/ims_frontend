@@ -166,7 +166,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
                   required
                   id="typeOfSupplier"
                   name="typeOfSupplier"
-                  size="small"
+                  size="large"
                   value={formik.values.typeOfSupplier}
                   onChange={formik.handleChange}
                   error={formik.touched.typeOfSupplier && Boolean(formik.errors.typeOfSupplier)}
@@ -187,6 +187,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
                 required
                 id="bankName"
                 name="bankName"
+                fullWidth
                 size="large"
                 value={formik.values.bankName}
                 onChange={formik.handleChange}
@@ -205,7 +206,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
               <TextField
                 id="accountHolder"
                 name="accountHolder"
-                size="small"
+                size="large"
                 fullWidth
                 value={formik.values.accountHolder}
                 onChange={formik.handleChange}
@@ -218,7 +219,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
               <TextField
                 id="accountNumber"
                 name="accountNumber"
-                size="small"
+                size="large"
                 type="text"
                 fullWidth
                 value={formik.values.accountNumber}

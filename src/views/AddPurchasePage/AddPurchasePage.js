@@ -46,7 +46,7 @@ const PurchaseForm = () => {
 
   const validationSchema = yup.object({ 
     date: yup.date().required('Date is required'),
-    supplierId: yup.string().required('Supplier is required')
+    supplierId: yup.string().required('Supplier is required'),
   });
 
   const formik = useFormik({
@@ -76,7 +76,6 @@ const PurchaseForm = () => {
         tax: purchaseTaxes,
         total: purchaseTotal,
       };
-    
 
       try {
         const response = await addPurchase(purchaseData);
@@ -104,24 +103,51 @@ const PurchaseForm = () => {
   }, []);
 
   const handleAddRow = () => {
+    const productNotSelected = rows.some(row => !row.product);
+
+    if (productNotSelected) {
+      toast.error('Product not selected! Please select a product before adding a row.');
+      return;
+    }
+
     setRows([...rows, { product: '', quantity: 1, price: 0, subtotal: 0 }]);
   };
 
+
+  const handleAddPurchase = (event) => {
+    event.preventDefault();
+    const productNotSelected = rows.some(row => !row.product);
+    if (productNotSelected) {
+      toast.error('Product not selected! Please select a product before adding the purchase.');
+      return;
+    }
+    formik.submitForm();
+  };
+  
   const handleProductChange = (index, event) => {
     const productId = event.target.value;
     const selectedProduct = productList.find((product) => product._id === productId);
     const newRows = [...rows];
-    
+
     newRows[index].product = productId;
+    newRows[index].productName = selectedProduct ? selectedProduct.productnm : '';
     newRows[index].categoryName = selectedProduct ? selectedProduct.categoryName : '';
-    newRows[index].price = selectedProduct ? selectedProduct.buyingPrice : 0; 
+    newRows[index].price = selectedProduct ? selectedProduct.buyingPrice : 0;
     newRows[index].subtotal = newRows[index].quantity * newRows[index].price;
-    
+
     setRows(newRows);
   };
 
   const handleQuantityChange = (index, event) => {
-    const quantity = event.target.value;
+    let quantity = parseInt(event.target.value, 10);
+
+    if (quantity > 1000) {
+      toast.error("Quantity cannot be more than 1000!"); 
+      quantity = 1000;
+    } else if (quantity < 1) {
+      quantity = 1; 
+    }
+
     const newRows = [...rows];
     newRows[index].quantity = quantity;
     newRows[index].subtotal = quantity * newRows[index].price;
@@ -145,7 +171,6 @@ const PurchaseForm = () => {
     <form onSubmit={formik.handleSubmit}>
       <Link to="/dashboard/purchases">
         <Button  sx={{marginTop:'5px'}} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
-          Back
         </Button>
       </Link>
       <Typography marginTop={5} variant="h3" gutterBottom>
@@ -207,7 +232,7 @@ const PurchaseForm = () => {
             }} />
           </FormControl>
         </Grid>
-        <Grid item xs={12} margin={2}>
+        <Grid item xs={12} margin={2} sx={{margin:'5px'}}>
           <TableContainer component={Paper} elevation={3}>
             <Table>
               <TableHead sx={{ backgroundColor:'#1976d2'}}>
@@ -231,11 +256,14 @@ const PurchaseForm = () => {
                         displayEmpty
                       >
                         <MenuItem value="">Select a product</MenuItem>
-                        {productList.map((product) => (
-                          <MenuItem key={product._id} value={product._id}>
-                            {product.productnm}
-                          </MenuItem>
-                        ))}
+                        {productList
+                          .filter(product => 
+                            !rows.some(r => r.product === product._id) || row.product === product._id)
+                          .map((product) => (
+                            <MenuItem key={product._id} value={product._id}>
+                              {product.productnm}
+                            </MenuItem>
+                          ))}
                       </Select>
                     </TableCell>
                     <TableCell>
@@ -248,9 +276,12 @@ const PurchaseForm = () => {
                     <TableCell>
                       <TextField
                         type="number"
+                        inputProps={{
+                          min: 1, 
+                          max: 1000 
+                        }}
                         value={row.quantity}
-                        onChange={(event) => handleQuantityChange(index, event)}
-                        inputProps={{ min: 1 }}
+                        onChange={(event) => handleQuantityChange(0, event)} 
                       />
                     </TableCell>
                     <TableCell>
@@ -261,7 +292,11 @@ const PurchaseForm = () => {
                       />
                     </TableCell>
                     <TableCell>
-                      <Typography>{row.subtotal.toFixed(2)}</Typography>
+                      <TextField
+                        type="number"
+                        value={(row.subtotal || 0).toFixed(2)}
+                        inputProps={{ readOnly: true }}
+                      />
                     </TableCell>
                     <TableCell>
                       <IconButton onClick={() => handleRemoveRow(index)} color="error">
@@ -270,39 +305,41 @@ const PurchaseForm = () => {
                     </TableCell>
                   </TableRow>
                 ))}
-            <TableCell colSpan={6} align="right">
-          <Button variant="contained" color="primary" onClick={handleAddRow}>
-            +
-          </Button>
-          </TableCell>
-          <TableRow>
-            <TableCell colSpan={5} align="right">
-              Subtotal
-            </TableCell>
-            <TableCell align="right">{purchaseSubtotal.toFixed(2)}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={5} align="right">
-              Tax
-            </TableCell>
-            <TableCell align="right">{purchaseTaxes.toFixed(2)}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell colSpan={5} align="right" sx={{ fontWeight: 'bold', color: 'black' }}>
-              Total
-            </TableCell>
-            <TableCell align="right">{purchaseTotal.toFixed(2)}</TableCell>
-          </TableRow>
-          </TableBody>
+                <TableRow>
+                  <TableCell colSpan={6} align="right">
+                    <Button variant="contained" color="primary" onClick={handleAddRow}>
+                      +
+                    </Button>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={5} align="right">
+                    Subtotal
+                  </TableCell>
+                  <TableCell align="right">{purchaseSubtotal.toFixed(2)}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={5} align="right">
+                    Tax
+                  </TableCell>
+                  <TableCell align="right">{purchaseTaxes.toFixed(2)}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell colSpan={5} align="right" sx={{ fontWeight: 'bold', color: 'black' }}>
+                    Total
+                  </TableCell>
+                  <TableCell align="right">{purchaseTotal.toFixed(2)}</TableCell>
+                </TableRow>
+              </TableBody>
             </Table>
           </TableContainer>
         </Grid>
         <Grid item xs={12}>
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.5 }}>
-          <Button  variant="contained" color="secondary" type="submit">
-           Add Purchase
-          </Button>
-          </ Box>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginRight: '5px' }}>
+            <Button variant="contained" color="secondary" type="submit" onClick={handleAddPurchase}>
+              Add Purchase
+            </Button>
+          </Box>
         </Grid>
       </Grid>
     </form>

@@ -13,6 +13,7 @@ const Customers = Loadable(lazy(() => import('views/Customer')));
 const Suppliers = Loadable(lazy(() => import('views/Supplier')));
 const Category = Loadable(lazy(() => import('views/AddCategory')));
 const Unit = Loadable(lazy(() => import('views/AddUnit')));
+const Profile = Loadable(lazy(() => import('views/Profile')));
 const AddOrder = Loadable(lazy(() => import('views/AddOrderPage/AddOrderPage')));
 const CreateInvoice = Loadable(lazy(() => import('views/CreateInvoice/createInvoice')))
 const AddPurchase = Loadable(lazy(() => import('views/AddPurchasePage/AddPurchasePage')));
@@ -96,6 +97,10 @@ const MainRoutes = {
         {
           path: 'reports',
           element: <Reports />
+        },
+        {
+          path: 'profile',
+          element: <Profile />
         },
         {
           path: 'suppliers',

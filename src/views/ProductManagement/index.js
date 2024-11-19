@@ -7,16 +7,16 @@ import { Link } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { toast } from 'react-toastify'; 
-import UpdateProduct from './updateProduct.js'; 
+import { toast } from 'react-toastify';
+import UpdateProduct from './updateProduct.js';
 import AddProductPage from './AddProducts';
-import { deleteProduct, fetchProducts} from 'apis/api.js';
+import { deleteProduct, fetchProducts } from 'apis/api.js';
 import ViewProduct from './viewProduct.js';
 
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
-  const [openView, setOpenView] = useState(false); 
+  const [openView, setOpenView] = useState(false);
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -24,7 +24,7 @@ const Product = () => {
     const loadProducts = async () => {
       try {
         const response = await fetchProducts();
-        setProducts(response.data); 
+        setProducts(response.data);
       } catch (error) {
         console.error('Failed to fetch products:', error);
         toast.error('Failed to fetch products');
@@ -34,48 +34,74 @@ const Product = () => {
   }, []);
 
   const columns = [
+    {
+      field: 'product_no',
+      headerName: 'Code',
+      flex: 1.5
+    },
     { field: 'productnm', headerName: 'Name', flex: 2 },
-    { 
-      field: 'quantity', 
-      headerName: 'Quantity', 
+    {
+      field: 'imageUrl',
+      headerName: 'Image',
       flex: 1,
-      minWidth: 120,
+      minWidth: 150,
       renderCell: (params) => {
-        const quantity = params.row.quantity;
+        const imageUrl = params.row.imageUrl; 
         return (
-          <div
-            style={{
-              backgroundColor: quantity < 5 ? '#d91656' : 'transparent', 
-              color: quantity < 5 ? 'white' : 'black', 
-              padding: '8px 12px',
-              borderRadius: '4px',
-              textAlign: 'center'
+          <Box
+            component="img"
+            src={imageUrl || 'https://via.placeholder.com/150'} 
+            alt={params.row.productnm}
+            sx={{
+              width: '40px',
+              height: '40px',
+              objectFit: 'cover',
+              borderRadius: '8px',
             }}
-          >
-            {quantity}
-          </div>
+          />
         );
       }
     },
     {
+      field: 'quantity',
+      headerName: 'Quantity',
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => {
+        const quantity = params.row.quantity;
+        const isLowQuantity = quantity <= 5;
+    
+        return (
+          <div
+            style={{
+              backgroundColor: isLowQuantity ? '#f44336' : '', 
+              color: isLowQuantity ? 'white' : '',  
+              padding: '0.5rem 1rem',
+              borderRadius: '5px',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              fontSize: '14px',
+              width: '60px', 
+            }}
+          >
+            {quantity} 
+          </div>
+        );
+      }
+    },      
+    {
       field: 'categoryName',
       headerName: 'Category',
       flex: 1,
-      minWidth: 200 ,
-      valueGetter: (params) => params.row.categoryName || 'N/A', 
-    },
-    {
-      field: 'unitName',
-      headerName: 'Unit',
-      flex: 1,
-      valueGetter: (params) => params.row.unitName || 'N/A',
+      minWidth: 200,
+      valueGetter: (params) => params.row.categoryName || 'N/A'
     },
     {
       field: 'actions',
       headerName: 'Actions',
       flex: 2,
       renderCell: (params) => (
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
           <Box
             sx={{
               backgroundColor: '#e3f2fd',
@@ -87,7 +113,7 @@ const Product = () => {
               alignItems: 'center',
               justifyContent: 'center',
               width: '40px',
-              height: '40px',
+              height: '40px'
             }}
           >
             <IconButton size="small" onClick={() => handleView(params.row)} color="primary" sx={{ padding: 0 }}>
@@ -105,7 +131,7 @@ const Product = () => {
               alignItems: 'center',
               justifyContent: 'center',
               width: '40px',
-              height: '40px',
+              height: '40px'
             }}
           >
             <IconButton size="small" onClick={() => handleEdit(params.row)}>
@@ -123,7 +149,7 @@ const Product = () => {
               alignItems: 'center',
               justifyContent: 'center',
               width: '40px',
-              height: '40px',
+              height: '40px'
             }}
           >
             <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
@@ -131,8 +157,8 @@ const Product = () => {
             </IconButton>
           </Box>
         </Stack>
-      ),
-    },
+      )
+    }
   ];
 
   const handleOpenAdd = () => {
@@ -169,22 +195,22 @@ const Product = () => {
 
   return (
     <>
-    <AddProductPage open={openAdd} handleClose={() =>setOpenAdd(false) } onProductAdded={handleProductAdded}/>
+      <AddProductPage open={openAdd} handleClose={() => setOpenAdd(false)} onProductAdded={handleProductAdded} />
       <ViewProduct open={openView} handleClose={() => setOpenView(false)} product={selectedProduct} />
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent="space-between">
           <Typography variant="h4" paddingTop={5}>
-             Products List
+            Products List
           </Typography>
-          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2}>
-              <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-                Add Product
-              </Button>
+          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2} marginTop={3}>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+              Add Product
+            </Button>
           </Stack>
         </Stack>
         <TableStyle>
           <Box width="100%">
-            <Card style={{ height: '600px', paddingTop: '15px' }}>
+            <Card style={{ height: '600px', paddingTop: '5px',  overflow: 'auto' }}>
               <DataGrid
                 rows={products}
                 columns={columns}
@@ -202,9 +228,7 @@ const Product = () => {
           handleClose={() => setOpenUpdateDialog(false)}
           product={selectedProduct}
           onProductUpdated={(updatedProduct) => {
-            setProducts((prev) =>
-              prev.map((prod) => (prod._id === updatedProduct._id ? updatedProduct : prod))
-            );
+            setProducts((prev) => prev.map((prod) => (prod._id === updatedProduct._id ? updatedProduct : prod)));
           }}
         />
       </Container>

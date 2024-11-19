@@ -26,9 +26,9 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
       .required('Selling price is required')
       .positive('Must be a positive number')
       .moreThan(yup.ref('buyingPrice'), 'Selling price must be greater than buying price'),
-    quantity: yup.number()
-      .max(100, 'Max 100 quantity are allowed')
-      .required('Quantity is required'),
+    // quantity: yup.number()
+    //   .max(100, 'Max 100 quantity are allowed')
+    //   .required('Quantity is required'),
     tax: yup.number()
       .max(20, 'Max 20% tax is allowed')
       .required('Tax is required'),
@@ -129,7 +129,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
                 helperText={formik.touched.sellingPrice && formik.errors.sellingPrice}
               />
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <TextField
                 required
                 id="quantity"
@@ -142,7 +142,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
                 error={formik.touched.quantity && Boolean(formik.errors.quantity)}
                 helperText={formik.touched.quantity && formik.errors.quantity}
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12}>
               <TextField
                 required

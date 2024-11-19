@@ -140,7 +140,7 @@ const DownloadInvoicePage = () => {
     <Card variant="outlined" sx={{ padding: 2, borderRadius: 2, boxShadow: 3 }}>
      <InvoiceHeader>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <img src={Logo} alt="Company Logo" style={{ maxWidth: '80px', marginBottom: '10px' }} />
+          <img src={Logo} alt="Company Logo" style={{ maxWidth: '60px', marginBottom: '10px' }} />
           <Box sx={{ textAlign: 'right' }}>
             <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
               Inventory Management System
@@ -168,7 +168,7 @@ const DownloadInvoicePage = () => {
       <Typography variant="body1">Phone: {customerPhone}</Typography>
       <Typography variant="body1">Address: {customerAddress}</Typography>
 
-      <TableContainer component={Paper} sx={{ alignContent: 'center' ,marginTop: 2, borderRadius: 1, boxShadow: 2 , width: '80%' }}>
+      <TableContainer component={Paper} sx={{ alignContent: 'center' ,marginTop: 2, borderRadius: 2, boxShadow: 2 , maxWidth: 900 }}>
         <InvoiceTable id="invoiceTable">
           <TableHead>
             <TableRow>
@@ -211,7 +211,7 @@ const DownloadInvoicePage = () => {
 
     
 
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2 , marginRight: '145px'}}>
         <Button variant="contained" color="secondary" onClick={downloadInvoice}>
           Download Invoice
         </Button>

@@ -29,19 +29,43 @@ const Customer = () => {
   }, []);
 
   const columns = [
-    { field: 'customernm', headerName: 'Name', flex: 1.5, minWidth: 150 },
-    { field: 'email', headerName: 'Email', flex: 1.5, minWidth: 250 },
-    { field: 'phone', headerName: 'Phone', flex: 1.5, minWidth: 150 },
-    { 
-      field: 'customerType', 
-      headerName: 'Type of Customer', 
-      flex: 1.5, 
+    { field: 'customernm', headerName: 'Name', flex: 1.5 },
+    { field: 'email', headerName: 'Email', flex: 2 },
+    { field: 'phone', headerName: 'Phone', flex: 1.5 },
+    {
+      field: 'customerType',
+      headerName: 'Type of Customer',
+      flex: 1.5,
       minWidth: 150,
       valueGetter: (params) => {
         return params.row.isWholesale ? 'Wholesale' : 'Walk-in';
+      },
+      renderCell: (params) => {
+        return (
+          <Box
+            sx={{
+              backgroundColor: '#0054a6',  
+              color: 'white',  
+              padding: '0.5rem 1rem',
+              borderRadius: '5px', 
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: '400',
+              width: '105px',
+              height: '25px',
+              textTransform: 'uppercase',
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 
+              gap: '0.5rem',
+              fontSize: '12px',
+              letterSpacing: '0.5px',
+            }}
+          >
+            {params.value} 
+          </Box>
+        );
       }
-    },
-    { field: 'address', headerName: 'Address', flex: 1.5, minWidth: 200 },
+    },    
     { field: 'createdAt', headerName: 'Created At', 
       flex: 1,minWidth : 150,
       valueGetter: (params) => {
@@ -54,7 +78,7 @@ const Customer = () => {
       flex: 2,
       minWidth: 250,
       renderCell: (params) => (
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1}>
         <Box
          sx={{backgroundColor: '#e3f2fd', borderRadius: '8px',padding: '8px', paddingTop:'8 px','&:hover': { backgroundColor: '#bbdefb' },
               display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
@@ -120,13 +144,15 @@ const Customer = () => {
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
           <Typography variant="h4" paddingTop={5}>Customers List</Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-            Add Customer
-          </Button>
+          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2} marginTop={3}>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+              Add Customer
+            </Button>
+          </Stack>
         </Stack>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '15px', overflow: 'auto' }}>
+            <Card style={{ height: '600px', paddingTop: '5px', overflow: 'auto' }}>
               <DataGrid
                 rows={customerData}
                 columns={columns}

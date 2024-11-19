@@ -1,27 +1,36 @@
 import {
   IconHome,
-  IconBoxMultiple,
+  IconUsers,
   IconBriefcase,
-  IconBoxModel,
+  IconStackPop,
   IconChecklist,
   IconShoppingCart,
   IconSettingsAutomation,
-  IconSettings 
+  IconSettings,
+  IconUser,
+  IconCategory,
+  IconBrandUnity,
+  IconAccessible,
+  IconUserPlus
 } from '@tabler/icons';
 
 const icons = {
   IconHome,
-  IconBoxMultiple,
+  IconUsers,
   IconBriefcase,
-  IconBoxModel,
+  IconStackPop,
   IconChecklist,
   IconShoppingCart,
   IconSettingsAutomation,
-  IconSettings 
+  IconSettings,
+  IconUser,
+  IconCategory,
+  IconBrandUnity,
+  IconAccessible,
+  IconUserPlus
 };
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
-
 
 const dashboard = {
   title: <span style={{ fontWeight: 'bold' }}> Dashboard-Menu</span>,
@@ -40,7 +49,7 @@ const dashboard = {
       title: 'Employee Management',
       type: 'item',
       url: '/dashboard/users',
-      icon: icons.IconBoxModel,
+      icon: icons.IconAccessible,
       breadcrumbs: false
     },
     {
@@ -48,7 +57,7 @@ const dashboard = {
       title: 'Products',
       type: 'item',
       url: '/dashboard/products',
-      icon: icons.IconBoxModel,
+      icon: icons.IconStackPop,
       breadcrumbs: false
     },
     {
@@ -71,14 +80,14 @@ const dashboard = {
       id: '05',
       title: 'Clients',
       type: 'collapse',
-      icon: icons.IconBoxMultiple,
+      icon: icons.IconUsers,
       children: [
         {
           id: '06',
           title: 'Suppliers',
           type: 'item',
           url: '/dashboard/suppliers',
-          icon: icons.IconBoxMultiple,
+          icon: icons.IconUserPlus,
           breadcrumbs: false
         },
         {
@@ -86,7 +95,7 @@ const dashboard = {
           title: 'Customers',
           type: 'item',
           url: '/dashboard/customers',
-          icon: icons.IconBoxMultiple,
+          icon: icons.IconUserPlus,
           breadcrumbs: false
         }
       ]
@@ -102,7 +111,7 @@ const dashboard = {
           title: 'Category',
           type: 'item',
           url: '/dashboard/category',
-          icon: icons.IconSettingsAutomation,
+          icon: icons.IconCategory,
           breadcrumbs: false
         },
         {
@@ -110,9 +119,9 @@ const dashboard = {
           title: 'Unit',
           type: 'item',
           url: '/dashboard/unit',
-          icon: icons.IconSettingsAutomation,
+          icon: icons.IconBrandUnity,
           breadcrumbs: false
-        },
+        }
       ]
     },
     {
@@ -123,6 +132,14 @@ const dashboard = {
       icon: icons.IconChecklist,
       breadcrumbs: false
     },
+    {
+      id: '12',
+      title: 'Profile',
+      type: 'item',
+      url: '/dashboard/profile',
+      icon: icons.IconUser,
+      breadcrumbs: false
+    }
   ]
 };
 

@@ -24,7 +24,7 @@ const NavItem = ({ item, level }) => {
 
   const Icon = item.icon;
   const itemIcon = item?.icon ? (
-    <Icon stroke={1.5} size="1.3rem" />
+    <Icon stroke={1.5} size="1.5rem" />
   ) : (
     <FiberManualRecordIcon
       sx={{
@@ -82,7 +82,7 @@ const NavItem = ({ item, level }) => {
       <ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>{itemIcon}</ListItemIcon>
       <ListItemText
         primary={
-          <Typography variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h5' : 'body1'} color="inherit">
+          <Typography variant={customization.isOpen.findIndex((id) => id === item.id) > -1 ? 'h4' : 'body1'} color="inherit">
             {item.title}
           </Typography>
         }
