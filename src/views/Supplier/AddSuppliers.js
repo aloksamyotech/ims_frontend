@@ -106,8 +106,8 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
           <Typography style={{ marginBottom: '15px' }} variant="h4">
             Supplier Details
           </Typography>
-          <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-            <Grid item xs={12}>
+          <Grid container rowSpacing={2} columnSpacing={{ xs: 0, sm: 5, md: 2 }}>
+            <Grid item xs={12} sm={6}>
               <FormLabel>Name</FormLabel>
               <TextField
                 required
@@ -121,7 +121,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
                 helperText={formik.touched.suppliernm && formik.errors.suppliernm}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <FormLabel>Email</FormLabel>
               <TextField
                 required
@@ -171,7 +171,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
                   required
                   id="typeOfSupplier"
                   name="typeOfSupplier"
-                  size="small"
+                  size="large"
                   value={formik.values.typeOfSupplier}
                   onChange={formik.handleChange}
                   error={formik.touched.typeOfSupplier && Boolean(formik.errors.typeOfSupplier)}
@@ -189,7 +189,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
             <Grid item xs={12} sm={6}>
             <FormControl fullWidth>
               <FormLabel>Bank Name</FormLabel>
-              <Select required id="bankName" name="bankName" size="small" value={formik.values.bankName} onChange={formik.handleChange}>
+              <Select required id="bankName" name="bankName" size="large" value={formik.values.bankName} onChange={formik.handleChange}>
                 <MenuItem value="">Select a bank</MenuItem>
                 <MenuItem value="BRI">BRI</MenuItem>
                 <MenuItem value="BNI">BNI</MenuItem>
@@ -205,7 +205,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
               <TextField
                 id="accountHolder"
                 name="accountHolder"
-                size="small"
+                size="large"
                 fullWidth
                 value={formik.values.accountHolder}
                 onChange={formik.handleChange}
@@ -218,7 +218,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
               <TextField
                 id="accountNumber"
                 name="accountNumber"
-                size="small"
+                size="large"
                 type="number"
                 fullWidth
                 value={formik.values.accountNumber}

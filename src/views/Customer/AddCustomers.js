@@ -98,8 +98,8 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
       <DialogContent dividers>
         <form onSubmit={throttledSubmit}>
           <Typography style={{ marginBottom: '15px' }} variant="h4">Customer Details</Typography>
-          <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }} >
-            <Grid item xs={12}>
+          <Grid container rowSpacing={2} columnSpacing={{ xs: 0, sm: 5, md: 2 }} >
+            <Grid item xs={12} sm={6}>
               <FormLabel>Name</FormLabel>
               <TextField
                 required

@@ -57,7 +57,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
     initialValues,
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
-      console.log('values : ', values); 
+      console.log('values : ', values);
 
       setIsSubmitting(true);
       try {
@@ -78,8 +78,8 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
         });
         const response = await axios.post('http://localhost:4200/product/save', formData, {
           headers: {
-            'Content-Type': 'multipart/form-data', 
-          },
+            'Content-Type': 'multipart/form-data'
+          }
         });
         console.log('Product added successfully:', response.data);
         toast.success('Product added successfully');
@@ -87,10 +87,10 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
         setImage(null);
         handleClose();
       } catch (error) {
-        console.error('Error:', error); 
+        console.error('Error:', error);
         toast.error('Failed to add product');
       } finally {
-        setIsSubmitting(false); 
+        setIsSubmitting(false);
       }
     }
   });
@@ -139,8 +139,8 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
           <Typography style={{ marginBottom: '15px' }} variant="h4">
             Product Details
           </Typography>
-          <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-            <Grid item xs={12}>
+          <Grid container rowSpacing={2} columnSpacing={{ xs: 0, sm: 5, md: 2 }}>
+            <Grid item xs={12} sm={6}>
               <FormLabel>Product Name</FormLabel>
               <TextField
                 required
@@ -266,6 +266,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 borderColor="grey.300"
                 borderRadius={1}
                 bgcolor="background.paper"
+                position="relative"
               >
                 {formik.values.image ? (
                   <img src={URL.createObjectURL(formik.values.image)} alt="product" style={{ maxWidth: '100%', maxHeight: '100%' }} />
@@ -274,8 +275,17 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                     Preview Image
                   </Typography>
                 )}
+
+                <Box position="absolute" left={0} bottom={0} p={2}>
+                  <input
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                    onChange={(event) => formik.setFieldValue('image', event.target.files[0])}
+                    style={{ display: 'block' }}
+                  />
+                </Box>
               </Box>
-              <input type="file" name="image" accept="image/*" onChange={(event) => formik.setFieldValue('image', event.target.files[0])} />
             </Grid>
           </Grid>
         </form>

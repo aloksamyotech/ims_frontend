@@ -44,16 +44,16 @@ const Customer = () => {
         return (
           <Box
             sx={{
-              backgroundColor: '#0054a6',  
+              backgroundColor: '#2196f3',  
               color: 'white',  
               padding: '0.5rem 1rem',
               borderRadius: '5px', 
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontWeight: '400',
-              width: '105px',
-              height: '25px',
+              fontWeight: 'bold',
+              width: '110px',
+              height: '25px', 
               textTransform: 'uppercase',
               boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 
               gap: '0.5rem',
