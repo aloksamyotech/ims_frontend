@@ -74,14 +74,11 @@ const Product = () => {
         return (
           <div
             style={{
-              backgroundColor: isLowQuantity ? '#f44336' : '', 
-              color: isLowQuantity ? 'white' : '',  
+              color: isLowQuantity ? '#f44336' : '',  
               padding: '0.5rem 1rem',
-              borderRadius: '5px',
               textAlign: 'center',
               fontWeight: 'bold',
               fontSize: '14px',
-              width: '60px', 
             }}
           >
             {quantity} 

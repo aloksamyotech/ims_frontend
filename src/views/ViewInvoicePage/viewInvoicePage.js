@@ -25,20 +25,21 @@ const InvoicePage = () => {
     loadInvoice();
   }, [id]);
 
-  const handleApprove = async () => {
+  const updateOrderStatus = async (id, action) => {
     try {
-      const response = await axios.patch(`http://localhost:4200/order/approve/${id}`);
-
+      const response = await axios.patch(`http://localhost:4200/order/update-status/${id}`, { action });
       if (response.status === 200) {
         setInvoiceData((prev) => ({
           ...prev,
-          order_status: 'Completed'
+          order_status: action === 'approve' ? 'Completed' : 'Cancelled'
         }));
-        window.alert('Order approved successfully!');
+        window.alert(`Order ${action === 'approve' ? 'approved' : 'cancelled'} successfully!`);
+      } else {
+        window.alert(`Failed to ${action === 'approve' ? 'approve' : 'cancel'} order`);
       }
     } catch (error) {
-      console.error('Error during approval:', error);
-      window.alert('Failed to approve purchase');
+      console.error(`Error during ${action}:`, error);
+      window.alert(`Failed to ${action === 'approve' ? 'approve' : 'cancel'} purchase`);
     }
   };
 
@@ -77,8 +78,15 @@ const InvoicePage = () => {
         &nbsp;&nbsp;
         <Box
           sx={{
-            backgroundColor: order_status === 'Completed' ? '#34a853' : order_status === 'Pending' ? '#f44336' : '',
-            color: order_status === 'Completed' ? 'white' : 'white',
+            backgroundColor:
+              order_status === 'Completed'
+                ? '#34a853'
+                : order_status === 'Pending'
+                ? '#ff9800'
+                : order_status === 'Cancelled'
+                ? '#f44336'
+                : '',
+            color: 'white',
             padding: '0.3rem 1rem',
             borderRadius: '5px',
             display: 'flex',
@@ -322,9 +330,9 @@ const InvoicePage = () => {
                       variant="body2"
                       color="primary"
                       sx={{
-                        fontSize : '18px',
+                        fontSize: '18px',
                         fontWeight: 'bold',
-                        textDecoration: 'underline', 
+                        textDecoration: 'underline',
                         cursor: 'pointer'
                       }}
                     >
@@ -338,10 +346,16 @@ const InvoicePage = () => {
         </Grid>
       </Grid>
 
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-        {order_status !== 'Completed' && (
-          <Button variant="contained" color="secondary" onClick={handleApprove}>
+      <Box sx={{ display: 'flex', mt: 2, justifyContent: 'flex-end' }}>
+        {order_status !== 'Completed' && order_status !== 'Cancelled' && (
+          <Button variant="contained" color="secondary" onClick={() => updateOrderStatus(id, 'approve')}>
             Approve Order
+          </Button>
+        )}
+
+        {order_status === 'Pending' && (
+          <Button variant="contained" color="error" onClick={() => updateOrderStatus(id, 'cancel')}>
+            Cancel Order
           </Button>
         )}
       </Box>

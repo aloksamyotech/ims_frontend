@@ -95,7 +95,10 @@ const Order = () => {
         return (
           <Box
             sx={{
-              backgroundColor: status === 'Completed' ? '#34a853' : status === 'Pending' ? '#f44336' : '',
+              backgroundColor: 
+              status === 'Completed' ? '#34a853' : 
+              status === 'Pending' ? '#ff9800' : 
+              status === 'Cancelled' ? '#f44336' : '',
               color: status === 'Completed' ? 'white' : 'white',
               padding: '0.5rem 1rem',
               borderRadius: '5px',
