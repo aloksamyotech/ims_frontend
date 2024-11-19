@@ -99,7 +99,7 @@ const InvoicePage = () => {
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <Card sx={{ marginBottom: 2 }}>
-          <CardContent>
+            <CardContent>
               <Box sx={{ borderRadius: 1, marginBottom: 1 }}>
                 <Typography variant="h4" sx={{ color: 'black', fontWeight: 'bold' }}>
                   Customer Details
@@ -116,8 +116,8 @@ const InvoicePage = () => {
                 </Grid>
 
                 <Grid item xs={6}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="body1">{invoice_no}</Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body1">{invoice_no}</Typography>
                   </Box>
                 </Grid>
 
@@ -130,8 +130,8 @@ const InvoicePage = () => {
                 </Grid>
 
                 <Grid item xs={6}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="body1">{moment(date).format('DD-MM-YYYY')}</Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body1">{moment(date).format('DD-MM-YYYY')}</Typography>
                   </Box>
                 </Grid>
 
@@ -145,7 +145,7 @@ const InvoicePage = () => {
 
                 <Grid item xs={6}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">{customerName}</Typography>
+                    <Typography variant="body1">{customerName}</Typography>
                   </Box>
                 </Grid>
 
@@ -159,7 +159,7 @@ const InvoicePage = () => {
 
                 <Grid item xs={6}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">{customerPhone}</Typography>
+                    <Typography variant="body1">{customerPhone}</Typography>
                   </Box>
                 </Grid>
 
@@ -173,7 +173,7 @@ const InvoicePage = () => {
 
                 <Grid item xs={6}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">{customerEmail}</Typography>
+                    <Typography variant="body1">{customerEmail}</Typography>
                   </Box>
                 </Grid>
 
@@ -187,10 +187,9 @@ const InvoicePage = () => {
 
                 <Grid item xs={6}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">{customerAddress}</Typography>
+                    <Typography variant="body1">{customerAddress}</Typography>
                   </Box>
                 </Grid>
-
               </Grid>
             </CardContent>
           </Card>
@@ -319,9 +318,18 @@ const InvoicePage = () => {
 
                 <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
                   <Link to={`/dashboard/orders/download-invoice/${id}`}>
-                    <Button variant="contained" color="primary">
-                      Invoice
-                    </Button>
+                    <Typography
+                      variant="body2"
+                      color="primary"
+                      sx={{
+                        fontSize : '18px',
+                        fontWeight: 'bold',
+                        textDecoration: 'underline', 
+                        cursor: 'pointer'
+                      }}
+                    >
+                      View Invoice
+                    </Typography>
                   </Link>
                 </Box>
               </Box>

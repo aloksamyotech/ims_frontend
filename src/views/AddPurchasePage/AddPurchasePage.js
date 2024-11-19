@@ -62,7 +62,7 @@ const PurchaseForm = () => {
       const purchaseData = {
         ...values,
         products: rows.map((row) => {
-          const selectedProduct = productList.find((product) => product._id === row.product);
+          const selectedProduct = productList?.find((product) => product._id === row.product);
           return {
             productId: row.product,
             productName: selectedProduct ? selectedProduct.productnm : '', 
@@ -103,7 +103,7 @@ const PurchaseForm = () => {
   }, []);
 
   const handleAddRow = () => {
-    const productNotSelected = rows.some(row => !row.product);
+    const productNotSelected = rows?.some(row => !row.product);
 
     if (productNotSelected) {
       toast.error('Product not selected! Please select a product before adding a row.');
@@ -116,7 +116,7 @@ const PurchaseForm = () => {
 
   const handleAddPurchase = (event) => {
     event.preventDefault();
-    const productNotSelected = rows.some(row => !row.product);
+    const productNotSelected = rows?.some(row => !row.product);
     if (productNotSelected) {
       toast.error('Product not selected! Please select a product before adding the purchase.');
       return;
@@ -126,7 +126,7 @@ const PurchaseForm = () => {
   
   const handleProductChange = (index, event) => {
     const productId = event.target.value;
-    const selectedProduct = productList.find((product) => product._id === productId);
+    const selectedProduct = productList?.find((product) => product._id === productId);
     const newRows = [...rows];
 
     newRows[index].product = productId;
@@ -160,7 +160,7 @@ const PurchaseForm = () => {
   };
 
   const calculateSubtotal = () => {
-    return rows.reduce((acc, row) => acc + (row.subtotal || 0), 0); 
+    return rows?.reduce((acc, row) => acc + (row.subtotal || 0), 0); 
   };
 
   const purchaseSubtotal = calculateSubtotal();
@@ -246,7 +246,7 @@ const PurchaseForm = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row, index) => (
+                {rows?.map((row, index) => (
                   <TableRow key={index}>
                     <TableCell>
                       <Select
@@ -258,7 +258,7 @@ const PurchaseForm = () => {
                         <MenuItem value="">Select a product</MenuItem>
                         {productList
                           .filter(product => 
-                            !rows.some(r => r.product === product._id) || row.product === product._id)
+                            !rows?.some(r => r.product === product._id) || row.product === product._id)
                           .map((product) => (
                             <MenuItem key={product._id} value={product._id}>
                               {product.productnm}
