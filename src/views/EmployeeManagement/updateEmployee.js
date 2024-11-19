@@ -1,10 +1,10 @@
 import React from 'react';
-import { Dialog, DialogTitle, DialogContent,Typography, DialogActions, Button, Grid , FormLabel,
-     TextField } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, Typography, DialogActions, Button, Grid, FormLabel, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { updateUser } from 'apis/api.js';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
   const formik = useFormik({
@@ -15,7 +15,7 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
     },
     enableReinitialize: true,
     validationSchema: yup.object({
-        name: yup
+      name: yup
         .string()
         .matches(/^[a-zA-Z\s]*$/, 'Only letters and spaces are allowed')
         .min(2, 'Min 2 character are allowed')
@@ -25,7 +25,7 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
       phone: yup
         .string()
         .matches(/^[1-9][0-9]{9}$/, 'Phone number must be 12 digits and cannot start with 0')
-        .required('Phone number is required'),
+        .required('Phone number is required')
     }),
     onSubmit: async (values) => {
       try {
@@ -40,10 +40,13 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
   });
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>  <Typography variant="h4">Update User</Typography></DialogTitle>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+      <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant="h3">Update User</Typography>
+        <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
+      </DialogTitle>
       <DialogContent>
-          <form onSubmit={formik.handleSubmit}>
+        <form onSubmit={formik.handleSubmit}>
           <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
             <Grid item xs={12}>
               <FormLabel>Name</FormLabel>
@@ -59,7 +62,7 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
                 helperText={formik.touched.name && formik.errors.name}
               />
             </Grid>
-       <Grid item xs={12}>
+            <Grid item xs={12}>
               <FormLabel>Email</FormLabel>
               <TextField
                 required
@@ -73,7 +76,7 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-          <Grid item xs={12}>
+            <Grid item xs={12}>
               <FormLabel>Phone Number</FormLabel>
               <TextField
                 required
@@ -88,15 +91,16 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
                 helperText={formik.touched.phone && formik.errors.phone}
               />
             </Grid>
-            </Grid>
-            </form>
+          </Grid>
+        </form>
       </DialogContent>
       <DialogActions>
-        <Button type="submit"  variant="contained" color="secondary" onClick={formik.handleSubmit}>
-          Update</Button>
-            <Button onClick={handleClose} variant="contained" color="error">
-              Cancel
-            </Button>
+        <Button type="submit" variant="contained" color="secondary" onClick={formik.handleSubmit}>
+          Update
+        </Button>
+        <Button onClick={handleClose} variant="contained" color="error">
+          Cancel
+        </Button>
       </DialogActions>
     </Dialog>
   );

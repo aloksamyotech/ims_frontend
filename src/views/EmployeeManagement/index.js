@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, Container, IconButton, Typography, Card, Box, Dialog } from '@mui/material';
+import { Stack, Button, Container, IconButton, Typography, Card, Box, Dialog, Popover } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import LockIcon from '@mui/icons-material/Lock';
 import { fetchUsers, deleteUser } from 'apis/api.js';
 import { toast } from 'react-toastify';
 import ViewUser from './view.js';
@@ -14,10 +15,21 @@ import ChangePassword from './changePassword.js';
 
 const User = () => {
   const [users, setUsers] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [openView, setOpenView] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openChangePassword, setOpenChangePassword] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -32,9 +44,9 @@ const User = () => {
   }, []);
 
   const columns = [
-    { field: 'name', headerName: 'Name', flex: 0.8},
-    { field: 'email', headerName: 'Email', flex: 1},
-    { field: 'phone', headerName: 'Phone', flex: 0.8},
+    { field: 'name', headerName: 'Name', flex: 0.8 },
+    { field: 'email', headerName: 'Email', flex: 1 },
+    { field: 'phone', headerName: 'Phone', flex: 0.8 },
     {
       field: 'date',
       headerName: 'Date',
@@ -77,7 +89,7 @@ const User = () => {
               height: '40px'
             }}
           >
-            <IconButton size="small" onClick={() => handleEdit(params.row)}>
+            <IconButton size="small" onClick={(event) => handlePopoverOpen(event, params.row)}>
               <EditIcon sx={{ color: '#ff9800' }} />
             </IconButton>
           </Box>
@@ -98,33 +110,65 @@ const User = () => {
               <DeleteIcon />
             </IconButton>
           </Box>
-          <Box
-            sx={{
-              backgroundColor: '#34a853',
-              borderRadius: '5px',
-              padding: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '160px',
-              height: '25px', 
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              cursor: 'pointer',
-              fontSize : '12px',
-            }}
-            onClick={() => handleChangePassword(params.row)}
-          >
-            <Typography
-              variant="body2"
-              sx={{
-                color: 'white',
-                textTransform: 'uppercase',
-                fontWeight: 'bold'
-              }}
-            >
-              Change Password
-            </Typography>
-          </Box>
+
+          <Popover
+      open={open}
+      anchorEl={anchorEl}
+      onClose={handlePopoverClose}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'left'
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'left'
+      }}
+    >
+      <Box sx={{ padding: 2, width: '200px' }}>
+        {/* Edit Profile Option */}
+        <Typography
+          variant="body2"
+          sx={{
+            marginBottom: 1,
+            cursor: 'pointer',
+            '&:hover': { backgroundColor: '#e3f2fd' },
+            padding: '8px',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            color: '#1976d2', // Blue color for Edit
+          }}
+          onClick={() => {
+            handleEdit(params.row);
+            handlePopoverClose();
+          }}
+        >
+          <EditIcon sx={{ marginRight: 1 }} />
+          Edit Profile
+        </Typography>
+
+        {/* Change Password Option */}
+        <Typography
+          variant="body2"
+          sx={{
+            cursor: 'pointer',
+            '&:hover': { backgroundColor: '#ffebee' },
+            padding: '8px',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            color: '#d32f2f', // Red color for Change Password
+          }}
+          onClick={() => {
+            handleChangePassword(params.row);
+            handlePopoverClose();
+          }}
+        >
+          <LockIcon sx={{ marginRight: 1 }} />
+          Change Password
+        </Typography>
+      </Box>
+    </Popover>
         </Stack>
       )
     }
@@ -184,16 +228,16 @@ const User = () => {
         <TableStyle>
           <Box width="100%" overflow="hidden">
             <Card style={{ height: '600px', paddingTop: '5px', overflow: 'auto' }}>
-                <DataGrid
-                  rows={users}
-                  columns={columns}
-                  checkboxSelection
-                  getRowId={(row) => row._id}
-                  slots={{ toolbar: GridToolbar }}
-                  slotProps={{ toolbar: { showQuickFilter: true } }}
-                  stickyHeader
-                  style={{ minWidth: '800px', overflow: 'auto' }}
-                />
+              <DataGrid
+                rows={users}
+                columns={columns}
+                checkboxSelection
+                getRowId={(row) => row._id}
+                slots={{ toolbar: GridToolbar }}
+                slotProps={{ toolbar: { showQuickFilter: true } }}
+                stickyHeader
+                style={{ minWidth: '800px', overflow: 'auto' }}
+              />
             </Card>
           </Box>
         </TableStyle>
