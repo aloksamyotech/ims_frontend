@@ -96,7 +96,7 @@ const OrderForm = (props) => {
     fetchData();
   }, []);
 
-  const filteredProducts = productList.filter((product) => product.productnm.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredProducts = productList?.filter((product) => product.productnm.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -114,7 +114,7 @@ const OrderForm = (props) => {
       return;
     }
   
-    const productInCart = products.find((item) => item._id === product._id);
+    const productInCart = products?.find((item) => item._id === product._id);
     if (productInCart) {
       toast.info('Product is already added to the cart');
       return;
@@ -131,7 +131,7 @@ const OrderForm = (props) => {
   
     const isAlreadySelected = selectedProductIds.includes(product._id);
     if (isAlreadySelected) {
-      setSelectedProductIds(selectedProductIds.filter(id => id !== product._id));
+      setSelectedProductIds(selectedProductIds?.filter(id => id !== product._id));
     } else {
       setSelectedProductIds([...selectedProductIds, product._id]);
     }
@@ -142,20 +142,20 @@ const OrderForm = (props) => {
   };
 
   const handleQuantityChange = (productId, newQuantity) => {
-    const product = products.find((prod) => prod._id === productId);
+    const product = products?.find((prod) => prod._id === productId);
     
     if (!product) {
       console.error('Product not found');
       return;
     }
 
-    const availableStock = productList.find((prod) => prod._id === productId)?.quantity;
+    const availableStock = productList?.find((prod) => prod._id === productId)?.quantity;
     if (newQuantity < 1) return; 
     if (newQuantity > availableStock) {
       toast.info(`Quantity exceeds available stock (: ${availableStock})`);
       return;
     }
-    const updatedProducts = products.map((item) =>
+    const updatedProducts = products?.map((item) =>
       item._id === productId
         ? {
             ...item,
@@ -172,7 +172,7 @@ const OrderForm = (props) => {
   };
   
   const handleRemoveProduct = (productId) => {
-    const updatedProducts = products.filter((product) => product._id !== productId);
+    const updatedProducts = products?.filter((product) => product._id !== productId);
     window.confirm('Are you sure you want to delete?');
     setProducts(updatedProducts);
   };
@@ -221,7 +221,7 @@ const OrderForm = (props) => {
     const orderData = {
       date: formik.values.date,
       customer: customerData,
-      products: products.map((product) => ({
+      products: products?.map((product) => ({
         productId: product._id,
         productName: product.productnm,
         quantity: product.quantity

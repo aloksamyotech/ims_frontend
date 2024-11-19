@@ -155,7 +155,7 @@ const PurchaseForm = () => {
   };
 
   const handleRemoveRow = (index) => {
-    const newRows = rows.filter((_, i) => i !== index);
+    const newRows = rows?.filter((_, i) => i !== index);
     setRows(newRows);
   };
 
@@ -211,7 +211,7 @@ const PurchaseForm = () => {
               }}
             >
               <MenuItem value="">Select a supplier</MenuItem>
-              {supplierList.map((supplier) => (
+              {supplierList?.map((supplier) => (
                 <MenuItem key={supplier._id} value={supplier._id}>
                   {supplier.suppliernm}
                 </MenuItem>
@@ -257,9 +257,9 @@ const PurchaseForm = () => {
                       >
                         <MenuItem value="">Select a product</MenuItem>
                         {productList
-                          .filter(product => 
+                          ?.filter(product => 
                             !rows?.some(r => r.product === product._id) || row.product === product._id)
-                          .map((product) => (
+                          ?.map((product) => (
                             <MenuItem key={product._id} value={product._id}>
                               {product.productnm}
                             </MenuItem>

@@ -137,7 +137,8 @@ const DownloadInvoicePage = () => {
   } = invoiceData || {};
 
   return (
-    <Card variant="outlined" sx={{ padding: 2, borderRadius: 2, boxShadow: 3 }}>
+    <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center' , marginTop: '10px'}}>
+    <Card variant="outlined" sx={{ padding: 2, borderRadius: 2, boxShadow: 3 ,width: '900px' , height:'900px'}}>
      <InvoiceHeader>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <img src={Logo} alt="Company Logo" style={{ maxWidth: '60px', marginBottom: '10px' }} />
@@ -168,7 +169,7 @@ const DownloadInvoicePage = () => {
       <Typography variant="body1">Phone: {customerPhone}</Typography>
       <Typography variant="body1">Address: {customerAddress}</Typography>
 
-      <TableContainer component={Paper} sx={{ alignContent: 'center' ,marginTop: 2, borderRadius: 2, boxShadow: 2 , maxWidth: 900 }}>
+      <TableContainer component={Paper} sx={{ alignContent: 'center' ,marginTop: 2, borderRadius: 2, boxShadow: 2 , maxWidth: 700 }}>
         <InvoiceTable id="invoiceTable">
           <TableHead>
             <TableRow>
@@ -211,7 +212,7 @@ const DownloadInvoicePage = () => {
 
     
 
-      <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2 , marginRight: '145px'}}>
+      <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2 , marginRight: '160px'}}>
         <Button variant="contained" color="secondary" onClick={downloadInvoice}>
           Download Invoice
         </Button>
@@ -224,6 +225,7 @@ const DownloadInvoicePage = () => {
         All payments must be made in full before the commencement of any design work.
       </Typography>
     </Card>
+    </Box>
   );
 };
 
