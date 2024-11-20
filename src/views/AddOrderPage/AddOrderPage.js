@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import Swal from 'sweetalert2';
 import {
   Container,
   Grid,
@@ -170,13 +171,24 @@ const OrderForm = (props) => {
       [productId]: newQuantity
     }));
   };
+ 
+  const handleRemoveProduct = async (productId) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, remove it!",
+    });
   
-  const handleRemoveProduct = (productId) => {
-    const updatedProducts = products?.filter((product) => product._id !== productId);
-    window.confirm('Are you sure you want to delete?');
-    setProducts(updatedProducts);
+    if (result.isConfirmed) {
+      const updatedProducts = products?.filter((product) => product._id !== productId);
+      setProducts(updatedProducts);
+    }
   };
-
+  
   const calculateSubtotal = () => {
     return products.reduce((acc, product) => acc + product.subtotal, 0);
   };

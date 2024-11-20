@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Box, Grid, Card, CardContent, Button, Divider } from '@mui/material';
 import moment from 'moment';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router';
 
@@ -33,13 +34,33 @@ const InvoicePage = () => {
           ...prev,
           order_status: action === 'approve' ? 'Completed' : 'Cancelled'
         }));
-        window.alert(`Order ${action === 'approve' ? 'approved' : 'cancelled'} successfully!`);
+        Swal.fire({
+          title: `Order ${action === 'approve' ? 'approved' : 'cancelled'} successfully!`,
+          icon: 'success',
+          background: '#f0f8ff', 
+          confirmButtonColor: '#3085d6', 
+          confirmButtonText: 'Great!',
+          timer: 3000, 
+        });
       } else {
-        window.alert(`Failed to ${action === 'approve' ? 'approve' : 'cancel'} order`);
+        Swal.fire({
+          title: `Failed to ${action === 'approve' ? 'approve' : 'cancel'} order`,
+          icon: 'error', 
+          background: '#f0f8ff',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'Okay',
+          timer: 3000,
+        });
       }
     } catch (error) {
-      console.error(`Error during ${action}:`, error);
-      window.alert(`Failed to ${action === 'approve' ? 'approve' : 'cancel'} purchase`);
+      Swal.fire({
+        title: `Failed to ${action === 'approve' ? 'approve' : 'cancel'} order`,
+        icon: 'error', 
+        background: '#f0f8ff',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Okay',
+        timer: 3000,
+      });
     }
   };
 
@@ -325,20 +346,22 @@ const InvoicePage = () => {
                 </Grid>
 
                 <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
-                  <Link to={`/dashboard/orders/download-invoice/${id}`}>
-                    <Typography
-                      variant="body2"
-                      color="primary"
-                      sx={{
-                        fontSize: '18px',
-                        fontWeight: 'bold',
-                        textDecoration: 'underline',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      View Invoice
-                    </Typography>
-                  </Link>
+                  {order_status !== 'Cancelled' && (
+                    <Link to={`/dashboard/orders/download-invoice/${id}`}>
+                      <Typography
+                        variant="body2"
+                        color="primary"
+                        sx={{
+                          fontSize: '18px',
+                          fontWeight: 'bold',
+                          textDecoration: 'underline',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        View Invoice
+                      </Typography>
+                    </Link>
+                  )}
                 </Box>
               </Box>
             </CardContent>
@@ -347,16 +370,16 @@ const InvoicePage = () => {
       </Grid>
 
       <Box sx={{ display: 'flex', mt: 2, justifyContent: 'flex-end' }}>
-        {order_status !== 'Completed' && order_status !== 'Cancelled' && (
-          <Button variant="contained" color="secondary" onClick={() => updateOrderStatus(id, 'approve')}>
-            Approve Order
-          </Button>
-        )}
-
         {order_status === 'Pending' && (
-          <Button variant="contained" color="error" onClick={() => updateOrderStatus(id, 'cancel')}>
-            Cancel Order
-          </Button>
+          <>
+            <Button variant="contained" color="secondary" onClick={() => updateOrderStatus(id, 'approve')}>
+              Approve Order
+            </Button>
+            &nbsp;&nbsp;
+            <Button variant="contained" color="error" onClick={() => updateOrderStatus(id, 'cancel')}>
+              Cancel Order
+            </Button>
+          </>
         )}
       </Box>
     </Box>

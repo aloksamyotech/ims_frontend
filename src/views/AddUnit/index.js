@@ -11,6 +11,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ViewUnit from './viewUnit.js';
+import Swal from 'sweetalert2';
 
 const Unit = () => {
   const [openAdd, setOpenAdd] = useState(false);
@@ -75,10 +76,27 @@ const Unit = () => {
   };
 
   const handleDelete = async (_id) => {
-    if (window.confirm('Are you sure you want to delete this unit?')) {
-      await deleteUnit(_id);
-      setUnitData((prev) => prev.filter((unit) => unit._id !== _id));
-      toast.success('Unit deleted successfully');
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+      if (result.isConfirmed) {
+        await deleteUnit(_id);
+        setUnitData((prev) => prev.filter((unit) => unit._id !== _id));
+        Swal.fire(
+          "Deleted!", 
+          "Your unit has been deleted.", 
+          "success"  
+        );
+      }
+    } catch (error) {
+      console.error('Error deleting unit:', error);
     }
   };
 

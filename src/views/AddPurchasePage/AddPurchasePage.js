@@ -281,7 +281,7 @@ const PurchaseForm = () => {
                           max: 1000 
                         }}
                         value={row.quantity}
-                        onChange={(event) => handleQuantityChange(0, event)} 
+                        onChange={(event) => handleQuantityChange(index, event)} 
                       />
                     </TableCell>
                     <TableCell>

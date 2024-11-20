@@ -7,6 +7,7 @@ import AddOrders from './AddOrder.js';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 import { deleteOrder, fetchOrders } from 'apis/api.js';
 import moment from 'moment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -195,17 +196,29 @@ const Order = () => {
 
   const handleOpenAdd = () => setOpenAdd(true);
   const handleCloseAdd = () => setOpenAdd(false);
-
+  
   const handleDelete = async (_id) => {
-    if (window.confirm('Are you sure you want to delete this order?')) {
-      try {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+      if (result.isConfirmed) {
         await deleteOrder(_id);
         setOrderDetails((prev) => prev.filter((order) => order._id !== _id));
-        toast.success('Order deleted successfully');
-      } catch (error) {
-        console.error('Failed to delete order:', error);
-        toast.error('Failed to delete order');
+        Swal.fire(
+          "Deleted!", 
+          "Your order has been deleted.", 
+          "success"  
+        );
       }
+    } catch (error) {
+      console.error('Error deleting order:', error);
     }
   };
 

@@ -8,15 +8,15 @@ import UpdateSupplier from './updateSupplier.js';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { toast } from 'react-toastify'; 
+import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import moment from 'moment';
 import { deleteSupplier, fetchSuppliers } from 'apis/api.js';
-import ViewSupplier from './viewSupplier.js';
 
 const Supplier = () => {
+  const navigate = useNavigate();
   const [openAdd, setOpenAdd] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false); 
-  const [openView, setOpenView] = useState(false); 
   const [supplierData, setSupplierData] = useState([]);
   const [currentSupplier, setCurrentSupplier] = useState(null); 
 
@@ -80,7 +80,7 @@ const Supplier = () => {
         <Box
          sx={{backgroundColor: '#e3f2fd', borderRadius: '8px',padding: '8px', paddingTop:'8 px','&:hover': { backgroundColor: '#bbdefb' },
               display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-          <IconButton size="small" onClick={() => handleView(params.row)} color="primary" sx={{ padding: 0 }}>
+          <IconButton size="small" onClick={() => handleView(params.row._id)} color="primary" sx={{ padding: 0 }}>
           <VisibilityIcon />  </IconButton>
          </Box>
          <Box sx={{ backgroundColor: '#fff3e0', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ffe0b2' },
@@ -105,9 +105,9 @@ const Supplier = () => {
     setOpenAdd(true);
   };
 
-  const handleView = (supplier) => {
-    setCurrentSupplier(supplier);
-    setOpenView(true);
+ 
+  const handleView = (_id) => {
+    navigate(`/dashboard/suppliers/view-supplier/${_id}`);
   };
 
   const handleEdit = (supplier) => {
@@ -116,10 +116,27 @@ const Supplier = () => {
   };
 
   const handleDelete = async (_id) => {
-    if (window.confirm('Are you sure you want to delete this supplier?')) {
-      await deleteSupplier(_id);
-      setSupplierData((prev) => prev.filter((supplier) => supplier._id !== _id));
-      toast.success('supplier deleted successfully');
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+      if (result.isConfirmed) {
+        await deleteSupplier(_id);
+        setSupplierData((prev) => prev.filter((supplier) => supplier._id !== _id));
+        Swal.fire(
+          "Deleted!", 
+          "Your supplier has been deleted.", 
+          "success"  
+        );
+      }
+    } catch (error) {
+      console.error('Error deleting supplier:', error);
     }
   };
 
@@ -137,7 +154,6 @@ const Supplier = () => {
     <>
     <AddSupplier open={openAdd} handleClose={() => setOpenAdd(false)} onSupplierAdded={handleSupplierAdded} />
       <UpdateSupplier open={openUpdate} handleClose={() => setOpenUpdate(false)} supplier={currentSupplier}  onSupplierUpdated={handleSupplierUpdated} />
-      <ViewSupplier open={openView} handleClose={() => setOpenView(false)} supplier={currentSupplier} />
 
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>

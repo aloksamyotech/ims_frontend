@@ -11,6 +11,7 @@ import UpdateCategory from './updateCategory.js';
 import ViewCategory from './viewCategory.js';
 import { deleteCategory, fetchCategories } from 'apis/api.js';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 import moment from 'moment';
 import { minWidth } from '@mui/system';
 
@@ -87,17 +88,30 @@ const Category = () => {
   };
 
   const handleDelete = async (_id) => {
-    if (window.confirm('Are you sure you want to delete this category?')) {
-      try {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+      if (result.isConfirmed) {
         await deleteCategory(_id);
         setCategories((prev) => prev.filter((category) => category._id !== _id));
-        toast.success('Category deleted successfully');
-      } catch (error) {
-        console.error('Error deleting category:', error);
-        toast.error('Error deleting category');
+        Swal.fire(
+          "Deleted!", 
+          "Your category has been deleted.", 
+          "success"  
+        );
       }
+    } catch (error) {
+      console.error('Error deleting category:', error);
     }
   };
+  
 
   const handleCategoryAdded = (newCategory) => {
     setCategories((prev) => [...prev, newCategory]);

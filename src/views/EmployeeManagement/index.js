@@ -12,6 +12,7 @@ import ViewUser from './view.js';
 import UpdateUser from './updateEmployee.js';
 import moment from 'moment';
 import ChangePassword from './changePassword.js';
+import Swal from 'sweetalert2';
 
 const User = () => {
   const [users, setUsers] = useState([]);
@@ -125,7 +126,6 @@ const User = () => {
       }}
     >
       <Box sx={{ padding: 2, width: '200px' }}>
-        {/* Edit Profile Option */}
         <Typography
           variant="body2"
           sx={{
@@ -136,7 +136,7 @@ const User = () => {
             borderRadius: '4px',
             display: 'flex',
             alignItems: 'center',
-            color: '#1976d2', // Blue color for Edit
+            color: '#1976d2', 
           }}
           onClick={() => {
             handleEdit(params.row);
@@ -147,7 +147,6 @@ const User = () => {
           Edit Profile
         </Typography>
 
-        {/* Change Password Option */}
         <Typography
           variant="body2"
           sx={{
@@ -157,7 +156,7 @@ const User = () => {
             borderRadius: '4px',
             display: 'flex',
             alignItems: 'center',
-            color: '#d32f2f', // Red color for Change Password
+            color: '#d32f2f', 
           }}
           onClick={() => {
             handleChangePassword(params.row);
@@ -186,15 +185,27 @@ const User = () => {
   };
 
   const handleDelete = async (_id) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      try {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+      if (result.isConfirmed) {
         await deleteUser(_id);
         setUsers((prev) => prev.filter((user) => user._id !== _id));
-        toast.success('User deleted successfully');
-      } catch (error) {
-        console.error('Error deleting user:', error);
-        toast.error('Error deleting user');
+        Swal.fire(
+          "Deleted!", 
+          "Your user has been deleted.", 
+          "success"  
+        );
       }
+    } catch (error) {
+      console.error('Error deleting user:', error);
     }
   };
 

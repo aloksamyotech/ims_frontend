@@ -20,6 +20,9 @@ const AddPurchase = Loadable(lazy(() => import('views/AddPurchasePage/AddPurchas
 const ViewInvoice = Loadable(lazy(() => import('views/ViewInvoicePage/viewInvoicePage')))
 const DownloadInvoice = Loadable(lazy(() => import('views/DownloadInvoicePage/downloadInvoicePage')))
 const ViewPurchase = Loadable(lazy(() => import('views/PurchasePage/viewPurchasePage')))
+const ViewProduct = Loadable(lazy(() => import('views/ViewProductPage/viewProductPage')))
+const ViewCustomer = Loadable(lazy(() => import('views/ViewCustomerPage/viewCustomerPage')))
+const ViewSupplier = Loadable(lazy(() => import('views/ViewSupplierPage/viewSupplierPage')))
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -44,7 +47,16 @@ const MainRoutes = {
         },
         {
           path: 'products',
-          element: <Products />
+          children: [
+            {
+              path: '',
+              element: <Products />
+            },
+            {
+              path: 'view-product/:id',
+              element: < ViewProduct />
+            },
+          ]
         },
         {
           path: 'orders',
@@ -104,11 +116,29 @@ const MainRoutes = {
         },
         {
           path: 'suppliers',
-          element: <Suppliers />
+          children: [
+            {
+              path: '',
+              element: <Suppliers />
+            },
+            {
+              path: 'view-supplier/:id',
+              element: < ViewSupplier />
+            },
+          ]
         },
         {
           path: 'customers',
-          element: <Customers />
+          children: [
+            {
+              path: '',
+              element: <Customers />
+            },
+            {
+              path: 'view-customer/:id',
+              element: < ViewCustomer />
+            },
+          ]
         },
         {
           path: 'category',

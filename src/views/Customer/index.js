@@ -8,15 +8,15 @@ import UpdateCustomer from './updateCustomer.js';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { toast } from 'react-toastify'; 
+import Swal from 'sweetalert2';
+import { Link, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { deleteCustomer, fetchCustomers } from 'apis/api.js';
-import ViewCustomer from './viewCustomer.js';
 
 const Customer = () => {
+  const navigate = useNavigate();
   const [openAdd, setOpenAdd] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false); 
-  const [openView, setOpenView] = useState(false); 
   const [customerData, setCustomerData] = useState([]);
   const [currentCustomer, setCurrentCustomer] = useState(null); 
 
@@ -82,7 +82,7 @@ const Customer = () => {
         <Box
          sx={{backgroundColor: '#e3f2fd', borderRadius: '8px',padding: '8px', paddingTop:'8 px','&:hover': { backgroundColor: '#bbdefb' },
               display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-          <IconButton size="small" onClick={() => handleView(params.row)} color="primary" sx={{ padding: 0 }}>
+          <IconButton size="small" onClick={() => handleView(params.row._id)} color="primary" sx={{ padding: 0 }}>
           <VisibilityIcon />  </IconButton>
          </Box>
          <Box sx={{ backgroundColor: '#fff3e0', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ffe0b2' },
@@ -107,9 +107,8 @@ const Customer = () => {
     setOpenAdd(true);
   };
 
-  const handleView = (customer) => {
-    setCurrentCustomer(customer);
-    setOpenView(true);
+  const handleView = (_id) => {
+    navigate(`/dashboard/customers/view-customer/${_id}`);
   };
 
   const handleEdit = (customer) => {
@@ -118,10 +117,27 @@ const Customer = () => {
   };
 
   const handleDelete = async (_id) => {
-    if (window.confirm('Are you sure you want to delete this customer?')) {
-      await deleteCustomer(_id);
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+      if (result.isConfirmed) {
+        await deleteCustomer(_id);
       setCustomerData((prev) => prev.filter((customer) => customer._id !== _id));
-      toast.success('customer deleted successfully');
+        Swal.fire(
+          "Deleted!", 
+          "Your customer has been deleted.", 
+          "success"  
+        );
+      }
+    } catch (error) {
+      console.error('Error deleting customer:', error);
     }
   };
 
@@ -139,7 +155,6 @@ const Customer = () => {
     <>
        <AddCustomer open={openAdd} handleClose={() => setOpenAdd(false)} onCustomerAdded={handleCustomerAdded} />
       <UpdateCustomer open={openUpdate} handleClose={() => setOpenUpdate(false)} customer={currentCustomer}  onCustomerUpdated={handleCustomerUpdated} />
-      <ViewCustomer open={openView} handleClose={() => setOpenView(false)} customer={currentCustomer} />
 
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>

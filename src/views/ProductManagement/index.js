@@ -3,20 +3,20 @@ import { Stack, Button, IconButton, Container, Typography, Card, Box } from '@mu
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Iconify from '../../ui-component/iconify';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import UpdateProduct from './updateProduct.js';
 import AddProductPage from './AddProducts';
 import { deleteProduct, fetchProducts } from 'apis/api.js';
-import ViewProduct from './viewProduct.js';
 
 const Product = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
-  const [openView, setOpenView] = useState(false);
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -113,7 +113,7 @@ const Product = () => {
               height: '40px'
             }}
           >
-            <IconButton size="small" onClick={() => handleView(params.row)} color="primary" sx={{ padding: 0 }}>
+            <IconButton size="small" onClick={() => handleView(params.row._id)} color="primary" sx={{ padding: 0 }}>
               <VisibilityIcon />
             </IconButton>
           </Box>
@@ -163,9 +163,8 @@ const Product = () => {
     setOpenAdd(true);
   };
 
-  const handleView = (product) => {
-    setSelectedProduct(product);
-    setOpenView(true);
+  const handleView = (_id) => {
+    navigate(`/dashboard/products/view-product/${_id}`);
   };
 
   const handleEdit = (product) => {
@@ -174,14 +173,27 @@ const Product = () => {
   };
 
   const handleDelete = async (_id) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      try {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+      if (result.isConfirmed) {
         await deleteProduct(_id);
         setProducts((prev) => prev.filter((product) => product._id !== _id));
-        toast.success('Product deleted successfully');
-      } catch (error) {
-        toast.error('Failed to delete product');
+        Swal.fire(
+          "Deleted!", 
+          "Your product has been deleted.", 
+          "success"  
+        );
       }
+    } catch (error) {
+      console.error('Error deleting product:', error);
     }
   };
 
@@ -193,7 +205,6 @@ const Product = () => {
   return (
     <>
       <AddProductPage open={openAdd} handleClose={() => setOpenAdd(false)} onProductAdded={handleProductAdded} />
-      <ViewProduct open={openView} handleClose={() => setOpenView(false)} product={selectedProduct} />
       <Container>
         <Stack direction="row" alignItems="center" mb={5} justifyContent="space-between">
           <Typography variant="h4" paddingTop={5}>

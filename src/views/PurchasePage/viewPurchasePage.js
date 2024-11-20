@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Typography, Button, Table, TableBody, TableCell, TableContainer, Grid,CardContent, Divider,
-  TableHead, TableRow, Paper, Box , Link} from '@mui/material';
+import {Card,Typography,Button,Table,TableBody,TableCell,TableContainer,Grid,CardContent,
+  Divider,TableHead,TableRow,Paper,Box,Link} from '@mui/material';
+import Swal from 'sweetalert2';
 import moment from 'moment';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import { styled } from '@mui/system';
 import Logo from '../../assets/images/images.png';
-import autoTable from 'jspdf-autotable'; 
+import autoTable from 'jspdf-autotable';
 import { useParams } from 'react-router';
 
 const InvoiceHeader = styled(Box)({
   textAlign: 'center',
   marginBottom: '20px',
   padding: '20px',
-  backgroundColor: '#90caf9', 
+  backgroundColor: '#90caf9',
   color: '#fff'
 });
 
@@ -26,7 +27,7 @@ const InvoiceTable = styled(Table)({
     textTransform: 'uppercase'
   },
   '& tbody tr:hover': {
-    backgroundColor: '#e3f2fd' 
+    backgroundColor: '#e3f2fd'
   },
   '& tfoot td': {
     fontWeight: 'bold',
@@ -58,34 +59,56 @@ const PurchasePage = () => {
     loadPurchase();
   }, [id]);
 
-  const handleApprove = async () => {
+  const updatePurchaseStatus = async (id, action) => {
     try {
-      const response = await axios.patch(`http://localhost:4200/purchase/approve/${id}`);
-  
+      const response = await axios.patch(`http://localhost:4200/purchase/update-status/${id}`, { action });
       if (response.status === 200) {
         setPurchaseData((prev) => ({
           ...prev,
-          status: 'Completed', 
+          status: action === 'approve' ? 'Completed' : 'Cancelled'
         }));
-        window.alert('Purchase approved successfully!');
+        Swal.fire({
+          title: `Purchase ${action === 'approve' ? 'approved' : 'cancelled'} successfully!`,
+          icon: 'success',
+          background: '#f0f8ff', 
+          confirmButtonColor: '#3085d6', 
+          confirmButtonText: 'Great!',
+          timer: 3000, 
+        });
+      } else {
+        Swal.fire({
+          title: `Failed to ${action === 'approve' ? 'approve' : 'cancel'} purchase`,
+          icon: 'error', 
+          background: '#f0f8ff',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'Okay',
+          timer: 3000,
+        });
       }
     } catch (error) {
-      console.error('Error during approval:', error);
-      window.alert('Failed to approve purchase');
+      console.error(`Error during ${action}:`, error);
+      Swal.fire({
+        title: `Failed to ${action === 'approve' ? 'approve' : 'cancel'} purchase`,
+        icon: 'error', 
+        background: '#f0f8ff',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Okay',
+        timer: 3000,
+      });
     }
   };
 
   const handleViewInvoice = () => {
-    setShowInvoice(true); 
+    setShowInvoice(true);
   };
 
   const downloadInvoice = () => {
     const doc = new jsPDF();
 
     doc.setFillColor(10, 45, 100);
-    doc.rect(0, 0, doc.internal.pageSize.width, 20, 'F'); 
+    doc.rect(0, 0, doc.internal.pageSize.width, 20, 'F');
     doc.setFontSize(22);
-    doc.setTextColor(255, 255, 255); 
+    doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.text('Invoice', doc.internal.pageSize.width / 2, 15, { align: 'center' });
 
@@ -112,21 +135,27 @@ const PurchasePage = () => {
       `$${(product.quantity * product.price).toFixed(2)}`
     ]);
 
-    tableRows.push([{ content: 'Subtotal', colSpan: 3, styles: { halign: 'right', fontStyle: 'bold' } }, `$${purchaseData.subtotal.toFixed(2)}`]);
+    tableRows.push([
+      { content: 'Subtotal', colSpan: 3, styles: { halign: 'right', fontStyle: 'bold' } },
+      `$${purchaseData.subtotal.toFixed(2)}`
+    ]);
     tableRows.push([{ content: 'Tax', colSpan: 3, styles: { halign: 'right', fontStyle: 'bold' } }, `$${purchaseData.tax.toFixed(2)}`]);
-    tableRows.push([{ content: 'Total', colSpan: 3, styles: { halign: 'right', fontStyle: 'bold', textColor: [0, 128, 0] } }, `$${purchaseData.total.toFixed(2)}`]);
+    tableRows.push([
+      { content: 'Total', colSpan: 3, styles: { halign: 'right', fontStyle: 'bold', textColor: [0, 128, 0] } },
+      `$${purchaseData.total.toFixed(2)}`
+    ]);
 
     autoTable(doc, {
       startY: tableMarginTop,
       head: [tableColumn],
       body: tableRows,
-      theme: 'grid', 
+      theme: 'grid',
       headStyles: { fillColor: [10, 45, 100], textColor: [255, 255, 255], fontSize: 12 },
       styles: { fontSize: 10, halign: 'center', cellPadding: 3 },
       columnStyles: {
-        1: { halign: 'center' }, 
-        2: { halign: 'right' }, 
-        3: { halign: 'right' }, 
+        1: { halign: 'center' },
+        2: { halign: 'right' },
+        3: { halign: 'right' }
       }
     });
 
@@ -166,11 +195,19 @@ const PurchasePage = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
         <Typography variant="h4">
           <strong>Status:</strong>
-        </Typography> &nbsp;&nbsp;
+        </Typography>{' '}
+        &nbsp;&nbsp;
         <Box
           sx={{
-            backgroundColor: status === 'Completed' ? '#34a853' : status === 'Pending' ? '#f44336' : '',
-            color: status === 'Completed' ? 'white' : 'white',
+            backgroundColor:
+              status === 'Completed'
+                ? '#34a853'
+                : status === 'Pending'
+                ? '#ff9800'
+                : status === 'Cancelled'
+                ? '#f44336'
+                : '',
+            color: 'white',
             padding: '0.3rem 1rem',
             borderRadius: '5px',
             display: 'flex',
@@ -394,20 +431,22 @@ const PurchasePage = () => {
                   </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
-                  <Link   onClick={handleViewInvoice}>
+                {status !== 'Cancelled' && (
+                  <Link onClick={handleViewInvoice}>
                     <Typography
                       variant="body2"
                       color="primary"
                       sx={{
-                        fontSize : '18px',
+                        fontSize: '18px',
                         fontWeight: 'bold',
-                        textDecoration: 'underline', 
+                        textDecoration: 'underline',
                         cursor: 'pointer'
                       }}
                     >
                       View Invoice
                     </Typography>
                   </Link>
+                )}
                 </Box>
               </Box>
             </CardContent>
@@ -415,104 +454,102 @@ const PurchasePage = () => {
         </Grid>
       </Grid>
 
-      {/* Invoice Section */}
-      <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center' , marginTop: '10px'}}>
-      {showInvoice && (
-         <Card variant="outlined" sx={{ padding: 2, borderRadius: 2, boxShadow: 3 , width: '900px', 
-          height: '900px'}}>
-         <InvoiceHeader>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <img src={Logo} alt="Company Logo" style={{ maxWidth: '60px', marginBottom: '10px' }} />
-              <Box sx={{ textAlign: 'right' }}>
-                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                  Inventory Management System
-                </Typography>
-                <Typography variant="body2">
-                  148, Greater South Avenue, Indore, M.P
-                </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '10px' }}>
+        {showInvoice && (
+          <Card variant="outlined" sx={{ padding: 2, borderRadius: 2, boxShadow: 3, width: '900px', height: '900px' }}>
+            <InvoiceHeader>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <img src={Logo} alt="Company Logo" style={{ maxWidth: '60px', marginBottom: '10px' }} />
+                <Box sx={{ textAlign: 'right' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                    Inventory Management System
+                  </Typography>
+                  <Typography variant="body2">148, Greater South Avenue, Indore, M.P</Typography>
+                </Box>
               </Box>
-            </Box>
-    
-            <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: '20px', mt: 2 }}>
-              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                Invoice No: {purchase_no}
-              </Typography>
-              <Typography variant="body1">
-                Date: {moment(date).format('DD/MM/YYYY')}
-              </Typography>
-            </Box>
-          </InvoiceHeader>
-    
-          <Typography variant="h5" sx={{ fontWeight: 'bold', marginTop: 2 }}>
-            Supplier : 
-         {supplierName}</Typography>
-          <Typography variant="body1">Email: {supplierEmail}</Typography>
-          <Typography variant="body1">Phone: {supplierPhone}</Typography>
-    
-          <TableContainer component={Paper} sx={{ alignContent: 'center' ,marginTop: 2, borderRadius: 2, boxShadow: 2 , maxWidth: 700 }}>
-            <InvoiceTable id="invoiceTable">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Item</TableCell>
-                  <TableCell>Quantity</TableCell>
-                  <TableCell>Price</TableCell>
-                  <TableCell>Subtotal</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {products?.map((product, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{product.productName}</TableCell>
-                    <TableCell>{product.quantity}</TableCell>
-                    <TableCell>{product.price}</TableCell>
-                    <TableCell>{(product.quantity * product.price).toFixed(2)}</TableCell>
+
+              <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: '20px', mt: 2 }}>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                  Invoice No: {purchase_no}
+                </Typography>
+                <Typography variant="body1">Date: {moment(date).format('DD/MM/YYYY')}</Typography>
+              </Box>
+            </InvoiceHeader>
+
+            <Typography variant="h5" sx={{ fontWeight: 'bold', marginTop: 2 }}>
+              Supplier :{supplierName}
+            </Typography>
+            <Typography variant="body1">Email: {supplierEmail}</Typography>
+            <Typography variant="body1">Phone: {supplierPhone}</Typography>
+
+            <TableContainer component={Paper} sx={{ alignContent: 'center', marginTop: 2, borderRadius: 2, boxShadow: 2, maxWidth: 700 }}>
+              <InvoiceTable id="invoiceTable">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Item</TableCell>
+                    <TableCell>Quantity</TableCell>
+                    <TableCell>Price</TableCell>
+                    <TableCell>Subtotal</TableCell>
                   </TableRow>
-                ))}
-                <TableRow>
-                  <TableCell colSpan={3} align="right">
-                    Subtotal
-                  </TableCell>
-                  <TableCell>{subtotal.toFixed(2)}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell colSpan={3} align="right">
-                    Tax
-                  </TableCell>
-                  <TableCell>{tax.toFixed(2)}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell colSpan={3} align="right" sx={{ fontWeight: 'bold' }}>
-                    Total
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>{total.toFixed(2)}</TableCell>
-                </TableRow>
-              </TableBody>
-            </InvoiceTable>
-          </TableContainer>
-    
-        
-    
-          <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2 ,marginRight: '160px' }}>
-            <Button variant="contained" color="secondary" onClick={downloadInvoice}>
-              Download Invoice
-            </Button>
-          </Box>
-    
-          <Typography variant="body2" align="left" sx={{ marginTop: 4 }}>
-            Thank you for your business!
-          </Typography>
-          <Typography variant="body2" align="left" sx={{ marginTop: 2}}>
-            All payments must be made in full before the commencement of any design work.
-          </Typography>
-        </Card>
-      )}
+                </TableHead>
+                <TableBody>
+                  {products?.map((product, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{product.productName}</TableCell>
+                      <TableCell>{product.quantity}</TableCell>
+                      <TableCell>{product.price}</TableCell>
+                      <TableCell>{(product.quantity * product.price).toFixed(2)}</TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow>
+                    <TableCell colSpan={3} align="right">
+                      Subtotal
+                    </TableCell>
+                    <TableCell>{subtotal.toFixed(2)}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={3} align="right">
+                      Tax
+                    </TableCell>
+                    <TableCell>{tax.toFixed(2)}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={3} align="right" sx={{ fontWeight: 'bold' }}>
+                      Total
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>{total.toFixed(2)}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </InvoiceTable>
+            </TableContainer>
+
+            <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2, marginRight: '160px' }}>
+              <Button variant="contained" color="secondary" onClick={downloadInvoice}>
+                Download Invoice
+              </Button>
+            </Box>
+
+            <Typography variant="body2" align="left" sx={{ marginTop: 4 }}>
+              Thank you for your business!
+            </Typography>
+            <Typography variant="body2" align="left" sx={{ marginTop: 2 }}>
+              All payments must be made in full before the commencement of any design work.
+            </Typography>
+          </Card>
+        )}
       </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-        {status !== 'Completed' && (
-          <Button variant="contained" color="secondary" onClick={handleApprove}>
-            Approve Purchase
-          </Button>
+      <Box sx={{ display: 'flex', mt: 2, justifyContent: 'flex-end' }}>
+        {status === 'Pending' && (
+          <>
+            <Button variant="contained" color="secondary" onClick={() => updatePurchaseStatus(id, 'approve')}>
+              Approve Purchase
+            </Button>
+            &nbsp;&nbsp;
+            <Button variant="contained" color="error" onClick={() => updatePurchaseStatus(id, 'cancel')}>
+              Cancel Purchase
+            </Button>
+          </>
         )}
       </Box>
     </Box>

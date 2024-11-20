@@ -6,6 +6,7 @@ import Iconify from '../../ui-component/iconify';
 import AddPurchases from './AddPurchase';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 import { deletePurchase, fetchPurchases } from 'apis/api.js';
 import moment from 'moment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -94,8 +95,11 @@ const Purchase = () => {
         return (
           <Box
             sx={{
-              backgroundColor: status === 'Completed' ? '#34a853' : status === 'Pending' ? '#f44336' : '',
-              color: status === 'Completed' ? 'white' : 'white',
+              backgroundColor: 
+              status === 'Completed' ? '#34a853' : 
+              status === 'Pending' ? '#ff9800' : 
+              status === 'Cancelled' ? '#f44336' : '',
+              color: 'white',
               padding: '0.5rem 1rem',
               borderRadius: '5px',
               display: 'flex',
@@ -170,15 +174,27 @@ const Purchase = () => {
   const handleCloseAdd = () => setOpenAdd(false);
 
   const handleDelete = async (_id) => {
-    if (window.confirm('Are you sure you want to delete this purchase?')) {
-      try {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+      if (result.isConfirmed) {
         await deletePurchase(_id);
         setPurchaseDetails((prev) => prev.filter((purchase) => purchase._id !== _id));
-        toast.success('Purchase deleted successfully');
-      } catch (error) {
-        console.error('Failed to delete purchase:', error);
-        toast.error('Failed to delete purchase');
+        Swal.fire(
+          "Deleted!", 
+          "Your purchase has been deleted.", 
+          "success"  
+        );
       }
+    } catch (error) {
+      console.error('Error deleting purchase:', error);
     }
   };
 
