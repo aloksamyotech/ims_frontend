@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchUsers } from 'apis/api.js';
-import { Dialog, DialogTitle, DialogContent,IconButton, Typography, Box } from '@mui/material';
-import { AccessTime } from '@mui/icons-material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Dialog, DialogTitle, DialogContent,TextField, Typography, Box } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
 import moment from 'moment';
 
 const ViewUser = ({ open, handleClose, user}) => {
@@ -34,40 +33,20 @@ const ViewUser = ({ open, handleClose, user}) => {
 
   return (
     <>
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-          <DialogTitle variant="h3" sx={{ backgroundColor: 'primary.main', color: 'white' }}>
-            User Details
-            <IconButton
-          edge="end"
-          color="inherit"
-          onClick={handleClose}
-          sx={{ position: 'absolute', right: 8, top: 8 }}
-        >
-          <CloseIcon />
-        </IconButton>
-          </DialogTitle>
-          <DialogContent sx={{ padding: 2 }}>
-            <Box mb={2} sx={{ paddingTop : 3}}>
-              <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: '1.2rem', mb: 1 }}>
-                User name:  {user.name}
-              </Typography>
-            </Box>
-            <Box mb={2}>
-              <Typography variant="body1">Email : {user.email}</Typography>
-            </Box>
-            <Box mb={2}>
-              <Typography variant="body1">Phone : {user.phone}</Typography>
-            </Box>
-            <Box mb={2}>
-              <Typography variant="body1">Role : {user.role}</Typography>
-            </Box>
-            <Box mb={2} sx={{ display: 'flex', alignItems: 'center' }}>
-            <AccessTime sx={{ marginRight: 1 }} />
-            <Typography variant="body2">Created At: {moment(user.createdAt).format('DD-MM-YYYY')}</Typography>
-          </Box>
-          </DialogContent>
-        </Dialog>
-      </>
+        <Dialog open={open} onClose={handleClose}>
+        <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between', marginLeft: 10 }}>
+          <Typography variant="h3">View User</Typography>
+          <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
+        </DialogTitle>
+        <DialogContent>
+          <TextField autoFocus label="User name" variant="outlined" fullWidth margin="dense" value={user?.name || 'NA'} />
+          <TextField autoFocus label="Email" variant="outlined" fullWidth margin="dense" value={user?.email || 'NA'} />
+          <TextField autoFocus label="Phone" variant="outlined" fullWidth margin="dense" value={user?.phone || 'NA'} />
+          <TextField autoFocus label="Role" variant="outlined" fullWidth margin="dense" value={user?.role || 'NA'} />
+          <TextField autoFocus label="Created At" variant="outlined" fullWidth margin="dense" value={moment(user?.createdAt).format('DD-MM-YYYY')}/>
+        </DialogContent>
+      </Dialog>  
+    </>       
   );
 };
 

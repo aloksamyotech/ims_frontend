@@ -168,14 +168,22 @@ const Customer = () => {
         <TableStyle>
           <Box width="100%" overflow="hidden">
             <Card style={{ height: '600px', paddingTop: '5px', overflow: 'auto' }}>
-              <DataGrid
+              <DataGrid  
                 rows={customerData}
                 columns={columns}
                 checkboxSelection
                 getRowId={(row) => row._id}
                 components={{ Toolbar: GridToolbar }}
+                componentsProps={{ toolbar: { showQuickFilter: true } }}
                 stickyHeader
                 style={{ minWidth: '800px' }} 
+                pageSizeOptions={[5, 10, 25]}
+                initialState={{
+                  pagination: {
+                    paginationModel: { pageSize: 10, page: 0 }, 
+                  },
+                }}
+                pagination
               />
             </Card>
           </Box>

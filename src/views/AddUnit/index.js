@@ -129,7 +129,7 @@ const Unit = () => {
         <Box width="100%" overflow="hidden">
               <Card style={{ height: '600px', paddingTop: '15px', overflow: 'hidden' }}> 
                 <div style={{ height: '100%', width: '100%', overflow: 'auto' }}> 
-            <DataGrid
+            <DataGrid 
               rows={unitData}
               columns={columns}
               checkboxSelection
@@ -137,7 +137,14 @@ const Unit = () => {
               slots={{ toolbar: GridToolbar }}
               slotProps={{ toolbar: { showQuickFilter: true } }}
               stickyHeader
-              style={{ minWidth: '800px'}} 
+              style={{ minWidth: '800px'}}
+              pageSizeOptions={[5, 10, 25]}
+              initialState={{
+                pagination: {
+                  paginationModel: { pageSize: 10, page: 0 }, 
+                },
+              }}
+              pagination 
             />
             </div>
           </Card>

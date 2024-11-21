@@ -77,7 +77,6 @@ const Category = () => {
   };
 
   const handleView = (category) => {
-    console.log('Viewing category:', category);
     setCurrentCategory(category);
     setOpenView(true);
   };
@@ -151,6 +150,13 @@ const Category = () => {
                   slotProps={{ toolbar: { showQuickFilter: true } }}
                   stickyHeader
                   style={{ minWidth: '800px', overflow: 'auto' }}
+                  pageSizeOptions={[5, 10, 25]}
+                  initialState={{
+                    pagination: {
+                      paginationModel: { pageSize: 10, page: 0 }, 
+                    },
+                  }}
+                  pagination
                 />
               </div>
             </Card>

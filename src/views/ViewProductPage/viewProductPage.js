@@ -40,38 +40,40 @@ const ViewProductPage = () => {
     const fetchReportData = async () => {
       try {
         let response;
-
+  
         if (selectedTab === 0) {
           response = await getCustomerProductReport();
-
-          const flattenedSellData = response.data.flatMap((customer) =>
-            customer.products.map((product) => ({
-              customerName: customer.customerName,
-              productName: product.productName,
-              categoryName: product.categoryName,
-              quantity: product.quantity,
-              price: product.price,
-              total: product.quantity * product.price,
-              createdAt: moment(customer.createdAt)
-            }))
+  
+          const flattenedSellData = response?.data?.flatMap((customer) =>
+            customer?.products
+              ?.filter((product) => product?.productId === id)  
+              ?.map((product) => ({
+                customerName: customer?.customerName,
+                productName: product?.productName,
+                categoryName: product?.categoryName,
+                quantity: product?.quantity,
+                price: product?.price,
+                total: product?.quantity * product?.price,
+                createdAt: moment(customer?.createdAt)
+              }))
           );
-
+  
           setReportData(flattenedSellData);
-        } 
-        
-        else {
+        } else {
           response = await getSupplierProductReport();
-
-          const flattenedPurchaseData = response.data.flatMap((supplier) =>
-            supplier.products.map((product) => ({
-              supplierName: supplier.supplierName,
-              productName: product.productName,
-              categoryName: product.categoryName,
-              quantity: product.quantity,
-              price: product.price,
-              total: product.quantity * product.price,
-              createdAt: moment(supplier.createdAt)
-            }))
+  
+          const flattenedPurchaseData = response?.data?.flatMap((supplier) =>
+            supplier?.products
+              ?.filter((product) => product?.productId === id) 
+              ?.map((product) => ({
+                supplierName: supplier?.supplierName,
+                productName: product?.productName,
+                categoryName: product?.categoryName,
+                quantity: product?.quantity,
+                price: product?.price,
+                total: product?.quantity * product?.price,
+                createdAt: moment(supplier?.createdAt)
+              }))
           );
           setReportData(flattenedPurchaseData);
         }
@@ -79,9 +81,10 @@ const ViewProductPage = () => {
         console.error('Error fetching report data:', error);
       }
     };
-
+  
     fetchReportData();
-  }, [selectedTab]);
+  }, [selectedTab, id]);  
+  
 
   const filterDataByDate = (data) => {
     const now = moment();
@@ -89,13 +92,13 @@ const ViewProductPage = () => {
   
     switch (selectedDateRange) {
       case 'Daily':
-        return data.filter((report) => report.createdAt.isSame(now, 'day'));
+        return data.filter((report) => report?.createdAt?.isSame(now, 'day'));
         case 'Weekly':
         return data.filter((report) => 
           report.createdAt.isBetween(last7Days, now, null, '[]') 
         );
       case 'Monthly':
-        return data.filter((report) => report.createdAt.isSame(now, 'month'));
+        return data.filter((report) => report?.createdAt?.isSame(now, 'month'));
       
       case 'All':
       default:
@@ -104,8 +107,6 @@ const ViewProductPage = () => {
   };
 
   const filteredData = filterDataByDate(reportData);
-
-
 
   return (
     <Box sx={{ marginTop: '20px' }}>
@@ -321,13 +322,13 @@ const ViewProductPage = () => {
           <TableBody>
             {filteredData.map((report, index) => (
               <TableRow key={index}>
-                <TableCell>{report.createdAt.format('DD-MM-YYYY')}</TableCell>
-                <TableCell>{selectedTab === 0 ? report.customerName : report.supplierName}</TableCell>
-                <TableCell>{report.productName}</TableCell>
-                <TableCell>{report.categoryName}</TableCell>
-                <TableCell>{report.quantity}</TableCell>
-                <TableCell>{report.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
-                <TableCell>{report.total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
+                <TableCell>{report?.createdAt.format('DD-MM-YYYY')}</TableCell>
+                <TableCell>{selectedTab === 0 ? report?.customerName : report?.supplierName}</TableCell>
+                <TableCell>{report?.productName}</TableCell>
+                <TableCell>{report?.categoryName}</TableCell>
+                <TableCell>{report?.quantity}</TableCell>
+                <TableCell>{report?.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
+                <TableCell>{report?.total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchCategories } from 'apis/api.js';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, IconButton, Box } from '@mui/material';
-import { AccessTime } from '@mui/icons-material';
-import CloseIcon from '@mui/icons-material/Close';
-import moment from 'moment';
+import { Dialog, DialogTitle, DialogContent,TextField, Typography } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const ViewCategory = ({ open, handleClose, category }) => {
   const [categoryData, setCategoryData] = useState(null);
@@ -32,26 +30,14 @@ const ViewCategory = ({ open, handleClose, category }) => {
 
   return (
     <>
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle variant="h3" sx={{ backgroundColor: 'primary.main', color: 'white' }}>
-          Category Details
-          <IconButton edge="end" color="inherit" onClick={handleClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
-            <CloseIcon />
-          </IconButton>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between', marginLeft: 10 }}>
+          <Typography variant="h3">View Category</Typography>
+          <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
         </DialogTitle>
-        <DialogContent sx={{ padding: 2 }}>
-          <Box mb={2} sx={{ paddingTop: 3 }}>
-            <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: '1.2rem', mb: 1 }}>
-              Category name: {category.catnm}
-            </Typography>
-          </Box>
-          <Box mb={2}>
-            <Typography variant="body1">Description : {category.desc}</Typography>
-          </Box>
-          <Box mb={2} sx={{ display: 'flex', alignItems: 'center' }}>
-            <AccessTime sx={{ marginRight: 1 }} />
-            <Typography variant="body2">Created At: {moment(category.createdAt).format('DD-MM-YYYY')}</Typography>
-          </Box>
+        <DialogContent>
+          <TextField autoFocus label="Category name" variant="outlined" fullWidth margin="dense" value={category?.catnm || 'NA'} />
+          <TextField autoFocus label="Description" variant="outlined" fullWidth margin="dense" value={category?.desc || 'NA'} />
         </DialogContent>
       </Dialog>
     </>

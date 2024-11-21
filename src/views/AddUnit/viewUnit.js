@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchUnits } from 'apis/api.js';
-import { Dialog, DialogTitle, DialogContent,IconButton, Typography, Box } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Dialog, DialogTitle, DialogContent,TextField, Typography, Box } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const ViewUnit = ({ open, handleClose, unit}) => {
     const [unitData, setUnitData] = useState(null);
@@ -32,29 +32,16 @@ const ViewUnit = ({ open, handleClose, unit}) => {
 
   return (
     <>
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-          <DialogTitle variant="h3" sx={{ backgroundColor: 'primary.main', color: 'white' }}>
-            Unit Details
-            <IconButton
-          edge="end"
-          color="inherit"
-          onClick={handleClose}
-          sx={{ position: 'absolute', right: 8, top: 8 }}
-        >
-          <CloseIcon />
-        </IconButton>
-          </DialogTitle>
-          <DialogContent sx={{ padding: 2 }}>
-            <Box mb={2} sx={{ paddingTop : 3}}>
-              <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: '1.2rem', mb: 1 }}>
-                Unit name:  {unit.unitnm}
-              </Typography>
-            </Box>
-            <Box mb={2}>
-              <Typography variant="body1">Short name : {unit.shortcode}</Typography>
-            </Box>
-          </DialogContent>
-        </Dialog>
+        <Dialog open={open} onClose={handleClose}>
+        <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between', marginLeft: 10 }}>
+          <Typography variant="h3">View Unit</Typography>
+          <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
+        </DialogTitle>
+        <DialogContent>
+          <TextField autoFocus label="Unit name" variant="outlined" fullWidth margin="dense" value={unit?.unitnm || 'NA'} />
+          <TextField autoFocus label="Shortcode" variant="outlined" fullWidth margin="dense" value={unit?.shortcode || 'NA'} />
+        </DialogContent>
+      </Dialog>
       </>
   );
 };

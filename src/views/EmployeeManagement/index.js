@@ -244,10 +244,16 @@ const User = () => {
                 columns={columns}
                 checkboxSelection
                 getRowId={(row) => row._id}
-                slots={{ toolbar: GridToolbar }}
-                slotProps={{ toolbar: { showQuickFilter: true } }}
-                stickyHeader
+                components={{ Toolbar: GridToolbar }}
+                componentsProps={{ toolbar: { showQuickFilter: true } }}
                 style={{ minWidth: '800px', overflow: 'auto' }}
+                pageSizeOptions={[5, 10, 25]}
+                initialState={{
+                  pagination: {
+                    paginationModel: { pageSize: 10, page: 0 }, 
+                  },
+                }}
+                pagination
               />
             </Card>
           </Box>
