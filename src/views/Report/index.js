@@ -16,11 +16,13 @@ import {
   FormControl
 } from '@mui/material';
 import moment from 'moment';
+import { fetchCurrencySymbol } from 'apis/constant.js'; 
 
 const SupplierProductReport = () => {
   const [reportData, setReportData] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedDateRange, setSelectedDateRange] = useState('All');
+  const [currencySymbol, setCurrencySymbol] = useState('');
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -29,6 +31,14 @@ const SupplierProductReport = () => {
   const handleDateRangeChange = (event) => {
     setSelectedDateRange(event.target.value);
   };
+
+  useEffect(() => {
+    const getCurrency = async () => {
+      const symbol = await fetchCurrencySymbol();
+      setCurrencySymbol(symbol);  
+    };
+    getCurrency();
+  }, []);
 
   useEffect(() => {
     const fetchReportData = async () => {
@@ -103,7 +113,7 @@ const SupplierProductReport = () => {
   return (
     <div>
       <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-        <Box sx={{ flexGrow: 0.8 , marginTop: 4,  marginLeft: '350px'}}>
+        <Box sx={{ flexGrow: 0.8 , marginTop: 4,  marginLeft: '350px' ,marginRight: '330px'}}>
           <Tabs
             value={selectedTab}
             onChange={handleTabChange}
@@ -128,7 +138,7 @@ const SupplierProductReport = () => {
           </Tabs>
         </Box>
 
-        <Box sx={{ marginTop: 4 , background : '#ffff'}}>
+        <Box sx={{ marginTop: 4 , background : '#ffff' ,marginRight: '42px'}}>
           <FormControl style={{minWidth: 120 , alignContent : 'center'}}>
             <Select value={selectedDateRange} onChange={handleDateRangeChange}>
               <MenuItem value="All">All</MenuItem>
@@ -161,8 +171,8 @@ const SupplierProductReport = () => {
                 <TableCell>{report?.productName}</TableCell>
                 <TableCell>{report?.categoryName}</TableCell>
                 <TableCell>{report?.quantity}</TableCell>
-                <TableCell>{report?.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
-                <TableCell>{report?.total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
+                <TableCell>{currencySymbol} {report?.price.toLocaleString()}</TableCell>
+                <TableCell>{currencySymbol} {report?.total.toLocaleString()}</TableCell>  
               </TableRow>
             ))}
           </TableBody>

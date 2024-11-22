@@ -49,6 +49,10 @@ export const urls = {
     getSupplierProductReport: '/purchase/fetchSupplierProductReport',
     getCustomerProductReport: '/order/fetchCustomerProductReport',
   },
+  admin: {
+    fetch: '/admin/fetch/',
+    update: '/admin/update/:id',
+  }
 };
 
 

@@ -36,6 +36,9 @@ export const updateEntity = async (entityType, updatedEntity) => {
     case 'product':
       url = urls.product.update;
       break;
+      case 'admin':
+        url = urls.admin.update;
+        break;
     default:
       throw new Error('Unsupported entity type');
   }

@@ -1,29 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Card,
-  Typography,
-  Grid,
-  CardContent,
-  Divider,
-  TableContainer,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableBody,
-  Table,
-  Paper
-} from '@mui/material';
+import { Box, Card, Typography, Grid, CardContent, Divider, Container, Button, Stack } from '@mui/material';
+import TableStyle from '../../ui-component/TableStyle';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import moment from 'moment';
 import { fetchPurchases } from 'apis/api.js';
+import { fetchCurrencySymbol } from 'apis/constant.js';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 const ViewSupplierPage = () => {
   const { id } = useParams();
   const [purchaseDetails, setPurchaseDetails] = useState([]);
   const [supplierData, setSupplierData] = useState(null);
+  const [currencySymbol, setCurrencySymbol] = useState('');
 
   useEffect(() => {
     const loadSupplier = async () => {
@@ -32,6 +23,7 @@ const ViewSupplierPage = () => {
         setSupplierData(response.data);
         const result = await fetchPurchases();
         setPurchaseDetails(result.data);
+        console.log(result.data);
       } catch (error) {
         toast.error('Error fetching supplier data');
       }
@@ -40,9 +32,111 @@ const ViewSupplierPage = () => {
     loadSupplier();
   }, [id]);
 
+  useEffect(() => {
+    const getCurrency = async () => {
+      const symbol = await fetchCurrencySymbol();
+      setCurrencySymbol(symbol);  
+    };
+    getCurrency();
+  }, []);
+
+  const columns = [
+    {
+      field: 'createdAt',
+      headerName: 'Date',
+      width: 120,
+      valueGetter: (params) => {
+        return moment(params.row.createdAt).format('DD-MM-YYYY');
+      }
+    },
+    {
+      field: 'status', 
+      headerName: 'Status', 
+      width: 150,
+      renderCell: (params) => {
+        const status = params.row.status;
+        return (
+          <Box
+            sx={{
+              backgroundColor: 
+                status === 'Completed' ? '#34a853' : 
+                status === 'Pending' ? '#ff9800' : 
+                status === 'Cancelled' ? '#f44336' : '',
+              color: 'white',
+              padding: '0.5rem 1rem',
+              borderRadius: '5px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 'bold',
+              width: '110px',
+              height: '25px', 
+              textTransform: 'uppercase',
+              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+              gap: '0.5rem',
+              fontSize: '12px',  
+            }}
+          >
+            {status}
+          </Box>
+        );
+      }
+    },
+    {
+      field: 'productName',
+      headerName: 'Product Name',
+      width: 200,
+      valueGetter: (params) => {
+        const products = params.row.products || [];
+        return products.length > 0 ? products[0].productName : 'NA';
+      }
+    },
+    {
+      field: 'categoryName',
+      headerName: 'Product Category',
+      width: 180,
+      valueGetter: (params) => {
+        const products = params.row.products || [];
+        return products.length > 0 ? products[0].categoryName : 'NA';
+      }
+    },
+    {
+      field: 'quantity',
+      headerName: 'Quantity',
+      width: 100,
+      valueGetter: (params) => {
+        const products = params.row.products || [];
+        return products.length > 0 ? products[0].quantity : 0;
+      }
+    },
+    {
+      field: 'subtotal',
+      headerName: 'Subtotal',
+      width: 120,
+      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`)
+    },
+    {
+      field: 'tax',
+      headerName: 'Tax',
+      width: 120,
+      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`)
+    },
+    {
+      field: 'total',
+      headerName: 'Total Sales',
+      width: 150,
+      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`)
+    }
+  ];
+
   const filteredPurchases = purchaseDetails.filter((purchase) => purchase.supplierId === supplierData?._id);
 
   return (
+    <Container>
+    <Link to="/dashboard/suppliers">
+      <Button sx={{ marginTop: '18px' }} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
+      </Button>
+    </Link>
     <Box sx={{ marginTop: '20px' }}>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
@@ -160,37 +254,38 @@ const ViewSupplierPage = () => {
         </Grid>
       </Grid>
 
-      <TableContainer component={Paper} elevation={3} sx={{ marginTop: 5, marginLeft: 3, maxWidth: 1050 }}>
-        <Table>
-          <TableHead sx={{ backgroundColor: '#1976d2' }}>
-            <TableRow>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Date</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Status</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Product Name</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Product Category</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Quantity</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Subtotal</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Tax</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Total Sales</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredPurchases.map((purchaseDetails, index) => (
-              <TableRow key={index}>
-                <TableCell>{new Date(purchaseDetails?.createdAt).toLocaleDateString('en-GB')}</TableCell>
-                <TableCell>{purchaseDetails?.status || 'NA'}</TableCell>
-                <TableCell>{purchaseDetails?.products[0]?.productName}</TableCell>
-                <TableCell>{purchaseDetails?.products[0]?.categoryName}</TableCell>
-                <TableCell>{purchaseDetails?.products[0]?.quantity}</TableCell>
-                <TableCell>{purchaseDetails?.subtotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
-                <TableCell>{purchaseDetails?.tax.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
-                <TableCell>{purchaseDetails?.total.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
+      <Stack direction="row" alignItems="center" mb={3} justifyContent={'space-between'}>
+          <Typography variant="h4" paddingTop={2}>
+            Purchases List
+          </Typography>
+        </Stack>
+        <TableStyle>
+          <Box width="100%" overflow="hidden">
+            <Card style={{ height: '600px', paddingTop: '10px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
+                <DataGrid
+                  rows={filteredPurchases}
+                  columns={columns}
+                  checkboxSelection
+                  getRowId={(row) => row._id}
+                  slots={{ toolbar: GridToolbar }}
+                  slotProps={{ toolbar: { showQuickFilter: true } }}
+                  stickyHeader
+                  style={{ minWidth: '800px' }}
+                  pageSizeOptions={[5, 10, 25]}
+                  initialState={{
+                    pagination: {
+                      paginationModel: { pageSize: 10, page: 0 }
+                    }
+                  }}
+                  pagination
+                />
+              </div>
+            </Card>
+          </Box>
+        </TableStyle>
+      </Box>
+    </Container>
   );
 };
 

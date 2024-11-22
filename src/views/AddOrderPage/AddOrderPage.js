@@ -32,6 +32,7 @@ import { Link } from 'react-router-dom';
 import { fetchProducts, fetchCustomers, addCustomer } from 'apis/api.js';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+import { fetchCurrencySymbol } from 'apis/constant.js'; 
 
 const TAX_RATE = 0.07;
 
@@ -54,6 +55,7 @@ const OrderForm = (props) => {
   });
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];
+  const [currencySymbol, setCurrencySymbol] = useState('');
 
   const validationSchema = yup.object({
     date: yup.date().required('Date is required'),
@@ -95,6 +97,15 @@ const OrderForm = (props) => {
     };
 
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const getCurrency = async () => {
+      const symbol = await fetchCurrencySymbol();
+      setCurrencySymbol(symbol);  
+      console.log(symbol);
+    };
+    getCurrency();
   }, []);
 
   const filteredProducts = productList?.filter((product) => product.productnm.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -249,7 +260,7 @@ const OrderForm = (props) => {
   return (
     <Container>
       <Link to="/dashboard/orders">
-        <Button sx={{ marginTop: '5px' }} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
+        <Button sx={{ marginTop: '18px' }} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
         </Button>
       </Link>
       <form onSubmit={formik.handleSubmit}>
@@ -403,8 +414,8 @@ const OrderForm = (props) => {
                               />
                             </Box>
                           </TableCell>
-                          <TableCell>{product.sellingPrice.toFixed(2)}</TableCell>
-                          <TableCell>{product.subtotal.toFixed(2)}</TableCell>
+                          <TableCell>{currencySymbol} {product.sellingPrice.toFixed(2)}</TableCell>
+                          <TableCell>{currencySymbol} {product.subtotal.toFixed(2)}</TableCell>
                           <TableCell>
                             <IconButton
                               onClick={() => handleRemoveProduct(product._id)}
@@ -427,19 +438,19 @@ const OrderForm = (props) => {
                         <TableCell colSpan={4} align="right">
                           Subtotal
                         </TableCell>
-                        <TableCell align="center">{invoiceSubtotal.toFixed(2)}</TableCell>
+                        <TableCell align="center">{currencySymbol} {invoiceSubtotal.toFixed(2)}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell colSpan={4} align="right">
                           Tax
                         </TableCell>
-                        <TableCell align="center">{invoiceTaxes.toFixed(2)}</TableCell>
+                        <TableCell align="center"> {currencySymbol} {invoiceTaxes.toFixed(2)}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell colSpan={4} align="right" sx={{ fontWeight: 'bold', color: 'black' }}>
                           Total
                         </TableCell>
-                        <TableCell align="center">{invoiceTotal.toFixed(2)}</TableCell>
+                        <TableCell align="center">{currencySymbol} {invoiceTotal.toFixed(2)}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
@@ -519,7 +530,7 @@ const OrderForm = (props) => {
                         <TableCell>{product.productnm}</TableCell>
                         <TableCell>{product.quantity}</TableCell>
                         <TableCell>{product.unitName}</TableCell>
-                        <TableCell>{product.sellingPrice.toFixed(2)}</TableCell>
+                        <TableCell>{currencySymbol} {product.sellingPrice.toFixed(2)}</TableCell>
                         <TableCell>
                               <Button
                                 onClick={() => handleSelectProduct(product)}

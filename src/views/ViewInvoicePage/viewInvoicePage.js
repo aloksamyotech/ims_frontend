@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Box, Grid, Card, CardContent, Button, Divider } from '@mui/material';
+import { Typography, Box, Grid, Card, CardContent, Button, Divider ,Container} from '@mui/material';
 import moment from 'moment';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router';
+import { fetchCurrencySymbol } from 'apis/constant.js'; 
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const InvoicePage = () => {
   const { id } = useParams();
   const [invoiceData, setInvoiceData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currencySymbol, setCurrencySymbol] = useState('');
 
   useEffect(() => {
     const loadInvoice = async () => {
@@ -25,6 +28,15 @@ const InvoicePage = () => {
     };
     loadInvoice();
   }, [id]);
+
+  useEffect(() => {
+    const getCurrency = async () => {
+      const symbol = await fetchCurrencySymbol();
+      setCurrencySymbol(symbol);  
+      console.log(symbol);
+    };
+    getCurrency();
+  }, []);
 
   const updateOrderStatus = async (id, action) => {
     try {
@@ -87,7 +99,12 @@ const InvoicePage = () => {
   } = invoiceData || {};
 
   return (
-    <Box sx={{ padding: 2, marginTop: 4 }}>
+    <Container>
+      <Link to="/dashboard/orders">
+        <Button sx={{ marginTop: '18px' }} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
+        </Button>
+      </Link>
+    <Box sx={{ padding: 2, marginTop: 2 }}>
       <Typography variant="h3" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
         Order Details
       </Typography>
@@ -275,7 +292,7 @@ const InvoicePage = () => {
 
                       <Grid item xs={6}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body1">${product.price.toFixed(2)}</Typography>
+                          <Typography variant="body1"> {currencySymbol} {product.price.toFixed(2)}</Typography>
                         </Box>
                       </Grid>
 
@@ -289,7 +306,7 @@ const InvoicePage = () => {
 
                       <Grid item xs={6}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body1">${subtotalProduct.toFixed(2)}</Typography>
+                          <Typography variant="body1">{currencySymbol} {subtotalProduct.toFixed(2)}</Typography>
                         </Box>
                       </Grid>
                     </Grid>
@@ -309,7 +326,7 @@ const InvoicePage = () => {
 
                   <Grid item xs={6}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1"> ${subtotal.toFixed(2)}</Typography>
+                      <Typography variant="body1">{currencySymbol} {subtotal.toFixed(2)}</Typography>
                     </Box>
                   </Grid>
 
@@ -323,7 +340,7 @@ const InvoicePage = () => {
 
                   <Grid item xs={6}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">${tax.toFixed(2)}</Typography>
+                      <Typography variant="body1">{currencySymbol} {tax.toFixed(2)}</Typography>
                     </Box>
                   </Grid>
 
@@ -339,7 +356,7 @@ const InvoicePage = () => {
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                       <Typography variant="body1">
                         {' '}
-                        <strong>${total.toFixed(2)}</strong>
+                        <strong>{currencySymbol} {total.toFixed(2)}</strong>
                       </Typography>
                     </Box>
                   </Grid>
@@ -383,6 +400,7 @@ const InvoicePage = () => {
         )}
       </Box>
     </Box>
+    </Container>
   );
 };
 

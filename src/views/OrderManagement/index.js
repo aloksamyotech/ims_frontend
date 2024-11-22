@@ -12,6 +12,7 @@ import { deleteOrder, fetchOrders } from 'apis/api.js';
 import moment from 'moment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { fetchCurrencySymbol } from 'apis/constant.js'; 
 
 const Order = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const Order = () => {
   const [orderDetails, setOrderDetails] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [filterStatus, setFilterStatus] = useState('All');
+  const [currencySymbol, setCurrencySymbol] = useState('');
 
   useEffect(() => {
     const loadOrders = async () => {
@@ -32,6 +34,14 @@ const Order = () => {
       }
     };
     loadOrders();
+  }, []);
+
+  useEffect(() => {
+    const getCurrency = async () => {
+      const symbol = await fetchCurrencySymbol();
+      setCurrencySymbol(symbol);  
+    };
+    getCurrency();
   }, []);
 
   const handleFilterChange = (event) => {
@@ -82,7 +92,7 @@ const Order = () => {
       flex: 1.5,
       valueFormatter: ({ value }) => {
         if (value != null) {
-          return `$${value.toLocaleString()}`;
+          return ` ${currencySymbol} ${value.toLocaleString()}`;
         }
         return '$0';
       }

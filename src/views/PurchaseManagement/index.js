@@ -11,6 +11,7 @@ import { deletePurchase, fetchPurchases } from 'apis/api.js';
 import moment from 'moment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { fetchCurrencySymbol } from 'apis/constant.js'; 
 
 const Purchase = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const Purchase = () => {
   const [purchaseDetails, setPurchaseDetails] = useState([]);
   const [filteredPurchases, setFilteredPurchasers] = useState([]);
   const [filterStatus, setFilterStatus] = useState('All');
+  const [currencySymbol, setCurrencySymbol] = useState('');
 
   useEffect(() => {
     const loadPurchase = async () => {
@@ -31,6 +33,14 @@ const Purchase = () => {
       }
     };
     loadPurchase();
+  }, []);
+
+  useEffect(() => {
+    const getCurrency = async () => {
+      const symbol = await fetchCurrencySymbol();
+      setCurrencySymbol(symbol);  
+    };
+    getCurrency();
   }, []);
 
   const handleFilterChange = (event) => {
@@ -81,7 +91,7 @@ const Purchase = () => {
       flex: 1.5,
       valueFormatter: ({ value }) => {
         if (value != null) {
-          return `$${value.toLocaleString()}`;
+          return `${currencySymbol} ${value.toLocaleString()}`;
         }
         return '$0';
       }

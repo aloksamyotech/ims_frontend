@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {Card,Typography,Button,Table,TableBody,TableCell,TableContainer,Grid,CardContent,
-  Divider,TableHead,TableRow,Paper,Box,Link} from '@mui/material';
+  Divider,TableHead,TableRow,Paper,Box,Container} from '@mui/material';
 import Swal from 'sweetalert2';
 import moment from 'moment';
 import axios from 'axios';
@@ -8,7 +8,10 @@ import jsPDF from 'jspdf';
 import { styled } from '@mui/system';
 import Logo from '../../assets/images/images.png';
 import autoTable from 'jspdf-autotable';
-import { useParams } from 'react-router';
+import { useParams} from 'react-router';
+import { Link } from 'react-router-dom';
+import { fetchCurrencySymbol } from 'apis/constant.js'; 
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const InvoiceHeader = styled(Box)({
   textAlign: 'center',
@@ -42,6 +45,7 @@ const PurchasePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showInvoice, setShowInvoice] = useState(false);
+  const [currencySymbol, setCurrencySymbol] = useState('');
 
   useEffect(() => {
     const loadPurchase = async () => {
@@ -58,6 +62,14 @@ const PurchasePage = () => {
 
     loadPurchase();
   }, [id]);
+
+  useEffect(() => {
+    const getCurrency = async () => {
+      const symbol = await fetchCurrencySymbol();
+      setCurrencySymbol(symbol);  
+    };
+    getCurrency();
+  }, []);
 
   const updatePurchaseStatus = async (id, action) => {
     try {
@@ -98,7 +110,8 @@ const PurchasePage = () => {
     }
   };
 
-  const handleViewInvoice = () => {
+  const handleViewInvoice = (event) => {
+    event.preventDefault();
     setShowInvoice(true);
   };
 
@@ -187,7 +200,12 @@ const PurchasePage = () => {
   } = purchaseData || {};
 
   return (
-    <Box sx={{ padding: 2, marginTop: 4 }}>
+    <Container>
+    <Link to="/dashboard/purchases">
+      <Button sx={{ marginTop: '18px' }} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
+      </Button>
+    </Link>
+    <Box sx={{ padding: 2, marginTop: 2 }}>
       <Typography variant="h3" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
         Purchase Details
       </Typography>
@@ -361,7 +379,7 @@ const PurchasePage = () => {
 
                       <Grid item xs={6}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body1">${product.price.toFixed(2)}</Typography>
+                          <Typography variant="body1">{currencySymbol} {product.price.toFixed(2)}</Typography>
                         </Box>
                       </Grid>
 
@@ -375,7 +393,7 @@ const PurchasePage = () => {
 
                       <Grid item xs={6}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body1">${subtotalProduct.toFixed(2)}</Typography>
+                          <Typography variant="body1">{currencySymbol} {subtotalProduct.toFixed(2)}</Typography>
                         </Box>
                       </Grid>
                     </Grid>
@@ -395,7 +413,7 @@ const PurchasePage = () => {
 
                   <Grid item xs={6}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1"> ${subtotal.toFixed(2)}</Typography>
+                      <Typography variant="body1">{currencySymbol} {subtotal.toFixed(2)}</Typography>
                     </Box>
                   </Grid>
 
@@ -409,7 +427,7 @@ const PurchasePage = () => {
 
                   <Grid item xs={6}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">${tax.toFixed(2)}</Typography>
+                      <Typography variant="body1">{currencySymbol} {tax.toFixed(2)}</Typography>
                     </Box>
                   </Grid>
 
@@ -425,27 +443,26 @@ const PurchasePage = () => {
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                       <Typography variant="body1">
                         {' '}
-                        <strong>${total.toFixed(2)}</strong>
+                        <strong>{currencySymbol} {total.toFixed(2)}</strong>
                       </Typography>
                     </Box>
                   </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
                 {status !== 'Cancelled' && (
-                  <Link onClick={handleViewInvoice}>
-                    <Typography
-                      variant="body2"
-                      color="primary"
-                      sx={{
-                        fontSize: '18px',
-                        fontWeight: 'bold',
-                        textDecoration: 'underline',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      View Invoice
-                    </Typography>
-                  </Link>
+                  <Button onClick={handleViewInvoice} sx={{ textDecoration: 'underline', color: 'primary.main' }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      color : 'primary.main'
+                    }}
+                  >
+                    View Invoice
+                  </Typography>
+                </Button>
                 )}
                 </Box>
               </Box>
@@ -456,7 +473,7 @@ const PurchasePage = () => {
 
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '10px' }}>
         {showInvoice && (
-          <Card variant="outlined" sx={{ padding: 2, borderRadius: 2, boxShadow: 3, width: '900px', height: '900px' }}>
+          <Card variant="outlined" sx={{ padding: 2, borderRadius: 2, boxShadow: 3, width: '800px', height: '800px' }}>
             <InvoiceHeader>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <img src={Logo} alt="Company Logo" style={{ maxWidth: '60px', marginBottom: '10px' }} />
@@ -482,7 +499,7 @@ const PurchasePage = () => {
             <Typography variant="body1">Email: {supplierEmail}</Typography>
             <Typography variant="body1">Phone: {supplierPhone}</Typography>
 
-            <TableContainer component={Paper} sx={{ alignContent: 'center', marginTop: 2, borderRadius: 2, boxShadow: 2, maxWidth: 700 }}>
+            <TableContainer component={Paper} sx={{ alignContent: 'center', marginTop: 2, borderRadius: 2, boxShadow: 2, maxWidth: 800 }}>
               <InvoiceTable id="invoiceTable">
                 <TableHead>
                   <TableRow>
@@ -497,33 +514,33 @@ const PurchasePage = () => {
                     <TableRow key={index}>
                       <TableCell>{product.productName}</TableCell>
                       <TableCell>{product.quantity}</TableCell>
-                      <TableCell>{product.price}</TableCell>
-                      <TableCell>{(product.quantity * product.price).toFixed(2)}</TableCell>
+                      <TableCell>{currencySymbol} {product.price}</TableCell>
+                      <TableCell>{currencySymbol} {(product.quantity * product.price).toFixed(2)}</TableCell>
                     </TableRow>
                   ))}
                   <TableRow>
                     <TableCell colSpan={3} align="right">
                       Subtotal
                     </TableCell>
-                    <TableCell>{subtotal.toFixed(2)}</TableCell>
+                    <TableCell>{currencySymbol} {subtotal.toFixed(2)}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell colSpan={3} align="right">
                       Tax
                     </TableCell>
-                    <TableCell>{tax.toFixed(2)}</TableCell>
+                    <TableCell>{currencySymbol} {tax.toFixed(2)}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell colSpan={3} align="right" sx={{ fontWeight: 'bold' }}>
                       Total
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>{total.toFixed(2)}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>{currencySymbol} {total.toFixed(2)}</TableCell>
                   </TableRow>
                 </TableBody>
               </InvoiceTable>
             </TableContainer>
 
-            <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2, marginRight: '160px' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2}}>
               <Button variant="contained" color="secondary" onClick={downloadInvoice}>
                 Download Invoice
               </Button>
@@ -553,6 +570,7 @@ const PurchasePage = () => {
         )}
       </Box>
     </Box>
+    </Container>
   );
 };
 

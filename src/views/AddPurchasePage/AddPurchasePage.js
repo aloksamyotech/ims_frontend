@@ -170,10 +170,10 @@ const PurchaseForm = () => {
   return (
     <form onSubmit={formik.handleSubmit}>
       <Link to="/dashboard/purchases">
-        <Button  sx={{marginTop:'5px'}} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
+        <Button  sx={{marginTop:'18px'}} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
         </Button>
       </Link>
-      <Typography marginTop={5} variant="h3" gutterBottom>
+      <Typography marginTop={3} variant="h3" gutterBottom>
         Add Purchase
       </Typography>
       <Grid container spacing={3} sx={{marginTop:'8px'}}>

@@ -133,3 +133,12 @@ export const getSupplierProductReport = async () => {
 export const getCustomerProductReport = async () => {
     return fetchApi(urls.report.getCustomerProductReport);  
 };
+
+//admin
+export const fetchAdmin = async () => {
+    return fetchApi(urls.admin.fetch); 
+};
+
+export const updateAdmin = async (updatedAdmin) => {
+    return updateEntity('admin', updatedAdmin); 
+};
