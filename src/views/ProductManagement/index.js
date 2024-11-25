@@ -24,9 +24,8 @@ const Product = () => {
     const loadProducts = async () => {
       try {
         const response = await fetchProducts();
-        setProducts(response.data);
+        setProducts(response?.data);
       } catch (error) {
-        console.error('Failed to fetch products:', error);
         toast.error('Failed to fetch products');
       }
     };
@@ -46,12 +45,12 @@ const Product = () => {
       flex: 1,
       minWidth: 150,
       renderCell: (params) => {
-        const imageUrl = params.row.imageUrl; 
+        const imageUrl = params.row?.imageUrl; 
         return (
           <Box
             component="img"
             src={imageUrl || 'https://via.placeholder.com/150'} 
-            alt={params.row.productnm}
+            alt={params.row?.productnm}
             sx={{
               width: '40px',
               height: '40px',
@@ -68,7 +67,7 @@ const Product = () => {
       flex: 1,
       minWidth: 120,
       renderCell: (params) => {
-        const quantity = params.row.quantity;
+        const quantity = params.row?.quantity;
         const isLowQuantity = quantity <= 5;
     
         return (
@@ -91,7 +90,7 @@ const Product = () => {
       headerName: 'Category',
       flex: 1,
       minWidth: 200,
-      valueGetter: (params) => params.row.categoryName || 'N/A'
+      valueGetter: (params) => params.row?.categoryName || 'N/A'
     },
     {
       field: 'actions',
@@ -113,7 +112,7 @@ const Product = () => {
               height: '40px'
             }}
           >
-            <IconButton size="small" onClick={() => handleView(params.row._id)} color="primary" sx={{ padding: 0 }}>
+            <IconButton size="small" onClick={() => handleView(params.row?._id)} color="primary" sx={{ padding: 0 }}>
               <VisibilityIcon />
             </IconButton>
           </Box>
@@ -149,7 +148,7 @@ const Product = () => {
               height: '40px'
             }}
           >
-            <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
+            <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
               <DeleteIcon />
             </IconButton>
           </Box>
@@ -185,7 +184,7 @@ const Product = () => {
       });
       if (result.isConfirmed) {
         await deleteProduct(_id);
-        setProducts((prev) => prev.filter((product) => product._id !== _id));
+        setProducts((prev) => prev.filter((product) => product?._id !== _id));
         Swal.fire(
           "Deleted!", 
           "Your product has been deleted.", 

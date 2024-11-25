@@ -20,7 +20,7 @@ const UpdateCategory = ({ open, handleClose, category, onUpdateCategory }) => {
     onSubmit: async (values) => {
       try {
         const response = await updateCategory({ ...category, ...values });
-        onUpdateCategory(response.data);
+        onUpdateCategory(response?.data);
         toast.success('Category updated successfully');
       } catch (error) {
         toast.error('Failed to update category');

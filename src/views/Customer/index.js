@@ -23,7 +23,7 @@ const Customer = () => {
   useEffect(() => {
     const loadCustomers = async () => {
       const response = await fetchCustomers();
-      setCustomerData(response.data);
+      setCustomerData(response?.data);
     };
     loadCustomers();
   }, []);
@@ -69,7 +69,7 @@ const Customer = () => {
     { field: 'createdAt', headerName: 'Created At', 
       flex: 1,minWidth : 150,
       valueGetter: (params) => {
-        return moment(params.row.createdAt).format('DD-MM-YYYY'); 
+        return moment(params.row?.createdAt).format('DD-MM-YYYY'); 
       }
     },
     {
@@ -82,7 +82,7 @@ const Customer = () => {
         <Box
          sx={{backgroundColor: '#e3f2fd', borderRadius: '8px',padding: '8px', paddingTop:'8 px','&:hover': { backgroundColor: '#bbdefb' },
               display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-          <IconButton size="small" onClick={() => handleView(params.row._id)} color="primary" sx={{ padding: 0 }}>
+          <IconButton size="small" onClick={() => handleView(params.row?._id)} color="primary" sx={{ padding: 0 }}>
           <VisibilityIcon />  </IconButton>
          </Box>
          <Box sx={{ backgroundColor: '#fff3e0', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ffe0b2' },
@@ -93,7 +93,7 @@ const Customer = () => {
          </Box>
          <Box sx={{ backgroundColor: '#ffebee', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ef9a9a' } ,
           display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-           <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
+           <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
              <DeleteIcon />
            </IconButton>
          </Box>
@@ -129,7 +129,7 @@ const Customer = () => {
       });
       if (result.isConfirmed) {
         await deleteCustomer(_id);
-      setCustomerData((prev) => prev.filter((customer) => customer._id !== _id));
+      setCustomerData((prev) => prev.filter((customer) => customer?._id !== _id));
         Swal.fire(
           "Deleted!", 
           "Your customer has been deleted.", 

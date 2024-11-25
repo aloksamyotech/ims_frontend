@@ -51,9 +51,8 @@ const PurchasePage = () => {
     const loadPurchase = async () => {
       try {
         const response = await axios.get(`http://localhost:4200/purchase/fetchById/${id}`);
-        setPurchaseData(response.data);
+        setPurchaseData(response?.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
         setError('Failed to fetch purchase data');
       } finally {
         setLoading(false);
@@ -77,7 +76,7 @@ const PurchasePage = () => {
       if (response.status === 200) {
         setPurchaseData((prev) => ({
           ...prev,
-          status: action === 'approve' ? 'Completed' : 'Cancelled'
+          status: action === 'approve' ? 'completed' : 'cancelled'
         }));
         Swal.fire({
           title: `Purchase ${action === 'approve' ? 'approved' : 'cancelled'} successfully!`,
@@ -141,11 +140,11 @@ const PurchasePage = () => {
 
     const tableMarginTop = 100;
     const tableColumn = ['Item', 'Quantity', 'Price', 'Subtotal'];
-    const tableRows = purchaseData.products.map((product) => [
-      product.productName,
-      product.quantity,
-      `$${product.price.toFixed(2)}`,
-      `$${(product.quantity * product.price).toFixed(2)}`
+    const tableRows = purchaseData?.products?.map((product) => [
+      product?.productName,
+      product?.quantity,
+      `$${product?.price.toFixed(2)}`,
+      `$${(product?.quantity * product?.price).toFixed(2)}`
     ]);
 
     tableRows.push([
@@ -218,11 +217,11 @@ const PurchasePage = () => {
         <Box
           sx={{
             backgroundColor:
-              status === 'Completed'
+              status === 'completed'
                 ? '#34a853'
-                : status === 'Pending'
+                : status === 'pending'
                 ? '#ff9800'
-                : status === 'Cancelled'
+                : status === 'cancelled'
                 ? '#f44336'
                 : '',
             color: 'white',
@@ -239,7 +238,7 @@ const PurchasePage = () => {
             fontSize: '12px'
           }}
         >
-          {status || 'Pending'}
+          {status || 'pending'}
         </Box>
       </Box>
 
@@ -338,7 +337,7 @@ const PurchasePage = () => {
               </Box>
               <Divider sx={{ marginY: 2, borderColor: 'gray', borderWidth: 1 }} />
               {products?.map((product, index) => {
-                const subtotalProduct = product.quantity * product.price;
+                const subtotalProduct = product?.quantity * product?.price;
                 return (
                   <Box
                     key={product.id || index}
@@ -350,7 +349,7 @@ const PurchasePage = () => {
                   >
                     <Typography variant="h5">
                       <strong>
-                        {index + 1}. {product.productName}
+                        {index + 1}. {product?.productName}
                       </strong>
                     </Typography>
 
@@ -365,7 +364,7 @@ const PurchasePage = () => {
 
                       <Grid item xs={6}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body1">{product.quantity}</Typography>
+                          <Typography variant="body1">{product?.quantity}</Typography>
                         </Box>
                       </Grid>
 
@@ -379,7 +378,7 @@ const PurchasePage = () => {
 
                       <Grid item xs={6}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body1">{currencySymbol} {product.price.toFixed(2)}</Typography>
+                          <Typography variant="body1">{currencySymbol} {product?.price.toFixed(2)}</Typography>
                         </Box>
                       </Grid>
 
@@ -449,7 +448,7 @@ const PurchasePage = () => {
                   </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
-                {status !== 'Cancelled' && (
+                {status !== 'cancelled' && (
                   <Button onClick={handleViewInvoice} sx={{ textDecoration: 'underline', color: 'primary.main' }}>
                   <Typography
                     variant="body2"
@@ -512,10 +511,10 @@ const PurchasePage = () => {
                 <TableBody>
                   {products?.map((product, index) => (
                     <TableRow key={index}>
-                      <TableCell>{product.productName}</TableCell>
-                      <TableCell>{product.quantity}</TableCell>
-                      <TableCell>{currencySymbol} {product.price}</TableCell>
-                      <TableCell>{currencySymbol} {(product.quantity * product.price).toFixed(2)}</TableCell>
+                      <TableCell>{product?.productName}</TableCell>
+                      <TableCell>{product?.quantity}</TableCell>
+                      <TableCell>{currencySymbol} {product?.price}</TableCell>
+                      <TableCell>{currencySymbol} {(product?.quantity * product?.price).toFixed(2)}</TableCell>
                     </TableRow>
                   ))}
                   <TableRow>
@@ -557,7 +556,7 @@ const PurchasePage = () => {
       </Box>
 
       <Box sx={{ display: 'flex', mt: 2, justifyContent: 'flex-end' }}>
-        {status === 'Pending' && (
+        {status === 'pending' && (
           <>
             <Button variant="contained" color="secondary" onClick={() => updatePurchaseStatus(id, 'approve')}>
               Approve Purchase

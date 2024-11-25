@@ -20,9 +20,9 @@ const ViewCustomerPage = () => {
     const loadCustomer = async () => {
       try {
         const response = await axios.get(`http://localhost:4200/customer/fetchById/${id}`);
-        setCustomerData(response.data);
+        setCustomerData(response?.data);
         const result = await fetchOrders();
-        setOrderDetails(result.data);
+        setOrderDetails(result?.data);
       } catch (error) {
         toast.error('Error fetching customer data');
       }
@@ -44,7 +44,7 @@ const ViewCustomerPage = () => {
       headerName: 'Date',
       width: 120,
       valueGetter: (params) => {
-        return moment(params.row.createdAt).format('DD-MM-YYYY');
+        return moment(params.row?.createdAt).format('DD-MM-YYYY');
       }
     },
     {
@@ -52,14 +52,14 @@ const ViewCustomerPage = () => {
       headerName: 'Status', 
       width: 150,
       renderCell: (params) => {
-        const status = params.row.order_status;
+        const status = params.row?.order_status;
         return (
           <Box
             sx={{
               backgroundColor: 
-                status === 'Completed' ? '#34a853' : 
-                status === 'Pending' ? '#ff9800' : 
-                status === 'Cancelled' ? '#f44336' : '',
+                status === 'completed' ? '#34a853' : 
+                status === 'pending' ? '#ff9800' : 
+                status === 'cancelled' ? '#f44336' : '',
               color: 'white',
               padding: '0.5rem 1rem',
               borderRadius: '5px',
@@ -84,29 +84,53 @@ const ViewCustomerPage = () => {
       field: 'productName',
       headerName: 'Product Name',
       width: 200,
-      valueGetter: (params) => {
-        const products = params.row.products || [];
-        return products.length > 0 ? products[0].productName : 'NA';
-      }
+      renderCell: (params) => {
+        const products = params.row?.products || [];
+        return (
+          <div>
+            {products.map((product, index) => (
+              <div key={index}>
+                <Typography variant="body2">{product.productName}</Typography>
+              </div>
+            ))}
+          </div>
+        );
+      },
     },
     {
       field: 'categoryName',
       headerName: 'Product Category',
       width: 180,
-      valueGetter: (params) => {
-        const products = params.row.products || [];
-        return products.length > 0 ? products[0].categoryName : 'NA';
-      }
+      renderCell: (params) => {
+        const products = params.row?.products || [];
+        return (
+          <div>
+            {products.map((product, index) => (
+              <div key={index}>
+                <Typography variant="body2">{product.categoryName}</Typography>
+              </div>
+            ))}
+          </div>
+        );
+      },
     },
     {
       field: 'quantity',
       headerName: 'Quantity',
       width: 100,
-      valueGetter: (params) => {
-        const products = params.row.products || [];
-        return products.length > 0 ? products[0].quantity : 0;
-      }
-    },
+      renderCell: (params) => {
+        const products = params.row?.products || [];
+        return (
+          <div>
+            {products.map((product, index) => (
+              <div key={index}>
+                <Typography variant="body2">{product.quantity}</Typography>
+              </div>
+            ))}
+          </div>
+        );
+      },
+    }, 
     {
       field: 'subtotal',
       headerName: 'Subtotal',

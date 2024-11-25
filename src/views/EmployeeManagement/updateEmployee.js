@@ -30,10 +30,9 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
     onSubmit: async (values) => {
       try {
         const response = await updateUser({ ...user, ...values });
-        onUpdateUser(response.data);
+        onUpdateUser(response?.data);
         toast.success('User updated successfully');
       } catch (error) {
-        console.error('Error updating user:', error);
         toast.error('Failed to update user');
       }
     }

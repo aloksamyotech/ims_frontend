@@ -23,7 +23,7 @@ const Unit = () => {
   useEffect(() => {
     const loadUnits = async () => {
       const response = await fetchUnits();
-      setUnitData(response.data);
+      setUnitData(response?.data);
     };
     loadUnits();
   }, []);
@@ -51,7 +51,7 @@ const Unit = () => {
           </Box>
           <Box sx={{ backgroundColor: '#ffebee', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ef9a9a' } ,
            display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-            <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
+            <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
               <DeleteIcon />
             </IconButton>
           </Box>
@@ -88,7 +88,7 @@ const Unit = () => {
       });
       if (result.isConfirmed) {
         await deleteUnit(_id);
-        setUnitData((prev) => prev.filter((unit) => unit._id !== _id));
+        setUnitData((prev) => prev.filter((unit) => unit?._id !== _id));
         Swal.fire(
           "Deleted!", 
           "Your unit has been deleted.", 

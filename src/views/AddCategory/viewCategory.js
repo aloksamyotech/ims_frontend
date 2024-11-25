@@ -12,7 +12,7 @@ const ViewCategory = ({ open, handleClose, category }) => {
       if (category) {
         try {
           const response = await fetchCategories(category);
-          setCategoryData(response.data);
+          setCategoryData(response?.data);
           setLoading(false);
         } catch (error) {
           console.error('Error fetching category details:', error);
@@ -20,7 +20,6 @@ const ViewCategory = ({ open, handleClose, category }) => {
         }
       }
     };
-
     loadCategory();
   }, [category]);
 
@@ -36,8 +35,8 @@ const ViewCategory = ({ open, handleClose, category }) => {
           <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
         </DialogTitle>
         <DialogContent>
-          <TextField autoFocus label="Category name" variant="outlined" fullWidth margin="dense" value={category?.catnm || 'NA'} />
-          <TextField autoFocus label="Description" variant="outlined" fullWidth margin="dense" value={category?.desc || 'NA'} />
+          <TextField autoFocus label="Category name" variant="outlined" fullWidth margin="dense" value={category?.catnm || 'NA'} sx={{marginBottom:2}} />
+          <TextField autoFocus label="Description" variant="outlined" fullWidth margin="dense" value={category?.desc || 'NA'} sx={{marginBottom:2}}/>
         </DialogContent>
       </Dialog>
     </>

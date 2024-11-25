@@ -9,6 +9,7 @@ import moment from 'moment';
 import { fetchPurchases } from 'apis/api.js';
 import { fetchCurrencySymbol } from 'apis/constant.js';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { filter } from 'lodash';
 
 const ViewSupplierPage = () => {
   const { id } = useParams();
@@ -20,15 +21,13 @@ const ViewSupplierPage = () => {
     const loadSupplier = async () => {
       try {
         const response = await axios.get(`http://localhost:4200/supplier/fetchById/${id}`);
-        setSupplierData(response.data);
+        setSupplierData(response?.data);
         const result = await fetchPurchases();
-        setPurchaseDetails(result.data);
-        console.log(result.data);
+        setPurchaseDetails(result?.data);
       } catch (error) {
         toast.error('Error fetching supplier data');
       }
     };
-
     loadSupplier();
   }, [id]);
 
@@ -46,22 +45,26 @@ const ViewSupplierPage = () => {
       headerName: 'Date',
       width: 120,
       valueGetter: (params) => {
-        return moment(params.row.createdAt).format('DD-MM-YYYY');
-      }
+        return moment(params.row?.createdAt).format('DD-MM-YYYY');
+      },
     },
     {
-      field: 'status', 
-      headerName: 'Status', 
+      field: 'status',
+      headerName: 'Status',
       width: 150,
       renderCell: (params) => {
-        const status = params.row.status;
+        const status = params.row?.status;
         return (
           <Box
             sx={{
-              backgroundColor: 
-                status === 'Completed' ? '#34a853' : 
-                status === 'Pending' ? '#ff9800' : 
-                status === 'Cancelled' ? '#f44336' : '',
+              backgroundColor:
+                status === 'completed'
+                  ? '#34a853'
+                  : status === 'pending'
+                  ? '#ff9800'
+                  : status === 'cancelled'
+                  ? '#f44336'
+                  : '',
               color: 'white',
               padding: '0.5rem 1rem',
               borderRadius: '5px',
@@ -70,66 +73,90 @@ const ViewSupplierPage = () => {
               justifyContent: 'center',
               fontWeight: 'bold',
               width: '110px',
-              height: '25px', 
+              height: '25px',
               textTransform: 'uppercase',
               boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
               gap: '0.5rem',
-              fontSize: '12px',  
+              fontSize: '12px',
             }}
           >
             {status}
           </Box>
         );
-      }
+      },
     },
     {
       field: 'productName',
       headerName: 'Product Name',
       width: 200,
-      valueGetter: (params) => {
-        const products = params.row.products || [];
-        return products.length > 0 ? products[0].productName : 'NA';
-      }
+      renderCell: (params) => {
+        const products = params.row?.products || [];
+        return (
+          <div>
+            {products.map((product, index) => (
+              <div key={index}>
+                <Typography variant="body2">{product.productName}</Typography>
+              </div>
+            ))}
+          </div>
+        );
+      },
     },
     {
       field: 'categoryName',
       headerName: 'Product Category',
       width: 180,
-      valueGetter: (params) => {
-        const products = params.row.products || [];
-        return products.length > 0 ? products[0].categoryName : 'NA';
-      }
+      renderCell: (params) => {
+        const products = params.row?.products || [];
+        return (
+          <div>
+            {products.map((product, index) => (
+              <div key={index}>
+                <Typography variant="body2">{product.categoryName}</Typography>
+              </div>
+            ))}
+          </div>
+        );
+      },
     },
     {
       field: 'quantity',
       headerName: 'Quantity',
       width: 100,
-      valueGetter: (params) => {
-        const products = params.row.products || [];
-        return products.length > 0 ? products[0].quantity : 0;
-      }
-    },
+      renderCell: (params) => {
+        const products = params.row?.products || [];
+        return (
+          <div>
+            {products.map((product, index) => (
+              <div key={index}>
+                <Typography variant="body2">{product.quantity}</Typography>
+              </div>
+            ))}
+          </div>
+        );
+      },
+    },    
     {
       field: 'subtotal',
       headerName: 'Subtotal',
       width: 120,
-      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`)
+      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`),
     },
     {
       field: 'tax',
       headerName: 'Tax',
       width: 120,
-      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`)
+      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`),
     },
     {
       field: 'total',
       headerName: 'Total Sales',
       width: 150,
-      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`)
-    }
+      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`),
+    },
   ];
-
-  const filteredPurchases = purchaseDetails.filter((purchase) => purchase.supplierId === supplierData?._id);
+  
+  const filteredPurchases = purchaseDetails.filter((purchase) => purchase?.supplierId === supplierData?._id);
 
   return (
     <Container>

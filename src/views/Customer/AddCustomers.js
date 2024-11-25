@@ -62,12 +62,10 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
       setIsSubmitting(true);
       try {
         const response = await addCustomer(values);
-        console.log(response);
-        onCustomerAdded(response.data);
+        onCustomerAdded(response?.data);
         toast.success('Customer added successfully');
         resetForm();
       } catch (error) {
-        console.error(error);
         toast.error('Failed to add customer');
       } finally {
         setIsSubmitting(false);

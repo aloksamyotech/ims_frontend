@@ -19,7 +19,7 @@ const InvoicePage = () => {
     const loadInvoice = async () => {
       try {
         const response = await axios.get(`http://localhost:4200/order/fetchById/${id}`);
-        setInvoiceData(response.data);
+        setInvoiceData(response?.data);
       } catch (error) {
         setError('Failed to fetch invoice data');
       } finally {
@@ -33,7 +33,6 @@ const InvoicePage = () => {
     const getCurrency = async () => {
       const symbol = await fetchCurrencySymbol();
       setCurrencySymbol(symbol);  
-      console.log(symbol);
     };
     getCurrency();
   }, []);
@@ -44,7 +43,7 @@ const InvoicePage = () => {
       if (response.status === 200) {
         setInvoiceData((prev) => ({
           ...prev,
-          order_status: action === 'approve' ? 'Completed' : 'Cancelled'
+          order_status: action === 'approve' ? 'completed' : 'cancelled'
         }));
         Swal.fire({
           title: `Order ${action === 'approve' ? 'approved' : 'cancelled'} successfully!`,
@@ -117,11 +116,11 @@ const InvoicePage = () => {
         <Box
           sx={{
             backgroundColor:
-              order_status === 'Completed'
+              order_status === 'completed'
                 ? '#34a853'
-                : order_status === 'Pending'
+                : order_status === 'pending'
                 ? '#ff9800'
-                : order_status === 'Cancelled'
+                : order_status === 'cancelled'
                 ? '#f44336'
                 : '',
             color: 'white',
@@ -138,7 +137,7 @@ const InvoicePage = () => {
             fontSize: '12px'
           }}
         >
-          {order_status || 'Pending'}
+          {order_status || 'pending'}
         </Box>
       </Box>
 
@@ -363,7 +362,7 @@ const InvoicePage = () => {
                 </Grid>
 
                 <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
-                  {order_status !== 'Cancelled' && (
+                  {order_status !== 'cancelled' && (
                     <Link to={`/dashboard/orders/download-invoice/${id}`}>
                       <Typography
                         variant="body2"
@@ -387,7 +386,7 @@ const InvoicePage = () => {
       </Grid>
 
       <Box sx={{ display: 'flex', mt: 2, justifyContent: 'flex-end' }}>
-        {order_status === 'Pending' && (
+        {order_status === 'pending' && (
           <>
             <Button variant="contained" color="secondary" onClick={() => updateOrderStatus(id, 'approve')}>
               Approve Order

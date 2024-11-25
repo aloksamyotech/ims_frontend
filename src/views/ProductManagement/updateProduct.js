@@ -17,7 +17,8 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = yup.object({
-    productnm: yup.string().max(20, 'Max 20 characters are allowed').required('Product name is required'),
+    productnm: yup.string().max(20, 'Max 20 characters are allowed')
+    .required('Product name is required'),
     buyingPrice: yup.number()
       .required('Buying Price is required')
       .positive('Must be a positive number')
@@ -25,10 +26,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
     sellingPrice: yup.number()
       .required('Selling price is required')
       .positive('Must be a positive number')
-      .moreThan(yup.ref('buyingPrice'), 'Selling price must be greater than buying price'),
-    // quantity: yup.number()
-    //   .max(100, 'Max 100 quantity are allowed')
-    //   .required('Quantity is required'),
+      .max(1500000, 'Price cannot exceed Rs.1500000'),
     tax: yup.number()
       .max(20, 'Max 20% tax is allowed')
       .required('Tax is required'),

@@ -88,9 +88,9 @@ const OrderForm = (props) => {
     const fetchData = async () => {
       try {
         const productResult = await fetchProducts();
-        setProductList(productResult.data);
+        setProductList(productResult?.data);
         const customerResult = await fetchCustomers();
-        setCustomerList(customerResult.data);
+        setCustomerList(customerResult?.data);
       } catch (error) {
         console.error(error);
       }
@@ -103,12 +103,11 @@ const OrderForm = (props) => {
     const getCurrency = async () => {
       const symbol = await fetchCurrencySymbol();
       setCurrencySymbol(symbol);  
-      console.log(symbol);
     };
     getCurrency();
   }, []);
 
-  const filteredProducts = productList?.filter((product) => product.productnm.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredProducts = productList?.filter((product) => product?.productnm.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -195,7 +194,7 @@ const OrderForm = (props) => {
     });
   
     if (result.isConfirmed) {
-      const updatedProducts = products?.filter((product) => product._id !== productId);
+      const updatedProducts = products?.filter((product) => product?._id !== productId);
       setProducts(updatedProducts);
     }
   };
@@ -521,7 +520,7 @@ const OrderForm = (props) => {
                         hover
                         sx={{
                           borderBottom: '1px solid #e0e0e0',
-                          backgroundColor: selectedProductIds.includes(product._id) ? '#e3f2fd' : 'transparent',  // Highlight selected rows
+                          backgroundColor: selectedProductIds.includes(product._id) ? '#e3f2fd' : 'transparent', 
                           '&:hover': {
                             backgroundColor: selectedProductIds.includes(product._id) ? '#c1e1fc' : 'transparent'
                           }

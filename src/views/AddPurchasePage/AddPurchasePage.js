@@ -61,7 +61,7 @@ const PurchaseForm = () => {
     onSubmit: async (values) => {
       const purchaseData = {
         ...values,
-        products: rows.map((row) => {
+        products: rows?.map((row) => {
           const selectedProduct = productList?.find((product) => product._id === row.product);
           return {
             productId: row.product,
@@ -92,9 +92,9 @@ const PurchaseForm = () => {
     const fetchData = async () => {
       try {
         const productResult = await fetchProducts();
-        setProductList(productResult.data);
+        setProductList(productResult?.data);
         const supplierResult = await fetchSuppliers();
-        setSupplierList(supplierResult.data);
+        setSupplierList(supplierResult?.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -269,7 +269,7 @@ const PurchaseForm = () => {
                     <TableCell>
                       <TextField
                         type="string"
-                        value={row.categoryName}
+                        value={row?.categoryName}
                         inputProps={{ readOnly: true }}
                       />
                     </TableCell>
@@ -280,21 +280,21 @@ const PurchaseForm = () => {
                           min: 1, 
                           max: 1000 
                         }}
-                        value={row.quantity}
+                        value={row?.quantity}
                         onChange={(event) => handleQuantityChange(index, event)} 
                       />
                     </TableCell>
                     <TableCell>
                       <TextField
                         type="number"
-                        value={(row.price || 0).toFixed(2)}
+                        value={(row?.price || 0).toFixed(2)}
                         inputProps={{ readOnly: true }}
                       />
                     </TableCell>
                     <TableCell>
                       <TextField
                         type="number"
-                        value={(row.subtotal || 0).toFixed(2)}
+                        value={(row?.subtotal || 0).toFixed(2)}
                         inputProps={{ readOnly: true }}
                       />
                     </TableCell>

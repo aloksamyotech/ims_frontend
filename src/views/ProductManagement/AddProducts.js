@@ -29,7 +29,8 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = yup.object({
-    productnm: yup.string().max(50, 'Max 50 characters are allowed').required('Product name is required'),
+    productnm: yup.string().max(50, 'Max 50 characters are allowed')
+    .required('Product name is required'),
     catnm: yup.string().required('Product Category is required'),
     unitnm: yup.string().required('Unit is required'),
     buyingPrice: yup
@@ -37,7 +38,10 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
       .required('Buying Price is required')
       .positive('Must be a positive number')
       .max(1000000, 'Price cannot exceed Rs.1000000'),
-    sellingPrice: yup.number().required('Selling price is required').max(1500000, 'Price cannot exceed Rs.1500000'),
+    sellingPrice: yup.number()
+    .required('Selling price is required')
+    .positive('Must be a positive number')
+    .max(1500000, 'Price cannot exceed Rs.1500000'),
     tax: yup.number().max(20, 'Max 20% tax is allowed').required('Tax is required'),
     notes: yup.string().max(400, 'Max 400 words are allowed')
   });
@@ -57,8 +61,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
     initialValues,
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
-      console.log('values : ', values);
-
+  
       setIsSubmitting(true);
       try {
         const formData = new FormData();
@@ -73,49 +76,44 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
         if (values.image) {
           formData.append('image', values.image);
         }
-        formData.forEach((value, key) => {
-          console.log(`${key}: ${value}`);
-        });
-        const response = await axios.post('http://localhost:4200/product/save', formData, {
+        await axios.post('http://localhost:4200/product/save', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         });
-        console.log('Product added successfully:', response.data);
         toast.success('Product added successfully');
         resetForm();
         setImage(null);
         handleClose();
       } catch (error) {
-        console.error('Error:', error);
         toast.error('Failed to add product');
       } finally {
         setIsSubmitting(false);
       }
     }
   });
-
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
         const categoryResult = await fetchCategories();
-        setCatList(categoryResult.data);
+        setCatList(categoryResult?.data); 
         const unitResult = await fetchUnits();
-        setUnitList(unitResult.data);
+        setUnitList(unitResult?.data); 
       } catch (error) {
         console.error(error);
       }
     };
     fetchData();
   }, []);
-
+  
   useEffect(() => {
     const { buyingPrice, sellingPrice } = formik.values;
     if (buyingPrice && sellingPrice) {
       const margin = ((sellingPrice - buyingPrice) / sellingPrice) * 100;
       formik.setFieldValue('margin', margin.toFixed(2));
     }
-  }, [formik.values.buyingPrice, formik.values.sellingPrice]);
+  }, [formik.values.buyingPrice, formik.values.sellingPrice]);  
 
   return (
     <Dialog

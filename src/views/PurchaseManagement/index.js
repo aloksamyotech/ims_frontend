@@ -25,10 +25,9 @@ const Purchase = () => {
     const loadPurchase = async () => {
       try {
         const response = await fetchPurchases();
-        setPurchaseDetails(response.data);
-        setFilteredPurchasers(response.data);
+        setPurchaseDetails(response?.data);
+        setFilteredPurchasers(response?.data);
       } catch (error) {
-        console.error('Failed to fetch purchase data:', error);
         toast.error('Failed to fetch purchase data');
       }
     };
@@ -49,7 +48,7 @@ const Purchase = () => {
     if (status === 'All') {
       setFilteredPurchasers(purchaseDetails);
     } else {
-      setFilteredPurchasers(purchaseDetails.filter((purchase) => purchase.status === status));
+      setFilteredPurchasers(purchaseDetails.filter((purchase) => purchase?.status === status));
     }
   };
 
@@ -59,7 +58,7 @@ const Purchase = () => {
       headerName: 'Date',
       flex: 1.5,
       valueGetter: (params) => {
-        return moment(params.row.createdAt).format('DD-MM-YYYY');
+        return moment(params.row?.createdAt).format('DD-MM-YYYY');
       }
     },
     {
@@ -72,15 +71,15 @@ const Purchase = () => {
       headerName: 'Supplier',
       flex: 2,
       minWidth: 100,
-      valueGetter: (params) => params.row.supplierName || 'N/A'
+      valueGetter: (params) => params.row?.supplierName || 'N/A'
     },
     {
       field: 'productName',
       headerName: 'Item',
       flex: 3.5,
       valueGetter: (params) => {
-        if (params.row.products && params.row.products.length > 0) {
-          return params.row.products.map((product) => `${product.productName}(${product.quantity})`).join(', ');
+        if ( params.row?.products?.length > 0) {
+          return params.row.products?.map((product) => `${product?.productName}(${product?.quantity})`).join(', ');
         }
         return 'N/A';
       }
@@ -101,14 +100,14 @@ const Purchase = () => {
       headerName: 'Status',
       flex: 2.5,
       renderCell: (params) => {
-        const status = params.row.status;
+        const status = params.row?.status;
         return (
           <Box
             sx={{
               backgroundColor: 
-              status === 'Completed' ? '#34a853' : 
-              status === 'Pending' ? '#ff9800' : 
-              status === 'Cancelled' ? '#f44336' : '',
+              status === 'completed' ? '#34a853' : 
+              status === 'pending' ? '#ff9800' : 
+              status === 'cancelled' ? '#f44336' : '',
               color: 'white',
               padding: '0.5rem 1rem',
               borderRadius: '5px',
@@ -148,11 +147,11 @@ const Purchase = () => {
               height: '40px'
             }}
           >
-            <IconButton size="small" onClick={() => handleView(params.row._id)} color="primary" sx={{ padding: 0 }}>
+            <IconButton size="small" onClick={() => handleView(params.row?._id)} color="primary" sx={{ padding: 0 }}>
               <VisibilityIcon />{' '}
             </IconButton>
           </Box>
-          {params.row.status === 'Pending' && (
+          {(params.row.status === 'pending' || params.row.status === 'cancelled') && (
             <Box
               sx={{
                 backgroundColor: '#ffebee',
@@ -166,7 +165,7 @@ const Purchase = () => {
                 height: '40px'
               }}
             >
-              <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
+              <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
                 <DeleteIcon />
               </IconButton>
             </Box>
@@ -196,7 +195,7 @@ const Purchase = () => {
       });
       if (result.isConfirmed) {
         await deletePurchase(_id);
-        setPurchaseDetails((prev) => prev.filter((purchase) => purchase._id !== _id));
+        setPurchaseDetails((prev) => prev.filter((purchase) => purchase?._id !== _id));
         Swal.fire(
           "Deleted!", 
           "Your purchase has been deleted.", 

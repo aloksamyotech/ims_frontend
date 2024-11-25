@@ -8,27 +8,22 @@ const ViewUnit = ({ open, handleClose, unit}) => {
     const [loading, setLoading] = useState(true);
   
     useEffect(() => {
-        
       const loadUnit = async () => {
         if (unit) {
           try {
             const response = await fetchUnits(unit);
-            setUnitData(response.data); 
+            setUnitData(response?.data); 
             setLoading(false);
           } catch (error) {
-            console.error('Error fetching unit details:', error);
             setLoading(false);
           }
         }
       };
-  
       loadUnit();
     }, [unit]);
   
-    if (loading) return null; 
-  
+    if (loading) return null;
     if (!unit) return <div>Unit not found.</div>;
- 
 
   return (
     <>
@@ -38,8 +33,8 @@ const ViewUnit = ({ open, handleClose, unit}) => {
           <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
         </DialogTitle>
         <DialogContent>
-          <TextField autoFocus label="Unit name" variant="outlined" fullWidth margin="dense" value={unit?.unitnm || 'NA'} />
-          <TextField autoFocus label="Shortcode" variant="outlined" fullWidth margin="dense" value={unit?.shortcode || 'NA'} />
+          <TextField autoFocus label="Unit name" variant="outlined" fullWidth margin="dense" value={unit?.unitnm || 'NA'} sx={{marginBottom:2}} />
+          <TextField autoFocus label="Shortcode" variant="outlined" fullWidth margin="dense" value={unit?.shortcode || 'NA'} sx={{marginBottom:2}}/>
         </DialogContent>
       </Dialog>
       </>

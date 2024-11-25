@@ -36,7 +36,7 @@ const User = () => {
     const loadUsers = async () => {
       try {
         const response = await fetchUsers();
-        setUsers(response.data);
+        setUsers(response?.data);
       } catch (error) {
         console.error('Error fetching users:', error);
       }
@@ -52,7 +52,7 @@ const User = () => {
       field: 'date',
       headerName: 'Date',
       flex: 0.7,
-      valueGetter: (params) => moment(params.row.createdAt).format('DD-MM-YYYY')
+      valueGetter: (params) => moment(params.row?.createdAt).format('DD-MM-YYYY')
     },
     {
       field: 'actions',
@@ -107,7 +107,7 @@ const User = () => {
               height: '40px'
             }}
           >
-            <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
+            <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
               <DeleteIcon />
             </IconButton>
           </Box>
@@ -174,7 +174,6 @@ const User = () => {
   ];
 
   const handleView = (user) => {
-    console.log('Viewing user:', user);
     setCurrentUser(user);
     setOpenView(true);
   };
@@ -197,7 +196,7 @@ const User = () => {
       });
       if (result.isConfirmed) {
         await deleteUser(_id);
-        setUsers((prev) => prev.filter((user) => user._id !== _id));
+        setUsers((prev) => prev.filter((user) => user?._id !== _id));
         Swal.fire(
           "Deleted!", 
           "Your user has been deleted.", 

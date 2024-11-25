@@ -14,23 +14,19 @@ const ViewUser = ({ open, handleClose, user}) => {
         if (user) {
           try {
             const response = await fetchUsers(user);
-            setUserData(response.data); 
+            setUserData(response?.data); 
             setLoading(false);
           } catch (error) {
-            console.error('Error fetching user details:', error);
             setLoading(false);
           }
         }
       };
-  
       loadUser();
     }, [user]);
   
     if (loading) return null; 
-  
     if (!user) return <div>User not found.</div>;
  
-
   return (
     <>
         <Dialog open={open} onClose={handleClose}>
@@ -39,11 +35,11 @@ const ViewUser = ({ open, handleClose, user}) => {
           <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
         </DialogTitle>
         <DialogContent>
-          <TextField autoFocus label="User name" variant="outlined" fullWidth margin="dense" value={user?.name || 'NA'} />
-          <TextField autoFocus label="Email" variant="outlined" fullWidth margin="dense" value={user?.email || 'NA'} />
-          <TextField autoFocus label="Phone" variant="outlined" fullWidth margin="dense" value={user?.phone || 'NA'} />
-          <TextField autoFocus label="Role" variant="outlined" fullWidth margin="dense" value={user?.role || 'NA'} />
-          <TextField autoFocus label="Created At" variant="outlined" fullWidth margin="dense" value={moment(user?.createdAt).format('DD-MM-YYYY')}/>
+          <TextField autoFocus label="User name" variant="outlined" fullWidth margin="dense" value={user?.name || 'NA'} sx={{marginBottom:2}}/>
+          <TextField autoFocus label="Email" variant="outlined" fullWidth margin="dense" value={user?.email || 'NA'} sx={{marginBottom:2}}/>
+          <TextField autoFocus label="Phone" variant="outlined" fullWidth margin="dense" value={user?.phone || 'NA'} sx={{marginBottom:2}}/>
+          <TextField autoFocus label="Role" variant="outlined" fullWidth margin="dense" value={user?.role || 'NA'} sx={{marginBottom:2}}/>
+          <TextField autoFocus label="Created At" variant="outlined" fullWidth margin="dense" value={moment(user?.createdAt).format('DD-MM-YYYY')} sx={{marginBottom:2}}/>
         </DialogContent>
       </Dialog>  
     </>       

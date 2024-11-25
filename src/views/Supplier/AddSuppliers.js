@@ -68,11 +68,10 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
       setIsSubmitting(true);
       try {
         const response = await addSupplier(values);
-        onSupplierAdded(response.data);
+        onSupplierAdded(response?.data);
         toast.success('Supplier added successfully');
         resetForm();
       } catch (error) {
-        console.error(error);
         toast.error('Failed to add supplier');
       } finally {
         setIsSubmitting(false);

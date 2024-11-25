@@ -23,7 +23,7 @@ const Supplier = () => {
   useEffect(() => {
     const loadSuppliers = async () => {
       const response = await fetchSuppliers();
-      setSupplierData(response.data);
+      setSupplierData(response?.data);
     };
     loadSuppliers();
   }, []);
@@ -80,7 +80,7 @@ const Supplier = () => {
         <Box
          sx={{backgroundColor: '#e3f2fd', borderRadius: '8px',padding: '8px', paddingTop:'8 px','&:hover': { backgroundColor: '#bbdefb' },
               display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-          <IconButton size="small" onClick={() => handleView(params.row._id)} color="primary" sx={{ padding: 0 }}>
+          <IconButton size="small" onClick={() => handleView(params.row?._id)} color="primary" sx={{ padding: 0 }}>
           <VisibilityIcon />  </IconButton>
          </Box>
          <Box sx={{ backgroundColor: '#fff3e0', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ffe0b2' },
@@ -91,7 +91,7 @@ const Supplier = () => {
          </Box>
          <Box sx={{ backgroundColor: '#ffebee', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ef9a9a' } ,
           display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-           <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
+           <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
              <DeleteIcon />
            </IconButton>
          </Box>
@@ -128,7 +128,7 @@ const Supplier = () => {
       });
       if (result.isConfirmed) {
         await deleteSupplier(_id);
-        setSupplierData((prev) => prev.filter((supplier) => supplier._id !== _id));
+        setSupplierData((prev) => prev.filter((supplier) => supplier?._id !== _id));
         Swal.fire(
           "Deleted!", 
           "Your supplier has been deleted.", 

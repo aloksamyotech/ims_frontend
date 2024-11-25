@@ -26,10 +26,9 @@ const Order = () => {
     const loadOrders = async () => {
       try {
         const response = await fetchOrders();
-        setOrderDetails(response.data);
-        setFilteredOrders(response.data);
+        setOrderDetails(response?.data);
+        setFilteredOrders(response?.data);
       } catch (error) {
-        console.error('Failed to fetch orders data:', error);
         toast.error('Failed to fetch orders data');
       }
     };
@@ -50,17 +49,17 @@ const Order = () => {
     if (status === 'All') {
       setFilteredOrders(orderDetails);
     } else {
-      setFilteredOrders(orderDetails.filter((order) => order.order_status === status));
+      setFilteredOrders(orderDetails.filter((order) => order?.order_status === status));
     }
   };
 
   const columns = [
     {
-      field: 'date',
+      field: 'createdAt',
       headerName: 'Date',
       flex: 1.2,
       valueGetter: (params) => {
-        return moment(params.row.createdAt).format('DD-MM-YYYY');
+        return moment(params.row?.createdAt).format('DD-MM-YYYY');
       }
     },
     {
@@ -73,19 +72,19 @@ const Order = () => {
       headerName: 'Customer',
       flex: 2,
       minWidth: 100,
-      valueGetter: (params) => params.row.customerName || 'N/A'
+      valueGetter: (params) => params.row?.customerName || 'N/A'
     },
     {
       field: 'productName',
       headerName: 'Item',
       flex: 3,
       valueGetter: (params) => {
-        if (params.row.products && params.row.products.length > 0) {
-          return params.row.products.map((product) => `${product.productName}(${product.quantity})`).join(', ');
+        if (params.row?.products?.length > 0) { 
+          return params.row.products?.map((product) => `${product?.productName}(${product?.quantity})`).join(', ');
         }
         return 'N/A';
       }
-    },
+    },    
     {
       field: 'total',
       headerName: 'Total Price',
@@ -102,15 +101,15 @@ const Order = () => {
       headerName: 'Status',
       flex: 2,
       renderCell: (params) => {
-        const status = params.row.order_status;
+        const status = params.row?.order_status;
         return (
           <Box
             sx={{
               backgroundColor: 
-              status === 'Completed' ? '#34a853' : 
-              status === 'Pending' ? '#ff9800' : 
-              status === 'Cancelled' ? '#f44336' : '',
-              color: status === 'Completed' ? 'white' : 'white',
+              status === 'completed' ? '#34a853' : 
+              status === 'pending' ? '#ff9800' : 
+              status === 'cancelled' ? '#f44336' : '',
+              color: 'white',
               padding: '0.5rem 1rem',
               borderRadius: '5px',
               display: 'flex',
@@ -149,11 +148,11 @@ const Order = () => {
               height: '40px'
             }}
           >
-            <IconButton size="small" onClick={() => handleView(params.row._id)} color="primary" sx={{ padding: 0 }}>
+            <IconButton size="small" onClick={() => handleView(params.row?._id)} color="primary" sx={{ padding: 0 }}>
               <VisibilityIcon />{' '}
             </IconButton>
           </Box>
-          {params.row.order_status === 'Completed' && (
+          {params.row.order_status === 'completed' && (
             <Box
               sx={{
                 backgroundColor: '#ede7f6',
@@ -167,12 +166,12 @@ const Order = () => {
                 height: '40px'
               }}
             >
-              <IconButton size="small" onClick={() => handleDownload(params.row._id)} color="secondary" sx={{ padding: 0 }}>
+              <IconButton size="small" onClick={() => handleDownload(params.row?._id)} color="secondary" sx={{ padding: 0 }}>
                 <Iconify icon="eva:download-fill" />
               </IconButton>
             </Box>
           )}
-          {params.row.order_status === 'Pending' && (
+         {(params.row.order_status === 'pending' || params.row.order_status === 'cancelled') && (
             <Box
               sx={{
                 backgroundColor: '#ffebee',
@@ -186,7 +185,7 @@ const Order = () => {
                 height: '40px'
               }}
             >
-              <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
+              <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
                 <DeleteIcon />
               </IconButton>
             </Box>
@@ -220,7 +219,7 @@ const Order = () => {
       });
       if (result.isConfirmed) {
         await deleteOrder(_id);
-        setOrderDetails((prev) => prev.filter((order) => order._id !== _id));
+        setOrderDetails((prev) => prev.filter((order) => order?._id !== _id));
         Swal.fire(
           "Deleted!", 
           "Your order has been deleted.", 

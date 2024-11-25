@@ -72,7 +72,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
         }
 
         const response = await updateSupplier({ ...values, _id: supplier._id });
-        onSupplierUpdated(response.data);
+        onSupplierUpdated(response?.data);
         toast.success('Supplier updated successfully');
         resetForm();
       } catch (error) {

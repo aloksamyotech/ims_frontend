@@ -26,7 +26,7 @@ const Category = () => {
     const loadCategories = async () => {
       try {
         const response = await fetchCategories();
-        if (response.data && response.data.length > 0) {
+        if (response?.data?.length > 0) { 
           setCategories(response.data);
         } else {
           console.warn('No categories found');
@@ -37,6 +37,7 @@ const Category = () => {
     };
     loadCategories();
   }, []);
+  
 
   const columns = [
     { field: 'catnm', headerName: 'Category Name', flex: 1.5, minWidth: 250 },
@@ -62,7 +63,7 @@ const Category = () => {
           </Box>
           <Box sx={{ backgroundColor: '#ffebee', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ef9a9a' } ,
            display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-            <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
+            <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
               <DeleteIcon />
             </IconButton>
           </Box>
@@ -99,7 +100,7 @@ const Category = () => {
       });
       if (result.isConfirmed) {
         await deleteCategory(_id);
-        setCategories((prev) => prev.filter((category) => category._id !== _id));
+        setCategories((prev) => prev.filter((category) => category?._id !== _id));
         Swal.fire(
           "Deleted!", 
           "Your category has been deleted.", 

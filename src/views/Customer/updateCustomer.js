@@ -71,35 +71,35 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
           toast.error('No customer data available for update');
           return;
         }
-
-        const response = await updateCustomer({ ...values, _id: customer._id });
-        onCustomerUpdated(response.data);
+  
+        const response = await updateCustomer({ ...values, _id: customer?._id }); 
+        onCustomerUpdated(response?.data); 
         toast.success('Customer updated successfully');
         resetForm();
       } catch (error) {
-        console.error(error);
-        toast.error(error.response?.data?.message || 'Failed to update customer');
+        toast.error(error?.response?.data?.message || 'Failed to update customer'); 
       } finally {
         setIsSubmitting(false);
         handleClose();
       }
     },
   });
-
+  
   useEffect(() => {
     if (customer) {
       formik.setValues({
-        customernm: customer.customernm || '',
-        phone: customer.phone || '',
-        email: customer.email || '',
-        address: customer.address || '',
-        typeOfCustomer: customer.typeOfCustomer || '',
-        accountHolder: customer.accountHolder || '',
-        accountNumber: customer.accountNumber || '',
-        bankName: customer.bankName || '',
+        customernm: customer?.customernm || '', 
+        phone: customer?.phone || '', 
+        email: customer?.email || '', 
+        address: customer?.address || '', 
+        typeOfCustomer: customer?.typeOfCustomer || '', 
+        accountHolder: customer?.accountHolder || '', 
+        accountNumber: customer?.accountNumber || '', 
+        bankName: customer?.bankName || '', 
       });
     }
   }, [customer]);
+  
 
   return (
     <Dialog open={open} onClose={handleClose}>

@@ -24,13 +24,11 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
       setIsSubmitting(true);
       try {
         const response = await addCategory(values);
-        onCategoryAdded(response.data);
-        console.log(response.data);
+        onCategoryAdded(response?.data);
         handleClose();
         toast.success('Category added successfully');
         resetForm();
       } catch (error) {
-        console.error(error);
         toast.error('Failed to add category');
       } finally {
         setIsSubmitting(false);
