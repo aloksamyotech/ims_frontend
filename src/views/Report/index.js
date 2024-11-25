@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getSupplierProductReport, getCustomerProductReport } from 'apis/api.js';
+import { fetchPurchases, fetchOrders } from 'apis/api.js';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { Box, Tabs, Tab, FormControl, Select, MenuItem, Container, Card } from '@mui/material';
 import moment from 'moment';
@@ -7,7 +7,8 @@ import { fetchCurrencySymbol } from 'apis/constant.js';
 import TableStyle from '../../ui-component/TableStyle';
 
 const ProductReport = () => {
-  const [reportData, setReportData] = useState([]);
+  const [orderDetails, setOrderDetails] = useState([]);
+  const [purchaseDetails, setPurchaseDetails] = useState([]);
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedDateRange, setSelectedDateRange] = useState('All');
   const [currencySymbol, setCurrencySymbol] = useState('');
@@ -29,90 +30,182 @@ const ProductReport = () => {
   }, []);
 
   useEffect(() => {
-    const fetchReportData = async () => {
+    const loadReport = async () => {
       try {
-        let response;
-        if (selectedTab === 0) {
-          response = await getCustomerProductReport();
-
-        } else {
-          response = await getSupplierProductReport();
-        }
-        setReportData(response?.data || []);
+        const purchase = await fetchPurchases();
+        setPurchaseDetails(purchase?.data);
+        const order = await fetchOrders();
+        setOrderDetails(order?.data);
       } catch (error) {
-        console.error('Error fetching report data:', error);
+        toast.error('Error fetching data');
       }
     };
-    fetchReportData();
-  }, [selectedTab]);
+    loadReport();
+  }, []);
 
   const filterDataByDate = (data) => {
     const now = moment();
     const last7Days = moment().subtract(7, 'days');
-
-    switch (selectedDateRange) {
-      case 'Daily':
-        return data.filter((report) => moment(report.createdAt).isSame(now, 'day'));
-      case 'Weekly':
-        return data.filter((report) => moment(report.createdAt).isBetween(last7Days, now, null, '[]'));
-      case 'Monthly':
-        return data.filter((report) => moment(report.createdAt).isSame(now, 'month'));
-      case 'All':
-      default:
-        return data;
-    }
+    return data.filter((report) => {
+      const reportDate = moment(report?.date);  
+      switch (selectedDateRange) {
+        case 'Daily':
+          return reportDate.isSame(now, 'day');
+        case 'Weekly':
+          return reportDate.isBetween(last7Days, now, null, '[]');
+        case 'Monthly':
+          return reportDate.isSame(now, 'month');
+        case 'All':
+        default:
+          return true;
+      }
+    });
   };
 
-  const flattenData = (data) => {
-    return data.flatMap((report) => {
-      return report.products.map((product) => ({
-        id: `${report._id}-${report.productId}`, 
-        createdAt: report.createdAt,
-        productName: product.productName,
-        categoryName: product.categoryName,
-        quantity: product.quantity,
-        price: product.price,
-        total: product.price * product.quantity,
-        name: report.customerName || report.supplierName, 
-        email: report.customerEmail || report.supplierEmail, 
-        phone: report.customerPhone || report.supplierPhone,
+  const purchaseColumns = [
+    {
+      field: 'date',
+      headerName: 'Purchase Date',
+      width: 180,
+      valueGetter: (params) => moment(params.row?.date).format('DD-MM-YYYY')
+    },
+    { field: 'supplierName', headerName: 'Supplier', width: 200 },
+    { field: 'supplierEmail', headerName: 'Email', width: 200 },
+    { field: 'supplierPhone', headerName: 'Phone', width: 200 },
+    { field: 'productName', headerName: 'Product Name', width: 200 },
+    { field: 'quantity', headerName: 'Quantity', width: 130 },
+    { field: 'price', headerName: 'Price', width: 150 },
+    {
+      field: 'subtotal',
+      headerName: 'Subtotal',
+      width: 150,
+      valueFormatter: ({ value }) => {
+        if (value != null) {
+          return ` ${currencySymbol} ${value.toLocaleString()}`;
+        }
+        return '$0';
+      }
+    },
+    {
+      field: 'tax',
+      headerName: 'Tax',
+      width: 150,
+      valueFormatter: ({ value }) => {
+        if (value != null) {
+          return ` ${currencySymbol} ${value.toLocaleString()}`;
+        }
+        return '$0';
+      }
+    },
+    {
+      field: 'total',
+      headerName: 'Total Price',
+      width: 150,
+      valueFormatter: ({ value }) => {
+        if (value != null) {
+          return ` ${currencySymbol} ${value.toLocaleString()}`;
+        }
+        return '$0';
+      }
+    },
+  ];
+
+  const orderColumns = [
+    {
+      field: 'date',
+      headerName: 'Order Date',
+      width: 180,
+      valueGetter: (params) => moment(params.row?.date).format('DD-MM-YYYY')
+    },
+    { field: 'customerName', headerName: 'Customer', width: 200 },
+    { field: 'customerEmail', headerName: 'Email', width: 200 },
+    { field: 'customerPhone', headerName: 'Phone', width: 200 },
+    { field: 'productName', headerName: 'Product Name', width: 200 },
+    { field: 'quantity', headerName: 'Quantity', width: 130 },
+    { field: 'price', headerName: 'Price', width: 150 },
+    {
+      field: 'subtotal',
+      headerName: 'Subtotal',
+      width: 150,
+      valueFormatter: ({ value }) => {
+        if (value != null) {
+          return ` ${currencySymbol} ${value.toLocaleString()}`;
+        }
+        return '$0';
+      }
+    },
+    {
+      field: 'tax',
+      headerName: 'Tax',
+      width: 150,
+      valueFormatter: ({ value }) => {
+        if (value != null) {
+          return ` ${currencySymbol} ${value.toLocaleString()}`;
+        }
+        return '$0';
+      }
+    },
+    {
+      field: 'total',
+      headerName: 'Total Price',
+      width: 150,
+      valueFormatter: ({ value }) => {
+        if (value != null) {
+          return ` ${currencySymbol} ${value.toLocaleString()}`;
+        }
+        return '$0';
+      }
+    },
+  ];
+  
+
+  const flattenPurchaseData = (purchaseData) => {
+    return purchaseData.flatMap((purchase) => {
+      return purchase.products.map((product) => ({
+        id: `${purchase._id}-${product.productId}`,    
+        date : purchase.date,
+        supplierName: purchase.supplierName,      
+        supplierEmail: purchase.supplierEmail,       
+        supplierPhone: purchase.supplierPhone,     
+        productName: product.productName,        
+        quantity: product.quantity,             
+        price: product.price,                    
+        total: purchase.total,  
+        subtotal: purchase.subtotal,            
+        tax: purchase.tax,                          
       }));
     });
   };
 
-  const filteredData = filterDataByDate(flattenData(reportData));
+  const flattenOrderData = (orderData) => {
+    return orderData.flatMap((order) => {
+      return order.products.map((product) => ({
+        id: `${order._id}-${product.productId}`,    
+        date : order.date,
+        customerName: order.customerName,      
+        customerEmail: order.customerEmail,       
+        customerPhone: order.customerPhone,     
+        productName: product.productName,        
+        quantity: product.quantity,             
+        price: product.price,                    
+        total: order.total,  
+        subtotal: order.subtotal,            
+        tax: order.tax,                          
+      }));
+    });
+  };
 
-  const columns = [
-    { field: 'createdAt', headerName: 'Date', width: 120, valueGetter: (params) => moment(params.row?.createdAt).format('DD-MM-YYYY') },
-    { field: 'productName', headerName: 'Product Name', width: 200 },
-    { field: 'categoryName', headerName: 'Category', width: 180 },
-    { field: 'quantity', headerName: 'Quantity', width: 120 },
-    { 
-      field: 'price', 
-      headerName: 'Price', 
-      width: 160, 
-      valueFormatter: (params) => `${currencySymbol} ${params.value?.toLocaleString()}` 
-    },
-    { 
-      field: 'total', 
-      headerName: 'Total Sales', 
-      width: 180, 
-      valueFormatter: (params) => `${currencySymbol} ${params.value?.toLocaleString()}` 
-    },
-    { 
-      field: 'name', 
-      headerName: selectedTab === 0 ? 'Customer Name' : 'Supplier Name', 
-      width: 200 
-    },
-    { field: 'email', headerName: 'Email', width: 180 },
-    { field: 'phone', headerName: 'Phone', width: 150 },
-  ];
+  const flattenedOrderData = flattenOrderData(orderDetails);
+  const filteredOrderData = filterDataByDate(flattenedOrderData);
+
+  const flattenedPurchaseData = flattenPurchaseData(purchaseDetails);
+  const filteredPurchaseData = filterDataByDate(flattenedPurchaseData);
 
   return (
     <>
       <Container>
         <Box sx={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-          <Box sx={{ flexGrow: 0.8, marginTop: 4, marginLeft: '330px', marginRight: '310px' }}>
+          <Box sx={{ flexGrow: 0.8, marginTop: 4, marginLeft: '350px', marginRight: '330px' }}>
             <Tabs
               value={selectedTab}
               onChange={handleTabChange}
@@ -137,12 +230,12 @@ const ProductReport = () => {
             </Tabs>
           </Box>
 
-          <Box sx={{ marginTop: 4, marginRight: '42px' }}>
-            <FormControl style={{ minWidth: 120 }}>
+          <Box sx={{ marginTop: 4 }}>
+            <FormControl style={{ minWidth: 120, alignContent: 'center' }}>
               <Select value={selectedDateRange} onChange={handleDateRangeChange}>
                 <MenuItem value="All">All</MenuItem>
                 <MenuItem value="Daily">Daily</MenuItem>
-                <MenuItem value="Weekly">Weekly</MenuItem>
+                <MenuItem value="Last 7 Days">Weekly</MenuItem>
                 <MenuItem value="Monthly">Monthly</MenuItem>
               </Select>
             </FormControl>
@@ -150,29 +243,57 @@ const ProductReport = () => {
         </Box>
 
         <TableStyle>
-          <Box width="100%" overflow="hidden" sx={{ marginTop: '20px' }}>
-            <Card style={{ height: '600px', paddingTop: '10px', overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
-                <DataGrid
-                  rows={filteredData}
-                  columns={columns}
-                  getRowId={(row) => row.id}
-                  pageSize={5}
-                  slots={{ toolbar: GridToolbar }}
-                  slotProps={{ toolbar: { showQuickFilter: true } }}
-                  stickyHeader
-                  style={{ minWidth: '800px' }}
-                  pageSizeOptions={[5, 10, 25]}
-                  initialState={{
-                    pagination: {
-                      paginationModel: { pageSize: 10, page: 0 }
-                    }
-                  }}
-                  pagination
-                />
-              </div>
-            </Card>
-          </Box>
+          {selectedTab === 0 && (
+            <Box width="100%" overflow="hidden" sx={{ marginTop: '20px' }}>
+              <Card style={{ height: '600px', paddingTop: '10px', overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
+                  <DataGrid
+                    rows={filteredOrderData}
+                    columns={orderColumns}
+                    checkboxSelection
+                    getRowId={(row) => row.id}
+                    slots={{ toolbar: GridToolbar }}
+                    slotProps={{ toolbar: { showQuickFilter: true } }}
+                    stickyHeader
+                    style={{ minWidth: '800px' }}
+                    pageSizeOptions={[5, 10, 25]}
+                    initialState={{
+                      pagination: {
+                        paginationModel: { pageSize: 10, page: 0 }
+                      }
+                    }}
+                    pagination
+                  />
+                </div>
+              </Card>
+            </Box>
+          )}
+
+          {selectedTab === 1 && (
+            <Box width="100%" overflow="hidden" sx={{ marginTop: '20px' }}>
+              <Card style={{ height: '600px', paddingTop: '10px', overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
+                  <DataGrid
+                    rows={filteredPurchaseData}
+                    columns={purchaseColumns}
+                    checkboxSelection
+                    getRowId={(row) => row.id}
+                    slots={{ toolbar: GridToolbar }}
+                    slotProps={{ toolbar: { showQuickFilter: true } }}
+                    stickyHeader
+                    style={{ minWidth: '800px' }}
+                    pageSizeOptions={[5, 10, 25]}
+                    initialState={{
+                      pagination: {
+                        paginationModel: { pageSize: 10, page: 0 }
+                      }
+                    }}
+                    pagination
+                  />
+                </div>
+              </Card>
+            </Box>
+          )}
         </TableStyle>
       </Container>
     </>

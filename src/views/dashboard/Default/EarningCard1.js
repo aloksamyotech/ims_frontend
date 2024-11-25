@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState , useEffect} from 'react';
-import { countCustomers } from 'apis/api.js';
+import { countSuppliers } from 'apis/api.js';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -8,8 +8,16 @@ import { Avatar, Box, Grid, Menu, MenuItem, Typography } from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import { IconUser } from '@tabler/icons';
 import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
+
+// assets
+import EarningIcon from 'assets/images/icons/earning.svg';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import GetAppTwoToneIcon from '@mui/icons-material/GetAppOutlined';
+import FileCopyTwoToneIcon from '@mui/icons-material/FileCopyOutlined';
+import PictureAsPdfTwoToneIcon from '@mui/icons-material/PictureAsPdfOutlined';
+import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveOutlined';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.dark,
@@ -53,7 +61,7 @@ const EarningCard = ({ isLoading }) => {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const [customerCount, setCustomerCount] = useState(0);
+  const [supplierCount, setSupplierCount] = useState(0);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -64,16 +72,16 @@ const EarningCard = ({ isLoading }) => {
   };
 
   useEffect(() => {
-    const getCustomerCount = async () => {
+    const getSupplierCount = async () => {
       try {
-        const response = await countCustomers();
-        setCustomerCount(response.data.count);
+        const response = await countSuppliers();
+        setSupplierCount(response.data.count);
       } catch (err) {
       console.log(err);
       } 
     };
 
-    getCustomerCount(); 
+    getSupplierCount(); 
   }, []); 
 
   return (
@@ -87,7 +95,7 @@ const EarningCard = ({ isLoading }) => {
               <Grid item>
                 <Grid container alignItems="center">
                   <Grid item>
-                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{customerCount}</Typography>
+                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>{supplierCount}</Typography>
                   </Grid>
                 </Grid>
               </Grid>
@@ -99,7 +107,7 @@ const EarningCard = ({ isLoading }) => {
                     color: theme.palette.secondary[200]
                   }}
                 >
-                  Active Customer
+                  Active Supplier
                 </Typography>
               </Grid>
             </Grid>

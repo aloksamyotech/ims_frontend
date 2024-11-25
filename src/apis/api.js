@@ -52,6 +52,10 @@ export const updateSupplier = async (updatedSupplier) => {
     return updateEntity('supplier', updatedSupplier); 
 };
 
+export const countSuppliers = async () => {
+    return fetchApi(urls.supplier.count); 
+};
+
 // customer
 export const deleteCustomer = async (_id) => {
     return deleteApi(urls.customer.delete, _id); 
@@ -69,6 +73,10 @@ export const updateCustomer = async (updatedCustomer) => {
     return updateEntity('customer', updatedCustomer); 
 };
 
+export const countCustomers = async () => {
+    return fetchApi(urls.customer.count); 
+};
+
 // product
 export const deleteProduct = async (_id) => {
     return deleteApi(urls.product.delete, _id); 
@@ -84,6 +92,10 @@ export const addProduct = async (newProduct) => {
 
 export const updateProduct = async (updatedProduct) => {
     return updateEntity('product', updatedProduct); 
+};
+
+export const fetchLowStock = async () => {
+    return fetchApi(urls.product.lowstock); 
 };
 
 // user
@@ -112,6 +124,10 @@ export const addOrder = async (newOrder) => {
     return addApi(urls.order.add, newOrder); 
 };
 
+export const countOrders = async () => {
+    return fetchApi(urls.order.count); 
+};
+
 // purchase
 export const deletePurchase = async (_id) => {
     return deleteApi(urls.purchase.delete, _id); 
@@ -123,6 +139,10 @@ export const fetchPurchases = async () => {
 
 export const addPurchase = async (newPurchase) => {
     return addApi(urls.purchase.add, newPurchase); 
+};
+
+export const countPurchases = async () => {
+    return fetchApi(urls.purchase.count); 
 };
 
 //report

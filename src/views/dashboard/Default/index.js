@@ -6,8 +6,10 @@ import { useTheme } from '@mui/material/styles';
 
 // project imports
 import EarningCard from './EarningCard';
+import EarningCard1 from './EarningCard1';
 import PopularCard from './PopularCard';
 import TotalOrderLineChartCard from './TotalOrderLineChartCard';
+import TotalOrderLineChartCard1 from './TotalOrderLineChartCard1';
 // import TotalIncomeDarkCard from './TotalIncomeDarkCard';
 //import TotalIncomeLightCard from './TotalIncomeLightCard';
 import TotalGrowthBarChart from './TotalGrowthBarChart';
@@ -36,12 +38,12 @@ const Dashboard = () => {
           <Grid item lg={3} md={6} sm={6} xs={12}>
             <EarningCard isLoading={isLoading} />
           </Grid>
-          <Grid item sm={6} xs={12} md={6} lg={3}>
-            <TotalOrderLineChartCard isLoading={isLoading} />
+          <Grid item lg={3} md={6} sm={6} xs={12}>
+            <TotalOrderLineChartCard1 isLoading={isLoading} />
           </Grid>
 
-          <Grid item sm={6} xs={12} md={6} lg={3}>
-            <EarningCard isLoading={isLoading} />
+          <Grid item lg={3} md={6} sm={6} xs={12}>
+            <EarningCard1 isLoading={isLoading} />
           </Grid>
         </Grid>
       </Grid>
@@ -77,19 +79,19 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12} md={4} lg={6}>
             <AppCurrentVisits
-              title="Current Visits"
+              title="Sale By Category"
               chartData={[
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 }
+                { label: 'Electronics', value: 4344 },
+                { label: 'Laptops', value: 5435 },
+                { label: 'Furnitures', value: 1443 },
+                { label: 'Automotives', value: 4443 }
               ]}
               chartColors={[theme.palette.primary.main, theme.palette.info.main, theme.palette.warning.main, theme.palette.error.main]}
             />
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
           <Grid item xs={12} md={6} lg={5}>
             <AppTrafficBySite
@@ -131,7 +133,7 @@ const Dashboard = () => {
             />
           </Grid>
         </Grid>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 };

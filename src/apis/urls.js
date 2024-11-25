@@ -17,18 +17,21 @@ export const urls = {
     delete: '/supplier/deleteById/:id',
     update: '/supplier/update/:id',
     fetch: '/supplier/fetch/',
+    count: '/supplier/count/',
   },
   customer: {
     add: '/customer/save/',
     delete: '/customer/deleteById/:id',
     update: '/customer/update/:id',
     fetch: '/customer/fetch/',
+    count: '/customer/count/',
   },
   product: {
     add: '/product/save/',
     delete: '/product/deleteById/:id',
     update: '/product/update/:id',
     fetch: '/product/fetch/',
+    lowstock: '/product/lowstock/',
   },
   user: {
     delete: '/user/deleteById/:id',
@@ -39,11 +42,13 @@ export const urls = {
     add: '/order/save/',
     delete: '/order/deleteById/:id',
     fetch: '/order/fetch/',
+    count: '/order/count/',
   },
   purchase: {
     add: '/purchase/save/',
     delete: '/purchase/deleteById/:id',
     fetch: '/purchase/fetch/',
+    count: '/purchase/count/',
   },
   report: {
     getSupplierProductReport: '/purchase/fetchSupplierProductReport',

@@ -11,7 +11,7 @@ const Logo = () => {
         src={inventoryLogo}
         alt="Inventory Management"
         width="190" 
-        height='90'
+        height='75'
       />
     </Box>
   );
