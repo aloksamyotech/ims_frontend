@@ -14,11 +14,11 @@ import TotalOrderLineChartCard1 from './TotalOrderLineChartCard1';
 //import TotalIncomeLightCard from './TotalIncomeLightCard';
 import TotalGrowthBarChart from './TotalGrowthBarChart';
 import { gridSpacing } from 'store/constant';
-import AppTrafficBySite from './TrafficBySiteCard';
-import Iconify from '../../../ui-component/iconify';
-import AppTasks from './AppTask';
-import AppConversionRates from './AppConversionCard';
-import AppCurrentVisits from './AppCurrentVisitCard';
+// import AppTrafficBySite from './TrafficBySiteCard';
+// import Iconify from '../../../ui-component/iconify';
+// import AppTasks from './AppTask';
+// import AppConversionRates from './AppConversionCard';
+// import AppCurrentVisits from './AppCurrentVisitCard';
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
 const Dashboard = () => {
@@ -57,7 +57,7 @@ const Dashboard = () => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12}>
+      {/* <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
           <Grid item xs={12} md={6} lg={6}>
             <AppConversionRates
@@ -91,7 +91,7 @@ const Dashboard = () => {
           </Grid>
         </Grid>
       </Grid>
-      {/* <Grid item xs={12}>
+      <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
           <Grid item xs={12} md={6} lg={5}>
             <AppTrafficBySite

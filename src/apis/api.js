@@ -128,6 +128,14 @@ export const countOrders = async () => {
     return fetchApi(urls.order.count); 
 };
 
+export const totalSalesAmount = async () => {
+    return fetchApi(urls.order.totalamount); 
+};
+
+export const totalSoldQuantity = async () => {
+    return fetchApi(urls.order.totalquantity); 
+};
+
 // purchase
 export const deletePurchase = async (_id) => {
     return deleteApi(urls.purchase.delete, _id); 

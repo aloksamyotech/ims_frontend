@@ -43,6 +43,8 @@ export const urls = {
     delete: '/order/deleteById/:id',
     fetch: '/order/fetch/',
     count: '/order/count/',
+    totalamount: '/order/total-amount/',
+    totalquantity: '/order/total-quantity/',
   },
   purchase: {
     add: '/purchase/save/',
