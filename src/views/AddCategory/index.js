@@ -130,17 +130,26 @@ const Category = () => {
       <ViewCategory open={openView} handleClose={() => setOpenView(false)} category={currentCategory} />
 
       <Container>
-        <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
-          <Typography variant="h4" paddingTop={5}>Category Lists</Typography>
-          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2} marginTop={3}>
+      <Box
+          sx={{
+            marginTop: '20px',
+            backgroundColor: '#ffff',
+            padding: '12px',          
+            borderRadius: '8px', 
+            width: '100%',          
+            display: 'flex',         
+            alignItems: 'center',  
+            justifyContent: 'space-between'
+          }}
+        >
+          <Typography variant="h3">Category Lists</Typography>
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
               Add Category
             </Button>
-          </Stack>
-        </Stack>
+           </Box>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '15px', overflow: 'hidden' }}>
+            <Card style={{ height: '600px', paddingTop: '5px',marginTop:'25px', overflow: 'hidden' }}>
               <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
                 <DataGrid
                   rows={categories}

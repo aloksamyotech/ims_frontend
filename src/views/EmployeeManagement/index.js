@@ -113,61 +113,61 @@ const User = () => {
           </Box>
 
           <Popover
-      open={open}
-      anchorEl={anchorEl}
-      onClose={handlePopoverClose}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left'
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'left'
-      }}
-    >
-      <Box sx={{ padding: 2, width: '200px' }}>
-        <Typography
-          variant="body2"
-          sx={{
-            marginBottom: 1,
-            cursor: 'pointer',
-            '&:hover': { backgroundColor: '#e3f2fd' },
-            padding: '8px',
-            borderRadius: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            color: '#1976d2', 
-          }}
-          onClick={() => {
-            handleEdit(params.row);
-            handlePopoverClose();
-          }}
-        >
-          <EditIcon sx={{ marginRight: 1 }} />
-          Edit Profile
-        </Typography>
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handlePopoverClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left'
+            }}
+          >
+            <Box sx={{ padding: 2, width: '200px' }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  marginBottom: 1,
+                  cursor: 'pointer',
+                  '&:hover': { backgroundColor: '#b7a5d7' },
+                  padding: '8px',
+                  borderRadius: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: '#5e35b1'
+                }}
+                onClick={() => {
+                  handleEdit(params.row);
+                  handlePopoverClose();
+                }}
+              >
+                <EditIcon sx={{ marginRight: 1 }} />
+                Edit Profile
+              </Typography>
 
-        <Typography
-          variant="body2"
-          sx={{
-            cursor: 'pointer',
-            '&:hover': { backgroundColor: '#ffebee' },
-            padding: '8px',
-            borderRadius: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            color: '#d32f2f', 
-          }}
-          onClick={() => {
-            handleChangePassword(params.row);
-            handlePopoverClose();
-          }}
-        >
-          <LockIcon sx={{ marginRight: 1 }} />
-          Change Password
-        </Typography>
-      </Box>
-    </Popover>
+              <Typography
+                variant="body2"
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': { backgroundColor: '#ffebee' },
+                  padding: '8px',
+                  borderRadius: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: '#d32f2f'
+                }}
+                onClick={() => {
+                  handleChangePassword(params.row);
+                  handlePopoverClose();
+                }}
+              >
+                <LockIcon sx={{ marginRight: 1 }} />
+                Change Password
+              </Typography>
+            </Box>
+          </Popover>
         </Stack>
       )
     }
@@ -186,22 +186,18 @@ const User = () => {
   const handleDelete = async (_id) => {
     try {
       const result = await Swal.fire({
-        title: "Are you sure?",
+        title: 'Are you sure?',
         text: "You won't be able to revert this!",
-        icon: "warning",
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
       });
       if (result.isConfirmed) {
         await deleteUser(_id);
         setUsers((prev) => prev.filter((user) => user?._id !== _id));
-        Swal.fire(
-          "Deleted!", 
-          "Your user has been deleted.", 
-          "success"  
-        );
+        Swal.fire('Deleted!', 'Your user has been deleted.', 'success');
       }
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -230,14 +226,23 @@ const User = () => {
       />
 
       <Container>
-        <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
-          <Typography variant="h4" paddingTop={5}>
-            Users List
-          </Typography>
-        </Stack>
+        <Box
+          sx={{
+            marginTop: '20px',
+            backgroundColor: '#ffff',
+            padding: '14px',
+            borderRadius: '8px',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          <Typography variant="h3">Users</Typography>
+        </Box>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px', overflow: 'auto' }}>
+            <Card style={{ height: '600px', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
               <DataGrid
                 rows={users}
                 columns={columns}
@@ -249,8 +254,8 @@ const User = () => {
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{
                   pagination: {
-                    paginationModel: { pageSize: 10, page: 0 }, 
-                  },
+                    paginationModel: { pageSize: 10, page: 0 }
+                  }
                 }}
                 pagination
               />

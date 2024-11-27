@@ -235,19 +235,28 @@ const Order = () => {
     <>
       <AddOrders open={openAdd} handleClose={handleCloseAdd} />
       <Container>
-        <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
-          <Typography variant="h4" paddingTop={5}>
+      <Box
+          sx={{
+            marginTop: '20px',
+            backgroundColor: '#ffff',
+            padding: '14px',          
+            borderRadius: '8px', 
+            width: '100%',          
+            display: 'flex',         
+            alignItems: 'center',  
+            justifyContent: 'space-between'
+          }}
+        >
+          <Typography variant="h3">
             Order Lists
           </Typography>
-          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2} marginTop={3}>
-            <FormControl>
+          <FormControl>
               <Select
                 value={filterStatus}
                 onChange={handleFilterChange}
                 sx={{
                   width: '140px',
                   height: '40px',
-                  backgroundColor: '#f5f5f5',
                   borderRadius: '8px'
                 }}
               >
@@ -257,16 +266,49 @@ const Order = () => {
                 <MenuItem value="Cancelled">Cancelled</MenuItem>
               </Select>
             </FormControl>
-            <Link to="/dashboard/orders/add-order">
+            {/* <Link to="/dashboard/orders/add-order">
               <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
                 Add Order
               </Button>
-            </Link>
-          </Stack>
-        </Stack>
+            </Link> */}
+          </Box>
+
+          <Box
+          sx={{
+            marginTop: '5px',
+            backgroundColor: '#eeeeee',
+            padding: '5px',
+            borderRadius: '8px',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          <Box
+            sx={{
+              backgroundColor: '#1e88e5',
+              borderRadius: '50%',
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              marginLeft: '980px',
+              justifyContent: 'center',
+              alignItems: 'center',
+              boxShadow: 3,
+              cursor: 'pointer'
+            }}
+            onClick={handleOpenAdd}
+          >
+              <Link to="/dashboard/orders/add-order">
+            <Typography variant="h2" sx={{ color: 'white' }}>
+              +
+            </Typography></Link>
+          </Box>
+        </Box>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px', overflow: 'auto' }}>
+            <Card style={{ height: '600px', paddingTop: '5px',marginTop:'25px', overflow: 'auto' }}>
               <DataGrid
                 rows={filteredOrders}
                 columns={columns}

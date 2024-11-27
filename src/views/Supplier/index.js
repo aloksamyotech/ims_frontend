@@ -4,7 +4,7 @@ import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Iconify from '../../ui-component/iconify';
 import AddSupplier from './AddSuppliers.js';
-import UpdateSupplier from './updateSupplier.js'; 
+import UpdateSupplier from './updateSupplier.js';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -16,9 +16,9 @@ import { deleteSupplier, fetchSuppliers } from 'apis/api.js';
 const Supplier = () => {
   const navigate = useNavigate();
   const [openAdd, setOpenAdd] = useState(false);
-  const [openUpdate, setOpenUpdate] = useState(false); 
+  const [openUpdate, setOpenUpdate] = useState(false);
   const [supplierData, setSupplierData] = useState([]);
-  const [currentSupplier, setCurrentSupplier] = useState(null); 
+  const [currentSupplier, setCurrentSupplier] = useState(null);
 
   useEffect(() => {
     const loadSuppliers = async () => {
@@ -42,32 +42,35 @@ const Supplier = () => {
         return (
           <Box
             sx={{
-              backgroundColor: '#2196f3',  
-              color: 'white', 
+              backgroundColor: '#2196f3',
+              color: 'white',
               padding: '0.5rem 1rem',
-              borderRadius: '5px', 
+              borderRadius: '5px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 'bold',
               width: '110px',
-              height: '25px', 
+              height: '25px',
               textTransform: 'uppercase',
-              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
               gap: '0.5rem',
               fontSize: '12px',
-              letterSpacing: '0.5px', 
+              letterSpacing: '0.5px'
             }}
           >
             {params.value}
           </Box>
         );
       }
-    },    
-    { field: 'createdAt', headerName: 'Created At', 
-      flex: 1,minWidth : 150,
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Created At',
+      flex: 1,
+      minWidth: 150,
       valueGetter: (params) => {
-        return moment(params.row.createdAt).format('DD-MM-YYYY'); 
+        return moment(params.row.createdAt).format('DD-MM-YYYY');
       }
     },
     {
@@ -77,27 +80,63 @@ const Supplier = () => {
       minWidth: 250,
       renderCell: (params) => (
         <Stack direction="row" spacing={1}>
-        <Box
-         sx={{backgroundColor: '#e3f2fd', borderRadius: '8px',padding: '8px', paddingTop:'8 px','&:hover': { backgroundColor: '#bbdefb' },
-              display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-          <IconButton size="small" onClick={() => handleView(params.row?._id)} color="primary" sx={{ padding: 0 }}>
-          <VisibilityIcon />  </IconButton>
-         </Box>
-         <Box sx={{ backgroundColor: '#fff3e0', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ffe0b2' },
-          display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-           <IconButton size="small" onClick={() => handleEdit(params.row)}>
-             <EditIcon sx={{ color: '#ff9800' }} />
-           </IconButton>
-         </Box>
-         <Box sx={{ backgroundColor: '#ffebee', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ef9a9a' } ,
-          display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-           <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
-             <DeleteIcon />
-           </IconButton>
-         </Box>
-       </Stack>
-      ),
-    },
+          <Box
+            sx={{
+              backgroundColor: '#e3f2fd',
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8 px',
+              '&:hover': { backgroundColor: '#bbdefb' },
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton size="small" onClick={() => handleView(params.row?._id)} color="primary" sx={{ padding: 0 }}>
+              <VisibilityIcon />{' '}
+            </IconButton>
+          </Box>
+          <Box
+            sx={{
+              backgroundColor: '#fff3e0',
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8 px',
+              '&:hover': { backgroundColor: '#ffe0b2' },
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton size="small" onClick={() => handleEdit(params.row)}>
+              <EditIcon sx={{ color: '#ff9800' }} />
+            </IconButton>
+          </Box>
+          <Box
+            sx={{
+              backgroundColor: '#ffebee',
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8 px',
+              '&:hover': { backgroundColor: '#ef9a9a' },
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
+              <DeleteIcon />
+            </IconButton>
+          </Box>
+        </Stack>
+      )
+    }
   ];
 
   const handleOpenAdd = () => {
@@ -105,7 +144,6 @@ const Supplier = () => {
     setOpenAdd(true);
   };
 
- 
   const handleView = (_id) => {
     navigate(`/dashboard/suppliers/view-supplier/${_id}`);
   };
@@ -118,22 +156,18 @@ const Supplier = () => {
   const handleDelete = async (_id) => {
     try {
       const result = await Swal.fire({
-        title: "Are you sure?",
+        title: 'Are you sure?',
         text: "You won't be able to revert this!",
-        icon: "warning",
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
       });
       if (result.isConfirmed) {
         await deleteSupplier(_id);
         setSupplierData((prev) => prev.filter((supplier) => supplier?._id !== _id));
-        Swal.fire(
-          "Deleted!", 
-          "Your supplier has been deleted.", 
-          "success"  
-        );
+        Swal.fire('Deleted!', 'Your supplier has been deleted.', 'success');
       }
     } catch (error) {
       console.error('Error deleting supplier:', error);
@@ -152,22 +186,35 @@ const Supplier = () => {
 
   return (
     <>
-    <AddSupplier open={openAdd} handleClose={() => setOpenAdd(false)} onSupplierAdded={handleSupplierAdded} />
-      <UpdateSupplier open={openUpdate} handleClose={() => setOpenUpdate(false)} supplier={currentSupplier}  onSupplierUpdated={handleSupplierUpdated} />
-
+      <AddSupplier open={openAdd} handleClose={() => setOpenAdd(false)} onSupplierAdded={handleSupplierAdded} />
+      <UpdateSupplier
+        open={openUpdate}
+        handleClose={() => setOpenUpdate(false)}
+        supplier={currentSupplier}
+        onSupplierUpdated={handleSupplierUpdated}
+      />
       <Container>
-        <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
-          <Typography variant="h4" paddingTop={5}>Suppliers List</Typography>
-          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2} marginTop={3}>
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-              Add Supplier
-            </Button>
-          </Stack>
-        </Stack>
+        <Box
+          sx={{
+            marginTop: '20px',
+            backgroundColor: '#ffff',
+            padding: '12px',
+            borderRadius: '8px',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          <Typography variant="h3">Suppliers List</Typography>
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
+            Add Supplier
+          </Button>
+        </Box>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px', overflow: 'auto' }}>
-              <DataGrid 
+            <Card style={{ height: '600px', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+              <DataGrid
                 rows={supplierData}
                 columns={columns}
                 checkboxSelection
@@ -175,12 +222,12 @@ const Supplier = () => {
                 components={{ Toolbar: GridToolbar }}
                 componentsProps={{ toolbar: { showQuickFilter: true } }}
                 stickyHeader
-                style={{ minWidth: '800px' }} 
+                style={{ minWidth: '800px' }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{
                   pagination: {
-                    paginationModel: { pageSize: 10, page: 0 }, 
-                  },
+                    paginationModel: { pageSize: 10, page: 0 }
+                  }
                 }}
                 pagination
               />

@@ -157,17 +157,27 @@ const Customer = () => {
       <UpdateCustomer open={openUpdate} handleClose={() => setOpenUpdate(false)} customer={currentCustomer}  onCustomerUpdated={handleCustomerUpdated} />
 
       <Container>
-        <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
-          <Typography variant="h4" paddingTop={5}>Customers List</Typography>
-          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2} marginTop={3}>
+      <Box
+          sx={{
+            marginTop: '20px',
+            backgroundColor: '#ffff',
+            padding: '12px',          
+            borderRadius: '8px', 
+            width: '100%',          
+            display: 'flex',         
+            alignItems: 'center',  
+            justifyContent: 'space-between'
+          }}
+        >
+          <Typography variant="h3">Customers List</Typography>
+         
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
               Add Customer
             </Button>
-          </Stack>
-        </Stack>
+        </Box>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px', overflow: 'auto' }}>
+            <Card style={{ height: '600px', paddingTop: '5px',marginTop:'25px', overflow: 'auto' }}>
               <DataGrid  
                 rows={customerData}
                 columns={columns}
