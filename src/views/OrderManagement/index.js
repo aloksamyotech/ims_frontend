@@ -1,7 +1,21 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, Container, Typography, Card, Box, MenuItem, Select, IconButton, FormControl } from '@mui/material';
+import {
+  Stack,
+  Button,
+  Container,
+  Typography,
+  Card,
+  Box,
+  MenuItem,
+  Breadcrumbs,
+  Link as MuiLink,
+  Select,
+  IconButton,
+  FormControl
+} from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import Paper from '@mui/material/Paper';
 import Iconify from '../../ui-component/iconify';
 import AddOrders from './AddOrder.js';
 import { Link } from 'react-router-dom';
@@ -12,7 +26,10 @@ import { deleteOrder, fetchOrders } from 'apis/api.js';
 import moment from 'moment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { fetchCurrencySymbol } from 'apis/constant.js'; 
+import { fetchCurrencySymbol } from 'apis/constant.js';
+import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
 
 const Order = () => {
   const navigate = useNavigate();
@@ -38,7 +55,7 @@ const Order = () => {
   useEffect(() => {
     const getCurrency = async () => {
       const symbol = await fetchCurrencySymbol();
-      setCurrencySymbol(symbol);  
+      setCurrencySymbol(symbol);
     };
     getCurrency();
   }, []);
@@ -52,6 +69,36 @@ const Order = () => {
       setFilteredOrders(orderDetails.filter((order) => order?.order_status === status));
     }
   };
+
+  function CustomToolbar() {
+    return (
+      <GridToolbarContainer>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '8px',
+            backgroundColor: '#ffffff',
+            borderRadius: '8px',
+            width: '30%'
+          }}
+        >
+          <GridToolbarQuickFilter
+            placeholder="Search..."
+            sx={{
+              width: '100%',
+              backgroundColor: '#eeeeee',
+              borderRadius: '8px',
+              padding: '8px',
+              boxSizing: 'border-box'
+            }}
+          />
+        </Box>
+        <GridToolbarExport sx={{ ml: 75, color: '#757575', fontSize: '30' }} />
+      </GridToolbarContainer>
+    );
+  }
 
   const columns = [
     {
@@ -72,19 +119,20 @@ const Order = () => {
       headerName: 'Customer',
       flex: 2,
       minWidth: 100,
-      valueGetter: (params) => params.row?.customerName || 'N/A'
+      valueGetter: (params) => params.row?.customerName || 'N/A',
+      sortable: true
     },
     {
       field: 'productName',
       headerName: 'Item',
       flex: 3,
       valueGetter: (params) => {
-        if (params.row?.products?.length > 0) { 
+        if (params.row?.products?.length > 0) {
           return params.row.products?.map((product) => `${product?.productName}(${product?.quantity})`).join(', ');
         }
         return 'N/A';
       }
-    },    
+    },
     {
       field: 'total',
       headerName: 'Total Price',
@@ -105,10 +153,8 @@ const Order = () => {
         return (
           <Box
             sx={{
-              backgroundColor: 
-              status === 'completed' ? '#34a853' : 
-              status === 'pending' ? '#ff9800' : 
-              status === 'cancelled' ? '#f44336' : '',
+              backgroundColor:
+                status === 'completed' ? '#34a853' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
               color: 'white',
               padding: '0.5rem 1rem',
               borderRadius: '5px',
@@ -117,11 +163,11 @@ const Order = () => {
               justifyContent: 'center',
               fontWeight: 'bold',
               width: '110px',
-              height: '25px', 
+              height: '25px',
               textTransform: 'uppercase',
               boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
               gap: '0.5rem',
-              fontSize: '12px',  
+              fontSize: '12px'
             }}
           >
             {status}
@@ -171,7 +217,7 @@ const Order = () => {
               </IconButton>
             </Box>
           )}
-         {(params.row.order_status === 'pending' || params.row.order_status === 'cancelled') && (
+          {(params.row.order_status === 'pending' || params.row.order_status === 'cancelled') && (
             <Box
               sx={{
                 backgroundColor: '#ffebee',
@@ -205,26 +251,22 @@ const Order = () => {
 
   const handleOpenAdd = () => setOpenAdd(true);
   const handleCloseAdd = () => setOpenAdd(false);
-  
+
   const handleDelete = async (_id) => {
     try {
       const result = await Swal.fire({
-        title: "Are you sure?",
+        title: 'Are you sure?',
         text: "You won't be able to revert this!",
-        icon: "warning",
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
       });
       if (result.isConfirmed) {
         await deleteOrder(_id);
         setOrderDetails((prev) => prev.filter((order) => order?._id !== _id));
-        Swal.fire(
-          "Deleted!", 
-          "Your order has been deleted.", 
-          "success"  
-        );
+        Swal.fire('Deleted!', 'Your order has been deleted.', 'success');
       }
     } catch (error) {
       console.error('Error deleting order:', error);
@@ -235,45 +277,53 @@ const Order = () => {
     <>
       <AddOrders open={openAdd} handleClose={handleCloseAdd} />
       <Container>
-      <Box
+        <Box
           sx={{
             marginTop: '20px',
             backgroundColor: '#ffff',
-            padding: '14px',          
-            borderRadius: '8px', 
-            width: '100%',          
-            display: 'flex',         
-            alignItems: 'center',  
+            padding: '14px',
+            borderRadius: '8px',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'space-between'
           }}
         >
-          <Typography variant="h3">
-            Order Lists
-          </Typography>
+          <Typography variant="h3">Order Lists</Typography>
           <FormControl>
-              <Select
-                value={filterStatus}
-                onChange={handleFilterChange}
-                sx={{
-                  width: '140px',
-                  height: '40px',
-                  borderRadius: '8px'
-                }}
-              >
-                <MenuItem value="All">All</MenuItem>
-                <MenuItem value="Pending">Pending</MenuItem>
-                <MenuItem value="Completed">Completed</MenuItem>
-                <MenuItem value="Cancelled">Cancelled</MenuItem>
-              </Select>
-            </FormControl>
-            {/* <Link to="/dashboard/orders/add-order">
+            <Select
+              value={filterStatus}
+              onChange={handleFilterChange}
+              sx={{
+                width: '140px',
+                height: '40px',
+                borderRadius: '8px'
+              }}
+            >
+              <MenuItem value="All">All</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="completed">Completed</MenuItem>
+              <MenuItem value="cancelled">Cancelled</MenuItem>
+            </Select>
+          </FormControl>
+          {/* <Link to="/dashboard/orders/add-order">
               <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
                 Add Order
               </Button>
             </Link> */}
-          </Box>
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="breadcrumb"
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+              <HomeIcon sx={{ color: '#5e35b1' }} />
+            </MuiLink>
+            <Typography color="text.primary">Orders</Typography>
+          </Breadcrumbs>
+        </Box>
 
-          <Box
+        <Box
           sx={{
             marginTop: '5px',
             backgroundColor: '#eeeeee',
@@ -300,33 +350,34 @@ const Order = () => {
             }}
             onClick={handleOpenAdd}
           >
-              <Link to="/dashboard/orders/add-order">
-            <Typography variant="h2" sx={{ color: 'white' }}>
-              +
-            </Typography></Link>
+            <Link to="/dashboard/orders/add-order">
+              <Typography variant="h2" sx={{ color: 'white' }}>
+                +
+              </Typography>
+            </Link>
           </Box>
         </Box>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px',marginTop:'25px', overflow: 'auto' }}>
+            <Paper sx={{ height: 400, width: '100%' }}>
               <DataGrid
                 rows={filteredOrders}
                 columns={columns}
-                checkboxSelection
                 getRowId={(row) => row._id}
-                components={{ Toolbar: GridToolbar }}
-                componentsProps={{ toolbar: { showQuickFilter: true } }}
-                stickyHeader
-                style={{ minWidth: '800px' }}
+                checkboxSelection
+                components={{
+                  Toolbar: CustomToolbar
+                }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{
                   pagination: {
-                    paginationModel: { pageSize: 10, page: 0 }, 
-                  },
+                    paginationModel: { pageSize: 10, page: 0 }
+                  }
                 }}
                 pagination
+                sx={{ border: 0 }}
               />
-            </Card>
+            </Paper>
           </Box>
         </TableStyle>
       </Container>

@@ -1,5 +1,20 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, IconButton, Container, Typography, Card, Box, Grid, CardMedia, Popover, CardContent } from '@mui/material';
+import {
+  Stack,
+  Button,
+  IconButton,
+  Container,
+  Typography,
+  Card,
+  Box,
+  Grid,
+  Tooltip,
+  CardMedia,
+  Popover,
+  CardContent,
+  Breadcrumbs,
+  Link as MuiLink
+} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Link, useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
@@ -10,6 +25,8 @@ import UpdateProduct from './updateProduct.js';
 import AddProductPage from './AddProducts';
 import { fetchCurrencySymbol } from 'apis/constant.js';
 import { deleteProduct, fetchProducts } from 'apis/api.js';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
 
 const Product = () => {
   const navigate = useNavigate();
@@ -102,11 +119,22 @@ const Product = () => {
             borderRadius: '8px',
             width: '100%',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            alignItems: 'center'
           }}
         >
           <Typography variant="h3">Product List</Typography>
+
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="breadcrumb"
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+              <HomeIcon sx={{ color: '#5e35b1' }} />
+            </MuiLink>
+            <Typography color="text.primary">Products</Typography>
+          </Breadcrumbs>
         </Box>
 
         <Box
@@ -136,9 +164,11 @@ const Product = () => {
             }}
             onClick={handleOpenAdd}
           >
-            <Typography variant="h2" sx={{ color: 'white' }}>
-              +
-            </Typography>
+             <Tooltip title="Add Product" arrow>
+          <Typography variant="h2" sx={{ color: 'white', cursor: 'pointer' }}>
+            +
+          </Typography>
+        </Tooltip>
           </Box>
         </Box>
 
@@ -168,13 +198,7 @@ const Product = () => {
                       {currencySymbol} {product.sellingPrice}
                     </Typography>
 
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'flex-end'
-                      }}
-                    >
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                       <IconButton size="small" onClick={(event) => handlePopoverOpen(event)}>
                         <MoreVertIcon sx={{ color: 'black' }} />
                       </IconButton>
@@ -192,7 +216,7 @@ const Product = () => {
                         horizontal: 'left'
                       }}
                     >
-                      <Box sx={{ padding: 2 , width: '150px' }}>
+                      <Box sx={{ padding: 2, width: '150px' }}>
                         <Typography
                           variant="body2"
                           sx={{
