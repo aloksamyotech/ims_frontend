@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import {
   Stack,
-  Button,
   Container,
   Typography,
-  Card,
   Box,
+  Card,
   MenuItem,
   Breadcrumbs,
+  Tooltip,
   Link as MuiLink,
   Select,
   IconButton,
@@ -15,11 +15,9 @@ import {
 } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import Paper from '@mui/material/Paper';
 import Iconify from '../../ui-component/iconify';
 import AddOrders from './AddOrder.js';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import { deleteOrder, fetchOrders } from 'apis/api.js';
@@ -30,6 +28,7 @@ import { fetchCurrencySymbol } from 'apis/constant.js';
 import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
+import AddIcon from '@mui/icons-material/Add';
 
 const Order = () => {
   const navigate = useNavigate();
@@ -70,35 +69,78 @@ const Order = () => {
     }
   };
 
-  function CustomToolbar() {
+  const CustomToolbar = ({ handleOpenAdd, filterStatus, handleFilterChange }) => {
     return (
-      <GridToolbarContainer>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '8px',
-            backgroundColor: '#ffffff',
+      <GridToolbarContainer
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '10px'
+        }}
+      >
+        <GridToolbarQuickFilter
+          placeholder="Search..."
+          style={{
+            width: '250px',
+            backgroundColor: '#ffff',
             borderRadius: '8px',
-            width: '30%'
+            padding: '5px 10px',
+            border: '1px solid beige'
           }}
-        >
-          <GridToolbarQuickFilter
-            placeholder="Search..."
+        />
+
+        <Stack direction="row" spacing={2} alignItems="center">
+          <FormControl
             sx={{
-              width: '100%',
-              backgroundColor: '#eeeeee',
-              borderRadius: '8px',
-              padding: '8px',
-              boxSizing: 'border-box'
+              width: '120px',
+              height: '40px'
             }}
-          />
-        </Box>
-        <GridToolbarExport sx={{ ml: 75, color: '#757575', fontSize: '30' }} />
+          >
+            <Select
+              value={filterStatus}
+              onChange={handleFilterChange}
+              sx={{
+                width: '120px',
+                height: '40px',
+                borderRadius: '8px',
+                backgroundColor: '#ffffff'
+              }}
+            >
+              <MenuItem value="All">All</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="completed">Completed</MenuItem>
+              <MenuItem value="cancelled">Cancelled</MenuItem>
+            </Select>
+          </FormControl>
+
+          <Tooltip title="Add Order" arrow>
+            <IconButton
+              onClick={handleOpenAdd}
+              sx={{
+                backgroundColor: '#1e88e5',
+                borderRadius: '50%',
+                width: '35px',
+                height: '35px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                boxShadow: 3,
+                color: 'white',
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: '#1565c0', 
+                  color: '#ffffff'
+                }
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        </Stack>
       </GridToolbarContainer>
     );
-  }
+  };
 
   const columns = [
     {
@@ -290,27 +332,7 @@ const Order = () => {
           }}
         >
           <Typography variant="h3">Order Lists</Typography>
-          <FormControl>
-            <Select
-              value={filterStatus}
-              onChange={handleFilterChange}
-              sx={{
-                width: '140px',
-                height: '40px',
-                borderRadius: '8px'
-              }}
-            >
-              <MenuItem value="All">All</MenuItem>
-              <MenuItem value="pending">Pending</MenuItem>
-              <MenuItem value="completed">Completed</MenuItem>
-              <MenuItem value="cancelled">Cancelled</MenuItem>
-            </Select>
-          </FormControl>
-          {/* <Link to="/dashboard/orders/add-order">
-              <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-                Add Order
-              </Button>
-            </Link> */}
+
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}
             aria-label="breadcrumb"
@@ -323,50 +345,22 @@ const Order = () => {
           </Breadcrumbs>
         </Box>
 
-        <Box
-          sx={{
-            marginTop: '5px',
-            backgroundColor: '#eeeeee',
-            padding: '5px',
-            borderRadius: '8px',
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}
-        >
-          <Box
-            sx={{
-              backgroundColor: '#1e88e5',
-              borderRadius: '50%',
-              width: '40px',
-              height: '40px',
-              display: 'flex',
-              marginLeft: '980px',
-              justifyContent: 'center',
-              alignItems: 'center',
-              boxShadow: 3,
-              cursor: 'pointer'
-            }}
-            onClick={handleOpenAdd}
-          >
-            <Link to="/dashboard/orders/add-order">
-              <Typography variant="h2" sx={{ color: 'white' }}>
-                +
-              </Typography>
-            </Link>
-          </Box>
-        </Box>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Paper sx={{ height: 400, width: '100%' }}>
+            <Card style={{ height: 'auto', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
               <DataGrid
                 rows={filteredOrders}
                 columns={columns}
                 getRowId={(row) => row._id}
                 checkboxSelection
                 components={{
-                  Toolbar: CustomToolbar
+                  Toolbar: () => (
+                    <CustomToolbar
+                      handleOpenAdd={() => navigate('/dashboard/orders/add-order')}
+                      filterStatus={filterStatus}
+                      handleFilterChange={handleFilterChange}
+                    />
+                  )
                 }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{
@@ -375,9 +369,19 @@ const Order = () => {
                   }
                 }}
                 pagination
-                sx={{ border: 0 }}
+                sx={{
+                  '& .MuiDataGrid-root': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    borderBottom: '1px solid #ccc'
+                  },
+                  '& .MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold'
+                  }
+                }}
               />
-            </Paper>
+            </Card>
           </Box>
         </TableStyle>
       </Container>

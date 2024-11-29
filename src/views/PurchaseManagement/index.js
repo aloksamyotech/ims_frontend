@@ -1,5 +1,20 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, Container, Typography, Card, Box, MenuItem, Select, IconButton, FormControl } from '@mui/material';
+import {
+  Stack,
+  Button,
+  Container,
+  Typography,
+  Card,
+  Box,
+  MenuItem,
+  Breadcrumbs,
+  Tooltip,
+  Link as MuiLink,
+  Select,
+  IconButton,
+  FormControl,
+  styled
+} from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Iconify from '../../ui-component/iconify';
@@ -11,7 +26,11 @@ import { deletePurchase, fetchPurchases } from 'apis/api.js';
 import moment from 'moment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { fetchCurrencySymbol } from 'apis/constant.js'; 
+import { fetchCurrencySymbol } from 'apis/constant.js';
+import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
+import AddIcon from '@mui/icons-material/Add';
 
 const Purchase = () => {
   const navigate = useNavigate();
@@ -37,7 +56,7 @@ const Purchase = () => {
   useEffect(() => {
     const getCurrency = async () => {
       const symbol = await fetchCurrencySymbol();
-      setCurrencySymbol(symbol);  
+      setCurrencySymbol(symbol);
     };
     getCurrency();
   }, []);
@@ -50,6 +69,79 @@ const Purchase = () => {
     } else {
       setFilteredPurchasers(purchaseDetails.filter((purchase) => purchase?.status === status));
     }
+  };
+
+  const CustomToolbar = ({ handleOpenAdd, filterStatus, handleFilterChange }) => {
+    return (
+      <GridToolbarContainer
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '10px'
+        }}
+      >
+        <GridToolbarQuickFilter
+          placeholder="Search..."
+          style={{
+            width: '250px',
+            backgroundColor: '#ffff',
+            borderRadius: '8px',
+            padding: '5px 10px',
+            border: '1px solid beige'
+          }}
+        />
+
+        <Stack direction="row" spacing={2} alignItems="center">
+          <FormControl
+            sx={{
+              width: '120px',
+              height: '40px'
+            }}
+          >
+            <Select
+              value={filterStatus}
+              onChange={handleFilterChange}
+              sx={{
+                width: '120px',
+                height: '40px',
+                borderRadius: '8px',
+                backgroundColor: '#ffffff'
+              }}
+            >
+              <MenuItem value="All">All</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+              <MenuItem value="completed">Completed</MenuItem>
+              <MenuItem value="cancelled">Cancelled</MenuItem>
+            </Select>
+          </FormControl>
+
+          <Tooltip title="Add Purchase" arrow>
+            <IconButton
+              onClick={handleOpenAdd}
+              sx={{
+                backgroundColor: '#1e88e5',
+                borderRadius: '50%',
+                width: '35px',
+                height: '35px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                boxShadow: 3,
+                color: 'white',
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: '#1565c0',
+                  color: '#ffffff'
+                }
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      </GridToolbarContainer>
+    );
   };
 
   const columns = [
@@ -78,7 +170,7 @@ const Purchase = () => {
       headerName: 'Item',
       flex: 3.5,
       valueGetter: (params) => {
-        if ( params.row?.products?.length > 0) {
+        if (params.row?.products?.length > 0) {
           return params.row.products?.map((product) => `${product?.productName}(${product?.quantity})`).join(', ');
         }
         return 'N/A';
@@ -104,10 +196,8 @@ const Purchase = () => {
         return (
           <Box
             sx={{
-              backgroundColor: 
-              status === 'completed' ? '#34a853' : 
-              status === 'pending' ? '#ff9800' : 
-              status === 'cancelled' ? '#f44336' : '',
+              backgroundColor:
+                status === 'completed' ? '#34a853' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
               color: 'white',
               padding: '0.5rem 1rem',
               borderRadius: '5px',
@@ -116,11 +206,11 @@ const Purchase = () => {
               justifyContent: 'center',
               fontWeight: 'bold',
               width: '125px',
-              height: '25px', 
+              height: '25px',
               textTransform: 'uppercase',
               boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
               gap: '0.5rem',
-              fontSize: '12px',  
+              fontSize: '12px'
             }}
           >
             {status}
@@ -185,22 +275,18 @@ const Purchase = () => {
   const handleDelete = async (_id) => {
     try {
       const result = await Swal.fire({
-        title: "Are you sure?",
+        title: 'Are you sure?',
         text: "You won't be able to revert this!",
-        icon: "warning",
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
       });
       if (result.isConfirmed) {
         await deletePurchase(_id);
         setPurchaseDetails((prev) => prev.filter((purchase) => purchase?._id !== _id));
-        Swal.fire(
-          "Deleted!", 
-          "Your purchase has been deleted.", 
-          "success"  
-        );
+        Swal.fire('Deleted!', 'Your purchase has been deleted.', 'success');
       }
     } catch (error) {
       console.error('Error deleting purchase:', error);
@@ -211,64 +297,69 @@ const Purchase = () => {
     <>
       <AddPurchases open={openAdd} handleClose={handleCloseAdd} />
       <Container>
-      <Box
+        <Box
           sx={{
             marginTop: '20px',
             backgroundColor: '#ffff',
-            padding: '14px',          
-            borderRadius: '8px', 
-            width: '100%',          
-            display: 'flex',         
-            alignItems: 'center',  
+            padding: '14px',
+            borderRadius: '8px',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'space-between'
           }}
         >
           <Typography variant="h3">Purchase Lists</Typography>
-            <FormControl>
-              <Select
-                value={filterStatus}
-                onChange={handleFilterChange}
-                sx={{
-                  width: '140px',
-                  height: '40px',
-                  backgroundColor: '#f5f5f5',
-                  borderRadius: '8px'
-                }}
-              >
-                <MenuItem value="All">All</MenuItem>
-                <MenuItem value="pending">Pending</MenuItem>
-                <MenuItem value="completed">Completed</MenuItem>
-                <MenuItem value="cancelled">Cancelled</MenuItem>
-              </Select>
-            </FormControl>
-            <Link to="/dashboard/purchases/add-purchase">
-              <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-                Add Purchase
-              </Button>
-            </Link>
-          </Box>
-       
+
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="breadcrumb"
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+              <HomeIcon sx={{ color: '#5e35b1' }} />
+            </MuiLink>
+            <Typography color="text.primary">Purchases</Typography>
+          </Breadcrumbs>
+        </Box>
+
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px',marginTop:'25px', overflow: 'auto' }}>
-              <DataGrid
-                rows={filteredPurchases}
-                columns={columns}
-                checkboxSelection
-                getRowId={(row) => row._id}
-                components={{ Toolbar: GridToolbar }}
-                 componentsProps={{ toolbar: { showQuickFilter: true } }}
-                stickyHeader
-                style={{ minWidth: '800px' }}
-                pageSizeOptions={[5, 10, 25]}
-                initialState={{
-                  pagination: {
-                    paginationModel: { pageSize: 10, page: 0 }, 
-                  },
-                }}
-                pagination
-              />
-            </Card>
+            <Card style={{ height: 'auto', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+            <DataGrid
+              rows={filteredPurchases}
+              columns={columns}
+              checkboxSelection
+              getRowId={(row) => row._id}
+              components={{
+                Toolbar: () => (
+                  <CustomToolbar
+                    handleOpenAdd={() => navigate('/dashboard/purchases/add-purchase')}
+                    filterStatus={filterStatus}
+                    handleFilterChange={handleFilterChange}
+                  />
+                )
+              }}
+              pageSizeOptions={[5, 10, 25]}
+              initialState={{
+                pagination: {
+                  paginationModel: { pageSize: 10, page: 0 }
+                }
+              }}
+              pagination
+              sx={{
+                '& .MuiDataGrid-root': {
+                  border: 'none'
+                },
+                '& .MuiDataGrid-row': {
+                  borderBottom: '1px solid #ccc'
+                },
+                '& .MuiDataGrid-columnHeaderTitle': {
+                  fontWeight: 'bold'
+                }
+              }}
+            />
+        </Card>
           </Box>
         </TableStyle>
       </Container>

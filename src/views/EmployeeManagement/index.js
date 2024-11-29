@@ -1,19 +1,21 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, Container, IconButton, Typography, Card, Box,
-   Dialog, Popover } from '@mui/material';
+import { Stack, IconButton, Breadcrumbs, Link as MuiLink,Popover, Container, Typography, Card, Box, Dialog } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LockIcon from '@mui/icons-material/Lock';
 import { fetchUsers, deleteUser } from 'apis/api.js';
-import { toast } from 'react-toastify';
 import ViewUser from './view.js';
 import UpdateUser from './updateEmployee.js';
 import moment from 'moment';
 import ChangePassword from './changePassword.js';
 import Swal from 'sweetalert2';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
+import AddIcon from '@mui/icons-material/Add';
+import { Link } from 'react-router-dom';
 
 const User = () => {
   const [users, setUsers] = useState([]);
@@ -44,6 +46,31 @@ const User = () => {
     };
     loadUsers();
   }, []);
+
+  const CustomToolbar = () => {
+    return (
+      <GridToolbarContainer
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '10px'
+        }}
+      >
+        <GridToolbarQuickFilter
+          placeholder="Search..."
+          style={{
+            width: '250px',
+            backgroundColor: '#ffff',
+            borderRadius: '8px',
+            padding: '5px 10px',
+            border: '1px solid beige'
+          }}
+        />
+          <GridToolbarExport sx={{ fontSize: 25 }} />    
+      </GridToolbarContainer>
+    );
+  };
 
   const columns = [
     { field: 'name', headerName: 'Name', flex: 0.8 },
@@ -240,18 +267,26 @@ const User = () => {
           }}
         >
           <Typography variant="h3">Users</Typography>
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="breadcrumb"
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+              <HomeIcon sx={{ color: '#5e35b1' }} />
+            </MuiLink>
+            <Typography color="text.primary">Users</Typography>
+          </Breadcrumbs>
         </Box>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+            <Card style={{ height: 'auto', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
               <DataGrid
                 rows={users}
                 columns={columns}
                 checkboxSelection
                 getRowId={(row) => row._id}
-                components={{ Toolbar: GridToolbar }}
-                componentsProps={{ toolbar: { showQuickFilter: true } }}
-                style={{ minWidth: '800px', overflow: 'auto' }}
+                components={{ Toolbar: CustomToolbar }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{
                   pagination: {
@@ -259,6 +294,17 @@ const User = () => {
                   }
                 }}
                 pagination
+                sx={{
+                  '& .MuiDataGrid-root': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    borderBottom: '1px solid #ccc'
+                  },
+                  '& .MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold'
+                  }
+                }}
               />
             </Card>
           </Box>

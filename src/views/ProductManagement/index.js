@@ -153,19 +153,23 @@ const Product = () => {
             sx={{
               backgroundColor: '#1e88e5',
               borderRadius: '50%',
-              width: '40px',
-              height: '40px',
+              width: '35px',
+              height: '35px',
               display: 'flex',
               marginLeft: '980px',
               justifyContent: 'center',
               alignItems: 'center',
               boxShadow: 3,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              '&:hover': {
+                backgroundColor: '#1565c0', 
+                color: '#ffffff'
+              }
             }}
             onClick={handleOpenAdd}
           >
              <Tooltip title="Add Product" arrow>
-          <Typography variant="h2" sx={{ color: 'white', cursor: 'pointer' }}>
+          <Typography variant="h6" sx={{ color: 'white', cursor: 'pointer' ,fontSize: 28}}>
             +
           </Typography>
         </Tooltip>

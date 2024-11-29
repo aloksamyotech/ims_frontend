@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, IconButton, Container, Typography, Card, Box } from '@mui/material';
+import { Stack, Button, IconButton,Breadcrumbs,Tooltip, Link as MuiLink, Container, Typography, Card, Box } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import Iconify from '../../ui-component/iconify';
 import AddCustomer from './AddCustomers.js';
 import UpdateCustomer from './updateCustomer.js'; 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -12,6 +11,10 @@ import Swal from 'sweetalert2';
 import { Link, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { deleteCustomer, fetchCustomers } from 'apis/api.js';
+import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
+import AddIcon from '@mui/icons-material/Add';
 
 const Customer = () => {
   const navigate = useNavigate();
@@ -27,6 +30,56 @@ const Customer = () => {
     };
     loadCustomers();
   }, []);
+
+  const CustomToolbar = ({ handleOpenAdd}) => {
+    return (
+      <GridToolbarContainer
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '10px'
+        }}
+      >
+        <GridToolbarQuickFilter
+          placeholder="Search..."
+          style={{
+            width: '250px',
+            backgroundColor: '#ffff',
+            borderRadius: '8px',
+            padding: '5px 10px',
+            border: '1px solid beige'
+          }}
+        />
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Tooltip title="Add Customer" arrow>
+            <IconButton
+              onClick={handleOpenAdd}
+              sx={{
+                backgroundColor: '#1e88e5',
+                borderRadius: '50%',
+                width: '35px',
+                height: '35px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                boxShadow: 3,
+                color: 'white',
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: '#1565c0', 
+                  color: '#ffffff'
+                }
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+          <GridToolbarExport sx={{ fontSize: 25 }} />
+          </Stack>
+      </GridToolbarContainer>
+    );
+  };
 
   const columns = [
     { field: 'customernm', headerName: 'Name', flex: 1.5 },
@@ -79,27 +132,89 @@ const Customer = () => {
       minWidth: 250,
       renderCell: (params) => (
         <Stack direction="row" spacing={1}>
-        <Box
-         sx={{backgroundColor: '#e3f2fd', borderRadius: '8px',padding: '8px', paddingTop:'8 px','&:hover': { backgroundColor: '#bbdefb' },
-              display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-          <IconButton size="small" onClick={() => handleView(params.row?._id)} color="primary" sx={{ padding: 0 }}>
-          <VisibilityIcon />  </IconButton>
-         </Box>
-         <Box sx={{ backgroundColor: '#fff3e0', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ffe0b2' },
-          display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-           <IconButton size="small" onClick={() => handleEdit(params.row)}>
-             <EditIcon sx={{ color: '#ff9800' }} />
-           </IconButton>
-         </Box>
-         <Box sx={{ backgroundColor: '#ffebee', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ef9a9a' } ,
-          display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-           <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
-             <DeleteIcon />
-           </IconButton>
-         </Box>
-       </Stack>
-      ),
-    },
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton
+              size="small"
+              onClick={() => handleView(params.row?._id)}
+              color="primary"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#9abfdd', 
+                  color: '#1976d2' 
+                }
+              }}
+            >
+              <VisibilityIcon />
+            </IconButton>
+          </Box>
+
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton
+              size="small"
+              onClick={() => handleEdit(params.row)}
+              color="secondary"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#d7cde6',
+                  color: '#512995' 
+                }
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Box>
+
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton
+              size="small"
+              onClick={() => handleDelete(params.row?._id)}
+              color="error"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#ffcccc',
+                  color: '#d32f2f'
+                }
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Box>
+        </Stack>
+      )
+    }
   ];
 
   const handleOpenAdd = () => {
@@ -170,23 +285,34 @@ const Customer = () => {
           }}
         >
           <Typography variant="h3">Customers List</Typography>
-         
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-              Add Customer
-            </Button>
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="breadcrumb"
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+              <HomeIcon sx={{ color: '#5e35b1' }} />
+            </MuiLink>
+            <Typography color="text.primary">Clients</Typography>
+            <Typography color="text.primary">Customers</Typography>
+          </Breadcrumbs>
         </Box>
+
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px',marginTop:'25px', overflow: 'auto' }}>
+            <Card style={{ height: 'auto', paddingTop: '5px',marginTop:'25px', overflow: 'auto' }}>
               <DataGrid  
                 rows={customerData}
                 columns={columns}
                 checkboxSelection
                 getRowId={(row) => row._id}
-                components={{ Toolbar: GridToolbar }}
-                componentsProps={{ toolbar: { showQuickFilter: true } }}
-                stickyHeader
-                style={{ minWidth: '800px' }} 
+                components={{
+                  Toolbar: () => (
+                    <CustomToolbar
+                    handleOpenAdd={handleOpenAdd}
+                    />
+                  )
+                }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{
                   pagination: {
@@ -194,6 +320,17 @@ const Customer = () => {
                   },
                 }}
                 pagination
+                sx={{
+                  '& .MuiDataGrid-root': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    borderBottom: '1px solid #ccc'
+                  },
+                  '& .MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold'
+                  }
+                }}
               />
             </Card>
           </Box>

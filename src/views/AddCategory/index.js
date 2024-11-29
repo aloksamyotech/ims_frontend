@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, Container, IconButton, Typography, Card, Box, Dialog } from '@mui/material';
+import { Stack, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Container, Typography, Card, Box, Dialog } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import Iconify from '../../ui-component/iconify';
+import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,10 +9,11 @@ import AddCategory from './addCategory.js';
 import UpdateCategory from './updateCategory.js';
 import ViewCategory from './viewCategory.js';
 import { deleteCategory, fetchCategories } from 'apis/api.js';
-import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
-import moment from 'moment';
-import { minWidth } from '@mui/system';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
+import AddIcon from '@mui/icons-material/Add';
+import { Link } from 'react-router-dom';
 
 const Category = () => {
   const [openAdd, setOpenAdd] = useState(false);
@@ -26,7 +26,7 @@ const Category = () => {
     const loadCategories = async () => {
       try {
         const response = await fetchCategories();
-        if (response?.data?.length > 0) { 
+        if (response?.data?.length > 0) {
           setCategories(response.data);
         } else {
           console.warn('No categories found');
@@ -37,11 +37,60 @@ const Category = () => {
     };
     loadCategories();
   }, []);
-  
+
+  const CustomToolbar = ({ handleOpenAdd }) => {
+    return (
+      <GridToolbarContainer
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '10px'
+        }}
+      >
+        <GridToolbarQuickFilter
+          placeholder="Search..."
+          style={{
+            width: '250px',
+            backgroundColor: '#ffff',
+            borderRadius: '8px',
+            padding: '5px 10px',
+            border: '1px solid beige'
+          }}
+        />
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Tooltip title="Add Category" arrow>
+            <IconButton
+              onClick={handleOpenAdd}
+              sx={{
+                backgroundColor: '#1e88e5',
+                borderRadius: '50%',
+                width: '35px',
+                height: '35px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                boxShadow: 3,
+                color: 'white',
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: '#1565c0',
+                  color: '#ffffff'
+                }
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+          <GridToolbarExport sx={{ fontSize: 25 }} />
+        </Stack>
+      </GridToolbarContainer>
+    );
+  };
 
   const columns = [
     { field: 'catnm', headerName: 'Category Name', flex: 1.5, minWidth: 250 },
-    { field: 'desc', headerName: 'Description', flex: 1, minWidth: 400  },
+    { field: 'desc', headerName: 'Description', flex: 1, minWidth: 400 },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -49,27 +98,89 @@ const Category = () => {
       minWidth: 250,
       renderCell: (params) => (
         <Stack direction="row" spacing={1}>
-         <Box
-          sx={{backgroundColor: '#e3f2fd', borderRadius: '8px',padding: '8px', paddingTop:'8 px','&:hover': { backgroundColor: '#bbdefb' },
-               display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-           <IconButton size="small" onClick={() => handleView(params.row)} color="primary" sx={{ padding: 0 }}>
-           <VisibilityIcon />  </IconButton>
-          </Box>
-          <Box sx={{ backgroundColor: '#fff3e0', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ffe0b2' },
-           display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-            <IconButton size="small" onClick={() => handleEdit(params.row)}>
-              <EditIcon sx={{ color: '#ff9800' }} />
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton
+              size="small"
+              onClick={() => handleView(params.row)}
+              color="primary"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#9abfdd', 
+                  color: '#1976d2' 
+                }
+              }}
+            >
+              <VisibilityIcon />
             </IconButton>
           </Box>
-          <Box sx={{ backgroundColor: '#ffebee', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ef9a9a' } ,
-           display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-            <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
+
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton
+              size="small"
+              onClick={() => handleEdit(params.row)}
+              color="secondary"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#d7cde6',
+                  color: '#512995' 
+                }
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Box>
+
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton
+              size="small"
+              onClick={() => handleDelete(params.row?._id)}
+              color="error"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#ffcccc',
+                  color: '#d32f2f'
+                }
+              }}
+            >
               <DeleteIcon />
             </IconButton>
           </Box>
         </Stack>
-      ),
-    },
+      )
+    }
   ];
 
   const handleOpenAdd = () => {
@@ -90,28 +201,23 @@ const Category = () => {
   const handleDelete = async (_id) => {
     try {
       const result = await Swal.fire({
-        title: "Are you sure?",
+        title: 'Are you sure?',
         text: "You won't be able to revert this!",
-        icon: "warning",
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
       });
       if (result.isConfirmed) {
         await deleteCategory(_id);
-        setCategories((prev) => prev.filter((category) => category?._id !== _id));
-        Swal.fire(
-          "Deleted!", 
-          "Your category has been deleted.", 
-          "success"  
-        );
+        setCategories((prev) => prev.filter((category) => category._id !== _id));
+        Swal.fire('Deleted!', 'Your category has been deleted.', 'success');
       }
     } catch (error) {
       console.error('Error deleting category:', error);
     }
   };
-  
 
   const handleCategoryAdded = (newCategory) => {
     setCategories((prev) => [...prev, newCategory]);
@@ -125,59 +231,77 @@ const Category = () => {
 
   return (
     <>
-     <AddCategory open={openAdd} handleClose={() => setOpenAdd(false)} onCategoryAdded={handleCategoryAdded} />
-      <UpdateCategory open={openUpdate} handleClose={() => setOpenUpdate(false)} category={currentCategory} onUpdateCategory={handleCategoryUpdated} />
+      <AddCategory open={openAdd} handleClose={() => setOpenAdd(false)} onCategoryAdded={handleCategoryAdded} />
+      <UpdateCategory
+        open={openUpdate}
+        handleClose={() => setOpenUpdate(false)}
+        category={currentCategory}
+        onUpdateCategory={handleCategoryUpdated}
+      />
       <ViewCategory open={openView} handleClose={() => setOpenView(false)} category={currentCategory} />
 
       <Container>
-      <Box
+        <Box
           sx={{
             marginTop: '20px',
             backgroundColor: '#ffff',
-            padding: '12px',          
-            borderRadius: '8px', 
-            width: '100%',          
-            display: 'flex',         
-            alignItems: 'center',  
-            justifyContent: 'space-between'
+            padding: '12px',
+            borderRadius: '8px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
           }}
         >
           <Typography variant="h3">Category Lists</Typography>
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-              Add Category
-            </Button>
-           </Box>
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="breadcrumb"
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+              <HomeIcon sx={{ color: '#5e35b1' }} />
+            </MuiLink>
+            <Typography color="text.primary">Classifications</Typography>
+            <Typography color="text.primary">Category</Typography>
+          </Breadcrumbs>
+        </Box>
+
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px',marginTop:'25px', overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
-                <DataGrid
-                  rows={categories}
-                  columns={columns}
-                  checkboxSelection
-                  getRowId={(row) => row._id}
-                  slots={{ toolbar: GridToolbar }}
-                  slotProps={{ toolbar: { showQuickFilter: true } }}
-                  stickyHeader
-                  style={{ minWidth: '800px', overflow: 'auto' }}
-                  pageSizeOptions={[5, 10, 25]}
-                  initialState={{
-                    pagination: {
-                      paginationModel: { pageSize: 10, page: 0 }, 
-                    },
-                  }}
-                  pagination
-                />
-              </div>
+            <Card style={{ height: 'auto', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+              <DataGrid
+                rows={categories}
+                columns={columns}
+                checkboxSelection
+                getRowId={(row) => row._id}
+                components={{
+                  Toolbar: () => <CustomToolbar handleOpenAdd={handleOpenAdd} />
+                }}
+                pageSizeOptions={[5, 10, 25]}
+                initialState={{
+                  pagination: {
+                    paginationModel: { pageSize: 10, page: 0 }
+                  }
+                }}
+                pagination
+                sx={{
+                  '& .MuiDataGrid-root': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    borderBottom: '1px solid #ccc'
+                  },
+                  '& .MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold'
+                  }
+                }}
+              />
             </Card>
           </Box>
         </TableStyle>
-       
       </Container>
     </>
   );
 };
 
 export default Category;
-
-

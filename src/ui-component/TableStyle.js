@@ -9,7 +9,7 @@ const TableStyle = styled('div')({
     borderBottom: 'none'
   },
   '& .name-column--cell': {
-    color: Palette.primary.main,
+    color: Palette.grey.main,
     cursor: 'pointer'
   },
   '& .name-column--cell--capitalize': {
@@ -19,17 +19,17 @@ const TableStyle = styled('div')({
     textDecoration: 'underline'
   },
   '& .MuiDataGrid-columnHeaders': {
-    backgroundColor: '#FEF9F2',
+    backgroundColor: '#ffff',
     borderBottom: 'none',
     outline: 'none !important',
-    borderRadius: '0px'
+    borderRadius: '0px',
   },
   '& .MuiDataGrid-virtualScroller': {
     scrollbarWidth: '1px'
   },
   '& .MuiDataGrid-toolbarContainer .MuiButton-text': {
     textTransform: 'capitalize',
-    fontSize: '15px'
+    fontSize: '15px',
   },
   '.MuiDataGrid-cell:focus,.MuiDataGrid-columnHeader:focus,MuiDataGrid-columnHeaderCheckbox:focus': {
     outline: 'none !important'
