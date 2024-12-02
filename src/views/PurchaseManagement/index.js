@@ -148,7 +148,7 @@ const Purchase = () => {
     {
       field: 'date',
       headerName: 'Date',
-      flex: 1.5,
+      flex: 1.8,
       valueGetter: (params) => {
         return moment(params.row?.createdAt).format('DD-MM-YYYY');
       }
@@ -156,14 +156,19 @@ const Purchase = () => {
     {
       field: 'purchase_no',
       headerName: 'Purchase no',
-      flex: 1.5
+      flex: 1.8
     },
     {
-      field: 'supplierName',
+      field: 'supplierName', 
       headerName: 'Supplier',
-      flex: 2,
-      minWidth: 100,
-      valueGetter: (params) => params.row?.supplierName || 'N/A'
+      flex: 1.5,
+      minWidth:250,
+      renderCell: (params) => (
+        <Box>
+          <Typography variant="h5">{params.row?.supplierName || 'N/A'}</Typography>
+          <Typography variant="body2" color="textSecondary">{params.row?.supplierEmail}</Typography>
+        </Box>
+      )
     },
     {
       field: 'productName',
@@ -179,7 +184,7 @@ const Purchase = () => {
     {
       field: 'total',
       headerName: 'Total Price',
-      flex: 1.5,
+      flex: 2.5,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return `${currencySymbol} ${value.toLocaleString()}`;
@@ -190,31 +195,34 @@ const Purchase = () => {
     {
       field: 'status',
       headerName: 'Status',
-      flex: 2.5,
+      flex: 2,
       renderCell: (params) => {
         const status = params.row?.status;
         return (
           <Box
-            sx={{
-              backgroundColor:
-                status === 'completed' ? '#34a853' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-              color: 'white',
-              padding: '0.5rem 1rem',
-              borderRadius: '5px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              width: '125px',
-              height: '25px',
-              textTransform: 'uppercase',
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              gap: '0.5rem',
-              fontSize: '12px'
-            }}
-          >
-            {status}
-          </Box>
+          sx={{
+            backgroundColor: status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
+            color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+            '&:hover': {
+              backgroundColor: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+              color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
+            },
+            padding: '0.5rem 1rem',
+            borderRadius: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 'bold',
+            width: '90px',
+            height: '25px',
+            textTransform: 'uppercase',
+            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+            gap: '0.5rem',
+            fontSize: '12px'
+          }}
+        >
+          {status}
+        </Box>
         );
       }
     },
@@ -223,13 +231,11 @@ const Purchase = () => {
       headerName: 'Actions',
       flex: 2,
       renderCell: (params) => (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Box
             sx={{
-              backgroundColor: '#e3f2fd',
               borderRadius: '8px',
               padding: '8px',
-              '&:hover': { backgroundColor: '#bbdefb' },
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -237,17 +243,21 @@ const Purchase = () => {
               height: '40px'
             }}
           >
-            <IconButton size="small" onClick={() => handleView(params.row?._id)} color="primary" sx={{ padding: 0 }}>
+            <IconButton size="small" onClick={() => handleView(params.row?._id)} color="primary" 
+             sx={{
+              '&:hover': {
+                backgroundColor: '#9abfdd', 
+                color: '#1976d2' 
+              }
+            }}>
               <VisibilityIcon />{' '}
             </IconButton>
           </Box>
           {(params.row.status === 'pending' || params.row.status === 'cancelled') && (
             <Box
               sx={{
-                backgroundColor: '#ffebee',
                 borderRadius: '8px',
                 padding: '8px',
-                '&:hover': { backgroundColor: '#ef9a9a' },
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -255,7 +265,13 @@ const Purchase = () => {
                 height: '40px'
               }}
             >
-              <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
+              <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error"
+               sx={{
+                '&:hover': {
+                  backgroundColor: '#ffcccc',
+                  color: '#d32f2f'
+                }
+              }}>
                 <DeleteIcon />
               </IconButton>
             </Box>
@@ -330,6 +346,7 @@ const Purchase = () => {
               rows={filteredPurchases}
               columns={columns}
               checkboxSelection
+              rowHeight={70}
               getRowId={(row) => row._id}
               components={{
                 Toolbar: () => (

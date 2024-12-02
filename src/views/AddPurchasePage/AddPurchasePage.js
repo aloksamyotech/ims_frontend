@@ -20,13 +20,15 @@ import {
   TableHead,
   TableRow,
   Paper,
-  IconButton
+  IconButton, Breadcrumbs, Tooltip, Link as MuiLink,Container,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { IconTrash } from '@tabler/icons';
 import { Link } from 'react-router-dom';
 import { addPurchase, fetchProducts, fetchSuppliers } from 'apis/api.js';
 import { makeStyles } from '@mui/styles';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
 
 const useStyles = makeStyles({
   input: {
@@ -168,14 +170,41 @@ const PurchaseForm = () => {
   const purchaseTotal = purchaseSubtotal + purchaseTaxes;
 
   return (
-    <form onSubmit={formik.handleSubmit}>
-      <Link to="/dashboard/purchases">
+    <Container>
+    <Box
+          sx={{
+            marginTop: '20px',
+            backgroundColor: '#ffff',
+            padding: '12px',
+            borderRadius: '8px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <Typography variant="h3">Add Purchase</Typography>
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="breadcrumb"
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+              <HomeIcon sx={{ color: '#5e35b1' }} />
+            </MuiLink>
+            <MuiLink component={Link} to="/dashboard/purchases" color="inherit">
+            <Typography color="text.primary">Purchases</Typography>
+            </MuiLink>
+            <Typography color="text.primary">AddPurchase</Typography>
+          </Breadcrumbs>
+        </Box>
+
+  
+      {/* <Link to="/dashboard/purchases">
         <Button  sx={{marginTop:'18px'}} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
         </Button>
-      </Link>
-      <Typography marginTop={3} variant="h3" gutterBottom>
-        Add Purchase
-      </Typography>
+      </Link> */}
+
+      <form onSubmit={formik.handleSubmit}>
       <Grid container spacing={3} sx={{marginTop:'8px'}}>
         <Grid item xs={12} sm={4} md={4}>
           <FormLabel>Purchase Date</FormLabel>
@@ -343,6 +372,7 @@ const PurchaseForm = () => {
         </Grid>
       </Grid>
     </form>
+    </Container>
   );
 };
 

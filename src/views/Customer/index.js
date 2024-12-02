@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, IconButton,Breadcrumbs,Tooltip, Link as MuiLink, Container, Typography, Card, Box } from '@mui/material';
+import { Stack, Button, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Container, Typography, Card, Box } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import AddCustomer from './AddCustomers.js';
-import UpdateCustomer from './updateCustomer.js'; 
+import UpdateCustomer from './updateCustomer.js';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -19,9 +19,9 @@ import AddIcon from '@mui/icons-material/Add';
 const Customer = () => {
   const navigate = useNavigate();
   const [openAdd, setOpenAdd] = useState(false);
-  const [openUpdate, setOpenUpdate] = useState(false); 
+  const [openUpdate, setOpenUpdate] = useState(false);
   const [customerData, setCustomerData] = useState([]);
-  const [currentCustomer, setCurrentCustomer] = useState(null); 
+  const [currentCustomer, setCurrentCustomer] = useState(null);
 
   useEffect(() => {
     const loadCustomers = async () => {
@@ -31,7 +31,7 @@ const Customer = () => {
     loadCustomers();
   }, []);
 
-  const CustomToolbar = ({ handleOpenAdd}) => {
+  const CustomToolbar = ({ handleOpenAdd }) => {
     return (
       <GridToolbarContainer
         style={{
@@ -52,6 +52,7 @@ const Customer = () => {
           }}
         />
         <Stack direction="row" spacing={2} alignItems="center">
+          <GridToolbarExport sx={{ fontSize: 25 }} />
           <Tooltip title="Add Customer" arrow>
             <IconButton
               onClick={handleOpenAdd}
@@ -67,7 +68,7 @@ const Customer = () => {
                 color: 'white',
                 cursor: 'pointer',
                 '&:hover': {
-                  backgroundColor: '#1565c0', 
+                  backgroundColor: '#1565c0',
                   color: '#ffffff'
                 }
               }}
@@ -75,15 +76,23 @@ const Customer = () => {
               <AddIcon />
             </IconButton>
           </Tooltip>
-          <GridToolbarExport sx={{ fontSize: 25 }} />
-          </Stack>
+        </Stack>
       </GridToolbarContainer>
     );
   };
 
   const columns = [
-    { field: 'customernm', headerName: 'Name', flex: 1.5 },
-    { field: 'email', headerName: 'Email', flex: 2 },
+    {
+      field: 'customernm', 
+      headerName: 'Name',
+      flex: 1.5,
+      renderCell: (params) => (
+        <Box>
+          <Typography variant="h5">{params.row.customernm}</Typography>
+          <Typography variant="body2" color="textSecondary">{params.row.email}</Typography>
+        </Box>
+      )
+    },
     { field: 'phone', headerName: 'Phone', flex: 1.5 },
     {
       field: 'customerType',
@@ -97,41 +106,47 @@ const Customer = () => {
         return (
           <Box
             sx={{
-              backgroundColor: '#2196f3',  
-              color: 'white',  
+              backgroundColor: '#e3f2fd',
+              color: '#2196f3',
+              '&:hover': {
+                backgroundColor: '#2196f3',
+                color: 'white'
+              },
               padding: '0.5rem 1rem',
-              borderRadius: '5px', 
+              borderRadius: '30px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 'bold',
-              width: '110px',
-              height: '25px', 
+              width: '90px',
+              height: '25px',
               textTransform: 'uppercase',
-              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', 
+              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
               gap: '0.5rem',
-              fontSize: '12px',
-              letterSpacing: '0.5px',
+              fontSize: '12px'
             }}
           >
-            {params.value} 
+            {params.value}
           </Box>
         );
       }
-    },    
-    { field: 'createdAt', headerName: 'Created At', 
-      flex: 1,minWidth : 150,
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Created At',
+      flex: 1,
+      minWidth: 150,
       valueGetter: (params) => {
-        return moment(params.row?.createdAt).format('DD-MM-YYYY'); 
+        return moment(params.row?.createdAt).format('DD-MM-YYYY');
       }
     },
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 2,
+      flex: 1,
       minWidth: 250,
       renderCell: (params) => (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Box
             sx={{
               borderRadius: '8px',
@@ -150,8 +165,8 @@ const Customer = () => {
               color="primary"
               sx={{
                 '&:hover': {
-                  backgroundColor: '#9abfdd', 
-                  color: '#1976d2' 
+                  backgroundColor: '#9abfdd',
+                  color: '#1976d2'
                 }
               }}
             >
@@ -178,7 +193,7 @@ const Customer = () => {
               sx={{
                 '&:hover': {
                   backgroundColor: '#d7cde6',
-                  color: '#512995' 
+                  color: '#512995'
                 }
               }}
             >
@@ -234,22 +249,18 @@ const Customer = () => {
   const handleDelete = async (_id) => {
     try {
       const result = await Swal.fire({
-        title: "Are you sure?",
+        title: 'Are you sure?',
         text: "You won't be able to revert this!",
-        icon: "warning",
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
       });
       if (result.isConfirmed) {
         await deleteCustomer(_id);
-      setCustomerData((prev) => prev.filter((customer) => customer?._id !== _id));
-        Swal.fire(
-          "Deleted!", 
-          "Your customer has been deleted.", 
-          "success"  
-        );
+        setCustomerData((prev) => prev.filter((customer) => customer?._id !== _id));
+        Swal.fire('Deleted!', 'Your customer has been deleted.', 'success');
       }
     } catch (error) {
       console.error('Error deleting customer:', error);
@@ -268,19 +279,24 @@ const Customer = () => {
 
   return (
     <>
-       <AddCustomer open={openAdd} handleClose={() => setOpenAdd(false)} onCustomerAdded={handleCustomerAdded} />
-      <UpdateCustomer open={openUpdate} handleClose={() => setOpenUpdate(false)} customer={currentCustomer}  onCustomerUpdated={handleCustomerUpdated} />
+      <AddCustomer open={openAdd} handleClose={() => setOpenAdd(false)} onCustomerAdded={handleCustomerAdded} />
+      <UpdateCustomer
+        open={openUpdate}
+        handleClose={() => setOpenUpdate(false)}
+        customer={currentCustomer}
+        onCustomerUpdated={handleCustomerUpdated}
+      />
 
       <Container>
-      <Box
+        <Box
           sx={{
             marginTop: '20px',
             backgroundColor: '#ffff',
-            padding: '12px',          
-            borderRadius: '8px', 
-            width: '100%',          
-            display: 'flex',         
-            alignItems: 'center',  
+            padding: '12px',
+            borderRadius: '8px',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'space-between'
           }}
         >
@@ -300,24 +316,21 @@ const Customer = () => {
 
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: 'auto', paddingTop: '5px',marginTop:'25px', overflow: 'auto' }}>
-              <DataGrid  
+            <Card style={{ height: 'auto', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+              <DataGrid
                 rows={customerData}
                 columns={columns}
                 checkboxSelection
+                rowHeight={70}
                 getRowId={(row) => row._id}
                 components={{
-                  Toolbar: () => (
-                    <CustomToolbar
-                    handleOpenAdd={handleOpenAdd}
-                    />
-                  )
+                  Toolbar: () => <CustomToolbar handleOpenAdd={handleOpenAdd} />
                 }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{
                   pagination: {
-                    paginationModel: { pageSize: 10, page: 0 }, 
-                  },
+                    paginationModel: { pageSize: 10, page: 0 }
+                  }
                 }}
                 pagination
                 sx={{
@@ -335,7 +348,6 @@ const Customer = () => {
             </Card>
           </Box>
         </TableStyle>
-     
       </Container>
     </>
   );

@@ -12,10 +12,12 @@ import {
   CardMedia,
   Popover,
   CardContent,
+  TextField,
   Breadcrumbs,
   Link as MuiLink
 } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import AddIcon from '@mui/icons-material/Add';
 import { Link, useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -27,10 +29,12 @@ import { fetchCurrencySymbol } from 'apis/constant.js';
 import { deleteProduct, fetchProducts } from 'apis/api.js';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
+import SearchIcon from '@mui/icons-material/Search';
 
 const Product = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [openAdd, setOpenAdd] = useState(false);
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -107,6 +111,12 @@ const Product = () => {
     setOpenAdd(false);
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value.toLowerCase());
+  };
+
+  const filteredProducts = products.filter((product) => product.productnm.toLowerCase().includes(searchTerm));
+
   return (
     <>
       <AddProductPage open={openAdd} handleClose={() => setOpenAdd(false)} onProductAdded={handleProductAdded} />
@@ -137,76 +147,106 @@ const Product = () => {
           </Breadcrumbs>
         </Box>
 
-        <Box
-          sx={{
-            marginTop: '5px',
-            backgroundColor: '#eeeeee',
-            padding: '5px',
-            borderRadius: '8px',
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}
-        >
+        <Card sx={{ marginTop: '25px' }}>
           <Box
             sx={{
-              backgroundColor: '#1e88e5',
-              borderRadius: '50%',
-              width: '35px',
-              height: '35px',
               display: 'flex',
-              marginLeft: '980px',
-              justifyContent: 'center',
+              justifyContent: 'space-between',
               alignItems: 'center',
-              boxShadow: 3,
-              cursor: 'pointer',
-              '&:hover': {
-                backgroundColor: '#1565c0', 
-                color: '#ffffff'
-              }
+              backgroundColor: '#fff',
+              padding: '10px',
+              borderRadius: '8px',
+              marginTop: '5px'
             }}
-            onClick={handleOpenAdd}
           >
-             <Tooltip title="Add Product" arrow>
-          <Typography variant="h6" sx={{ color: 'white', cursor: 'pointer' ,fontSize: 28}}>
-            +
-          </Typography>
-        </Tooltip>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '5px',
+                borderRadius: '8px',
+                border: '1px solid beige',
+                width: '250px'
+              }}
+            >
+              <SearchIcon sx={{ fontSize: '20px', marginRight: 1 }} />
+              <TextField value={searchTerm} onChange={handleSearchChange} placeholder="Search..." variant="standard" fullWidth />
+            </Box>
+
+            <Tooltip title="Add Product" arrow>
+              <IconButton
+                onClick={handleOpenAdd}
+                sx={{
+                  backgroundColor: '#1e88e5',
+                  color: '#fff',
+                  width: '35px',
+                  height: '35px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  boxShadow: 3,
+                  justifyContent: 'center',
+                  borderRadius: '50%',
+                  '&:hover': {
+                    backgroundColor: '#1565c0',
+                    color: '#ffffff'
+                  }
+                }}
+              >
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
           </Box>
-        </Box>
 
-        <Box sx={{ marginTop: '5px' }}>
-          <Grid container spacing={3}>
-            {products.map((product) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
-                <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
-                  <CardMedia
-                    component="img"
-                    image={product.imageUrl || 'https://via.placeholder.com/150'}
-                    alt={product.productnm}
-                    sx={{ height: 200, objectFit: 'cover' }}
-                    onClick={() => handleView(product._id)}
-                  />
-                  <CardContent>
-                    <Typography variant="h4" noWrap>
-                      {product.productnm}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      {product.categoryName || 'No Category'}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: product.quantity > 5 ? 'green' : 'red' }}>
-                      {product.quantity > 5 ? 'In Stock' : 'Out of Stock'}
-                    </Typography>
-                    <Typography variant="body2">
-                      {currencySymbol} {product.sellingPrice}
-                    </Typography>
+          <Box sx={{ padding: '10px 20px' }}>
+            <Grid container spacing={3}>
+              {filteredProducts.map((product) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
+                  <Card sx={{ borderRadius: 2, boxShadow: 3, position: 'relative' }}>
+                    <CardMedia
+                      component="img"
+                      image={product.imageUrl || 'https://via.placeholder.com/150'}
+                      alt={product.productnm}
+                      sx={{ height: 200, objectFit: 'cover' }}
+                      onClick={() => handleView(product._id)}
+                    />
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                      <IconButton size="small" onClick={(event) => handlePopoverOpen(event)}>
-                        <MoreVertIcon sx={{ color: 'black' }} />
-                      </IconButton>
-                    </Box>
+                    <IconButton
+                      size="small"
+                      onClick={(event) => handlePopoverOpen(event)}
+                      sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8
+                      }}
+                    >
+                      <MoreHorizIcon sx={{ color: 'black' }} />
+                    </IconButton>
+
+                    <CardContent>
+                      <Box display="flex" justifyContent="space-between" alignItems="center">
+                        <Typography variant="h4" noWrap>
+                          {product.productnm}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: product.quantity > 5 ? 'green' : 'red',
+                            textAlign: 'right'
+                          }}
+                        >
+                          {product.quantity > 5 ? 'In Stock' : 'Out of Stock'}
+                        </Typography>
+                      </Box>
+
+                      <Typography variant="body2" color="textSecondary">
+                        {product.categoryName || 'No Category'}
+                      </Typography>
+
+                      <Typography variant="body2">
+                        {currencySymbol} {product.sellingPrice}
+                      </Typography>
+                    </CardContent>
+
                     <Popover
                       open={open}
                       anchorEl={anchorEl}
@@ -241,7 +281,6 @@ const Product = () => {
                           <EditIcon sx={{ color: '#5e35b1', marginRight: 1 }} />
                           Edit
                         </Typography>
-
                         <Typography
                           variant="body2"
                           sx={{
@@ -254,7 +293,7 @@ const Product = () => {
                             color: '#d32f2f'
                           }}
                           onClick={() => {
-                            handleChangePassword(product._id);
+                            handleDelete(product._id);
                             handlePopoverClose();
                           }}
                         >
@@ -263,12 +302,12 @@ const Product = () => {
                         </Typography>
                       </Box>
                     </Popover>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        </Card>
 
         <UpdateProduct
           open={openUpdateDialog}

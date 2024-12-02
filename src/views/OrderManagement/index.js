@@ -146,7 +146,7 @@ const Order = () => {
     {
       field: 'createdAt',
       headerName: 'Date',
-      flex: 1.2,
+      flex: 1.5,
       valueGetter: (params) => {
         return moment(params.row?.createdAt).format('DD-MM-YYYY');
       }
@@ -154,15 +154,19 @@ const Order = () => {
     {
       field: 'invoice_no',
       headerName: 'Invoice no',
-      flex: 1.2
+      flex: 1.5
     },
     {
-      field: 'customerName',
+      field: 'customerName', 
       headerName: 'Customer',
-      flex: 2,
-      minWidth: 100,
-      valueGetter: (params) => params.row?.customerName || 'N/A',
-      sortable: true
+      flex: 1.5,
+      minWidth:250,
+      renderCell: (params) => (
+        <Box>
+          <Typography variant="h5">{params.row?.customerName || 'N/A'}</Typography>
+          <Typography variant="body2" color="textSecondary">{params.row?.customerEmail}</Typography>
+        </Box>
+      )
     },
     {
       field: 'productName',
@@ -189,46 +193,47 @@ const Order = () => {
     {
       field: 'order_status',
       headerName: 'Status',
-      flex: 2,
+      flex: 1.5,
       renderCell: (params) => {
         const status = params.row?.order_status;
         return (
           <Box
-            sx={{
-              backgroundColor:
-                status === 'completed' ? '#34a853' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-              color: 'white',
-              padding: '0.5rem 1rem',
-              borderRadius: '5px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              width: '110px',
-              height: '25px',
-              textTransform: 'uppercase',
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              gap: '0.5rem',
-              fontSize: '12px'
-            }}
-          >
-            {status}
-          </Box>
+          sx={{
+            backgroundColor: status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
+            color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+            '&:hover': {
+              backgroundColor: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+              color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
+            },
+            padding: '0.5rem 1rem',
+            borderRadius: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 'bold',
+            width: '90px',
+            height: '25px',
+            textTransform: 'uppercase',
+            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+            gap: '0.5rem',
+            fontSize: '12px'
+          }}
+        >
+          {status}
+        </Box>
         );
       }
     },
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 2,
+      flex: 1.5,
       renderCell: (params) => (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Box
             sx={{
-              backgroundColor: '#e3f2fd',
               borderRadius: '8px',
               padding: '8px',
-              '&:hover': { backgroundColor: '#bbdefb' },
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -236,17 +241,22 @@ const Order = () => {
               height: '40px'
             }}
           >
-            <IconButton size="small" onClick={() => handleView(params.row?._id)} color="primary" sx={{ padding: 0 }}>
+            <IconButton size="small" onClick={() => handleView(params.row?._id)}
+                color="primary"
+                sx={{
+                  '&:hover': {
+                    backgroundColor: '#9abfdd', 
+                    color: '#1976d2' 
+                  }
+                }}>
               <VisibilityIcon />{' '}
             </IconButton>
           </Box>
           {params.row.order_status === 'completed' && (
             <Box
               sx={{
-                backgroundColor: '#ede7f6',
                 borderRadius: '8px',
                 padding: '8px',
-                '&:hover': { backgroundColor: '#a695c9' },
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -254,7 +264,13 @@ const Order = () => {
                 height: '40px'
               }}
             >
-              <IconButton size="small" onClick={() => handleDownload(params.row?._id)} color="secondary" sx={{ padding: 0 }}>
+              <IconButton size="small" onClick={() => handleDownload(params.row?._id)} color="secondary" 
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#d7cde6',
+                  color: '#512995' 
+                }
+              }}>
                 <Iconify icon="eva:download-fill" />
               </IconButton>
             </Box>
@@ -262,10 +278,8 @@ const Order = () => {
           {(params.row.order_status === 'pending' || params.row.order_status === 'cancelled') && (
             <Box
               sx={{
-                backgroundColor: '#ffebee',
                 borderRadius: '8px',
                 padding: '8px',
-                '&:hover': { backgroundColor: '#ef9a9a' },
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -273,7 +287,13 @@ const Order = () => {
                 height: '40px'
               }}
             >
-              <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
+              <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error"
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: '#ffcccc',
+                      color: '#d32f2f'
+                    }
+                  }}>
                 <DeleteIcon />
               </IconButton>
             </Box>
@@ -353,6 +373,7 @@ const Order = () => {
                 columns={columns}
                 getRowId={(row) => row._id}
                 checkboxSelection
+                rowHeight={70}
                 components={{
                   Toolbar: () => (
                     <CustomToolbar

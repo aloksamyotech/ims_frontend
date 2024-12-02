@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Grid, Typography, Card, CardContent, IconButton } from '@mui/material';
+import { Box, Grid, Typography, Card, CardContent, Breadcrumbs,Container,
+  Link as MuiLink,IconButton } from '@mui/material';
 import { fetchAdmin } from 'apis/api.js';
 import logo from 'assets/images/profile.png';
 import { toast } from 'react-toastify';
 import UpdateProfile from './updateProfile.js';
 import EditIcon from '@mui/icons-material/Edit';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
+import { Link } from 'react-router-dom';
 
 const ProfileSection = () => {
   const [profile, setProfile] = useState(null);
@@ -37,7 +41,34 @@ const ProfileSection = () => {
   }
 
   return (
-    <Box sx={{ marginTop: '20px' }}>
+   <Container>
+       <Box
+        sx={{
+          marginTop: '20px',
+          backgroundColor: '#ffff',
+          padding: '14px',
+          borderRadius: '8px',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
+        <Typography variant="h3">Profile Details</Typography>
+
+        <Breadcrumbs
+          separator={<NavigateNextIcon fontSize="small" />}
+          aria-label="breadcrumb"
+          sx={{ display: 'flex', alignItems: 'center' }}
+        >
+          <MuiLink component={Link} to="/dashboard/default" color="inherit">
+            <HomeIcon sx={{ color: '#5e35b1' }} />
+          </MuiLink>
+          <Typography color="text.primary">Profile</Typography>
+        </Breadcrumbs>
+      </Box>
+
+       <Card sx={{ marginTop: '20px' }}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={4}>
           <Card sx={{ marginBottom: 2 }}>
@@ -114,7 +145,8 @@ const ProfileSection = () => {
       </Grid>
 
       <UpdateProfile open={openDialog} onClose={handleDialogClose} profile={profile} setProfile={setProfile} />
-    </Box>
+    </Card>
+    </Container>
   );
 };
 

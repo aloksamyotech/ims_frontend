@@ -24,15 +24,16 @@ import {
   TableHead,
   TableRow,
   InputAdornment,
-  IconButton
+  IconButton,Breadcrumbs, Link as MuiLink,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { IconTrash, IconShoppingCart, IconSearch } from '@tabler/icons';
 import { Link } from 'react-router-dom';
 import { fetchProducts, fetchCustomers, addCustomer } from 'apis/api.js';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { fetchCurrencySymbol } from 'apis/constant.js'; 
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
 
 const TAX_RATE = 0.07;
 
@@ -258,14 +259,39 @@ const OrderForm = (props) => {
 
   return (
     <Container>
-      <Link to="/dashboard/orders">
+      <Box
+          sx={{
+            marginTop: '20px',
+            backgroundColor: '#ffff',
+            padding: '12px',
+            borderRadius: '8px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <Typography variant="h3">Add Order</Typography>
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="breadcrumb"
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+              <HomeIcon sx={{ color: '#5e35b1' }} />
+            </MuiLink>
+            <MuiLink component={Link} to="/dashboard/orders" color="inherit">
+            <Typography color="text.primary">Orders</Typography>
+            </MuiLink>
+            <Typography color="text.primary">AddOrder</Typography>
+          </Breadcrumbs>
+        </Box>
+
+      {/* <Link to="/dashboard/orders">
         <Button sx={{ marginTop: '18px' }} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
         </Button>
-      </Link>
-      <form onSubmit={formik.handleSubmit}>
-        <Typography marginTop={5} variant="h3" gutterBottom>
-          Add Order
-        </Typography>
+      </Link> */}
+  
+        <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={2} sx={{ marginTop: '8px' }}>
           <Grid item xs={12}>
             <Paper style={{ padding: '10px', borderRadius: '8px', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}>

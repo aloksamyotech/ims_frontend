@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Card, Typography, Grid, CardContent, Divider, Container, Button, Stack } from '@mui/material';
+import { Box, Card, Typography, Grid, CardContent, Divider, Container,
+  Breadcrumbs, Link as MuiLink, Button, Stack } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import axios from 'axios';
@@ -9,6 +10,8 @@ import moment from 'moment';
 import { fetchOrders } from 'apis/api.js';
 import { fetchCurrencySymbol } from 'apis/constant.js';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
 
 const ViewCustomerPage = () => {
   const { id } = useParams();
@@ -55,28 +58,29 @@ const ViewCustomerPage = () => {
         const status = params.row?.order_status;
         return (
           <Box
-            sx={{
-              backgroundColor: 
-                status === 'completed' ? '#34a853' : 
-                status === 'pending' ? '#ff9800' : 
-                status === 'cancelled' ? '#f44336' : '',
-              color: 'white',
-              padding: '0.5rem 1rem',
-              borderRadius: '5px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              width: '110px',
-              height: '25px', 
-              textTransform: 'uppercase',
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              gap: '0.5rem',
-              fontSize: '12px',  
-            }}
-          >
-            {status}
-          </Box>
+          sx={{
+            backgroundColor: status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
+            color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+            '&:hover': {
+              backgroundColor: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+              color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
+            },
+            padding: '0.5rem 1rem',
+            borderRadius: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 'bold',
+            width: '90px',
+            height: '25px',
+            textTransform: 'uppercase',
+            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+            gap: '0.5rem',
+            fontSize: '12px'
+          }}
+        >
+          {status}
+        </Box>
         );
       }
     },
@@ -155,20 +159,40 @@ const ViewCustomerPage = () => {
 
   return (
     <Container>
-      <Link to="/dashboard/customers">
-        <Button sx={{ marginTop: '18px' }} variant="contained" color="primary" startIcon={<ArrowBackIcon />}></Button>
-      </Link>
+      <Box
+        sx={{
+          marginTop: '20px',
+          backgroundColor: '#ffff',
+          padding: '14px',
+          borderRadius: '8px',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
+        <Typography variant="h3">Customer Details</Typography>
+
+        <Breadcrumbs
+          separator={<NavigateNextIcon fontSize="small" />}
+          aria-label="breadcrumb"
+          sx={{ display: 'flex', alignItems: 'center' }}
+        >
+          <MuiLink component={Link} to="/dashboard/default" color="inherit">
+            <HomeIcon sx={{ color: '#5e35b1' }} />
+          </MuiLink>
+          <MuiLink component={Link} to="/dashboard/customers" color="inherit">
+            <Typography color="text.primary">Customers</Typography>
+          </MuiLink>
+          <Typography color="text.primary">ViewCustomer</Typography>
+        </Breadcrumbs>
+      </Box>
+
       <Box sx={{ marginTop: '20px' }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <Card sx={{ marginBottom: 2 }}>
               <CardContent>
-                <Box sx={{ borderRadius: 1, marginBottom: 1 }}>
-                  <Typography variant="h4" sx={{ color: 'black', fontWeight: 'bold' }}>
-                    Customer Details
-                  </Typography>
-                </Box>
-                <Divider sx={{ marginY: 2, borderColor: 'gray', borderWidth: 1 }} />
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>

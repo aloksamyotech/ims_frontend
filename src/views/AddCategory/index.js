@@ -59,6 +59,7 @@ const Category = () => {
           }}
         />
         <Stack direction="row" spacing={2} alignItems="center">
+        <GridToolbarExport sx={{ fontSize: 25 }} />
           <Tooltip title="Add Category" arrow>
             <IconButton
               onClick={handleOpenAdd}
@@ -82,22 +83,20 @@ const Category = () => {
               <AddIcon />
             </IconButton>
           </Tooltip>
-          <GridToolbarExport sx={{ fontSize: 25 }} />
         </Stack>
       </GridToolbarContainer>
     );
   };
 
   const columns = [
-    { field: 'catnm', headerName: 'Category Name', flex: 1.5, minWidth: 250 },
-    { field: 'desc', headerName: 'Description', flex: 1, minWidth: 400 },
+    { field: 'catnm', headerName: 'Category Name', flex: 1},
+    { field: 'desc', headerName: 'Description', flex: 1},
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 2,
-      minWidth: 250,
+      flex: 1,
       renderCell: (params) => (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Box
             sx={{
               borderRadius: '8px',

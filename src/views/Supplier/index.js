@@ -15,6 +15,7 @@ import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from 
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
+import { minWidth } from '@mui/system';
 
 const Supplier = () => {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ const Supplier = () => {
           }}
         />
         <Stack direction="row" spacing={2} alignItems="center">
+        <GridToolbarExport sx={{ fontSize: 25 }} />
           <Tooltip title="Add Supplier" arrow>
             <IconButton
               onClick={handleOpenAdd}
@@ -75,17 +77,27 @@ const Supplier = () => {
               <AddIcon />
             </IconButton>
           </Tooltip>
-          <GridToolbarExport sx={{ fontSize: 25 }} />
+         
         </Stack>
       </GridToolbarContainer>
     );
   };
 
   const columns = [
-    { field: 'suppliernm', headerName: 'Name', flex: 1.5, minWidth: 150 },
-    { field: 'email', headerName: 'Email', flex: 2, minWidth: 250 },
-    { field: 'phone', headerName: 'Phone', flex: 1.5, minWidth: 150 },
-    { field: 'shopName', headerName: 'Shop Name', flex: 1.5, minWidth: 200 },
+    {
+      field: 'suppliernm', 
+      headerName: 'Name',
+      flex: 1.5,
+      minWidth:250,
+      renderCell: (params) => (
+        <Box>
+          <Typography variant="h5">{params.row.suppliernm}</Typography>
+          <Typography variant="body2" color="textSecondary">{params.row.email}</Typography>
+        </Box>
+      )
+    },
+    { field: 'phone', headerName: 'Phone', flex: 1.5, minWidth: 140 },
+    { field: 'shopName', headerName: 'Shop Name', flex: 1.5, minWidth: 180 },
     {
       field: 'typeOfSupplier',
       headerName: 'Type Of Supplier',
@@ -95,21 +107,24 @@ const Supplier = () => {
         return (
           <Box
             sx={{
-              backgroundColor: '#2196f3',
-              color: 'white',
+              backgroundColor: '#e3f2fd',
+              color: '#2196f3',
+              '&:hover': {
+                backgroundColor: '#2196f3',
+                color: 'white'
+              },
               padding: '0.5rem 1rem',
-              borderRadius: '5px',
+              borderRadius: '30px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 'bold',
-              width: '110px',
+              width: '93px',
               height: '25px',
               textTransform: 'uppercase',
-              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
               gap: '0.5rem',
-              fontSize: '12px',
-              letterSpacing: '0.5px'
+              fontSize: '12px'
             }}
           >
             {params.value}
@@ -129,10 +144,10 @@ const Supplier = () => {
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 2,
+      flex: 1,
       minWidth: 250,
       renderCell: (params) => (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Box
             sx={{
               borderRadius: '8px',
@@ -306,6 +321,7 @@ const Supplier = () => {
                 columns={columns}
                 checkboxSelection
                 getRowId={(row) => row._id}
+                rowHeight={70}
                 components={{
                   Toolbar: () => <CustomToolbar handleOpenAdd={handleOpenAdd} />
                 }}

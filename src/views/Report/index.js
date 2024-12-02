@@ -23,6 +23,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { Link } from 'react-router-dom';
+import { Container, minWidth } from '@mui/system';
 
 const TabContentCard = styled(Card)(({ theme }) => ({
   boxShadow: theme.shadows[3],
@@ -94,8 +95,18 @@ const ProductReport = () => {
       width: 180,
       valueGetter: (params) => moment(params.row?.date).format('DD-MM-YYYY')
     },
-    { field: 'supplierName', headerName: 'Supplier', width: 200 },
-    { field: 'supplierEmail', headerName: 'Email', width: 200 },
+    {
+      field: 'supplierName', 
+      headerName: 'Supplier',
+      flex: 1.5,
+      minWidth:200,
+      renderCell: (params) => (
+        <Box>
+          <Typography variant="h5">{params.row?.supplierName}</Typography>
+          <Typography variant="body2" color="textSecondary">{params.row?.supplierEmail}</Typography>
+        </Box>
+      )
+    },
     { field: 'supplierPhone', headerName: 'Phone', width: 200 },
     { field: 'productName', headerName: 'Product Name', width: 200 },
     { field: 'quantity', headerName: 'Quantity', width: 130 },
@@ -152,8 +163,18 @@ const ProductReport = () => {
       width: 180,
       valueGetter: (params) => moment(params.row?.date).format('DD-MM-YYYY')
     },
-    { field: 'customerName', headerName: 'Customer', width: 200 },
-    { field: 'customerEmail', headerName: 'Email', width: 200 },
+    {
+      field: 'customerName', 
+      headerName: 'Customer',
+      flex: 1.5,
+      minWidth:200,
+      renderCell: (params) => (
+        <Box>
+          <Typography variant="h5">{params.row?.customerName}</Typography>
+          <Typography variant="body2" color="textSecondary">{params.row?.customerEmail}</Typography>
+        </Box>
+      )
+    },
     { field: 'customerPhone', headerName: 'Phone', width: 200 },
     { field: 'productName', headerName: 'Product Name', width: 200 },
     { field: 'quantity', headerName: 'Quantity', width: 130 },
@@ -296,7 +317,7 @@ const ProductReport = () => {
   };
 
   return (
-    <Box>
+    <Container>
       <Box
         sx={{
           marginTop: '20px',
@@ -357,6 +378,7 @@ const ProductReport = () => {
               rows={filteredOrderData}
               columns={orderColumns}
               checkboxSelection
+              rowHeight={70}
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
               initialState={{
@@ -381,6 +403,7 @@ const ProductReport = () => {
               rows={filteredPurchaseData}
               columns={purchaseColumns}
               checkboxSelection
+              rowHeight={70}
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
               initialState={{
@@ -399,7 +422,7 @@ const ProductReport = () => {
           </Box>
         )}
       </TabContentCard>
-    </Box>
+    </Container>
   );
 };
 

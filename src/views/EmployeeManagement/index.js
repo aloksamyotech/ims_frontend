@@ -14,8 +14,8 @@ import ChangePassword from './changePassword.js';
 import Swal from 'sweetalert2';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
-import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
+import { Avatar } from '@mui/material';
 
 const User = () => {
   const [users, setUsers] = useState([]);
@@ -72,9 +72,44 @@ const User = () => {
     );
   };
 
+  const generateRandomAvatar = (name) => {
+    const initials = name
+      .split(' ')
+      .map((word) => word[0])
+      .join('');
+    return initials;
+  };  
+
   const columns = [
-    { field: 'name', headerName: 'Name', flex: 0.8 },
-    { field: 'email', headerName: 'Email', flex: 1 },
+    { field: 'name', headerName: 'Username',
+      flex: 1.5,
+      sortable: false,
+      renderCell: (params) => (
+        <Box display="flex" alignItems="center">
+          <Avatar
+            sx={{
+              bgcolor: '#673ab7',
+              color: '#ffff',
+              width: 40,
+              height: 40,
+              fontSize: 14,
+              boxShadow: 3,
+              border: '1px solid white',
+              transition: 'transform 0.3s ease-in-out',
+              '&:hover': {
+                transform: 'scale(1.1)'
+              }
+            }}
+          >
+            {generateRandomAvatar(params.row.name || '')}
+          </Avatar>
+          <Box ml={1}>
+            <Typography variant="h5">{params.row?.name || 'N/A'}</Typography>
+            <Typography variant="body2" color="textSecondary">{params.row?.email}</Typography>
+          </Box>
+        </Box>
+      )
+    },    
     { field: 'phone', headerName: 'Phone', flex: 0.8 },
     {
       field: 'date',
@@ -85,61 +120,69 @@ const User = () => {
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 2,
+      flex: 1,
       renderCell: (params) => (
-        <Stack direction="row" spacing={1}>
-          <Box
-            sx={{
-              backgroundColor: '#e3f2fd',
-              borderRadius: '8px',
-              padding: '8px',
-              '&:hover': { backgroundColor: '#bbdefb' },
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '40px',
-              height: '40px'
-            }}
-          >
-            <IconButton size="small" onClick={() => handleView(params.row)} color="primary" sx={{ padding: 0 }}>
+        <Stack direction="row">
+          <Box sx={{
+            borderRadius: '8px',
+            padding: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '40px',
+            height: '40px'
+          }}>
+            <IconButton
+              size="small"
+              onClick={() => handleView(params.row)}
+              color="primary"
+              sx={{
+                '&:hover': { backgroundColor: '#9abfdd', color: '#1976d2' }
+              }}
+            >
               <VisibilityIcon />
             </IconButton>
           </Box>
-          <Box
-            sx={{
-              backgroundColor: '#fff3e0',
-              borderRadius: '8px',
-              padding: '8px',
-              '&:hover': { backgroundColor: '#ffe0b2' },
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '40px',
-              height: '40px'
-            }}
-          >
-            <IconButton size="small" onClick={(event) => handlePopoverOpen(event, params.row)}>
-              <EditIcon sx={{ color: '#ff9800' }} />
+  
+          <Box sx={{
+            borderRadius: '8px',
+            padding: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '40px',
+            height: '40px'
+          }}>
+            <IconButton size="small" onClick={(event) => handlePopoverOpen(event, params.row)} 
+              color="secondary"
+              sx={{
+                '&:hover': { backgroundColor: '#d7cde6', color: '#512995' }
+              }}>
+              <EditIcon />
             </IconButton>
           </Box>
-          <Box
-            sx={{
-              backgroundColor: '#ffebee',
-              borderRadius: '8px',
-              padding: '8px',
-              '&:hover': { backgroundColor: '#ef9a9a' },
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '40px',
-              height: '40px'
-            }}
-          >
-            <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error">
+  
+          <Box sx={{
+            borderRadius: '8px',
+            padding: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '40px',
+            height: '40px'
+          }}>
+            <IconButton
+              size="small"
+              onClick={() => handleDelete(params.row?._id)}
+              color="error"
+              sx={{
+                '&:hover': { backgroundColor: '#ffcccc', color: '#d32f2f' }
+              }}
+            >
               <DeleteIcon />
             </IconButton>
           </Box>
-
+  
           <Popover
             open={open}
             anchorEl={anchorEl}
@@ -174,7 +217,7 @@ const User = () => {
                 <EditIcon sx={{ marginRight: 1 }} />
                 Edit Profile
               </Typography>
-
+  
               <Typography
                 variant="body2"
                 sx={{
@@ -200,7 +243,7 @@ const User = () => {
       )
     }
   ];
-
+  
   const handleView = (user) => {
     setCurrentUser(user);
     setOpenView(true);
@@ -284,8 +327,8 @@ const User = () => {
               <DataGrid
                 rows={users}
                 columns={columns}
-                checkboxSelection
                 getRowId={(row) => row._id}
+                rowHeight={70}
                 components={{ Toolbar: CustomToolbar }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{

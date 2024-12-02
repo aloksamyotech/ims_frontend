@@ -51,6 +51,7 @@ const Unit = () => {
           }}
         />
         <Stack direction="row" spacing={2} alignItems="center">
+        <GridToolbarExport sx={{ fontSize: 25 }} />
           <Tooltip title="Add Unit" arrow>
             <IconButton
               onClick={handleOpenAdd}
@@ -74,7 +75,6 @@ const Unit = () => {
               <AddIcon />
             </IconButton>
           </Tooltip>
-          <GridToolbarExport sx={{ fontSize: 25 }} />
         </Stack>
       </GridToolbarContainer>
     );
@@ -86,10 +86,10 @@ const Unit = () => {
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 2,
+      flex: 1,
       minWidth: 250,
       renderCell: (params) => (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Box
             sx={{
               borderRadius: '8px',
