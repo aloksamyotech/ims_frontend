@@ -331,6 +331,17 @@ const InvoicePage = () => {
                             : order_status === 'cancelled'
                             ? '#f44336'
                             : '',
+                            '&:hover': {
+                              backgroundColor:
+                                order_status === 'completed'
+                                  ? '#19ab53'
+                                  : order_status === 'pending'
+                                  ? '#ff9800'
+                                  : order_status === 'cancelled'
+                                  ? '#f44336'
+                                  : '',
+                              color: order_status === 'completed' ? '#ffff' : order_status === 'pending' ? '#ffff' : order_status === 'cancelled' ? '#ffff' : ''
+                            },
                         padding: '1rem 1rem',
                         borderRadius: '30px',
                         display: 'flex',

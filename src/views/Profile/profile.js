@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Grid, Typography, Card, CardContent, Breadcrumbs,Container,
-  Link as MuiLink,IconButton } from '@mui/material';
+  Link as MuiLink,Button } from '@mui/material';
 import { fetchAdmin } from 'apis/api.js';
 import logo from 'assets/images/profile.png';
 import { toast } from 'react-toastify';
 import UpdateProfile from './updateProfile.js';
-import EditIcon from '@mui/icons-material/Edit';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import { Link } from 'react-router-dom';
@@ -120,24 +119,9 @@ const ProfileSection = () => {
                   <Typography variant="h5">{profile?.currencySymbol || 'NA'}</Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <Box
-                    sx={{
-                      backgroundColor: '#fff3e0',
-                      borderRadius: '8px',
-                      padding: '8px',
-                      paddingTop: '8px',
-                      '&:hover': { backgroundColor: '#ffe0b2' },
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '40px',
-                      height: '40px'
-                    }}
-                  >
-                    <IconButton size="small" onClick={handleEditClick}>
-                      <EditIcon sx={{ color: '#ff9800' }} />
-                    </IconButton>
-                  </Box>
+                    <Button  variant="contained" size="small" color="secondary" onClick={handleEditClick}>
+                     Edit Profile
+                    </Button>
                 </Grid>
               </Grid>
             </CardContent>

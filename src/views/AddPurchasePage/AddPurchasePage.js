@@ -24,7 +24,7 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { IconTrash } from '@tabler/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { addPurchase, fetchProducts, fetchSuppliers } from 'apis/api.js';
 import { makeStyles } from '@mui/styles';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -40,6 +40,7 @@ const TAX_RATE = 0.07;
 
 const PurchaseForm = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
   const [supplierList, setSupplierList] = useState([]);
   const [productList, setProductList] = useState([]);
   const [rows, setRows] = useState([{ product: '', quantity: 1, price: 0, subtotal: 0 }]);
@@ -82,6 +83,7 @@ const PurchaseForm = () => {
       try {
         const response = await addPurchase(purchaseData);
         toast.success('Purchase added successfully');
+        navigate('/dashboard/purchases');
         formik.resetForm();
         setRows([{ product: '', quantity: 1, price: 0, subtotal: 0 }]);
       } catch (error) {
