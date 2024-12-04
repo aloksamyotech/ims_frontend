@@ -51,7 +51,7 @@ const UpdateProfile = ({ open, onClose, profile, setProfile }) => {
       );
       
       if (response.status === 200) {
-        console.log('Profile updated successfully', response.data);
+         window.location.reload();
         toast.success("Profile Updated Successfully!");
       } else {
         console.error('Failed to update profile', response.data);
