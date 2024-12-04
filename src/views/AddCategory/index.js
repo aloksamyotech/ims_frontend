@@ -111,7 +111,7 @@ const Category = () => {
           >
             <IconButton
               size="small"
-              onClick={() => handleView(params.row._id)}
+              onClick={() => handleView(params.row)}
               color="primary"
               sx={{
                 '&:hover': {
