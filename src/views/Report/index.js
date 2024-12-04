@@ -330,7 +330,7 @@ const ProductReport = () => {
           justifyContent: 'space-between'
         }}
       >
-        <Typography variant="h3">Reports </Typography>
+        <Typography variant="h4">Reports </Typography>
 
         <Breadcrumbs
           separator={<NavigateNextIcon fontSize="small" />}

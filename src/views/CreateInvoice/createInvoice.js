@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import {
   Container,
+  Card,
   Grid,
+  Box,
   Typography,
   Button,
+  Breadcrumbs,
+  Link as MuiLink,
   Table,
   TableBody,
   TableCell,
@@ -15,6 +19,8 @@ import {
 import { useLocation, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { addOrder } from 'apis/api.js';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
 
 const CreateInvoice = () => {
   const location = useLocation();
@@ -57,23 +63,48 @@ const CreateInvoice = () => {
 
   return (
     <Container>
-      <Grid container spacing={3}>
-        <Grid container spacing={2} sx={{ marginBottom: 3, marginLeft: 35, paddingTop: 10 }}>
-          <Grid item xs={6} style={{ textAlign: 'center' }}>
-            <Typography variant="h3" fontWeight="bold">
-              Invoice Details
-            </Typography>
-          </Grid>
-        </Grid>
-        <Grid container spacing={2} sx={{ marginBottom: 3, marginLeft: 5 }}>
+       <Box
+          sx={{
+            marginTop: '20px',
+            backgroundColor: '#ffff',
+            padding: '14px',
+            borderRadius: '8px',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          <Typography variant="h4">Invoice Details</Typography>
+
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="breadcrumb"
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+            <HomeIcon sx={{ color: '#5e35b1' }} />
+          </MuiLink>
+          <MuiLink component={Link} to="/dashboard/orders" color="inherit">
+            <Typography color="text.primary">Orders</Typography>
+          </MuiLink>
+          <MuiLink component={Link} to="/dashboard/orders/add-order" color="inherit">
+            <Typography color="text.primary">Add Orders</Typography>
+          </MuiLink>
+            <Typography color="text.primary">CreateInvoice</Typography>
+          </Breadcrumbs>
+        </Box>
+
+      <Card sx={{marginTop:'20px'}}>
+        <Grid container spacing={2} sx={{ marginBottom: 3, marginLeft: 2 }}>
           <Grid item xs={6}>
-            <Typography variant="body1" fontWeight="bold">
+            <Typography variant="body1" fontWeight="bold" sx={{paddingTop:'8px'}}>
               Invoice date: {orderData?.date}
             </Typography>
           </Grid>
         </Grid>
 
-        <Grid container spacing={2} sx={{ marginBottom: 3, marginLeft: 5 }}>
+        <Grid container spacing={2} sx={{ marginBottom: 1, marginLeft: 2 }}>
           <Grid item xs={12}>
             <Typography variant="body1" fontWeight="bold">
               Customer
@@ -86,7 +117,7 @@ const CreateInvoice = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <TableContainer component={Paper}>
+          <TableContainer component={Paper} sx={{padding:'20px'}}>
             <Table>
               <TableHead sx={{ backgroundColor: '#1976d2' }}>
                 <TableRow>
@@ -127,25 +158,13 @@ const CreateInvoice = () => {
             </Table>
           </TableContainer>
         </Grid>
+      </Card>
 
-        <Grid item xs={12} sx={{ textAlign: 'center', marginTop: 3 }}>
-          <Link to="/dashboard/orders/add-order">
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: '#f1c40f',
-                marginRight: 2,
-                '&:hover': { backgroundColor: '#f39c12' }
-              }}
-            >
-              Back to previous
-            </Button>
-          </Link>
+      <Grid item xs={12} sx={{ textAlign: 'left', marginTop: 3 }}>
           <Button variant="contained" color="secondary" onClick={handleSubmit} disabled={loading || isSubmitted}>
             {isSubmitted ? 'Submitted' : loading ? 'Submitting...' : 'Submit'}
           </Button>
         </Grid>
-      </Grid>
     </Container>
   );
 };

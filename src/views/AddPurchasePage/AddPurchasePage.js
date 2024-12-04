@@ -184,7 +184,7 @@ const PurchaseForm = () => {
             alignItems: 'center'
           }}
         >
-          <Typography variant="h3">Add Purchase</Typography>
+          <Typography variant="h4">Add Purchase</Typography>
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}
             aria-label="breadcrumb"
@@ -199,12 +199,6 @@ const PurchaseForm = () => {
             <Typography color="text.primary">AddPurchase</Typography>
           </Breadcrumbs>
         </Box>
-
-  
-      {/* <Link to="/dashboard/purchases">
-        <Button  sx={{marginTop:'18px'}} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
-        </Button>
-      </Link> */}
 
       <form onSubmit={formik.handleSubmit}>
       <Grid container spacing={3} sx={{marginTop:'8px'}}>

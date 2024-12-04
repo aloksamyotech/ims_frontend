@@ -80,8 +80,8 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
     <Dialog open={open} onClose={handleClose}
     PaperProps={{
       style: {
-        width: '900px', 
-        height: '900px', 
+        width: '600px', 
+        height: '600px', 
         maxWidth: 'none', 
       },
     }}>
@@ -96,8 +96,8 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
       <DialogContent dividers>
         <form onSubmit={throttledSubmit}>
           <Typography style={{ marginBottom: '15px' }} variant="h4">Customer Details</Typography>
-          <Grid container rowSpacing={2} columnSpacing={{ xs: 0, sm: 5, md: 2 }} >
-            <Grid item xs={12} sm={6}>
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={6}>
               <FormLabel>Name</FormLabel>
               <TextField
                 required
@@ -110,7 +110,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 helperText={formik.touched.customernm && formik.errors.customernm}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6} >
               <FormLabel>Email</FormLabel>
               <TextField
                 required
@@ -123,7 +123,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6} >
               <FormLabel>Phone number</FormLabel>
               <TextField
                 required
@@ -136,7 +136,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 helperText={formik.touched.phone && formik.errors.phone}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormControl fullWidth>
                 <FormLabel>Bank Name</FormLabel>
                 <Select
@@ -157,7 +157,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 </FormHelperText>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormLabel>Account Holder</FormLabel>
               <TextField
                 id="accountHolder"
@@ -169,7 +169,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 helperText={formik.touched.accountHolder && formik.errors.accountHolder}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormLabel>Account Number</FormLabel>
               <TextField
                 id="accountNumber"
@@ -190,7 +190,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 name="address"
                 multiline
                 fullWidth
-                rows={3}
+                rows={2}
                 value={formik.values.address}
                 onChange={formik.handleChange}
                 error={formik.touched.address && Boolean(formik.errors.address)}
@@ -216,6 +216,8 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
           </DialogActions>
         </form>
       </DialogContent>
+
+      
     </Dialog>
   );
 };

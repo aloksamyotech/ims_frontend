@@ -114,14 +114,14 @@ const dashboard = {
           icon: icons.IconCategory,
           breadcrumbs: false
         },
-        {
-          id: '10',
-          title: 'Unit',
-          type: 'item',
-          url: '/dashboard/unit',
-          icon: icons.IconBrandUnity,
-          breadcrumbs: false
-        }
+        // {
+        //   id: '10',
+        //   title: 'Unit',
+        //   type: 'item',
+        //   url: '/dashboard/unit',
+        //   icon: icons.IconBrandUnity,
+        //   breadcrumbs: false
+        // }
       ]
     },
     {

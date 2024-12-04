@@ -108,8 +108,8 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
       <DialogContent dividers>
         <form onSubmit={formik.handleSubmit}>
           <Typography style={{ marginBottom: '15px' }} variant="h4">Customer Details</Typography>
-          <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-            <Grid item xs={12}>
+          <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={6}>
               <FormLabel>Name</FormLabel>
               <TextField
                 required
@@ -122,7 +122,7 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                 helperText={formik.touched.customernm && formik.errors.customernm}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormLabel>Email</FormLabel>
               <TextField
                 required
@@ -135,7 +135,7 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormLabel>Phone number</FormLabel>
               <TextField
                 required
@@ -148,7 +148,7 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                 helperText={formik.touched.phone && formik.errors.phone}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormControl fullWidth>
                 <FormLabel>Bank Name</FormLabel>
                 <Select
@@ -169,7 +169,7 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                 </FormHelperText>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormLabel>Account Holder</FormLabel>
               <TextField
                 id="accountHolder"
@@ -181,7 +181,7 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                 helperText={formik.touched.accountHolder && formik.errors.accountHolder}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormLabel>Account Number</FormLabel>
               <TextField
                 id="accountNumber"
@@ -202,7 +202,7 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                 name="address"
                 multiline
                 fullWidth
-                rows={3}
+                rows={2}
                 value={formik.values.address}
                 onChange={formik.handleChange}
                 error={formik.touched.address && Boolean(formik.errors.address)}

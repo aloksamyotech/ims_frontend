@@ -351,7 +351,7 @@ const Order = () => {
             justifyContent: 'space-between'
           }}
         >
-          <Typography variant="h3">Order Lists</Typography>
+          <Typography variant="h4">Order Lists</Typography>
 
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}

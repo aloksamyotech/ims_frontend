@@ -286,17 +286,12 @@ const OrderForm = (props) => {
           </Breadcrumbs>
         </Box>
 
-      {/* <Link to="/dashboard/orders">
-        <Button sx={{ marginTop: '18px' }} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
-        </Button>
-      </Link> */}
-  
         <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={2} sx={{ marginTop: '8px' }}>
           <Grid item xs={12}>
-            <Paper style={{ padding: '10px', borderRadius: '8px', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}>
-              <Grid container spacing={3} sx={{ margin: '1px' }}>
-                <Grid item xs={12} sm={6}>
+            <Paper style={{ padding: '5px', borderRadius: '8px', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}>
+              <Grid container spacing={2} sx={{ padding: '10px' }}>
+                <Grid item xs={4}>
                   <FormLabel>Date *</FormLabel>
                   <TextField
                     fullWidth
@@ -310,7 +305,7 @@ const OrderForm = (props) => {
                     helperText={formik.touched.date && formik.errors.date}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={4} >
                   <FormLabel>Customer Type *</FormLabel>
                   <FormControl component="fieldset" sx={{ width: '100%' }}>
                     <FormGroup row>
@@ -346,7 +341,7 @@ const OrderForm = (props) => {
                 </Grid>
                 {isWalkIn && (
                   <>
-                    <Grid item xs={12} sm={5}>
+                    <Grid item xs={4}>
                       <FormLabel>Name *</FormLabel>
                       <TextField
                         fullWidth
@@ -356,7 +351,7 @@ const OrderForm = (props) => {
                         onChange={(e) => setWalkInData({ ...walkInData, customernm: e.target.value })}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={5}>
+                    <Grid item xs={4}>
                       <FormLabel>Phone *</FormLabel>
                       <TextField
                         fullWidth
@@ -366,7 +361,7 @@ const OrderForm = (props) => {
                         onChange={(e) => setWalkInData({ ...walkInData, phone: e.target.value })}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={5}>
+                    <Grid item xs={4}> 
                       <FormLabel>Email *</FormLabel>
                       <TextField
                         fullWidth
@@ -376,7 +371,7 @@ const OrderForm = (props) => {
                         onChange={(e) => setWalkInData({ ...walkInData, email: e.target.value })}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={5}>
+                    <Grid item xs={4}>
                       <FormLabel>Address *</FormLabel>
                       <TextField
                         fullWidth
@@ -390,7 +385,7 @@ const OrderForm = (props) => {
                 )}
 
                 {isWholesale && (
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={4}>
                     <FormLabel>Wholesale Customer</FormLabel>
                     <Select
                       value={formik.values.customernm}
@@ -431,7 +426,7 @@ const OrderForm = (props) => {
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                               <TextField
                                 type="number"
-                                value={quantity[product._id] || 1}
+                                value={quantity[product._id]}
                                 onChange={(e) => handleQuantityChange(product._id, parseInt(e.target.value))}
                                 inputProps={{ min: 1 }}
                                 size="large"
@@ -494,7 +489,6 @@ const OrderForm = (props) => {
             <Paper style={{ padding: '20px', borderRadius: '8px', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}>
               <Box
                 sx={{
-                  marginTop: '10px',
                   marginRight: '10px',
                   marginLeft: '8px',
                   display: 'flex',
@@ -526,8 +520,7 @@ const OrderForm = (props) => {
               <TableContainer
                 component={Paper}
                 elevation={3}
-                sx={{ marginLeft: '8px', alignContent: 'center' }}
-                style={{ maxWidth: '975px' }}
+                sx={{  alignContent: 'center' }}
               >
                 <Table>
                   <TableHead sx={{ backgroundColor: '#1976d2' }}>

@@ -25,14 +25,14 @@ import { addProduct, fetchCategories, fetchUnits } from 'apis/api.js';
 const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
   const [image, setImage] = useState('');
   const [clist, setCatList] = useState([]);
-  const [ulist, setUnitList] = useState([]);
+  // const [ulist, setUnitList] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = yup.object({
     productnm: yup.string().max(50, 'Max 30 characters are allowed')
     .required('Product name is required'),
     catnm: yup.string().required('Product Category is required'),
-    unitnm: yup.string().required('Unit is required'),
+    // unitnm: yup.string().required('Unit is required'),
     buyingPrice: yup
       .number()
       .required('Buying Price is required')
@@ -67,7 +67,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
         const formData = new FormData();
         formData.append('productnm', values.productnm);
         formData.append('categoryId', values.catnm);
-        formData.append('unitId', values.unitnm);
+        // formData.append('unitId', values.unitnm);
         formData.append('buyingPrice', values.buyingPrice);
         formData.append('sellingPrice', values.sellingPrice);
         formData.append('tax', values.tax);
@@ -98,8 +98,8 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
       try {
         const categoryResult = await fetchCategories();
         setCatList(categoryResult?.data); 
-        const unitResult = await fetchUnits();
-        setUnitList(unitResult?.data); 
+        // const unitResult = await fetchUnits();
+        // setUnitList(unitResult?.data); 
       } catch (error) {
         console.error(error);
       }
@@ -121,8 +121,8 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
       onClose={handleClose}
       PaperProps={{
         style: {
-          width: '900px',
-          height: '900px',
+          width: '600px',
+          height: '600px',
           maxWidth: 'none'
         }
       }}
@@ -166,7 +166,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <FormLabel>Unit</FormLabel>
                 <Select required id="unitnm" name="unitnm" value={formik.values.unitnm} onChange={formik.handleChange}>
@@ -178,7 +178,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 </Select>
                 <FormHelperText error>{formik.touched.unitnm && formik.errors.unitnm}</FormHelperText>
               </FormControl>
-            </Grid>
+            </Grid> */}
 
             <Grid item xs={12} sm={6}>
               <FormLabel>Buying Price</FormLabel>

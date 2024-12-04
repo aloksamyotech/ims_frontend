@@ -13,7 +13,6 @@ const ViewCategory = ({ open, handleClose, category }) => {
         try {
           const response = await fetchCategories(category);
           setCategoryData(response?.data);
-          console.log(response.data);
           setLoading(false);
         } catch (error) {
           console.error('Error fetching category details:', error);

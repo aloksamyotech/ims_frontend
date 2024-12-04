@@ -309,7 +309,7 @@ const User = () => {
             justifyContent: 'space-between'
           }}
         >
-          <Typography variant="h3">Users</Typography>
+          <Typography variant="h4">Users</Typography>
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}
             aria-label="breadcrumb"

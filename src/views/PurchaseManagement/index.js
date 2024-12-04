@@ -325,7 +325,7 @@ const Purchase = () => {
             justifyContent: 'space-between'
           }}
         >
-          <Typography variant="h3">Purchase Lists</Typography>
+          <Typography variant="h4">Purchase Lists</Typography>
 
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}

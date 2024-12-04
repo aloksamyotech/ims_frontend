@@ -251,7 +251,7 @@ const Category = () => {
             alignItems: 'center'
           }}
         >
-          <Typography variant="h3">Category Lists</Typography>
+          <Typography variant="h4">Category Lists</Typography>
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}
             aria-label="breadcrumb"

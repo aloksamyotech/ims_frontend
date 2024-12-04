@@ -357,7 +357,7 @@ const ViewProductPage = () => {
           alignItems: 'center'
         }}
       >
-        <Typography variant="h3">Product Details</Typography>
+        <Typography variant="h4">Product Details</Typography>
 
         <Breadcrumbs
           separator={<NavigateNextIcon fontSize="small" />}
@@ -390,7 +390,7 @@ const ViewProductPage = () => {
                 <img
                   src={productData.imageUrl}
                   alt={productData.name}
-                  style={{ borderRadius: '12px', objectFit: 'cover', maxWidth: '300px' }}
+                  style={{ borderRadius: '12px', objectFit: 'cover', maxWidth: '250px' }}
                 />
               ) : (
                 <Typography>No image available</Typography>

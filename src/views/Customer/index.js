@@ -300,7 +300,7 @@ const Customer = () => {
             justifyContent: 'space-between'
           }}
         >
-          <Typography variant="h3">Customers List</Typography>
+          <Typography variant="h4">Customers List</Typography>
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}
             aria-label="breadcrumb"

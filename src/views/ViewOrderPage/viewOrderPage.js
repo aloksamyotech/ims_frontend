@@ -256,7 +256,7 @@ const InvoicePage = () => {
           alignItems: 'center'
         }}
       >
-        <Typography variant="h3">Order Details</Typography>
+        <Typography variant="h4">Order Details</Typography>
 
         <Breadcrumbs
           separator={<NavigateNextIcon fontSize="small" />}

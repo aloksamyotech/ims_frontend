@@ -134,7 +134,7 @@ const Product = () => {
             alignItems: 'center'
           }}
         >
-          <Typography variant="h3">Product List</Typography>
+          <Typography variant="h4">Product List</Typography>
 
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}

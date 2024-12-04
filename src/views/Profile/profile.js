@@ -17,7 +17,6 @@ const ProfileSection = () => {
     const load = async () => {
       try {
         const response = await fetchAdmin();
-        console.log(response);
         const adminData = Array.isArray(response.data) ? response.data[0] : response.data;
         setProfile(adminData);
       } catch (error) {
@@ -54,7 +53,7 @@ const ProfileSection = () => {
           alignItems: 'center'
         }}
       >
-        <Typography variant="h3">Profile Details</Typography>
+        <Typography variant="h4">Profile Details</Typography>
 
         <Breadcrumbs
           separator={<NavigateNextIcon fontSize="small" />}

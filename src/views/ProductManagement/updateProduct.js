@@ -85,8 +85,8 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
       <DialogContent dividers>
         <form onSubmit={formik.handleSubmit}>
           <Typography style={{ marginBottom: '15px' }} variant="h4">Product Details</Typography>
-          <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-            <Grid item xs={12}>
+          <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={6}>
               <TextField
                 required
                 id="productnm"
@@ -99,7 +99,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
                 helperText={formik.touched.productnm && formik.errors.productnm}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 required
                 id="buyingPrice"
@@ -113,7 +113,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
                 helperText={formik.touched.buyingPrice && formik.errors.buyingPrice}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 required
                 id="sellingPrice"
@@ -127,21 +127,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
                 helperText={formik.touched.sellingPrice && formik.errors.sellingPrice}
               />
             </Grid>
-            {/* <Grid item xs={12}>
-              <TextField
-                required
-                id="quantity"
-                name="quantity"
-                label="Quantity"
-                type="number"
-                fullWidth
-                value={formik.values.quantity}
-                onChange={formik.handleChange}
-                error={formik.touched.quantity && Boolean(formik.errors.quantity)}
-                helperText={formik.touched.quantity && formik.errors.quantity}
-              />
-            </Grid> */}
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 required
                 id="tax"
@@ -155,7 +141,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
                 helperText={formik.touched.tax && formik.errors.tax}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 id="margin"
                 name="margin"
@@ -175,7 +161,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
                 label="Notes"
                 fullWidth
                 multiline
-                rows={3}
+                rows={1}
                 value={formik.values.notes}
                 onChange={formik.handleChange}
                 error={formik.touched.notes && Boolean(formik.errors.notes)}

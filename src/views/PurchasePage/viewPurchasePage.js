@@ -254,7 +254,7 @@ const PurchasePage = () => {
           alignItems: 'center'
         }}
       >
-        <Typography variant="h3">Purchase Details</Typography>
+        <Typography variant="h4">Purchase Details</Typography>
 
         <Breadcrumbs
           separator={<NavigateNextIcon fontSize="small" />}

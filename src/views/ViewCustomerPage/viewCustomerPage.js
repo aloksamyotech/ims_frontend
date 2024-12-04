@@ -204,7 +204,7 @@ const ViewCustomerPage = () => {
           alignItems: 'center'
         }}
       >
-        <Typography variant="h3">Customer Details</Typography>
+        <Typography variant="h4">Customer Details</Typography>
 
         <Breadcrumbs
           separator={<NavigateNextIcon fontSize="small" />}
