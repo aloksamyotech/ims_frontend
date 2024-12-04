@@ -29,7 +29,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = yup.object({
-    productnm: yup.string().max(50, 'Max 50 characters are allowed')
+    productnm: yup.string().max(50, 'Max 30 characters are allowed')
     .required('Product name is required'),
     catnm: yup.string().required('Product Category is required'),
     unitnm: yup.string().required('Unit is required'),

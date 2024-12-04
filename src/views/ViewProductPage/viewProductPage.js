@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
+  styled,
   Tabs,
   Tab,
   Stack,
@@ -19,10 +13,10 @@ import {
   Grid,
   CardContent,
   Breadcrumbs,
-  Link as MuiLink
+  Link as MuiLink,
+  Divider
 } from '@mui/material';
 import axios from 'axios';
-import TableStyle from '../../ui-component/TableStyle';
 import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import { toast } from 'react-toastify';
 import { useParams, Link } from 'react-router-dom';
@@ -37,10 +31,9 @@ import Inventory2Icon from '@mui/icons-material/Inventory2';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const TabContentCard = styled(Card)(({ theme }) => ({
-  boxShadow: theme.shadows[3],
-  borderRadius: 8,
-  marginBottom: theme.spacing(3),
-  marginTop: theme.spacing(3)
+  marginBottom: theme.spacing(1),
+  borderRadius:8,
+  margin: theme.spacing(2),
 }));
 
 const ViewProductPage = () => {
@@ -381,256 +374,167 @@ const ViewProductPage = () => {
         </Breadcrumbs>
       </Box>
 
-      <Box sx={{ marginTop: '20px' }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Card sx={{ marginBottom: 2, justifyItems: 'center' }}>
-              <CardContent>
-                {productData?.imageUrl ? (
-                  <img src={productData.imageUrl} alt={productData.name} style={{ width: '465px', height: 'auto', borderRadius: '8px' }} />
-                ) : (
-                  <Typography>No image available</Typography>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
+      <Card sx={{ marginTop: '20px' }}>
+        <Box sx={{ marginTop: '20px', display: 'flex', justifyContent: 'center', width: '100%' }}>
+          <Card sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
+            <Box
+              sx={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRight: { md: '1px solid #e0e0e0' }
+              }}
+            >
+              {productData?.imageUrl ? (
+                <img
+                  src={productData.imageUrl}
+                  alt={productData.name}
+                  style={{ borderRadius: '12px', objectFit: 'cover', maxWidth: '300px' }}
+                />
+              ) : (
+                <Typography>No image available</Typography>
+              )}
+            </Box>
 
-          <Grid item xs={12} sm={6}>
-            <Card sx={{ marginBottom: 2 }}>
-              <CardContent>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Name:</strong>
-                      </Typography>
-                    </Box>
-                  </Grid>
+            <Box sx={{ flex: 2, padding: 3 }}>
+              <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+                {productData?.productnm || 'NA'} ({productData?.product_no || 'NA'})
+              </Typography>
 
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>
-                          {productData?.productnm || 'NA'} ({productData?.product_no || 'NA'})
-                        </strong>
-                      </Typography>
-                    </Box>
-                  </Grid>
+              <Typography variant="body1" sx={{ marginBottom: 3, color: 'text.secondary' }}>
+                <strong>Description:</strong> {productData?.notes || 'No additional notes'}
+              </Typography>
 
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Notes:</strong>
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">{productData?.notes || 'NA'}</Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Category:</strong>
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">{productData?.categoryName || 'NA'}</Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Unit:</strong>
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">{productData?.unitName || 'NA'}</Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Quantity:</strong>
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">{productData?.quantity || 'NA'}</Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Buying Price:</strong>
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        {' '}
-                        {currencySymbol} {productData?.buyingPrice || 'NA'}
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Selling Price:</strong>
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        {' '}
-                        {currencySymbol} {productData?.sellingPrice || 'NA'}
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Tax:</strong>
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">{productData?.tax || 'NA'}%</Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Margin:</strong>
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">{productData?.margin || 'NA'}%</Typography>
-                    </Box>
-                  </Grid>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    <strong>Category:</strong> {productData?.categoryName || 'NA'}
+                  </Typography>
                 </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    <strong>Unit:</strong> {productData?.unitName || 'NA'}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    <strong>Quantity:</strong> {productData?.quantity || 'NA'}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    <strong>Buying Price:</strong> {currencySymbol} {productData?.buyingPrice || 'NA'}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    <strong>Selling Price:</strong> {currencySymbol} {productData?.sellingPrice || 'NA'}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    <strong>Tax:</strong> {productData?.tax || 'NA'}%
+                  </Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography variant="body2">
+                    <strong>Margin:</strong> {productData?.margin || 'NA'}%
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+          </Card>
         </Box>
 
+       <Divider/>
+
         <TabContentCard>
-            <Tabs
-              value={selectedTab}
-              onChange={handleTabChange}
-              aria-label="report tabs"
-              textColor="primary"
-              sx={{ backgroundColor: '#f5f5f5', borderRadius: '8px' }}
-            >
-              <Tab
-                icon={<ShoppingCartIcon />}
-                iconPosition="start"
-                label="Sales"
-                sx={{
-                  fontSize: '14px',
-                  minWidth: 160,
-                  fontWeight: 'bold',
-                  textTransform: 'none',
-                  color: selectedTab === 0 ? '#1976d2' : '#757070'
-                }}
-              />
-              <Tab
-                icon={<Inventory2Icon />}
-                iconPosition="start"
-                label="Purchases"
-                sx={{
-                  fontSize: '14px',
-                  minWidth: 160,
-                  fontWeight: 'bold',
-                  textTransform: 'none',
-                  color: selectedTab === 1 ? '#1976d2' : '#757070'
-                }}
-              />
-            </Tabs>
+          <Tabs value={selectedTab} onChange={handleTabChange} aria-label="report tabs" textColor="primary">
+            <Tab
+              icon={<ShoppingCartIcon />}
+              iconPosition="start"
+              label="Sales"
+              sx={{
+                fontSize: '14px',
+                minWidth: 160,
+                fontWeight: 'bold',
+                textTransform: 'none',
+                color: selectedTab === 0 ? '#1976d2' : '#757070'
+              }}
+            />
+            <Tab
+              icon={<Inventory2Icon />}
+              iconPosition="start"
+              label="Purchases"
+              sx={{
+                fontSize: '14px',
+                minWidth: 160,
+                fontWeight: 'bold',
+                textTransform: 'none',
+                color: selectedTab === 1 ? '#1976d2' : '#757070'
+              }}
+            />
+          </Tabs>
 
           {selectedTab === 0 && (
-            <Box width="100%" overflow="hidden" sx={{ marginTop: '20px' }}>
-              <Card style={{ height: '600px', paddingTop: '10px', overflow: 'hidden' }}>
-                  <DataGrid
-                    rows={filteredOrderData}
-                    columns={orderColumns}
-                    checkboxSelection
-                    getRowId={(row) => row.id}
-                    rowHeight={70}
-                    components={{ Toolbar: CustomToolbar }}
-                    pageSizeOptions={[5, 10, 25]}
-                    initialState={{
-                      pagination: {
-                        paginationModel: { pageSize: 10, page: 0 }
-                      }
-                    }}
-                    pagination
-                    sx={{
-                      '& .MuiDataGrid-columnHeaderTitle': {
-                        fontWeight: 'bold'
-                      },
-                      border: 0
-                    }}
-                  />
+            <Box width="100%" overflow="hidden">
+              <Card style={{ height: '600px', overflow: 'hidden' }}>
+                <DataGrid
+                  rows={filteredOrderData}
+                  columns={orderColumns}
+                  checkboxSelection
+                  getRowId={(row) => row.id}
+                  rowHeight={70}
+                  components={{ Toolbar: CustomToolbar }}
+                  pageSizeOptions={[5, 10, 25]}
+                  initialState={{
+                    pagination: {
+                      paginationModel: { pageSize: 10, page: 0 }
+                    }
+                  }}
+                  pagination
+                  sx={{
+                    '& .MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold'
+                    },
+                    border: 0
+                  }}
+                />
               </Card>
             </Box>
           )}
 
           {selectedTab === 1 && (
-            <Box width="100%" overflow="hidden" sx={{ marginTop: '20px' }}>
-              <Card style={{ height: '600px', paddingTop: '10px', overflow: 'hidden' }}>
-                  <DataGrid
-                    rows={filteredPurchaseData}
-                    columns={purchaseColumns}
-                    checkboxSelection
-                    getRowId={(row) => row.id}
-                    rowHeight={70}
-                    components={{ Toolbar: CustomToolbar }}
-                    pageSizeOptions={[5, 10, 25]}
-                    initialState={{
-                      pagination: {
-                        paginationModel: { pageSize: 10, page: 0 }
-                      }
-                    }}
-                    pagination
-                    sx={{
-                      '& .MuiDataGrid-columnHeaderTitle': {
-                        fontWeight: 'bold'
-                      },
-                      border: 0
-                    }}
-                  />
+            <Box width="100%" overflow="hidden">
+              <Card style={{ height: '600px', overflow: 'hidden' }}>
+                <DataGrid
+                  rows={filteredPurchaseData}
+                  columns={purchaseColumns}
+                  checkboxSelection
+                  getRowId={(row) => row.id}
+                  rowHeight={70}
+                  components={{ Toolbar: CustomToolbar }}
+                  pageSizeOptions={[5, 10, 25]}
+                  initialState={{
+                    pagination: {
+                      paginationModel: { pageSize: 10, page: 0 }
+                    }
+                  }}
+                  pagination
+                  sx={{
+                    '& .MuiDataGrid-columnHeaderTitle': {
+                      fontWeight: 'bold'
+                    },
+                    border: 0
+                  }}
+                />
               </Card>
             </Box>
           )}
-           </TabContentCard>
+        </TabContentCard>
+      </Card>
     </Container>
   );
 };

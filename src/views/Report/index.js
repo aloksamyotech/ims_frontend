@@ -373,7 +373,7 @@ const ProductReport = () => {
         </Tabs>
 
         {selectedTab === 0 && (
-          <Box sx={{ height: 'auto' }}>
+          <Box sx={{ height: '600px' }}>
             <DataGrid
               rows={filteredOrderData}
               columns={orderColumns}
@@ -398,7 +398,7 @@ const ProductReport = () => {
         )}
 
         {selectedTab === 1 && (
-          <Box sx={{ height: 'auto' }}>
+          <Box sx={{ height: '600px' }}>
             <DataGrid
               rows={filteredPurchaseData}
               columns={purchaseColumns}

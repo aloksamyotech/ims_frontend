@@ -17,7 +17,7 @@ const Profile = Loadable(lazy(() => import('views/Profile')));
 const AddOrder = Loadable(lazy(() => import('views/AddOrderPage/AddOrderPage')));
 const CreateInvoice = Loadable(lazy(() => import('views/CreateInvoice/createInvoice')))
 const AddPurchase = Loadable(lazy(() => import('views/AddPurchasePage/AddPurchasePage')));
-const ViewInvoice = Loadable(lazy(() => import('views/ViewInvoicePage/viewInvoicePage')))
+const ViewOrder = Loadable(lazy(() => import('views/ViewOrderPage/viewOrderPage')))
 const DownloadInvoice = Loadable(lazy(() => import('views/DownloadInvoicePage/downloadInvoicePage')))
 const ViewPurchase = Loadable(lazy(() => import('views/PurchasePage/viewPurchasePage')))
 const ViewProduct = Loadable(lazy(() => import('views/ViewProductPage/viewProductPage')))
@@ -70,8 +70,8 @@ const MainRoutes = {
               element: < DownloadInvoice />
             },
             {
-              path: 'view-invoice/:id',
-              element: < ViewInvoice />
+              path: 'view-order/:id',
+              element: < ViewOrder />
             },
             {
               path: 'add-order',

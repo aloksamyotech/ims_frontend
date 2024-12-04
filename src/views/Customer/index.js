@@ -316,7 +316,7 @@ const Customer = () => {
 
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: 'auto', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+            <Card style={{ height: '600px', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
               <DataGrid
                 rows={customerData}
                 columns={columns}

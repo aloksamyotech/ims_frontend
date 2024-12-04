@@ -162,7 +162,7 @@ const Purchase = () => {
       field: 'supplierName', 
       headerName: 'Supplier',
       flex: 1.5,
-      minWidth:250,
+      minWidth:200,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row?.supplierName || 'N/A'}</Typography>
@@ -195,7 +195,7 @@ const Purchase = () => {
     {
       field: 'status',
       headerName: 'Status',
-      flex: 2,
+      flex: 2.5,
       renderCell: (params) => {
         const status = params.row?.status;
         return (
@@ -341,7 +341,7 @@ const Purchase = () => {
 
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: 'auto', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+            <Card style={{ height: '600px', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
             <DataGrid
               rows={filteredPurchases}
               columns={columns}

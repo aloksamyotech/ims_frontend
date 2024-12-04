@@ -37,8 +37,6 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
 
     address: yup.string().min(10, 'Address must be at least 10 characters').max(50, 'Max 50 characters are allowed').required('Address is required'),
 
-    typeOfCustomer: yup.string().required('Type of customer is required'),
-
     accountHolder: yup
       .string()
       .matches(/^[a-zA-Z\s]*$/, 'Only letters and spaces are allowed')
@@ -54,7 +52,6 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
     phone: '',
     email: '',
     address: '',
-    typeOfCustomer: '',
     accountHolder: '',
     accountNumber: '',
     bankName: '',
@@ -150,26 +147,6 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                 error={formik.touched.phone && Boolean(formik.errors.phone)}
                 helperText={formik.touched.phone && formik.errors.phone}
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <FormLabel>Type of Customer</FormLabel>
-                <Select
-                  required
-                  id="typeOfCustomer"
-                  name="typeOfCustomer"
-                  value={formik.values.typeOfCustomer}
-                  onChange={formik.handleChange}
-                  error={formik.touched.typeOfCustomer && Boolean(formik.errors.typeOfCustomer)}
-                >
-                  <MenuItem value="">Select a type</MenuItem>
-                  <MenuItem value="Walk-in">Walk-in</MenuItem>
-                  <MenuItem value="Wholesaler">Wholesale</MenuItem>
-                </Select>
-                <FormHelperText error={formik.touched.typeOfCustomer && Boolean(formik.errors.typeOfCustomer)}>
-                  {formik.touched.typeOfCustomer && formik.errors.typeOfCustomer}
-                </FormHelperText>
-              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>

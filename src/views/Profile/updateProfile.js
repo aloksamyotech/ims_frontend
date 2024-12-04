@@ -1,67 +1,63 @@
-import React, { useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle,Typography,InputLabel,
-     TextField, Button, FormControl, Select, MenuItem } from '@mui/material';
-import { updateAdmin } from 'apis/api.js';
+import React, { useState, useEffect } from 'react';
+import { Button, TextField, FormControl, Select, MenuItem, InputLabel, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Grid, Box } from '@mui/material';
+import axios from 'axios';
 import currencySymbolMap from 'currency-symbol-map';
 import { toast } from 'react-toastify';
 import ClearIcon from '@mui/icons-material/Clear';
+import { Formik, Field, Form } from 'formik';
 
 const currency = [
-  'USD',  // United States Dollar
-  'EUR',  // Euro
-  'GBP',  // British Pound Sterling
-  'INR',  // Indian Rupee
-  'JPY',  // Japanese Yen
-  'AUD',  // Australian Dollar
-  'CAD',  // Canadian Dollar
-  'CHF',  // Swiss Franc
-  'CNY',  // Chinese Yuan
-  'SEK',  // Swedish Krona
-  'NZD',  // New Zealand Dollar
-  'MXN',  // Mexican Peso
-  'SGD',  // Singapore Dollar
-  'HKD',  // Hong Kong Dollar
-  'NOK',  // Norwegian Krone
-  'KRW',  // South Korean Won
-  'TRY',  // Turkish Lira
-  'BRL',  // Brazilian Real
-  'ZAR',  // South African Rand
+  'USD', 'EUR', 'GBP', 'INR', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK',
+  'NZD', 'MXN', 'SGD', 'HKD', 'NOK', 'KRW', 'TRY', 'BRL', 'ZAR',
 ];
 
 const UpdateProfile = ({ open, onClose, profile, setProfile }) => {
   const [currencyCode, setCurrencyCode] = useState(profile.currencyCode || '');
   const [currencySymbol, setCurrencySymbol] = useState(currencySymbolMap(profile.currencyCode || '') || '');
-  const [username, setUsername] = useState(profile.username || '');
-  const [phone, setPhone] = useState(profile.phone || '');
-  const [email, setEmail] = useState(profile.email || '');
+  const [imageFile, setImageFile] = useState(null);
 
-  const handleCurrencyCodeChange = (event) => {
+  const handleCurrencyCodeChange = (event, setFieldValue) => {
     const selectedCode = event.target.value;
     setCurrencyCode(selectedCode);
     setCurrencySymbol(currencySymbolMap(selectedCode));
+    setFieldValue('currencyCode', selectedCode); 
   };
 
-  const handleSaveProfile = async () => {
-    try {
-      const updatedProfile = {
-        username,
-        phone,
-        email,
-        currencyCode,
-        currencySymbol
-      };
-      const response = await updateAdmin({ ...updatedProfile, _id: profile._id });
+  const handleLogoChange = (event, setFieldValue) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setFieldValue('logo', file); 
+    }
+  };
 
+  const handleSaveProfile = async (values) => {
+    const formData = new FormData();
+    formData.append('currencyCode', values.currencyCode);
+    formData.append('currencySymbol', values.currencySymbol);
+    if (values.logo) {
+      formData.append('logo', values.logo); 
+    }
+
+    try {
+      const response = await axios.post(
+        `http://localhost:4200/admin/update`,  
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      
       if (response.status === 200) {
-        toast.success('Profile updated successfully');
-        setProfile(updatedProfile); 
-        onClose(); 
+        console.log('Profile updated successfully', response.data);
+        toast.success("Profile Updated Successfully!");
       } else {
-        toast.error('Failed to update profile');
+        console.error('Failed to update profile', response.data);
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast.error('Error updating profile');
     }
   };
 
@@ -71,56 +67,92 @@ const UpdateProfile = ({ open, onClose, profile, setProfile }) => {
         <Typography variant="h3">Update Profile</Typography>
         <ClearIcon onClick={onClose} style={{ cursor: 'pointer' }} />
       </DialogTitle>
-      <DialogContent >
-        <TextField
-          label="Username"
-          variant="outlined"
-          fullWidth
-          margin="dense"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          sx={{ marginBottom: 2 }}
-        />
-        <TextField
-          label="Phone"
-          variant="outlined"
-          fullWidth
-          margin="dense"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          sx={{ marginBottom: 2 }}
-        />
-        <TextField
-          label="Email"
-          variant="outlined"
-          fullWidth
-          margin="dense"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          sx={{ marginBottom: 2 }}
-        />
-        <FormControl fullWidth margin="dense">
-        <InputLabel >Currency Code</InputLabel>
-          <Select value={currencyCode} onChange={handleCurrencyCodeChange} label="Currency Code">
-            {currency.map((code) => (
-              <MenuItem key={code} value={code}>{code}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          label="Currency Symbol"
-          variant="outlined"
-          fullWidth
-          margin="dense"
-          value={currencySymbol}
-          onChange={(e) => setCurrencySymbol(e.target.value)}
-          sx={{ marginTop : 2  }}
-        />
+      <DialogContent>
+        <Formik
+          initialValues={{
+            currencyCode: currencyCode || '',
+            currencySymbol: currencySymbol || '',
+            logo: null,
+          }}
+          enableReinitialize={true} 
+          onSubmit={handleSaveProfile}
+        >
+          {({ setFieldValue, values }) => (
+            <Form>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <FormControl fullWidth margin="dense">
+                    <InputLabel>Currency Code</InputLabel>
+                    <Select
+                      value={values.currencyCode}
+                      onChange={(e) => handleCurrencyCodeChange(e, setFieldValue)}
+                      label="Currency Code"
+                    >
+                      {currency.map((code) => (
+                        <MenuItem key={code} value={code}>{code}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <Field
+                    name="currencySymbol"
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Currency Symbol"
+                        variant="outlined"
+                        fullWidth
+                        margin="dense"
+                      />
+                    )}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                minHeight="200px"
+                border={1}
+                borderColor="grey.300"
+                borderRadius={1}
+                bgcolor="background.paper"
+                position="relative"
+              >
+                    {values.logo ? (
+                      <img
+                        src={URL.createObjectURL(values.logo)}
+                        alt="Logo preview"
+                        style={{ maxWidth: '100%', maxHeight: '100%' }}
+                      />
+                    ) : (
+                      <Typography variant="body2" color="textSecondary">
+                        Preview Logo
+                      </Typography>
+                    )}
+                       <Box position="absolute" left={0} bottom={0} p={2}>
+                    <input
+                      accept="image/*"
+                      type="file"
+                      onChange={(event) => handleLogoChange(event, setFieldValue)}
+                      style={{ display: 'block' }}
+                    />
+                  </Box>
+                  </Box>
+                </Grid>
+              </Grid>
+
+              <DialogActions>
+                <Button type="submit" variant="contained" color="secondary">Update</Button>
+                <Button onClick={onClose} variant="contained" color="error">Cancel</Button>
+              </DialogActions>
+            </Form>
+          )}
+        </Formik>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSaveProfile} variant="contained" color="secondary">Update</Button>
-        <Button onClick={onClose} variant="contained" color="error">Cancel</Button>
-      </DialogActions>
     </Dialog>
   );
 };

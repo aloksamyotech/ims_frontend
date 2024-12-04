@@ -104,7 +104,7 @@ const Unit = () => {
           >
             <IconButton
               size="small"
-              onClick={() => handleView(params.row)}
+              onClick={() => handleView(params.row._id)}
               color="primary"
               sx={{
                 '&:hover': {
@@ -259,7 +259,7 @@ const Unit = () => {
 
          <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: 'auto', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+            <Card style={{ height: '600pxs', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
               <DataGrid
                 rows={unitData}
                 columns={columns}

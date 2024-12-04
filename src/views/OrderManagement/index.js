@@ -160,7 +160,7 @@ const Order = () => {
       field: 'customerName', 
       headerName: 'Customer',
       flex: 1.5,
-      minWidth:250,
+      minWidth:200,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row?.customerName || 'N/A'}</Typography>
@@ -193,7 +193,7 @@ const Order = () => {
     {
       field: 'order_status',
       headerName: 'Status',
-      flex: 1.5,
+      flex: 2,
       renderCell: (params) => {
         const status = params.row?.order_status;
         return (
@@ -304,7 +304,7 @@ const Order = () => {
   ];
 
   const handleView = (_id) => {
-    navigate(`/dashboard/orders/view-invoice/${_id}`);
+    navigate(`/dashboard/orders/view-order/${_id}`);
   };
 
   const handleDownload = (_id) => {
@@ -367,7 +367,7 @@ const Order = () => {
 
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: 'auto', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+            <Card style={{ height: '600px', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
               <DataGrid
                 rows={filteredOrders}
                 columns={columns}

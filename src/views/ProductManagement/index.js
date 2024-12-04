@@ -45,6 +45,7 @@ const Product = () => {
     const loadProducts = async () => {
       try {
         const response = await fetchProducts();
+        console.log(response);
         setProducts(response?.data);
       } catch (error) {
         toast.error('Failed to fetch products');
@@ -201,10 +202,14 @@ const Product = () => {
             <Grid container spacing={3}>
               {filteredProducts.map((product) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
-                  <Card sx={{ borderRadius: 2, boxShadow: 3, position: 'relative' }}>
+                  <Card
+                    sx={{ borderRadius: 2, boxShadow: 3, position: 'relative', height: '250px', display: 'flex', flexDirection: 'column' }}
+                  >
                     <CardMedia
                       component="img"
-                      image={product.imageUrl || 'https://via.placeholder.com/150'}
+                      image={
+                        product.imageUrl || 'https://www.pexels.com/photo/person-sitting-on-ground-between-brown-cardboard-boxes-2701434/'
+                      }
                       alt={product.productnm}
                       sx={{ height: 200, objectFit: 'cover' }}
                       onClick={() => handleView(product._id)}

@@ -111,7 +111,7 @@ const Category = () => {
           >
             <IconButton
               size="small"
-              onClick={() => handleView(params.row)}
+              onClick={() => handleView(params.row._id)}
               color="primary"
               sx={{
                 '&:hover': {
@@ -267,7 +267,7 @@ const Category = () => {
 
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: 'auto', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+            <Card style={{ height: '600px', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
               <DataGrid
                 rows={categories}
                 columns={columns}

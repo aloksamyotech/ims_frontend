@@ -1,15 +1,48 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Card, Typography, Grid, CardContent, Divider, Container, Button, Stack } from '@mui/material';
+import { Box, Card, Typography, Grid, CardContent, Divider, Container, Breadcrumbs, Link as MuiLink, Button, Stack } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useParams, Link } from 'react-router-dom';
 import moment from 'moment';
 import { fetchPurchases } from 'apis/api.js';
 import { fetchCurrencySymbol } from 'apis/constant.js';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { filter } from 'lodash';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
+
+const CustomToolbar = () => {
+  return (
+    <GridToolbarContainer
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '10px'
+      }}
+    >
+      <Box>
+        <Typography variant="h4" style={{ fontWeight: 'bold' }}>
+          Purchase List
+        </Typography>
+      </Box>
+
+      <Box style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <GridToolbarQuickFilter
+          placeholder="Search..."
+          style={{
+            width: '250px',
+            backgroundColor: '#ffff',
+            borderRadius: '8px',
+            padding: '5px 10px',
+            border: '1px solid beige'
+          }}
+        />
+        <GridToolbarExport style={{ fontSize: 14 }} />
+      </Box>
+    </GridToolbarContainer>
+  );
+};
 
 const ViewSupplierPage = () => {
   const { id } = useParams();
@@ -34,7 +67,7 @@ const ViewSupplierPage = () => {
   useEffect(() => {
     const getCurrency = async () => {
       const symbol = await fetchCurrencySymbol();
-      setCurrencySymbol(symbol);  
+      setCurrencySymbol(symbol);
     };
     getCurrency();
   }, []);
@@ -46,7 +79,7 @@ const ViewSupplierPage = () => {
       width: 120,
       valueGetter: (params) => {
         return moment(params.row?.createdAt).format('DD-MM-YYYY');
-      },
+      }
     },
     {
       field: 'status',
@@ -58,32 +91,31 @@ const ViewSupplierPage = () => {
           <Box
             sx={{
               backgroundColor:
-                status === 'completed'
-                  ? '#34a853'
-                  : status === 'pending'
-                  ? '#ff9800'
-                  : status === 'cancelled'
-                  ? '#f44336'
-                  : '',
-              color: 'white',
+                status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
+              color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+              '&:hover': {
+                backgroundColor:
+                  status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+                color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
+              },
               padding: '0.5rem 1rem',
-              borderRadius: '5px',
+              borderRadius: '30px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 'bold',
-              width: '110px',
+              width: '90px',
               height: '25px',
               textTransform: 'uppercase',
               boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
               gap: '0.5rem',
-              fontSize: '12px',
+              fontSize: '12px'
             }}
           >
             {status}
           </Box>
         );
-      },
+      }
     },
     {
       field: 'productName',
@@ -100,7 +132,7 @@ const ViewSupplierPage = () => {
             ))}
           </div>
         );
-      },
+      }
     },
     {
       field: 'categoryName',
@@ -117,7 +149,7 @@ const ViewSupplierPage = () => {
             ))}
           </div>
         );
-      },
+      }
     },
     {
       field: 'quantity',
@@ -134,184 +166,160 @@ const ViewSupplierPage = () => {
             ))}
           </div>
         );
-      },
-    },    
+      }
+    },
     {
       field: 'subtotal',
       headerName: 'Subtotal',
       width: 120,
-      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`),
+      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`)
     },
     {
       field: 'tax',
       headerName: 'Tax',
       width: 120,
-      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`),
+      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`)
     },
     {
       field: 'total',
       headerName: 'Total Sales',
       width: 150,
-      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`),
-    },
+      valueFormatter: ({ value }) => (value ? `${currencySymbol} ${value.toLocaleString()}` : `${currencySymbol} 0`)
+    }
   ];
-  
+
   const filteredPurchases = purchaseDetails.filter((purchase) => purchase?.supplierId === supplierData?._id);
 
   return (
     <Container>
-    <Link to="/dashboard/suppliers">
-      <Button sx={{ marginTop: '18px' }} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
-      </Button>
-    </Link>
-    <Box sx={{ marginTop: '20px' }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <Card sx={{ marginBottom: 2 }}>
-            <CardContent>
-              <Box sx={{ borderRadius: 1, marginBottom: 1 }}>
-                <Typography variant="h4" sx={{ color: 'black', fontWeight: 'bold' }}>
-                  Supplier Details
-                </Typography>
-              </Box>
-              <Divider sx={{ marginY: 2, borderColor: 'gray', borderWidth: 1 }} />
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1">
-                      <strong>Name:</strong>
-                    </Typography>
-                  </Box>
-                </Grid>
+      <Box
+        sx={{
+          marginTop: '20px',
+          backgroundColor: '#ffff',
+          padding: '14px',
+          borderRadius: '8px',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
+        <Typography variant="h3">Supplier Details</Typography>
 
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1">
-                      <strong>{supplierData?.suppliernm || 'NA'}</strong>
-                    </Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1">
-                      <strong>Email:</strong>
-                    </Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1">{supplierData?.email || 'NA'}</Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1">
-                      <strong>Phone:</strong>
-                    </Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1">{supplierData?.phone || 'NA'}</Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1">
-                      <strong>Address:</strong>
-                    </Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1">{supplierData?.address || 'NA'}</Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1">
-                      <strong>Type:</strong>
-                    </Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1">{supplierData?.typeOfSupplier || 'NA'}</Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1">
-                      <strong>Shop Name:</strong>
-                    </Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1"> {supplierData?.shopName || 'NA'}</Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1">
-                      <strong>Created At:</strong>
-                    </Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body1">{moment(supplierData?.createdAt).format('DD-MM-YYYY')}</Typography>
-                  </Box>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      <Stack direction="row" alignItems="center" mb={3} justifyContent={'space-between'}>
-          <Typography variant="h4" paddingTop={2}>
-            Purchases List
-          </Typography>
-        </Stack>
-        <TableStyle>
-          <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '10px', overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
-                <DataGrid
-                  rows={filteredPurchases}
-                  columns={columns}
-                  checkboxSelection
-                  getRowId={(row) => row._id}
-                  slots={{ toolbar: GridToolbar }}
-                  slotProps={{ toolbar: { showQuickFilter: true } }}
-                  stickyHeader
-                  style={{ minWidth: '800px' }}
-                  pageSizeOptions={[5, 10, 25]}
-                  initialState={{
-                    pagination: {
-                      paginationModel: { pageSize: 10, page: 0 }
-                    }
-                  }}
-                  pagination
-                />
-              </div>
-            </Card>
-          </Box>
-        </TableStyle>
+        <Breadcrumbs
+          separator={<NavigateNextIcon fontSize="small" />}
+          aria-label="breadcrumb"
+          sx={{ display: 'flex', alignItems: 'center' }}
+        >
+          <MuiLink component={Link} to="/dashboard/default" color="inherit">
+            <HomeIcon sx={{ color: '#5e35b1' }} />
+          </MuiLink>
+          <MuiLink component={Link} to="/dashboard/suppliers" color="inherit">
+            <Typography color="text.primary">Suppliers</Typography>
+          </MuiLink>
+          <Typography color="text.primary">ViewSupplier</Typography>
+        </Breadcrumbs>
       </Box>
+
+      <Card sx={{ marginTop: '20px' }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+          <Card style={{ boxShadow: 3 }}>
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="h4">
+                        <strong> {supplierData?.suppliernm || 'NA'} </strong>
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Email:</strong> {supplierData?.email || 'NA'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Phone:</strong> {supplierData?.phone || 'NA'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Address:</strong> {supplierData?.address || 'NA'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Type:</strong> {supplierData?.typeOfSupplier || 'NA'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Shop Name:</strong> {supplierData?.shopName || 'NA'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Created At:</strong> {moment(supplierData?.createdAt).format('DD-MM-YYYY')}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Card style={{ height: '600px', overflow: 'hidden', marginTop: '5px', boxShadow: 3,
+             padding: '20px', }}>
+          <DataGrid
+            rows={filteredPurchases}
+            columns={columns}
+            checkboxSelection
+            getRowId={(row) => row._id}
+            rowHeight={70}
+            components={{ Toolbar: CustomToolbar }}
+            pageSizeOptions={[5, 10, 25]}
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 10, page: 0 }
+              }
+            }}
+            pagination
+            sx={{
+              '& .MuiDataGrid-root': {
+                border: 'none'
+              },
+              '& .MuiDataGrid-row': {
+                borderBottom: '1px solid #ccc'
+              },
+              '& .MuiDataGrid-columnHeaderTitle': {
+                fontWeight: 'bold'
+              }
+            }}
+          />
+        </Card>
+        </Grid>
+      </Card>
     </Container>
   );
 };
