@@ -148,7 +148,7 @@ const Purchase = () => {
     {
       field: 'date',
       headerName: 'Date',
-      flex: 1.8,
+      flex: 2,
       valueGetter: (params) => {
         return moment(params.row?.createdAt).format('DD-MM-YYYY');
       }
@@ -156,7 +156,7 @@ const Purchase = () => {
     {
       field: 'purchase_no',
       headerName: 'Purchase no',
-      flex: 1.8
+      flex: 2.2
     },
     {
       field: 'supplierName', 
@@ -173,7 +173,7 @@ const Purchase = () => {
     {
       field: 'productName',
       headerName: 'Item',
-      flex: 3.5,
+      flex: 2.5,
       valueGetter: (params) => {
         if (params.row?.products?.length > 0) {
           return params.row.products?.map((product) => `${product?.productName}(${product?.quantity})`).join(', ');
@@ -183,7 +183,7 @@ const Purchase = () => {
     },
     {
       field: 'total',
-      headerName: 'Total Price',
+      headerName: 'Total Amount',
       flex: 2.5,
       valueFormatter: ({ value }) => {
         if (value != null) {

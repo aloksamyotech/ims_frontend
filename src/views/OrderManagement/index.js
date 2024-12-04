@@ -181,8 +181,8 @@ const Order = () => {
     },
     {
       field: 'total',
-      headerName: 'Total Price',
-      flex: 1.5,
+      headerName: 'Total Amount',
+      flex: 1.8,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;

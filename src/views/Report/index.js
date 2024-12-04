@@ -112,7 +112,7 @@ const ProductReport = () => {
     { field: 'quantity', headerName: 'Quantity', width: 130 },
     {
       field: 'price',
-      headerName: 'Price',
+      headerName: 'Amount',
       width: 150,
       valueFormatter: ({ value }) => {
         if (value != null) {
@@ -145,7 +145,7 @@ const ProductReport = () => {
     },
     {
       field: 'total',
-      headerName: 'Total Price',
+      headerName: 'Total Amount',
       width: 150,
       valueFormatter: ({ value }) => {
         if (value != null) {
@@ -180,7 +180,7 @@ const ProductReport = () => {
     { field: 'quantity', headerName: 'Quantity', width: 130 },
     {
       field: 'price',
-      headerName: 'Price',
+      headerName: 'Amount',
       width: 150,
       valueFormatter: ({ value }) => {
         if (value != null) {
@@ -213,7 +213,7 @@ const ProductReport = () => {
     },
     {
       field: 'total',
-      headerName: 'Total Price',
+      headerName: 'Total Amount',
       width: 150,
       valueFormatter: ({ value }) => {
         if (value != null) {
@@ -377,7 +377,6 @@ const ProductReport = () => {
             <DataGrid
               rows={filteredOrderData}
               columns={orderColumns}
-              checkboxSelection
               rowHeight={70}
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
@@ -402,7 +401,6 @@ const ProductReport = () => {
             <DataGrid
               rows={filteredPurchaseData}
               columns={purchaseColumns}
-              checkboxSelection
               rowHeight={70}
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
