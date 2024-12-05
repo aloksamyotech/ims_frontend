@@ -58,8 +58,8 @@ const Header = ({ handleLeftDrawerToggle }) => {
 <Box
   sx={{
     flexGrow: 1,
-    fontSize: '20px',
-    fontWeight: 600,
+    fontSize: '18px',
+    fontWeight: 500,
     fontFamily: 'Playfair Display, serif', 
     textAlign: 'left',
     color: '#0054a6',

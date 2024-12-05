@@ -29,7 +29,7 @@ const TabContentCard = styled(Card)(({ theme }) => ({
   boxShadow: theme.shadows[3],
   borderRadius: 8,
   marginBottom: theme.spacing(3),
-  marginTop: theme.spacing(3)
+  marginTop: theme.spacing(2.4)
 }));
 
 const ProductReport = () => {
@@ -310,7 +310,7 @@ const ProductReport = () => {
               <MenuItem value="Monthly">Monthly</MenuItem>
             </Select>
           </FormControl>
-          <GridToolbarExport sx={{ fontSize: 15 }} />
+          <GridToolbarExport style={{ fontSize: 14 }} />
         </Stack>
       </GridToolbarContainer>
     );
@@ -320,9 +320,8 @@ const ProductReport = () => {
     <Container>
       <Box
         sx={{
-          marginTop: '20px',
           backgroundColor: '#ffff',
-          padding: '14px',
+          padding: '10px',
           borderRadius: '8px',
           width: '100%',
           display: 'flex',
@@ -351,8 +350,8 @@ const ProductReport = () => {
              iconPosition="start"
             label="Sales"
             sx={{
-              fontSize: '14px',
-              minWidth: 160,
+              fontSize: '12px',
+              minWidth: 120,
               fontWeight: 'bold',
               textTransform: 'none',
               color: selectedTab === 0 ? '#1976d2' : '#757070'
@@ -363,8 +362,8 @@ const ProductReport = () => {
              iconPosition="start"
             label="Purchases"
             sx={{
-              fontSize: '14px',
-              minWidth: 160,
+              fontSize: '12px',
+              minWidth: 120,
               fontWeight: 'bold',
               textTransform: 'none',
               color: selectedTab === 1 ? '#1976d2' : '#757070'
@@ -377,7 +376,7 @@ const ProductReport = () => {
             <DataGrid
               rows={filteredOrderData}
               columns={orderColumns}
-              rowHeight={70}
+              rowHeight={60}
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
               initialState={{
@@ -401,7 +400,7 @@ const ProductReport = () => {
             <DataGrid
               rows={filteredPurchaseData}
               columns={purchaseColumns}
-              rowHeight={70}
+              rowHeight={60}
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
               initialState={{

@@ -53,7 +53,7 @@ const Supplier = () => {
           }}
         />
         <Stack direction="row" spacing={2} alignItems="center">
-        <GridToolbarExport sx={{ fontSize: 25 }} />
+        <GridToolbarExport style={{ fontSize: 14 }} />
           <Tooltip title="Add Supplier" arrow>
             <IconButton
               onClick={handleOpenAdd}
@@ -88,7 +88,7 @@ const Supplier = () => {
       field: 'suppliernm', 
       headerName: 'Name',
       flex: 1.5,
-      minWidth:250,
+      minWidth:220,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row.suppliernm}</Typography>
@@ -136,7 +136,7 @@ const Supplier = () => {
       field: 'createdAt',
       headerName: 'Created At',
       flex: 1,
-      minWidth: 150,
+      minWidth: 120,
       valueGetter: (params) => {
         return moment(params.row.createdAt).format('DD-MM-YYYY');
       }
@@ -145,7 +145,7 @@ const Supplier = () => {
       field: 'actions',
       headerName: 'Actions',
       flex: 1,
-      minWidth: 250,
+      minWidth: 200,
       renderCell: (params) => (
         <Stack direction="row">
           <Box
@@ -290,9 +290,8 @@ const Supplier = () => {
       <Container>
         <Box
           sx={{
-            marginTop: '20px',
             backgroundColor: '#ffff',
-            padding: '12px',
+            padding: '10px',
             borderRadius: '8px',
             width: '100%',
             display: 'flex',
@@ -314,14 +313,14 @@ const Supplier = () => {
           </Breadcrumbs>
         </Box>
         <TableStyle>
-          <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+          <Box width="100%">
+            <Card style={{ height: '600px', marginTop: '20px'}}>
               <DataGrid
                 rows={supplierData}
                 columns={columns}
                 checkboxSelection
                 getRowId={(row) => row._id}
-                rowHeight={70}
+                rowHeight={60}
                 components={{
                   Toolbar: () => <CustomToolbar handleOpenAdd={handleOpenAdd} />
                 }}

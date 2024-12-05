@@ -315,9 +315,8 @@ const Purchase = () => {
       <Container>
         <Box
           sx={{
-            marginTop: '20px',
             backgroundColor: '#ffff',
-            padding: '14px',
+            padding: '10px',
             borderRadius: '8px',
             width: '100%',
             display: 'flex',
@@ -341,12 +340,12 @@ const Purchase = () => {
 
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+            <Card style={{ height: '600px',marginTop: '20px' }}>
             <DataGrid
               rows={filteredPurchases}
               columns={columns}
               checkboxSelection
-              rowHeight={70}
+              rowHeight={60}
               getRowId={(row) => row._id}
               components={{
                 Toolbar: () => (

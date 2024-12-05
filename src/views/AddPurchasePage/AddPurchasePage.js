@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
   Button,
+  Card,
   Select,
   Box,
   MenuItem,
@@ -57,7 +58,6 @@ const PurchaseForm = () => {
     initialValues: {
       date: formattedDate,
       supplierId: '',
-      reference: 'LRS',
       total: 0,
       tax: 0
     },
@@ -175,9 +175,8 @@ const PurchaseForm = () => {
     <Container>
     <Box
           sx={{
-            marginTop: '20px',
             backgroundColor: '#ffff',
-            padding: '12px',
+            padding: '10px',
             borderRadius: '8px',
             display: 'flex',
             justifyContent: 'space-between',
@@ -195,14 +194,15 @@ const PurchaseForm = () => {
             </MuiLink>
             <MuiLink component={Link} to="/dashboard/purchases" color="inherit">
             <Typography color="text.primary">Purchases</Typography>
-            </MuiLink>
+            </MuiLink> 
             <Typography color="text.primary">AddPurchase</Typography>
           </Breadcrumbs>
         </Box>
 
+     <Card sx={{padding:'10px',marginTop:'20px'}}>
       <form onSubmit={formik.handleSubmit}>
-      <Grid container spacing={3} sx={{marginTop:'8px'}}>
-        <Grid item xs={12} sm={4} md={4}>
+      <Grid container spacing={3} sx={{padding:'5px'}}>
+        <Grid item xs={12} sm={6}>
           <FormLabel>Purchase Date</FormLabel>
           <TextField
             fullWidth
@@ -220,7 +220,7 @@ const PurchaseForm = () => {
           />
           {formik.touched.date && formik.errors.date && <FormHelperText error>{formik.errors.date}</FormHelperText>}
         </Grid>
-        <Grid item xs={12} sm={4} md={4}>
+        <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
             <FormLabel>Supplier *</FormLabel>
             <Select
@@ -247,17 +247,8 @@ const PurchaseForm = () => {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={4} md={4}>
-          <FormControl fullWidth>
-            <FormLabel>Reference</FormLabel>
-            <TextField id="reference" name="reference" value={formik.values.reference} 
-            onChange={formik.handleChange}
-            InputProps={{
-              className: classes.input
-            }} />
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} margin={2} sx={{margin:'5px'}}>
+      
+        <Grid item xs={12}  sx={{margin:'5px'}}>
           <TableContainer component={Paper} elevation={3}>
             <Table>
               <TableHead sx={{ backgroundColor:'#1976d2'}}>
@@ -368,6 +359,7 @@ const PurchaseForm = () => {
         </Grid>
       </Grid>
     </form>
+    </Card>
     </Container>
   );
 };

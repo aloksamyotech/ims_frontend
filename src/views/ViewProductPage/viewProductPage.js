@@ -33,7 +33,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 const TabContentCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(1),
   borderRadius:8,
-  margin: theme.spacing(2),
+  margin: theme.spacing(1),
 }));
 
 const ViewProductPage = () => {
@@ -124,7 +124,7 @@ const ViewProductPage = () => {
               <MenuItem value="Monthly">Monthly</MenuItem>
             </Select>
           </FormControl>
-          <GridToolbarExport sx={{ fontSize: 15 }} />
+          <GridToolbarExport style={{ fontSize: 14 }} />
         </Stack>
       </GridToolbarContainer>
     );
@@ -155,15 +155,15 @@ const ViewProductPage = () => {
     {
       field: 'createdAt',
       headerName: 'Purchase Date',
-      width: 180,
+      width: 120,
       valueGetter: (params) => moment(params.row?.createdAt).format('DD-MM-YYYY')
     },
-    { field: 'supplierName', headerName: 'Supplier', width: 200 },
-    { field: 'quantity', headerName: 'Quantity', width: 130 },
+    { field: 'supplierName', headerName: 'Supplier', width: 150 },
+    { field: 'quantity', headerName: 'Quantity', width: 100 },
     {
       field: 'status',
       headerName: 'Status',
-      width: 180,
+      width: 110,
       renderCell: (params) => {
         const status = params.row?.status;
         return (
@@ -199,7 +199,7 @@ const ViewProductPage = () => {
     {
       field: 'subtotal',
       headerName: 'Subtotal',
-      width: 150,
+      width: 120,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -210,7 +210,7 @@ const ViewProductPage = () => {
     {
       field: 'tax',
       headerName: 'Tax',
-      width: 150,
+      width: 120,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -220,8 +220,8 @@ const ViewProductPage = () => {
     },
     {
       field: 'total',
-      headerName: 'Total Price',
-      width: 150,
+      headerName: 'Total Amount',
+      width: 120,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -235,15 +235,15 @@ const ViewProductPage = () => {
     {
       field: 'createdAt',
       headerName: 'Order Date',
-      width: 180,
+      width: 120,
       valueGetter: (params) => moment(params.row?.createdAt).format('DD-MM-YYYY')
     },
-    { field: 'customerName', headerName: 'Customer', width: 200 },
-    { field: 'quantity', headerName: 'Quantity', width: 130 },
+    { field: 'customerName', headerName: 'Customer', width: 160 },
+    { field: 'quantity', headerName: 'Quantity', width: 100 },
     {
       field: 'order_status',
       headerName: 'Status',
-      width: 180,
+      width: 110,
       renderCell: (params) => {
         const status = params.row?.order_status;
         return (
@@ -279,7 +279,7 @@ const ViewProductPage = () => {
     {
       field: 'subtotal',
       headerName: 'Subtotal',
-      width: 150,
+      width: 120,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -290,7 +290,7 @@ const ViewProductPage = () => {
     {
       field: 'tax',
       headerName: 'Tax',
-      width: 150,
+      width: 120,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -300,8 +300,8 @@ const ViewProductPage = () => {
     },
     {
       field: 'total',
-      headerName: 'Total Price',
-      width: 150,
+      headerName: 'Total Amount',
+      width: 120,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -347,9 +347,8 @@ const ViewProductPage = () => {
     <Container>
       <Box
         sx={{
-          marginTop: '20px',
           backgroundColor: '#ffff',
-          padding: '14px',
+          padding: '10px',
           borderRadius: '8px',
           width: '100%',
           display: 'flex',
@@ -375,7 +374,7 @@ const ViewProductPage = () => {
       </Box>
 
       <Card sx={{ marginTop: '20px' }}>
-        <Box sx={{ marginTop: '20px', display: 'flex', justifyContent: 'center', width: '100%' }}>
+        <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'center', width: '100%' }}>
           <Card sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
             <Box
               sx={{
@@ -410,11 +409,6 @@ const ViewProductPage = () => {
                 <Grid item xs={6}>
                   <Typography variant="body2">
                     <strong>Category:</strong> {productData?.categoryName || 'NA'}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2">
-                    <strong>Unit:</strong> {productData?.unitName || 'NA'}
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
@@ -457,8 +451,8 @@ const ViewProductPage = () => {
               iconPosition="start"
               label="Sales"
               sx={{
-                fontSize: '14px',
-                minWidth: 160,
+                fontSize: '12px',
+                minWidth: 120,
                 fontWeight: 'bold',
                 textTransform: 'none',
                 color: selectedTab === 0 ? '#1976d2' : '#757070'
@@ -469,8 +463,8 @@ const ViewProductPage = () => {
               iconPosition="start"
               label="Purchases"
               sx={{
-                fontSize: '14px',
-                minWidth: 160,
+                fontSize: '12px',
+                minWidth: 120,
                 fontWeight: 'bold',
                 textTransform: 'none',
                 color: selectedTab === 1 ? '#1976d2' : '#757070'
@@ -480,13 +474,13 @@ const ViewProductPage = () => {
 
           {selectedTab === 0 && (
             <Box width="100%" overflow="hidden">
-              <Card style={{ height: '600px', overflow: 'hidden' }}>
+              <Card style={{ height: '600px' }}>
                 <DataGrid
                   rows={filteredOrderData}
                   columns={orderColumns}
                   checkboxSelection
                   getRowId={(row) => row.id}
-                  rowHeight={70}
+                  rowHeight={60}
                   components={{ Toolbar: CustomToolbar }}
                   pageSizeOptions={[5, 10, 25]}
                   initialState={{
@@ -508,13 +502,13 @@ const ViewProductPage = () => {
 
           {selectedTab === 1 && (
             <Box width="100%" overflow="hidden">
-              <Card style={{ height: '600px', overflow: 'hidden' }}>
+              <Card style={{ height: '600px' }}>
                 <DataGrid
                   rows={filteredPurchaseData}
                   columns={purchaseColumns}
                   checkboxSelection
                   getRowId={(row) => row.id}
-                  rowHeight={70}
+                  rowHeight={60}
                   components={{ Toolbar: CustomToolbar }}
                   pageSizeOptions={[5, 10, 25]}
                   initialState={{

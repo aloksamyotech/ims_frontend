@@ -68,7 +68,7 @@ const TabContentCard = styled(Card)(({ theme }) => ({
   boxShadow: theme.shadows[3],
   borderRadius: 8,
   marginBottom: theme.spacing(1),
-  marginTop: theme.spacing(3)
+  marginTop: theme.spacing(2.4)
 }));
 
 const PurchasePage = () => {
@@ -244,9 +244,8 @@ const PurchasePage = () => {
     <Container>
       <Box
         sx={{
-          marginTop: '20px',
           backgroundColor: '#ffff',
-          padding: '14px',
+          padding: '10px',
           borderRadius: '8px',
           width: '100%',
           display: 'flex',
@@ -278,8 +277,8 @@ const PurchasePage = () => {
                 iconPosition="start"
                 label="Details"
                 sx={{
-                  fontSize: '14px',
-                  minWidth: 160,
+                  fontSize: '12px',
+                  minWidth: 120,
                   fontWeight: 'bold',
                   textTransform: 'none',
                   color: tabIndex === 0 ? '#1976d2' : '#757070'
@@ -290,8 +289,8 @@ const PurchasePage = () => {
                 iconPosition="start"
                 label="Invoice"
                 sx={{
-                  fontSize: '14px',
-                  minWidth: 160,
+                  fontSize: '12px',
+                  minWidth: 120,
                   fontWeight: 'bold',
                   textTransform: 'none',
                   color: tabIndex === 1 ? '#1976d2' : '#757070'
@@ -299,11 +298,11 @@ const PurchasePage = () => {
               />
             </Tabs>
 
-            <Card sx={{ margin: '20px' }}>
+            <Card sx={{ margin: '15px' }}>
               {tabIndex === 0 && (
-                  <Box sx={{ padding: '10px' }}>
+                  <Box sx={{ padding: '3px' }}>
                 <Card>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Box>
                       {' '}
                       <Typography variant="h4" fontWeight="bold">
@@ -389,7 +388,7 @@ const PurchasePage = () => {
                   <Divider sx={{ margin: '16px 0' }} />
 
                   <Box sx={{ borderBottom: '1px solid #e0e0e0' }}>
-                    <Typography variant="h4" sx={{ marginBottom: 2 }}>
+                    <Typography variant="h4" sx={{ marginBottom: 1 }}>
                       <strong>Products</strong>
                     </Typography>
 
@@ -399,7 +398,7 @@ const PurchasePage = () => {
                         <Box key={product.id || index} sx={{ borderBottom: '1px solid #e0e0e0' }}>
                           <Grid container>
                             <Grid item xs={12}>
-                              <Typography variant="h5" sx={{ marginBottom: 2, marginTop:2 }}>
+                              <Typography variant="h5" sx={{ marginBottom: 2, marginTop:1 ,textTransform:'uppercase' }}>
                                 <strong>
                                   {index + 1}. {product.productName}
                                 </strong>

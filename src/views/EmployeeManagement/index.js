@@ -67,7 +67,7 @@ const User = () => {
             border: '1px solid beige'
           }}
         />
-          <GridToolbarExport sx={{ fontSize: 25 }} />    
+          <GridToolbarExport style={{ fontSize: 14 }} />    
       </GridToolbarContainer>
     );
   };
@@ -299,9 +299,8 @@ const User = () => {
       <Container>
         <Box
           sx={{
-            marginTop: '20px',
             backgroundColor: '#ffff',
-            padding: '14px',
+            padding: '10px',
             borderRadius: '8px',
             width: '100%',
             display: 'flex',
@@ -323,12 +322,12 @@ const User = () => {
         </Box>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: 'auto', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+            <Card style={{ height: '600px',  marginTop: '20px'}}>
               <DataGrid
                 rows={users}
                 columns={columns}
                 getRowId={(row) => row._id}
-                rowHeight={70}
+                rowHeight={60}
                 components={{ Toolbar: CustomToolbar }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{

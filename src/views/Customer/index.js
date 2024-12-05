@@ -52,7 +52,7 @@ const Customer = () => {
           }}
         />
         <Stack direction="row" spacing={2} alignItems="center">
-          <GridToolbarExport sx={{ fontSize: 25 }} />
+          <GridToolbarExport style={{ fontSize: 14 }} />
           <Tooltip title="Add Customer" arrow>
             <IconButton
               onClick={handleOpenAdd}
@@ -290,9 +290,8 @@ const Customer = () => {
       <Container>
         <Box
           sx={{
-            marginTop: '20px',
             backgroundColor: '#ffff',
-            padding: '12px',
+            padding: '10px',
             borderRadius: '8px',
             width: '100%',
             display: 'flex',
@@ -316,12 +315,12 @@ const Customer = () => {
 
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+            <Card style={{ height: '600px',  marginTop: '20px'}}>
               <DataGrid
                 rows={customerData}
                 columns={columns}
                 checkboxSelection
-                rowHeight={70}
+                rowHeight={60}
                 getRowId={(row) => row._id}
                 components={{
                   Toolbar: () => <CustomToolbar handleOpenAdd={handleOpenAdd} />

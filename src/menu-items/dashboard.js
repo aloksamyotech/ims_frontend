@@ -99,33 +99,17 @@ const dashboard = {
           breadcrumbs: false
         }
       ]
-    },
+    },    
     {
       id: '08',
-      title: 'Classification',
-      type: 'collapse',
-      icon: icons.IconSettingsAutomation,
-      children: [
-        {
-          id: '09',
-          title: 'Category',
-          type: 'item',
-          url: '/dashboard/category',
-          icon: icons.IconCategory,
-          breadcrumbs: false
-        },
-        // {
-        //   id: '10',
-        //   title: 'Unit',
-        //   type: 'item',
-        //   url: '/dashboard/unit',
-        //   icon: icons.IconBrandUnity,
-        //   breadcrumbs: false
-        // }
-      ]
+      title: 'Category',
+      type: 'item',
+      url: '/dashboard/category',
+      icon: icons.IconCategory,
+      breadcrumbs: false
     },
     {
-      id: '11',
+      id: '09',
       title: 'Reports',
       type: 'item',
       url: '/dashboard/reports',
@@ -133,7 +117,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '12',
+      id: '10',
       title: 'Profile',
       type: 'item',
       url: '/dashboard/profile',

@@ -59,7 +59,7 @@ const Category = () => {
           }}
         />
         <Stack direction="row" spacing={2} alignItems="center">
-        <GridToolbarExport sx={{ fontSize: 25 }} />
+        <GridToolbarExport style={{ fontSize: 14 }} />
           <Tooltip title="Add Category" arrow>
             <IconButton
               onClick={handleOpenAdd}
@@ -242,9 +242,8 @@ const Category = () => {
       <Container>
         <Box
           sx={{
-            marginTop: '20px',
             backgroundColor: '#ffff',
-            padding: '12px',
+            padding: '10px',
             borderRadius: '8px',
             display: 'flex',
             justifyContent: 'space-between',
@@ -267,7 +266,7 @@ const Category = () => {
 
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+            <Card style={{ height: '600px',  marginTop: '20px' }}>
               <DataGrid
                 rows={categories}
                 columns={columns}

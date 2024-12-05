@@ -137,8 +137,9 @@ const OrderForm = (props) => {
       {
         ...product,
         quantity: selectedQuantity,
-        subtotal: selectedQuantity * product.sellingPrice
-      }
+        subtotal: selectedQuantity * product.sellingPrice,
+        tax: product.tax,
+      },
     ]);
   
     const isAlreadySelected = selectedProductIds.includes(product._id);
@@ -204,8 +205,15 @@ const OrderForm = (props) => {
     return products.reduce((acc, product) => acc + product.subtotal, 0);
   };
 
+  const calculateTaxes = () => {
+    return products.reduce((totalTax, product) => {
+      const productTax = product.subtotal * (product.tax / 100); 
+      return totalTax + productTax;
+    }, 0); 
+  };
+  
+  const invoiceTaxes = calculateTaxes();
   const invoiceSubtotal = calculateSubtotal();
-  const invoiceTaxes = invoiceSubtotal * TAX_RATE;
   const invoiceTotal = invoiceTaxes + invoiceSubtotal;
 
   const handleCustomerChange = (event) => {
@@ -233,7 +241,8 @@ const OrderForm = (props) => {
       };
 
       const savedCustomer = await addCustomer(customerData);
-      customerData._id = savedCustomer?.data?._id;
+      console.log(savedCustomer);
+      customerData._id = savedCustomer.data._id;
     } else if (isWholesale && selectedCustomer) {
       customerData = {
         ...selectedCustomer,
@@ -261,16 +270,15 @@ const OrderForm = (props) => {
     <Container>
       <Box
           sx={{
-            marginTop: '20px',
             backgroundColor: '#ffff',
-            padding: '12px',
+            padding: '10px',
             borderRadius: '8px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center'
           }}
         >
-          <Typography variant="h3">Add Order</Typography>
+          <Typography variant="h4">Add Order</Typography>
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}
             aria-label="breadcrumb"
@@ -287,7 +295,7 @@ const OrderForm = (props) => {
         </Box>
 
         <form onSubmit={formik.handleSubmit}>
-        <Grid container spacing={2} sx={{ marginTop: '8px' }}>
+        <Grid container spacing={2} sx={{ marginTop: '4px' }}>
           <Grid item xs={12}>
             <Paper style={{ padding: '5px', borderRadius: '8px', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}>
               <Grid container spacing={2} sx={{ padding: '10px' }}>
@@ -527,7 +535,6 @@ const OrderForm = (props) => {
                     <TableRow>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Name</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Available Quantity</TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Unit</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Price</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Action</TableCell>
                     </TableRow>
@@ -547,7 +554,6 @@ const OrderForm = (props) => {
                       >
                         <TableCell>{product.productnm}</TableCell>
                         <TableCell>{product.quantity}</TableCell>
-                        <TableCell>{product.unitName}</TableCell>
                         <TableCell>{currencySymbol} {product.sellingPrice.toFixed(2)}</TableCell>
                         <TableCell>
                               <Button

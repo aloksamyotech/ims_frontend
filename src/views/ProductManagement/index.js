@@ -124,9 +124,8 @@ const Product = () => {
       <Container>
         <Box
           sx={{
-            marginTop: '20px',
             backgroundColor: '#ffff',
-            padding: '14px',
+            padding: '10px',
             borderRadius: '8px',
             width: '100%',
             display: 'flex',
@@ -148,7 +147,7 @@ const Product = () => {
           </Breadcrumbs>
         </Box>
 
-        <Card sx={{ marginTop: '25px' }}>
+        <Card sx={{ marginTop: '20px' }}>
           <Box
             sx={{
               display: 'flex',
@@ -157,7 +156,6 @@ const Product = () => {
               backgroundColor: '#fff',
               padding: '10px',
               borderRadius: '8px',
-              marginTop: '5px'
             }}
           >
             <Box
@@ -198,7 +196,7 @@ const Product = () => {
             </Tooltip>
           </Box>
 
-          <Box sx={{ padding: '10px 20px' }}>
+          <Box sx={{ padding: '8px 20px' }}>
             <Grid container spacing={3}>
               {filteredProducts.map((product) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
@@ -208,7 +206,7 @@ const Product = () => {
                     <CardMedia
                       component="img"
                       image={
-                        product.imageUrl || 'https://www.pexels.com/photo/person-sitting-on-ground-between-brown-cardboard-boxes-2701434/'
+                        product.imageUrl || 'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
                       }
                       alt={product.productnm}
                       sx={{ height: 200, objectFit: 'cover' }}

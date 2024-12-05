@@ -43,9 +43,8 @@ const ProfileSection = () => {
    <Container>
        <Box
         sx={{
-          marginTop: '20px',
           backgroundColor: '#ffff',
-          padding: '14px',
+          padding: '10px',
           borderRadius: '8px',
           width: '100%',
           display: 'flex',

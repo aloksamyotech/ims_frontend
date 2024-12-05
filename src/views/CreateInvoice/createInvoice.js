@@ -16,13 +16,14 @@ import {
   TableRow,
   Paper
 } from '@mui/material';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { addOrder } from 'apis/api.js';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 
 const CreateInvoice = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const { orderData, products } = location.state || {};
   const customer = orderData.customer;
@@ -49,6 +50,7 @@ const CreateInvoice = () => {
 
       const response = await addOrder(invoiceData);
       if (response) {
+        navigate("/dashboard/orders");
         toast.success('Invoice saved successfully! A confirmation email has been sent.');
         setIsSubmitted(true);
       } else {
@@ -144,7 +146,7 @@ const CreateInvoice = () => {
                 </TableRow>
                 <TableRow>
                   <TableCell colSpan={3} align="right">
-                    Tax (7%)
+                    Tax%
                   </TableCell>
                   <TableCell>{orderData?.tax.toFixed(2)}</TableCell>
                 </TableRow>
