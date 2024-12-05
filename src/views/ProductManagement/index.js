@@ -209,7 +209,7 @@ const Product = () => {
                         product.imageUrl || 'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
                       }
                       alt={product.productnm}
-                      sx={{ height: 200, objectFit: 'cover' }}
+                      sx={{ height: 150, objectFit: 'fill' }}
                       onClick={() => handleView(product._id)}
                     />
 

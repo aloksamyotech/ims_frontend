@@ -90,7 +90,7 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                 <Grid item>
                   <Grid container direction="column" spacing={1}>
                     <Grid item>
-                      <Typography variant="h3">Sales Report</Typography>
+                      <Typography variant="h4">Sales Report</Typography>
                     </Grid>
                   </Grid>
                 </Grid>

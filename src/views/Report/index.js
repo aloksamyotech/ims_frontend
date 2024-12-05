@@ -110,39 +110,39 @@ const ProductReport = () => {
     { field: 'supplierPhone', headerName: 'Phone', width: 150 },
     { field: 'productName', headerName: 'Product Name', width: 180 },
     { field: 'quantity', headerName: 'Quantity', width: 110 },
-    {
-      field: 'price',
-      headerName: 'Amount',
-      width: 120,
-      valueFormatter: ({ value }) => {
-        if (value != null) {
-          return ` ${currencySymbol} ${value.toLocaleString()}`;
-        }
-        return '$0';
-      }
-    },
-    {
-      field: 'subtotal',
-      headerName: 'Subtotal',
-      width: 120,
-      valueFormatter: ({ value }) => {
-        if (value != null) {
-          return ` ${currencySymbol} ${value.toLocaleString()}`;
-        }
-        return '$0';
-      }
-    },
-    {
-      field: 'tax',
-      headerName: 'Tax',
-      width: 100,
-      valueFormatter: ({ value }) => {
-        if (value != null) {
-          return ` ${currencySymbol} ${value.toLocaleString()}`;
-        }
-        return '$0';
-      }
-    },
+    // {
+    //   field: 'price',
+    //   headerName: 'Amount',
+    //   width: 120,
+    //   valueFormatter: ({ value }) => {
+    //     if (value != null) {
+    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
+    //     }
+    //     return '$0';
+    //   }
+    // },
+    // {
+    //   field: 'subtotal',
+    //   headerName: 'Subtotal',
+    //   width: 120,
+    //   valueFormatter: ({ value }) => {
+    //     if (value != null) {
+    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
+    //     }
+    //     return '$0';
+    //   }
+    // },
+    // {
+    //   field: 'tax',
+    //   headerName: 'Tax',
+    //   width: 100,
+    //   valueFormatter: ({ value }) => {
+    //     if (value != null) {
+    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
+    //     }
+    //     return '$0';
+    //   }
+    // },
     {
       field: 'total',
       headerName: 'Total Amount',
@@ -178,39 +178,39 @@ const ProductReport = () => {
     { field: 'customerPhone', headerName: 'Phone', width: 150 },
     { field: 'productName', headerName: 'Product Name', width: 180 },
     { field: 'quantity', headerName: 'Quantity', width: 110 },
-    {
-      field: 'price',
-      headerName: 'Amount',
-      width: 120,
-      valueFormatter: ({ value }) => {
-        if (value != null) {
-          return ` ${currencySymbol} ${value.toLocaleString()}`;
-        }
-        return '$0';
-      }
-    },
-    {
-      field: 'subtotal',
-      headerName: 'Subtotal',
-      width: 120,
-      valueFormatter: ({ value }) => {
-        if (value != null) {
-          return ` ${currencySymbol} ${value.toLocaleString()}`;
-        }
-        return '$0';
-      }
-    },
-    {
-      field: 'tax',
-      headerName: 'Tax',
-      width: 100,
-      valueFormatter: ({ value }) => {
-        if (value != null) {
-          return ` ${currencySymbol} ${value.toLocaleString()}`;
-        }
-        return '$0';
-      }
-    },
+    // {
+    //   field: 'price',
+    //   headerName: 'Amount',
+    //   width: 120,
+    //   valueFormatter: ({ value }) => {
+    //     if (value != null) {
+    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
+    //     }
+    //     return '$0';
+    //   }
+    // },
+    // {
+    //   field: 'subtotal',
+    //   headerName: 'Subtotal',
+    //   width: 120,
+    //   valueFormatter: ({ value }) => {
+    //     if (value != null) {
+    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
+    //     }
+    //     return '$0';
+    //   }
+    // },
+    // {
+    //   field: 'tax',
+    //   headerName: 'Tax',
+    //   width: 100,
+    //   valueFormatter: ({ value }) => {
+    //     if (value != null) {
+    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
+    //     }
+    //     return '$0';
+    //   }
+    // },
     {
       field: 'total',
       headerName: 'Total Amount',

@@ -390,7 +390,7 @@ const ViewProductPage = () => {
                 <img
                   src={productData.imageUrl}
                   alt={productData.name}
-                  style={{ borderRadius: '12px', objectFit: 'cover', maxWidth: '250px' }}
+                  style={{ borderRadius: '12px', objectFit: 'fill', maxWidth: '250px' }}
                 />
               ) : (
                 <Typography>No image available</Typography>
