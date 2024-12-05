@@ -298,10 +298,8 @@ const PurchasePage = () => {
               />
             </Tabs>
 
-            <Card sx={{ margin: '15px' }}>
               {tabIndex === 0 && (
-                  <Box sx={{ padding: '3px' }}>
-                <Card>
+                <Card sx={{padding:'15px'}}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Box>
                       {' '}
@@ -457,7 +455,6 @@ const PurchasePage = () => {
                     )}
                   </Box>
                 </Card>
-                </Box>
               )}
 
               {tabIndex === 1 && status !== 'cancelled' && (
@@ -565,7 +562,6 @@ const PurchasePage = () => {
                   </Typography>
                 </Box>
               )}
-        </Card>
       </TabContentCard>
     </Container>
   );

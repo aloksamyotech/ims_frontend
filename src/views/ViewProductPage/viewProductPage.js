@@ -33,7 +33,8 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 const TabContentCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(1),
   borderRadius:8,
-  margin: theme.spacing(1),
+  margin: theme.spacing(2.4),
+  padding: theme.spacing(1),
 }));
 
 const ViewProductPage = () => {
@@ -374,7 +375,7 @@ const ViewProductPage = () => {
       </Box>
 
       <Card sx={{ marginTop: '20px' }}>
-        <Box sx={{ marginTop: '10px', display: 'flex', justifyContent: 'center', width: '100%' }}>
+        <Box sx={{ margin:'10px',display: 'flex', justifyContent: 'center', width: '98%',padding:'10px' }}>
           <Card sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
             <Box
               sx={{
@@ -396,7 +397,7 @@ const ViewProductPage = () => {
               )}
             </Box>
 
-            <Box sx={{ flex: 2, padding: 3 }}>
+            <Box sx={{ flex: 2, padding: 3,marginLeft:'10px' }}>
               <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
                 {productData?.productnm || 'NA'} ({productData?.product_no || 'NA'})
               </Typography>

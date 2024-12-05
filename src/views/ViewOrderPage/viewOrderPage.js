@@ -66,11 +66,9 @@ const InvoiceTable = styled(Table)({
 });
 
 const TabContentCard = styled(Card)(({ theme }) => ({
-  boxShadow: theme.shadows[3],
   borderRadius: 8,
   marginBottom: theme.spacing(1),
-  marginTop: theme.spacing(2.4),
-  padding: theme.spacing(0)
+  marginTop: theme.spacing(2),
 }));
 
 const InvoicePage = () => {
@@ -300,10 +298,8 @@ const InvoicePage = () => {
           />
         </Tabs>
 
-        <Card sx={{ margin: '15px' }}>
           {tabIndex === 0 && (
-            <Box sx={{ padding: '3px' }}>
-              <Card>
+              <Card sx={{padding:'15px'}}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between'}}>
                   <Box>
                     <Typography variant="h4" fontWeight="bold">
@@ -474,7 +470,7 @@ const InvoicePage = () => {
                   )}
                 </Box>
               </Card>
-            </Box>
+
           )}
 
           {tabIndex === 1 && order_status !== 'cancelled' && (
@@ -583,7 +579,7 @@ const InvoicePage = () => {
               </Typography>
             </Box>
           )}
-        </Card>
+        
       </TabContentCard>
     </Container>
   );
