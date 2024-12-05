@@ -44,16 +44,16 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
         <Typography variant="h3">Update User</Typography>
         <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
       </DialogTitle>
-      <DialogContent>
+      <DialogContent dividers>
         <form onSubmit={formik.handleSubmit}>
-          <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-            <Grid item xs={12}>
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={12} sm={6}>
               <FormLabel>Name</FormLabel>
               <TextField
                 required
                 id="name"
                 name="name"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.name}
                 onChange={formik.handleChange}
@@ -61,13 +61,13 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
                 helperText={formik.touched.name && formik.errors.name}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <FormLabel>Email</FormLabel>
               <TextField
                 required
                 id="email"
                 name="email"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -75,13 +75,13 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <FormLabel>Phone Number</FormLabel>
               <TextField
                 required
                 id="phone"
                 name="phone"
-                size="large"
+                size="small"
                 type="text"
                 fullWidth
                 value={formik.values.phone}

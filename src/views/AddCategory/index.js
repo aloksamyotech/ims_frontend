@@ -265,12 +265,11 @@ const Category = () => {
         </Box>
 
         <TableStyle>
-          <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px',  marginTop: '20px' }}>
+        <Box width="100%" >
+            <Card style={{ height: '600px',  marginTop: '20px',padding:'5px'}}>
               <DataGrid
                 rows={categories}
                 columns={columns}
-                checkboxSelection
                 getRowId={(row) => row._id}
                 components={{
                   Toolbar: () => <CustomToolbar handleOpenAdd={handleOpenAdd} />
@@ -295,8 +294,8 @@ const Category = () => {
                 }}
               />
             </Card>
-          </Box>
-        </TableStyle>
+            </Box>
+            </TableStyle>
       </Container>
     </>
   );

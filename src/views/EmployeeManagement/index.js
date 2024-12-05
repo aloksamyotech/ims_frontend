@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, IconButton, Breadcrumbs, Link as MuiLink, Popover, Container, Typography, Card, Box, Dialog } from '@mui/material';
+import { Stack, IconButton, Breadcrumbs, Link as MuiLink, Popover,Paper, Container, Typography, Card, Box, Dialog } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -337,15 +337,15 @@ const User = () => {
             <Typography color="text.primary">Users</Typography>
           </Breadcrumbs>
         </Box>
+        
         <TableStyle>
-          <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', marginTop: '20px' }}>
+          <Box width="100%" >
+            <Paper style={{ height: '600px', marginTop: '20px',padding:'5px'}}>
               <DataGrid
                 rows={users}
                 columns={columns}
                 getRowId={(row) => row._id}
                 rowHeight={50}
-                checkboxSelection
                 components={{ Toolbar: CustomToolbar }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{
@@ -366,7 +366,7 @@ const User = () => {
                   }
                 }}
               />
-            </Card>
+            </Paper>
           </Box>
         </TableStyle>
       </Container>

@@ -372,12 +372,11 @@ const ProductReport = () => {
         </Tabs>
 
         {selectedTab === 0 && (
-          <Box sx={{ height: '600px' }}>
+          <Box sx={{ height: '600px' ,padding:'10px'}}>
             <DataGrid
               rows={filteredOrderData}
               columns={orderColumns}
               rowHeight={50}
-              checkboxSelection
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
               initialState={{
@@ -397,11 +396,10 @@ const ProductReport = () => {
         )}
 
         {selectedTab === 1 && (
-          <Box sx={{ height: '600px' }}>
+          <Box sx={{ height: '600px' ,padding:'10px'}}>
             <DataGrid
               rows={filteredPurchaseData}
               columns={purchaseColumns}
-              checkboxSelection
               rowHeight={50}
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}

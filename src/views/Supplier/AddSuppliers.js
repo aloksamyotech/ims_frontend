@@ -112,7 +112,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
                 required
                 id="suppliernm"
                 name="suppliernm"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.suppliernm}
                 onChange={formik.handleChange}
@@ -126,7 +126,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
                 required
                 id="email"
                 name="email"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -140,7 +140,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
                 required
                 id="phone"
                 name="phone"
-                size="large"
+                size="small"
                 type="number"
                 fullWidth
                 value={formik.values.phone}
@@ -155,7 +155,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
                 required
                 id="shopName"
                 name="shopName"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.shopName}
                 onChange={formik.handleChange}
@@ -170,7 +170,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
                   required
                   id="typeOfSupplier"
                   name="typeOfSupplier"
-                  size="large"
+                  size="small"
                   value={formik.values.typeOfSupplier}
                   onChange={formik.handleChange}
                   error={formik.touched.typeOfSupplier && Boolean(formik.errors.typeOfSupplier)}
@@ -188,7 +188,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
             <Grid item xs={6}>
             <FormControl fullWidth>
               <FormLabel>Bank Name</FormLabel>
-              <Select required id="bankName" name="bankName" size="large" value={formik.values.bankName} onChange={formik.handleChange}>
+              <Select required id="bankName" name="bankName" size="small" value={formik.values.bankName} onChange={formik.handleChange}>
                 <MenuItem value="">Select a bank</MenuItem>
                 <MenuItem value="BRI">BRI</MenuItem>
                 <MenuItem value="BNI">BNI</MenuItem>
@@ -204,7 +204,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
               <TextField
                 id="accountHolder"
                 name="accountHolder"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.accountHolder}
                 onChange={formik.handleChange}
@@ -217,7 +217,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
               <TextField
                 id="accountNumber"
                 name="accountNumber"
-                size="large"
+                size="small"
                 type="number"
                 fullWidth
                 value={formik.values.accountNumber}
@@ -232,7 +232,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
                 required
                 id="address"
                 name="address"
-                size="large"
+                size="small"
                 multiline
                 fullWidth
                 rows={2}

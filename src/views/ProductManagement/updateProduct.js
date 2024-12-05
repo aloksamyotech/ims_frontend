@@ -12,6 +12,7 @@ import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { updateProduct } from 'apis/api.js';
 import ClearIcon from '@mui/icons-material/Clear';
+import { FormLabel } from '@mui/material';
 
 const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -85,14 +86,15 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
       <DialogContent dividers>
         <form onSubmit={formik.handleSubmit}>
           <Typography style={{ marginBottom: '15px' }} variant="h4">Product Details</Typography>
-          <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={6}>
+            <FormLabel>Product Name</FormLabel>
               <TextField
                 required
                 id="productnm"
                 name="productnm"
-                label="Product Name"
                 fullWidth
+                size='small'
                 value={formik.values.productnm}
                 onChange={formik.handleChange}
                 error={formik.touched.productnm && Boolean(formik.errors.productnm)}
@@ -100,12 +102,13 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
               />
             </Grid>
             <Grid item xs={6}>
+            <FormLabel>Buying Price</FormLabel>
               <TextField
                 required
                 id="buyingPrice"
                 name="buyingPrice"
-                label="Buying Price"
                 type="number"
+                size='small'
                 fullWidth
                 value={formik.values.buyingPrice}
                 onChange={formik.handleChange}
@@ -114,12 +117,13 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
               />
             </Grid>
             <Grid item xs={6}>
+              <FormLabel>Selling Price</FormLabel>
               <TextField
                 required
                 id="sellingPrice"
                 name="sellingPrice"
-                label="Selling Price"
                 type="number"
+                size='small'
                 fullWidth
                 value={formik.values.sellingPrice}
                 onChange={formik.handleChange}
@@ -128,12 +132,13 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
               />
             </Grid>
             <Grid item xs={6}>
+            <FormLabel>Tax(%)</FormLabel>
               <TextField
                 required
                 id="tax"
                 name="tax"
-                label="Tax(%)"
                 type="number"
+                size='small'
                 fullWidth
                 value={formik.values.tax}
                 onChange={formik.handleChange}
@@ -142,11 +147,12 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
               />
             </Grid>
             <Grid item xs={6}>
+            <FormLabel>Margin(%)</FormLabel>
               <TextField
                 id="margin"
                 name="margin"
-                label="Margin(%)"
                 type="number"
+                size='small'
                 fullWidth
                 value={formik.values.margin}
                 onChange={formik.handleChange}
@@ -155,13 +161,14 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
               />
             </Grid>
             <Grid item xs={12}>
+            <FormLabel>Notes</FormLabel>
               <TextField
                 id="notes"
                 name="notes"
-                label="Notes"
+                size='small'
                 fullWidth
                 multiline
-                rows={1}
+                rows={2}
                 value={formik.values.notes}
                 onChange={formik.handleChange}
                 error={formik.touched.notes && Boolean(formik.errors.notes)}

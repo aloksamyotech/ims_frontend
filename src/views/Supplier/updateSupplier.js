@@ -101,14 +101,14 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
       <DialogContent dividers>
         <form onSubmit={formik.handleSubmit}>
           <Typography style={{ marginBottom: '15px' }} variant="h4">Supplier Details</Typography>
-          <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={6}>
               <FormLabel>Name</FormLabel>
               <TextField
                 required
                 id="suppliernm"
                 name="suppliernm"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.suppliernm}
                 onChange={formik.handleChange}
@@ -122,7 +122,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
                 required
                 id="email"
                 name="email"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -136,7 +136,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
                 required
                 id="phone"
                 name="phone"
-                size="large"
+                size="small"
                 type="text"
                 fullWidth
                 value={formik.values.phone}
@@ -151,7 +151,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
                 required
                 id="shopName"
                 name="shopName"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.shopName}
                 onChange={formik.handleChange}
@@ -166,7 +166,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
                   required
                   id="typeOfSupplier"
                   name="typeOfSupplier"
-                  size="large"
+                  size="small"
                   value={formik.values.typeOfSupplier}
                   onChange={formik.handleChange}
                   error={formik.touched.typeOfSupplier && Boolean(formik.errors.typeOfSupplier)}
@@ -188,7 +188,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
                 id="bankName"
                 name="bankName"
                 fullWidth
-                size="large"
+                size="small"
                 value={formik.values.bankName}
                 onChange={formik.handleChange}
               >
@@ -206,7 +206,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
               <TextField
                 id="accountHolder"
                 name="accountHolder"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.accountHolder}
                 onChange={formik.handleChange}
@@ -219,7 +219,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
               <TextField
                 id="accountNumber"
                 name="accountNumber"
-                size="large"
+                size="small"
                 type="text"
                 fullWidth
                 value={formik.values.accountNumber}
@@ -234,7 +234,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
                 required
                 id="address"
                 name="address"
-                size="large"
+                size="small"
                 multiline
                 fullWidth
                 rows={2}

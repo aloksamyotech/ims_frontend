@@ -71,7 +71,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
     transition: 'all 0.3s ease',
   }}
 >
-  Inventory - Efficient Tracking and Management
+  {/* Inventory - Efficient Tracking and Management */}
 </Box>
 
 

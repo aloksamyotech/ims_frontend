@@ -81,7 +81,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
     PaperProps={{
       style: {
         width: '600px', 
-        height: '600px', 
+        height: '450px', 
         maxWidth: 'none', 
       },
     }}>
@@ -103,6 +103,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 required
                 id="customernm"
                 name="customernm"
+                size='small'
                 fullWidth
                 value={formik.values.customernm}
                 onChange={formik.handleChange}
@@ -116,6 +117,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 required
                 id="email"
                 name="email"
+                size='small'
                 fullWidth
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -129,6 +131,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 required
                 id="phone"
                 name="phone"
+                size='small'
                 fullWidth
                 value={formik.values.phone}
                 onChange={formik.handleChange}
@@ -143,6 +146,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                   required
                   id="bankName"
                   name="bankName"
+                  size='small'
                   value={formik.values.bankName}
                   onChange={formik.handleChange}
                   error={formik.touched.bankName && Boolean(formik.errors.bankName)}
@@ -162,6 +166,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
               <TextField
                 id="accountHolder"
                 name="accountHolder"
+                size='small'
                 fullWidth
                 value={formik.values.accountHolder}
                 onChange={formik.handleChange}
@@ -174,6 +179,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
               <TextField
                 id="accountNumber"
                 name="accountNumber"
+                size='small'
                 type="text"
                 fullWidth
                 value={formik.values.accountNumber}
@@ -188,6 +194,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 required
                 id="address"
                 name="address"
+                size='small'
                 multiline
                 fullWidth
                 rows={2}

@@ -365,13 +365,12 @@ const Order = () => {
         </Box>
 
         <TableStyle>
-          <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', marginTop: '20px' }}>
+          <Box width="100%" >
+            <Card style={{ height: '600px', marginTop: '20px',padding:'5px'}}>
               <DataGrid
                 rows={filteredOrders}
                 columns={columns}
                 getRowId={(row) => row._id}
-                checkboxSelection
                 rowHeight={50}
                 components={{
                   Toolbar: () => (

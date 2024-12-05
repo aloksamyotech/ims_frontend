@@ -314,12 +314,11 @@ const Customer = () => {
         </Box>
 
         <TableStyle>
-          <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px',  marginTop: '20px'}}>
+          <Box width="100%" >
+            <Card style={{ height: '600px', marginTop: '20px',padding:'5px'}}>
               <DataGrid
                 rows={customerData}
                 columns={columns}
-                checkboxSelection
                 rowHeight={50}
                 getRowId={(row) => row._id}
                 components={{

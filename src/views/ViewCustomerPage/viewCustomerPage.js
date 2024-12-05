@@ -221,94 +221,94 @@ const ViewCustomerPage = () => {
       </Box>
 
       <Card sx={{ marginTop: '20px' }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-          <Card style={{ boxShadow: 3 }}>
-                <CardContent>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="h4">
-                          <strong>{customerData?.customernm || 'NA'}</strong>
-                        </Typography>
-                      </Box>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body1">
-                          <strong>Email:</strong> {customerData?.email || 'NA'}
-                        </Typography>
-                      </Box>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body1">
-                          <strong>Phone:</strong> {customerData?.phone || 'NA'}
-                        </Typography>
-                      </Box>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body1">
-                          <strong>Address:</strong> {customerData?.address || 'NA'}
-                        </Typography>
-                      </Box>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body1">
-                          <strong>Type of Customer:</strong> {customerData?.isWholesale ? 'Wholesale' : 'Walk-in'}
-                        </Typography>
-                      </Box>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body1">
-                          <strong>Bank Name:</strong> {customerData?.bankName || 'NA'}
-                        </Typography>
-                      </Box>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body1">
-                          <strong>Account Holder:</strong> {customerData?.accountHolder || 'NA'}
-                        </Typography>
-                      </Box>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body1">
-                          <strong>Account Number:</strong>{customerData?.accountNumber || 'NA'}
-                        </Typography>
-                      </Box>
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Typography variant="body1">
-                          <strong>Created At:</strong> {moment(customerData?.createdAt).format('DD-MM-YYYY')}
-                        </Typography>
-                      </Box>
-                    </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Card style={{ margin:'20px' }}>
+              <CardContent>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="h4">
+                        <strong>{customerData?.customernm || 'NA'}</strong>
+                      </Typography>
+                    </Box>
                   </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Email:</strong> {customerData?.email || 'NA'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Phone:</strong> {customerData?.phone || 'NA'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Address:</strong> {customerData?.address || 'NA'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Type of Customer:</strong> {customerData?.isWholesale ? 'Wholesale' : 'Walk-in'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Bank Name:</strong> {customerData?.bankName || 'NA'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Account Holder:</strong> {customerData?.accountHolder || 'NA'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Account Number:</strong>
+                        {customerData?.accountNumber || 'NA'}
+                      </Typography>
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body1">
+                        <strong>Created At:</strong> {moment(customerData?.createdAt).format('DD-MM-YYYY')}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
           </Grid>
+        </Grid>
 
         <Grid item xs={12}>
-          <Card style={{ height: '600px', boxShadow: 3,padding: '10px', }}>
+          <Box style={{ height: '600px', padding: '10px',margin:'12px' }}>
             <DataGrid
               rows={filteredOrders}
               columns={columns}
-              checkboxSelection
               getRowId={(row) => row._id}
               rowHeight={50}
               components={{ Toolbar: CustomToolbar }}
@@ -331,9 +331,8 @@ const ViewCustomerPage = () => {
                 }
               }}
             />
-          </Card>
+          </Box>
         </Grid>
-
       </Card>
     </Container>
   );

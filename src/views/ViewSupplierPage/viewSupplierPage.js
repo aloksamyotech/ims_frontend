@@ -223,7 +223,7 @@ const ViewSupplierPage = () => {
       <Card sx={{ marginTop: '20px' }}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-          <Card style={{ boxShadow: 3 }}>
+          <Card style={{ margin:'20px'}}>
               <CardContent>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
@@ -288,11 +288,10 @@ const ViewSupplierPage = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <Card style={{ height: '600px', boxShadow: 3,padding: '10px', }}>
+          <Box style={{ height: '600px',padding: '10px',margin:'12px' }}>
           <DataGrid
             rows={filteredPurchases}
             columns={columns}
-            checkboxSelection
             getRowId={(row) => row._id}
             rowHeight={50}
             components={{ Toolbar: CustomToolbar }}
@@ -315,7 +314,7 @@ const ViewSupplierPage = () => {
               }
             }}
           />
-        </Card>
+        </Box>
         </Grid>
       </Card>
     </Container>

@@ -108,13 +108,14 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
       <DialogContent dividers>
         <form onSubmit={formik.handleSubmit}>
           <Typography style={{ marginBottom: '15px' }} variant="h4">Customer Details</Typography>
-          <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={6}>
               <FormLabel>Name</FormLabel>
               <TextField
                 required
                 id="customernm"
                 name="customernm"
+                size='small'
                 fullWidth
                 value={formik.values.customernm}
                 onChange={formik.handleChange}
@@ -128,6 +129,7 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                 required
                 id="email"
                 name="email"
+                size='small'
                 fullWidth
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -141,6 +143,7 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                 required
                 id="phone"
                 name="phone"
+                size='small'
                 fullWidth
                 value={formik.values.phone}
                 onChange={formik.handleChange}
@@ -155,6 +158,7 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                   required
                   id="bankName"
                   name="bankName"
+                  size='small'
                   value={formik.values.bankName}
                   onChange={formik.handleChange}
                   error={formik.touched.bankName && Boolean(formik.errors.bankName)}
@@ -174,6 +178,7 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
               <TextField
                 id="accountHolder"
                 name="accountHolder"
+                size='small'
                 fullWidth
                 value={formik.values.accountHolder}
                 onChange={formik.handleChange}
@@ -186,6 +191,7 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
               <TextField
                 id="accountNumber"
                 name="accountNumber"
+                size='small'
                 type="text"
                 fullWidth
                 value={formik.values.accountNumber}
@@ -200,6 +206,7 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                 required
                 id="address"
                 name="address"
+                size='small'
                 multiline
                 fullWidth
                 rows={2}
