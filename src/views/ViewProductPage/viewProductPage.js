@@ -480,7 +480,7 @@ const ViewProductPage = () => {
                   columns={orderColumns}
                   checkboxSelection
                   getRowId={(row) => row.id}
-                  rowHeight={60}
+                  rowHeight={50}
                   components={{ Toolbar: CustomToolbar }}
                   pageSizeOptions={[5, 10, 25]}
                   initialState={{
@@ -508,7 +508,7 @@ const ViewProductPage = () => {
                   columns={purchaseColumns}
                   checkboxSelection
                   getRowId={(row) => row.id}
-                  rowHeight={60}
+                  rowHeight={50}
                   components={{ Toolbar: CustomToolbar }}
                   pageSizeOptions={[5, 10, 25]}
                   initialState={{
