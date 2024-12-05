@@ -320,7 +320,7 @@ const Customer = () => {
                 rows={customerData}
                 columns={columns}
                 checkboxSelection
-                rowHeight={60}
+                rowHeight={50}
                 getRowId={(row) => row._id}
                 components={{
                   Toolbar: () => <CustomToolbar handleOpenAdd={handleOpenAdd} />

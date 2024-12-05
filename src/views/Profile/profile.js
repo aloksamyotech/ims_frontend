@@ -67,9 +67,9 @@ const ProfileSection = () => {
       </Box>
 
        <Card sx={{ marginTop: '20px' }}>
-      <Grid container spacing={2}>
+      <Grid container spacing={1}>
         <Grid item xs={12} md={4}>
-          <Card sx={{ marginBottom: 2 }}>
+          <Card sx={{ marginBottom: 2 ,padding:'10px' , margin:'12px'}} >
             <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
               <img src={logo} alt="profile" style={{ width: '200px', height: 'auto', borderRadius: '8px' }} />
             </CardContent>
@@ -77,7 +77,7 @@ const ProfileSection = () => {
         </Grid>
 
         <Grid item xs={12} md={8}>
-          <Card sx={{ marginBottom: 3 }}>
+          <Card sx={{ marginBottom: 3 , margin:'12px' , padding:'10px'}}>
             <CardContent>
               <Grid container spacing={2}>
               <Grid item xs={12}>

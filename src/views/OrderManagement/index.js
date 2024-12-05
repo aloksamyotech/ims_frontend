@@ -372,7 +372,7 @@ const Order = () => {
                 columns={columns}
                 getRowId={(row) => row._id}
                 checkboxSelection
-                rowHeight={60}
+                rowHeight={50}
                 components={{
                   Toolbar: () => (
                     <CustomToolbar

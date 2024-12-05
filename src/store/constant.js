@@ -1,4 +1,4 @@
 // theme constant
-export const gridSpacing = 2;
-export const drawerWidth = 240;
-export const appDrawerWidth = 320;
+export const gridSpacing = 1;
+export const drawerWidth = 210;
+export const appDrawerWidth = 300;

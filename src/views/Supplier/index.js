@@ -96,7 +96,7 @@ const Supplier = () => {
         </Box>
       )
     },
-    { field: 'phone', headerName: 'Phone', flex: 1.5, minWidth: 140 },
+    { field: 'phone', headerName: 'Phone', flex: 1.5, minWidth: 120 },
     { field: 'shopName', headerName: 'Shop Name', flex: 1.5, minWidth: 180 },
     {
       field: 'typeOfSupplier',
@@ -136,7 +136,7 @@ const Supplier = () => {
       field: 'createdAt',
       headerName: 'Created At',
       flex: 1,
-      minWidth: 120,
+      minWidth: 110,
       valueGetter: (params) => {
         return moment(params.row.createdAt).format('DD-MM-YYYY');
       }
@@ -320,7 +320,7 @@ const Supplier = () => {
                 columns={columns}
                 checkboxSelection
                 getRowId={(row) => row._id}
-                rowHeight={60}
+                rowHeight={50}
                 components={{
                   Toolbar: () => <CustomToolbar handleOpenAdd={handleOpenAdd} />
                 }}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, IconButton, Breadcrumbs, Link as MuiLink,Popover, Container, Typography, Card, Box, Dialog } from '@mui/material';
+import { Stack, IconButton, Breadcrumbs, Link as MuiLink, Popover, Container, Typography, Card, Box, Dialog } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -67,7 +67,7 @@ const User = () => {
             border: '1px solid beige'
           }}
         />
-          <GridToolbarExport style={{ fontSize: 14 }} />    
+        <GridToolbarExport style={{ fontSize: 14 }} />
       </GridToolbarContainer>
     );
   };
@@ -78,38 +78,46 @@ const User = () => {
       .map((word) => word[0])
       .join('');
     return initials;
-  };  
+  };
 
   const columns = [
-    { field: 'name', headerName: 'Username',
-      flex: 1.5,
+    {
+      field: '#',
+      flex: 0.2,
       sortable: false,
       renderCell: (params) => (
-        <Box display="flex" alignItems="center">
-          <Avatar
-            sx={{
-              bgcolor: '#673ab7',
-              color: '#ffff',
-              width: 40,
-              height: 40,
-              fontSize: 14,
-              boxShadow: 3,
-              border: '1px solid white',
-              transition: 'transform 0.3s ease-in-out',
-              '&:hover': {
-                transform: 'scale(1.1)'
-              }
-            }}
-          >
-            {generateRandomAvatar(params.row.name || '')}
-          </Avatar>
-          <Box ml={1}>
-            <Typography variant="h5">{params.row?.name || 'N/A'}</Typography>
-            <Typography variant="body2" color="textSecondary">{params.row?.email}</Typography>
-          </Box>
+        <Avatar
+          sx={{
+            bgcolor: '#673ab7',
+            color: '#ffff',
+            width: 40,
+            height: 40,
+            fontSize: 14,
+            boxShadow: 3,
+            border: '1px solid white',
+            transition: 'transform 0.3s ease-in-out',
+            '&:hover': {
+              transform: 'scale(1.1)'
+            }
+          }}
+        >
+          {generateRandomAvatar(params.row.name || '')}
+        </Avatar>
+      )
+    },
+    {
+      field: 'name',
+      headerName: 'Username',
+      flex: 0.8,
+      renderCell: (params) => (
+        <Box ml={1}>
+          <Typography variant="h5">{params.row?.name || 'N/A'}</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {params.row?.email || 'No Email'}
+          </Typography>
         </Box>
       )
-    },    
+    },
     { field: 'phone', headerName: 'Phone', flex: 0.8 },
     {
       field: 'date',
@@ -123,15 +131,17 @@ const User = () => {
       flex: 1,
       renderCell: (params) => (
         <Stack direction="row">
-          <Box sx={{
-            borderRadius: '8px',
-            padding: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '40px',
-            height: '40px'
-          }}>
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
             <IconButton
               size="small"
               onClick={() => handleView(params.row)}
@@ -143,34 +153,41 @@ const User = () => {
               <VisibilityIcon />
             </IconButton>
           </Box>
-  
-          <Box sx={{
-            borderRadius: '8px',
-            padding: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '40px',
-            height: '40px'
-          }}>
-            <IconButton size="small" onClick={(event) => handlePopoverOpen(event, params.row)} 
+
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton
+              size="small"
+              onClick={(event) => handlePopoverOpen(event, params.row)}
               color="secondary"
               sx={{
                 '&:hover': { backgroundColor: '#d7cde6', color: '#512995' }
-              }}>
+              }}
+            >
               <EditIcon />
             </IconButton>
           </Box>
-  
-          <Box sx={{
-            borderRadius: '8px',
-            padding: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '40px',
-            height: '40px'
-          }}>
+
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
             <IconButton
               size="small"
               onClick={() => handleDelete(params.row?._id)}
@@ -182,7 +199,7 @@ const User = () => {
               <DeleteIcon />
             </IconButton>
           </Box>
-  
+
           <Popover
             open={open}
             anchorEl={anchorEl}
@@ -217,7 +234,7 @@ const User = () => {
                 <EditIcon sx={{ marginRight: 1 }} />
                 Edit Profile
               </Typography>
-  
+
               <Typography
                 variant="body2"
                 sx={{
@@ -243,7 +260,7 @@ const User = () => {
       )
     }
   ];
-  
+
   const handleView = (user) => {
     setCurrentUser(user);
     setOpenView(true);
@@ -322,12 +339,13 @@ const User = () => {
         </Box>
         <TableStyle>
           <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px',  marginTop: '20px'}}>
+            <Card style={{ height: '600px', marginTop: '20px' }}>
               <DataGrid
                 rows={users}
                 columns={columns}
                 getRowId={(row) => row._id}
-                rowHeight={60}
+                rowHeight={50}
+                checkboxSelection
                 components={{ Toolbar: CustomToolbar }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{

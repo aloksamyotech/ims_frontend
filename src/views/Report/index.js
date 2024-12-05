@@ -92,7 +92,7 @@ const ProductReport = () => {
     {
       field: 'date',
       headerName: 'Purchase Date',
-      width: 180,
+      width: 120,
       valueGetter: (params) => moment(params.row?.date).format('DD-MM-YYYY')
     },
     {
@@ -107,13 +107,13 @@ const ProductReport = () => {
         </Box>
       )
     },
-    { field: 'supplierPhone', headerName: 'Phone', width: 200 },
-    { field: 'productName', headerName: 'Product Name', width: 200 },
-    { field: 'quantity', headerName: 'Quantity', width: 130 },
+    { field: 'supplierPhone', headerName: 'Phone', width: 150 },
+    { field: 'productName', headerName: 'Product Name', width: 180 },
+    { field: 'quantity', headerName: 'Quantity', width: 110 },
     {
       field: 'price',
       headerName: 'Amount',
-      width: 150,
+      width: 120,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -124,7 +124,7 @@ const ProductReport = () => {
     {
       field: 'subtotal',
       headerName: 'Subtotal',
-      width: 150,
+      width: 120,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -135,7 +135,7 @@ const ProductReport = () => {
     {
       field: 'tax',
       headerName: 'Tax',
-      width: 150,
+      width: 100,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -146,7 +146,7 @@ const ProductReport = () => {
     {
       field: 'total',
       headerName: 'Total Amount',
-      width: 150,
+      width: 120,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -160,7 +160,7 @@ const ProductReport = () => {
     {
       field: 'date',
       headerName: 'Order Date',
-      width: 180,
+      width: 120,
       valueGetter: (params) => moment(params.row?.date).format('DD-MM-YYYY')
     },
     {
@@ -175,13 +175,13 @@ const ProductReport = () => {
         </Box>
       )
     },
-    { field: 'customerPhone', headerName: 'Phone', width: 200 },
-    { field: 'productName', headerName: 'Product Name', width: 200 },
-    { field: 'quantity', headerName: 'Quantity', width: 130 },
+    { field: 'customerPhone', headerName: 'Phone', width: 150 },
+    { field: 'productName', headerName: 'Product Name', width: 180 },
+    { field: 'quantity', headerName: 'Quantity', width: 110 },
     {
       field: 'price',
       headerName: 'Amount',
-      width: 150,
+      width: 120,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -192,7 +192,7 @@ const ProductReport = () => {
     {
       field: 'subtotal',
       headerName: 'Subtotal',
-      width: 150,
+      width: 120,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -203,7 +203,7 @@ const ProductReport = () => {
     {
       field: 'tax',
       headerName: 'Tax',
-      width: 150,
+      width: 100,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -214,7 +214,7 @@ const ProductReport = () => {
     {
       field: 'total',
       headerName: 'Total Amount',
-      width: 150,
+      width: 120,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -376,7 +376,8 @@ const ProductReport = () => {
             <DataGrid
               rows={filteredOrderData}
               columns={orderColumns}
-              rowHeight={60}
+              rowHeight={50}
+              checkboxSelection
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
               initialState={{
@@ -400,7 +401,8 @@ const ProductReport = () => {
             <DataGrid
               rows={filteredPurchaseData}
               columns={purchaseColumns}
-              rowHeight={60}
+              checkboxSelection
+              rowHeight={50}
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
               initialState={{

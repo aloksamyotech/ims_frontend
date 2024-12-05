@@ -345,7 +345,7 @@ const Purchase = () => {
               rows={filteredPurchases}
               columns={columns}
               checkboxSelection
-              rowHeight={60}
+              rowHeight={50}
               getRowId={(row) => row._id}
               components={{
                 Toolbar: () => (

@@ -310,7 +310,7 @@ const ViewCustomerPage = () => {
               columns={columns}
               checkboxSelection
               getRowId={(row) => row._id}
-              rowHeight={60}
+              rowHeight={50}
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
               initialState={{

@@ -11,7 +11,7 @@ export default function componentStyleOverrides(theme) {
     },
     MuiPaper: {
       defaultProps: {
-        elevation: 0
+        elevation: 1
       },
       styleOverrides: {
         root: {
@@ -36,7 +36,7 @@ export default function componentStyleOverrides(theme) {
     MuiCardContent: {
       styleOverrides: {
         root: {
-          // padding: '18px'
+          padding: '8px'
         }
       }
     },
