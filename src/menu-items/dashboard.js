@@ -29,8 +29,15 @@ const icons = {
   IconAccessible,
   IconUserPlus
 };
-
+import AdminDashboard from 'views/dashboard/Default';
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
+
+// let imsToken = localStorage.getItem("imsToken")
+// imsToken = JSON.parse(imsToken)
+// const payload = parseJWT(imsToken)
+// console.log("payload", payload);
+
+const role = (localStorage.getItem('role'));
 
 const dashboard = {
   title: <span style={{ fontWeight: 'bold' }}> Dashboard-Menu</span>,
@@ -99,7 +106,7 @@ const dashboard = {
           breadcrumbs: false
         }
       ]
-    },    
+    },
     {
       id: '08',
       title: 'Category',
@@ -123,8 +130,55 @@ const dashboard = {
       url: '/dashboard/profile',
       icon: icons.IconUser,
       breadcrumbs: false
-    }
+    },
   ]
 };
 
-export default dashboard;
+const Admindashboard = {
+  title: 'Admin Dashboard Menu',
+  type: 'group',
+  children: [
+    {
+      id: 'default',
+      title: 'Dashboard',
+      type: 'item',
+      url: '/dashboard/admin',
+      icon: icons.IconHome,
+      breadcrumbs: false
+    },
+    {
+      id: '01',
+      title: 'Employee Management',
+      type: 'item',
+      url: '/dashboard/employee',
+      icon: icons.IconAccessible,
+      breadcrumbs: false
+    },
+    {
+      id: '02',
+      title: 'Reports',
+      type: 'item',
+      url: '/dashboard/admin-report',
+      icon: icons.IconCategory,
+      breadcrumbs: false
+    },
+    {
+      id: '03',
+      title: 'Subscription',
+      type: 'item',
+      url: '/dashboard/subscription',
+      icon: icons.IconCategory,
+      breadcrumbs: false
+     },
+     {
+     id: '04',
+     title: 'Company',
+     type: 'item',
+     url: '/dashboard/company',
+     icon: icons.IconCategory,
+     breadcrumbs: false
+     },
+  ]
+}
+
+export default (role === 'user') ? dashboard : Admindashboard;

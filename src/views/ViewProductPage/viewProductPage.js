@@ -475,11 +475,10 @@ const ViewProductPage = () => {
 
           {selectedTab === 0 && (
             <Box width="100%" overflow="hidden">
-              <Card style={{ height: '600px' }}>
+              <Card style={{ height: '600px' ,padding:'5px'}}>
                 <DataGrid
                   rows={filteredOrderData}
                   columns={orderColumns}
-                  checkboxSelection
                   getRowId={(row) => row.id}
                   rowHeight={50}
                   components={{ Toolbar: CustomToolbar }}
@@ -503,11 +502,10 @@ const ViewProductPage = () => {
 
           {selectedTab === 1 && (
             <Box width="100%" overflow="hidden">
-              <Card style={{ height: '600px' }}>
+              <Card style={{ height: '600px' ,padding:'5px'}}>
                 <DataGrid
                   rows={filteredPurchaseData}
                   columns={purchaseColumns}
-                  checkboxSelection
                   getRowId={(row) => row.id}
                   rowHeight={50}
                   components={{ Toolbar: CustomToolbar }}

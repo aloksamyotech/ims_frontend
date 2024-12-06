@@ -54,18 +54,25 @@ const AuthLogin = ({ ...others }) => {
           try {
             setIsSubmitting(true);
             const res = await axios.post('http://localhost:4200/user/login/', values);
-            console.log('Response:', res.data);
+            console.log('Response:', res?.data);
 
-            if (res.data && res.data.jwtToken && res.data.user) {
+            if (res?.data && res?.data?.jwtToken && res?.data?.user) {
               // Store token and user details in localStorage or sessionStorage
               const storageMethod = rememberMe ? localStorage : sessionStorage;
-              storageMethod.setItem('token', res.data.jwtToken);
+              storageMethod.setItem('imstoken', JSON.stringify(res.data.jwtToken));
               storageMethod.setItem('user', JSON.stringify(res.data.user));
               storageMethod.setItem('email', res.data.user.email);
+              storageMethod.setItem('role', res.data.user.role);
+              if(res.data.user.role === 'user')
+              {
+                navigate('/dashboard/default');
+              }
+              else{
+                navigate('/dashboard/admin');
+              }
 
               if (scriptedRef.current) {
                 toast.success('User logged in successfully');
-                navigate('/dashboard/default'); // Redirect to dashboard
                 setStatus({ success: true });
               }
             } else {

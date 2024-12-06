@@ -82,10 +82,11 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
         });
         if (onProductAdded) {
           onProductAdded(response.data);
+          toast.success('Product added successfully');
         }
-        toast.success('Product added successfully');
         resetForm();
         setImage(null);
+        window.location.reload();
       } catch (error) {
         toast.error('Failed to add product');
       } finally {

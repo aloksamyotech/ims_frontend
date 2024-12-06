@@ -15,16 +15,22 @@ const Category = Loadable(lazy(() => import('views/AddCategory')));
 const Unit = Loadable(lazy(() => import('views/AddUnit')));
 const Profile = Loadable(lazy(() => import('views/Profile')));
 const AddOrder = Loadable(lazy(() => import('views/AddOrderPage/AddOrderPage')));
-const CreateInvoice = Loadable(lazy(() => import('views/CreateInvoice/createInvoice')))
+const CreateInvoice = Loadable(lazy(() => import('views/CreateInvoice/createInvoice')));
 const AddPurchase = Loadable(lazy(() => import('views/AddPurchasePage/AddPurchasePage')));
-const ViewOrder = Loadable(lazy(() => import('views/ViewOrderPage/viewOrderPage')))
-const DownloadInvoice = Loadable(lazy(() => import('views/DownloadInvoicePage/downloadInvoicePage')))
-const ViewPurchase = Loadable(lazy(() => import('views/PurchasePage/viewPurchasePage')))
-const ViewProduct = Loadable(lazy(() => import('views/ViewProductPage/viewProductPage')))
-const ViewCustomer = Loadable(lazy(() => import('views/ViewCustomerPage/viewCustomerPage')))
-const ViewSupplier = Loadable(lazy(() => import('views/ViewSupplierPage/viewSupplierPage')))
+const ViewOrder = Loadable(lazy(() => import('views/ViewOrderPage/viewOrderPage')));
+const DownloadInvoice = Loadable(lazy(() => import('views/DownloadInvoicePage/downloadInvoicePage')));
+const ViewPurchase = Loadable(lazy(() => import('views/PurchasePage/viewPurchasePage')));
+const ViewProduct = Loadable(lazy(() => import('views/ViewProductPage/viewProductPage')));
+const ViewCustomer = Loadable(lazy(() => import('views/ViewCustomerPage/viewCustomerPage')));
+const ViewSupplier = Loadable(lazy(() => import('views/ViewSupplierPage/viewSupplierPage')));
+const AdminDashboard = Loadable(lazy(() => import('views/AdminComponent/DefaultDashboard')));
+const AdminReports = Loadable(lazy(() => import('views/AdminComponent/ReportManagement')));
+const Subscription = Loadable(lazy(() => import('views/AdminComponent/Subscription')));
+const Company = Loadable(lazy(() => import('views/AdminComponent/Company')));
+const Employees = Loadable(lazy(() => import('views/AdminComponent/Employees')));
 
 // ==============================|| MAIN ROUTING ||============================== //
+const role = (localStorage.getItem('role'));
 
 const MainRoutes = {
   path: '/',
@@ -54,8 +60,8 @@ const MainRoutes = {
             },
             {
               path: 'view-product/:id',
-              element: < ViewProduct />
-            },
+              element: <ViewProduct />
+            }
           ]
         },
         {
@@ -67,11 +73,11 @@ const MainRoutes = {
             },
             {
               path: 'download-invoice/:id',
-              element: < DownloadInvoice />
+              element: <DownloadInvoice />
             },
             {
               path: 'view-order/:id',
-              element: < ViewOrder />
+              element: <ViewOrder />
             },
             {
               path: 'add-order',
@@ -83,10 +89,9 @@ const MainRoutes = {
                 {
                   path: 'create-invoice',
                   element: <CreateInvoice />
-                },
+                }
               ]
             }
-
           ]
         },
         {
@@ -98,12 +103,12 @@ const MainRoutes = {
             },
             {
               path: 'view-purchase/:id',
-              element: < ViewPurchase />
+              element: <ViewPurchase />
             },
             {
               path: 'add-purchase',
               element: <AddPurchase />
-            },
+            }
           ]
         },
         {
@@ -123,8 +128,8 @@ const MainRoutes = {
             },
             {
               path: 'view-supplier/:id',
-              element: < ViewSupplier />
-            },
+              element: <ViewSupplier />
+            }
           ]
         },
         {
@@ -136,8 +141,8 @@ const MainRoutes = {
             },
             {
               path: 'view-customer/:id',
-              element: < ViewCustomer />
-            },
+              element: <ViewCustomer />
+            }
           ]
         },
         {
@@ -145,13 +150,57 @@ const MainRoutes = {
           element: <Category />
         },
         {
-          path: 'unit',
-          element: <Unit />
+          path: 'admin-reports',
+          element: <AdminReports />
         },
-       
+        {
+          path: 'subscription',
+          element: <Subscription />
+        },
+        {
+          path: 'company',
+          element: <Company />
+        }
       ]
     }
   ]
 };
 
-export default MainRoutes;
+const AdminRoutes = {
+  path: '/',
+  element: <MainLayout />,
+  children: [
+    {
+      path: '/',
+      element: <DashboardDefault />
+    },
+    {
+      path: 'dashboard',
+      children: [
+        {
+          path: 'admin',
+          element: <AdminDashboard />
+        },
+        {
+          path: 'employee',
+          element: <Employees />
+        },
+        {
+          path: 'company',
+         element: <Company />
+         },
+         {
+          path: 'admin-report',
+          element: <AdminReports />
+        },
+        {
+          path: 'subscription',
+          element: <Subscription />
+        }
+      ]
+    },
+  ]
+};
+
+const render = (role === 'user') ? MainRoutes : AdminRoutes;
+export default render;

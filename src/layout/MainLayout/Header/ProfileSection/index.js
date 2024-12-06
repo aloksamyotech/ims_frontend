@@ -29,9 +29,9 @@ const ProfileSection = () => {
 
   const handleLogout = () => {
     // Step 1: Clear localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('_id');
-    localStorage.removeItem('email');
+    localStorage.removeItem('imstoken');
+    localStorage.removeItem('user._id');
+    localStorage.removeItem('user.email');
     localStorage.removeItem('role');
 
     // Optionally, if using Redux to store auth data, reset the Redux state here.

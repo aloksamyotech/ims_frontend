@@ -1,40 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Stack, IconButton, Breadcrumbs, Link as MuiLink, Popover,Paper, Container, Typography, Card, Box, Dialog } from '@mui/material';
-import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import LockIcon from '@mui/icons-material/Lock';
 import { fetchUsers, deleteUser } from 'apis/api.js';
-import ViewUser from './view.js';
-import UpdateUser from './updateEmployee.js';
+import ViewUser from './viewUser.js';
+import UpdateUser from './updateUser.js';
+import axios from 'axios';
 import moment from 'moment';
-import ChangePassword from './changePassword.js';
 import Swal from 'sweetalert2';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import { Link } from 'react-router-dom';
 import { Avatar } from '@mui/material';
-import { filter } from 'lodash';
 
 const User = () => {
   const [users, setUsers] = useState([]);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [openView, setOpenView] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
-  const [openChangePassword, setOpenChangePassword] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -42,9 +27,9 @@ const User = () => {
         const response = await fetchUsers();
         const filteredUsers = response?.data.filter(user => user.role === 'user'); 
         setUsers(filteredUsers); 
-        console.log(filteredUsers);
+        console.log(response.data);
       } catch (error) {
-        setError('Error fetching users');
+        console.error('Error fetching users:', error);
       }
     };
     loadUsers();
@@ -170,7 +155,7 @@ const User = () => {
           >
             <IconButton
               size="small"
-              onClick={(event) => handlePopoverOpen(event, params.row)}
+              onClick={(event) => handleEdit( params.row)}
               color="secondary"
               sx={{
                 '&:hover': { backgroundColor: '#d7cde6', color: '#512995' }
@@ -202,64 +187,7 @@ const User = () => {
               <DeleteIcon />
             </IconButton>
           </Box>
-
-          <Popover
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handlePopoverClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left'
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left'
-            }}
-          >
-            <Box sx={{ padding: 2, width: '200px' }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  marginBottom: 1,
-                  cursor: 'pointer',
-                  '&:hover': { backgroundColor: '#b7a5d7' },
-                  padding: '8px',
-                  borderRadius: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: '#5e35b1'
-                }}
-                onClick={() => {
-                  handleEdit(params.row);
-                  handlePopoverClose();
-                }}
-              >
-                <EditIcon sx={{ marginRight: 1 }} />
-                Edit Profile
-              </Typography>
-
-              <Typography
-                variant="body2"
-                sx={{
-                  cursor: 'pointer',
-                  '&:hover': { backgroundColor: '#ffebee' },
-                  padding: '8px',
-                  borderRadius: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: '#d32f2f'
-                }}
-                onClick={() => {
-                  handleChangePassword(params.row);
-                  handlePopoverClose();
-                }}
-              >
-                <LockIcon sx={{ marginRight: 1 }} />
-                Change Password
-              </Typography>
-            </Box>
-          </Popover>
-        </Stack>
+          </Stack>
       )
     }
   ];
@@ -300,21 +228,10 @@ const User = () => {
     setOpenUpdate(false);
   };
 
-  const handleChangePassword = (user) => {
-    setCurrentUser(user);
-    setOpenChangePassword(true);
-  };
-
   return (
     <>
       <UpdateUser open={openUpdate} handleClose={() => setOpenUpdate(false)} user={currentUser} onUpdateUser={handleUserUpdated} />
       <ViewUser open={openView} handleClose={() => setOpenView(false)} user={currentUser} />
-      <ChangePassword
-        open={openChangePassword}
-        handleClose={() => setOpenChangePassword(false)}
-        user={currentUser}
-        onchangePassword={handleChangePassword}
-      />
 
       <Container>
         <Box
@@ -328,22 +245,20 @@ const User = () => {
             justifyContent: 'space-between'
           }}
         >
-          <Typography variant="h4">Users</Typography>
+          <Typography variant="h4">Employee Management</Typography>
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}
             aria-label="breadcrumb"
             sx={{ display: 'flex', alignItems: 'center' }}
           >
-            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+            <MuiLink component={Link} to="/dashboard/admin" color="inherit">
               <HomeIcon sx={{ color: '#5e35b1' }} />
             </MuiLink>
-            <Typography color="text.primary">Users</Typography>
+            <Typography color="text.primary">Employee</Typography>
           </Breadcrumbs>
         </Box>
         
-        <TableStyle>
-          <Box width="100%" >
-            <Paper style={{ height: '600px', marginTop: '20px',padding:'5px'}}>
+            <Paper style={{ height: '600px', marginTop: '20px'}}>
               <DataGrid
                 rows={users}
                 columns={columns}
@@ -370,8 +285,6 @@ const User = () => {
                 }}
               />
             </Paper>
-          </Box>
-        </TableStyle>
       </Container>
     </>
   );
