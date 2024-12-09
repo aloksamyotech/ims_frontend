@@ -20,7 +20,8 @@ import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import ClearIcon from '@mui/icons-material/Clear';
 import axios from 'axios';
-import { addProduct, fetchCategories, fetchUnits } from 'apis/api.js';
+import { fetchCategories } from 'apis/api.js';
+import { getUserId } from 'apis/constant.js';
 
 const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
   const [image, setImage] = useState('');
@@ -43,7 +44,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
       .required('Selling price is required')
       .positive('Must be a positive number')
       .max(1500000, 'Price cannot exceed Rs.1500000'),
-    tax: yup.number().max(20, 'Max 20% tax is allowed').required('Tax is required'),
+    tax: yup.number().max(50, 'Max 50% tax is allowed').required('Tax is required'),
     notes: yup.string().max(400, 'Max 400 words are allowed')
   });
 
@@ -64,16 +65,17 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
     enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
       setIsSubmitting(true);
+      const userId = getUserId();
       try {
         const formData = new FormData();
         formData.append('productnm', values.productnm);
         formData.append('categoryId', values.catnm);
-        // formData.append('unitId', values.unitnm);
         formData.append('buyingPrice', values.buyingPrice);
         formData.append('sellingPrice', values.sellingPrice);
         formData.append('tax', values.tax);
         formData.append('margin', values.margin);
         formData.append('notes', values.notes);
+        formData.append('userId', userId);
         if (values.image) {
           formData.append('image', values.image);
         }
@@ -86,7 +88,6 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
         }
         resetForm();
         setImage(null);
-        window.location.reload();
       } catch (error) {
         toast.error('Failed to add product');
       } finally {
@@ -137,9 +138,6 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
 
       <DialogContent dividers>
         <form onSubmit={formik.handleSubmit}>
-          <Typography style={{ marginBottom: '15px' }} variant="h4">
-            Product Details
-          </Typography>
           <Grid container rowSpacing={2} columnSpacing={{ xs: 0, sm: 5, md: 2 }}>
             <Grid item xs={12} sm={6}>
               <FormLabel>Product Name</FormLabel>

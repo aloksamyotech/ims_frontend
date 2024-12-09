@@ -1,3 +1,5 @@
+import { Subscript } from "@mui/icons-material";
+
 export const urls = {
   base: 'http://localhost:4200',
   unit: {
@@ -59,7 +61,14 @@ export const urls = {
   admin: {
     fetch: '/admin/fetch/',
     update: '/admin/update/:id',
-  }
+  },
+  subscription: {
+    add: '/subscription/save/',
+    delete: '/subscription/deleteById/:id',
+    fetch: '/subscription/fetch/',
+    update: '/subscription/update/:id',
+    count: '/subscription/count/',
+  },
 };
 
 

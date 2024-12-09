@@ -16,14 +16,14 @@ import {
   styled
 } from '@mui/material';
 import moment from 'moment';
-import { fetchCurrencySymbol } from 'apis/constant.js';
+import { fetchCurrencySymbol , getUserId } from 'apis/constant.js';
 import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { Link } from 'react-router-dom';
-import { Container, minWidth } from '@mui/system';
+import { Container } from '@mui/system';
 
 const TabContentCard = styled(Card)(({ theme }) => ({
   boxShadow: theme.shadows[3],
@@ -58,10 +58,15 @@ const ProductReport = () => {
   useEffect(() => {
     const loadReport = async () => {
       try {
-        const purchase = await fetchPurchases();
-        setPurchaseDetails(purchase?.data);
-        const order = await fetchOrders();
-        setOrderDetails(order?.data);
+        const userId = getUserId();
+        const response = await fetchPurchases();
+        const allPurchases = response?.data;
+        const filteredPurchaseByUser = allPurchases.filter((purchase) => purchase.userId === userId); 
+        setPurchaseDetails(filteredPurchaseByUser);
+        const result = await fetchOrders();
+        const allOrders = result?.data;
+        const filteredOrderByUser = allOrders.filter((order) => order.userId === userId); 
+        setOrderDetails(filteredOrderByUser);
       } catch (error) {
         toast.error('Error fetching data');
       }

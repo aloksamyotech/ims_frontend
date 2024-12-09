@@ -15,7 +15,7 @@ import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from 
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
-import { minWidth } from '@mui/system';
+import { getUserId } from 'apis/constant.js';
 
 const Supplier = () => {
   const navigate = useNavigate();
@@ -24,13 +24,22 @@ const Supplier = () => {
   const [supplierData, setSupplierData] = useState([]);
   const [currentSupplier, setCurrentSupplier] = useState(null);
 
-  useEffect(() => {
-    const loadSuppliers = async () => {
+  const loadSuppliers = async () => {
+    try {
       const response = await fetchSuppliers();
-      setSupplierData(response?.data);
-    };
+      const allSuppliers = response?.data;
+      const userId = getUserId();
+      const filteredSuppliers = allSuppliers.filter((supplier) => supplier.userId === userId);
+      setSupplierData(filteredSuppliers);
+    } catch (error) {
+      toast.error('Failed to fetch suppliers');
+    }
+  };
+
+  useEffect(() => {
     loadSuppliers();
   }, []);
+
 
   const CustomToolbar = ({ handleOpenAdd }) => {
     return (
@@ -261,6 +270,7 @@ const Supplier = () => {
       if (result.isConfirmed) {
         await deleteSupplier(_id);
         setSupplierData((prev) => prev.filter((supplier) => supplier?._id !== _id));
+        loadSuppliers();
         Swal.fire('Deleted!', 'Your supplier has been deleted.', 'success');
       }
     } catch (error) {
@@ -271,11 +281,13 @@ const Supplier = () => {
   const handleSupplierAdded = (newsupplier) => {
     setSupplierData((prev) => [...prev, newsupplier]);
     setOpenAdd(false);
+    loadSuppliers();
   };
 
   const handleSupplierUpdated = (updatedsupplier) => {
     setSupplierData((prev) => prev.map((supplier) => (supplier._id === updatedsupplier._id ? updatedsupplier : supplier)));
     setOpenUpdate(false);
+    loadSuppliers();
   };
 
   return (

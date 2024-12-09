@@ -24,7 +24,7 @@ import { deleteOrder, fetchOrders } from 'apis/api.js';
 import moment from 'moment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { fetchCurrencySymbol } from 'apis/constant.js';
+import { fetchCurrencySymbol , getUserId} from 'apis/constant.js';
 import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
@@ -42,8 +42,11 @@ const Order = () => {
     const loadOrders = async () => {
       try {
         const response = await fetchOrders();
-        setOrderDetails(response?.data);
-        setFilteredOrders(response?.data);
+        const allOrders = response?.data;
+        const userId = getUserId();
+        const filteredByUser = allOrders.filter((order) => order.userId === userId); 
+        setOrderDetails(filteredByUser);
+        setFilteredOrders(filteredByUser);
       } catch (error) {
         toast.error('Failed to fetch orders data');
       }

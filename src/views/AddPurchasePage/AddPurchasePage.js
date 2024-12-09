@@ -30,6 +30,7 @@ import { addPurchase, fetchProducts, fetchSuppliers } from 'apis/api.js';
 import { makeStyles } from '@mui/styles';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
+import { getUserId } from 'apis/constant.js';
 
 const useStyles = makeStyles({
   input: {
@@ -62,13 +63,16 @@ const PurchaseForm = () => {
       tax: 0
     },
     onSubmit: async (values) => {
+      const userId = getUserId(); 
+  
       const purchaseData = {
         ...values,
+        userId: userId, 
         products: rows?.map((row) => {
           const selectedProduct = productList?.find((product) => product._id === row.product);
           return {
             productId: row.product,
-            productName: selectedProduct ? selectedProduct.productnm : '', 
+            productName: selectedProduct ? selectedProduct.productnm : '',
             categoryName: row.categoryName,
             quantity: row.quantity,
             price: row.price || 0,
@@ -79,7 +83,7 @@ const PurchaseForm = () => {
         tax: purchaseTaxes,
         total: purchaseTotal,
       };
-
+  
       try {
         const response = await addPurchase(purchaseData);
         toast.success('Purchase added successfully');
@@ -94,11 +98,14 @@ const PurchaseForm = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const userId = getUserId(); 
       try {
         const productResult = await fetchProducts();
-        setProductList(productResult?.data);
+        const filteredProducts = productResult?.data.filter(product => product.userId === userId);
+        setProductList(filteredProducts);
         const supplierResult = await fetchSuppliers();
-        setSupplierList(supplierResult?.data);
+        const filteredSuppliers = supplierResult?.data.filter(supplier => supplier.userId === userId);
+        setSupplierList(filteredSuppliers);
       } catch (error) {
         console.error('Error fetching data:', error);
       }

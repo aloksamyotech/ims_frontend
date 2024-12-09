@@ -23,7 +23,7 @@ const ViewPurchase = Loadable(lazy(() => import('views/PurchasePage/viewPurchase
 const ViewProduct = Loadable(lazy(() => import('views/ViewProductPage/viewProductPage')));
 const ViewCustomer = Loadable(lazy(() => import('views/ViewCustomerPage/viewCustomerPage')));
 const ViewSupplier = Loadable(lazy(() => import('views/ViewSupplierPage/viewSupplierPage')));
-const AdminDashboard = Loadable(lazy(() => import('views/AdminComponent/DefaultDashboard')));
+const AdminDashboard = Loadable(lazy(() => import('views/AdminComponent/DefaultDashboard/DefaultAdmin')));
 const AdminReports = Loadable(lazy(() => import('views/AdminComponent/ReportManagement')));
 const Subscription = Loadable(lazy(() => import('views/AdminComponent/Subscription')));
 const Company = Loadable(lazy(() => import('views/AdminComponent/Company')));

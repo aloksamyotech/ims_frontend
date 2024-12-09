@@ -22,7 +22,7 @@ import { toast } from 'react-toastify';
 import { useParams, Link } from 'react-router-dom';
 import moment from 'moment';
 import { fetchPurchases, fetchOrders } from 'apis/api.js';
-import { fetchCurrencySymbol } from 'apis/constant.js';
+import { fetchCurrencySymbol , getUserId } from 'apis/constant.js';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import { Container } from '@mui/system';
@@ -60,11 +60,19 @@ const ViewProductPage = () => {
         const response = await axios.get(`http://localhost:4200/product/fetchById/${id}`);
         setProductData(response?.data);
 
+        const userId = getUserId(); 
+        const productId = id; 
+        
         const purchase = await fetchPurchases();
-        setPurchaseDetails(purchase?.data.filter((p) => p?.products?.some((product) => product?.productId === id)));
-
+        setPurchaseDetails(purchase?.data.filter((p) => 
+          p?.userId === userId && p?.products?.some((product) => product?.productId === productId)
+        ));
+        
         const order = await fetchOrders();
-        setOrderDetails(order?.data.filter((p) => p?.products?.some((product) => product?.productId === id)));
+        setOrderDetails(order?.data.filter((p) => 
+          p?.userId === userId && p?.products?.some((product) => product?.productId === productId)
+        ));
+        
       } catch (error) {
         toast.error('Error fetching product data');
       }

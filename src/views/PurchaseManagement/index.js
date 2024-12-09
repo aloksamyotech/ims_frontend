@@ -26,7 +26,7 @@ import { deletePurchase, fetchPurchases } from 'apis/api.js';
 import moment from 'moment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { fetchCurrencySymbol } from 'apis/constant.js';
+import { fetchCurrencySymbol , getUserId } from 'apis/constant.js';
 import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
@@ -44,8 +44,11 @@ const Purchase = () => {
     const loadPurchase = async () => {
       try {
         const response = await fetchPurchases();
-        setPurchaseDetails(response?.data);
-        setFilteredPurchasers(response?.data);
+        const allPurchases = response?.data;
+        const userId = getUserId();
+        const filteredByUser = allPurchases.filter((purchase) => purchase.userId === userId); 
+        setPurchaseDetails(filteredByUser);
+        setFilteredPurchasers(filteredByUser);
       } catch (error) {
         toast.error('Failed to fetch purchase data');
       }

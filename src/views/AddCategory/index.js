@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Container, Typography, Card, Box, Dialog } from '@mui/material';
+import { Stack, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Container, Typography, Card, Box } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -14,6 +14,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
+import { getUserId } from 'apis/constant.js';
 
 const Category = () => {
   const [openAdd, setOpenAdd] = useState(false);
@@ -22,20 +23,20 @@ const Category = () => {
   const [categories, setCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState(null);
 
+  const loadCategories = async () => {
+    try {
+      const response = await fetchCategories(); 
+      const allCategories = response?.data;
+      const userId = getUserId(); 
+      const filteredCategories = allCategories.filter(category => category.userId === userId); 
+      setCategories(filteredCategories); 
+    } catch (error) {
+      toast.error('Failed to fetch categories');
+    }
+  };
+
   useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const response = await fetchCategories();
-        if (response?.data?.length > 0) {
-          setCategories(response.data);
-        } else {
-          console.warn('No categories found');
-        }
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-    loadCategories();
+    loadCategories(); 
   }, []);
 
   const CustomToolbar = ({ handleOpenAdd }) => {
@@ -59,7 +60,7 @@ const Category = () => {
           }}
         />
         <Stack direction="row" spacing={2} alignItems="center">
-        <GridToolbarExport style={{ fontSize: 14 }} />
+          <GridToolbarExport style={{ fontSize: 14 }} />
           <Tooltip title="Add Category" arrow>
             <IconButton
               onClick={handleOpenAdd}
@@ -210,7 +211,9 @@ const Category = () => {
       });
       if (result.isConfirmed) {
         await deleteCategory(_id);
+        loadCategories(); 
         setCategories((prev) => prev.filter((category) => category._id !== _id));
+        loadCategories();
         Swal.fire('Deleted!', 'Your category has been deleted.', 'success');
       }
     } catch (error) {
@@ -221,11 +224,13 @@ const Category = () => {
   const handleCategoryAdded = (newCategory) => {
     setCategories((prev) => [...prev, newCategory]);
     setOpenAdd(false);
+    loadCategories();
   };
 
   const handleCategoryUpdated = (updatedCategory) => {
     setCategories((prev) => prev.map((category) => (category._id === updatedCategory._id ? updatedCategory : category)));
     setOpenUpdate(false);
+    loadCategories();
   };
 
   return (
@@ -265,10 +270,10 @@ const Category = () => {
         </Box>
 
         <TableStyle>
-        <Box width="100%" >
-            <Card style={{ height: '600px',  marginTop: '20px',padding:'5px'}}>
+          <Box width="100%">
+            <Card style={{ height: '600px', marginTop: '20px', padding: '5px' }}>
               <DataGrid
-                rows={categories}
+                rows={categories} 
                 columns={columns}
                 getRowId={(row) => row._id}
                 components={{
@@ -294,8 +299,8 @@ const Category = () => {
                 }}
               />
             </Card>
-            </Box>
-            </TableStyle>
+          </Box>
+        </TableStyle>
       </Container>
     </>
   );

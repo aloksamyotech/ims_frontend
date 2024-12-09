@@ -25,7 +25,7 @@ import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import UpdateProduct from './updateProduct.js';
 import AddProductPage from './AddProducts';
-import { fetchCurrencySymbol } from 'apis/constant.js';
+import { fetchCurrencySymbol, getUserId } from 'apis/constant.js';
 import { deleteProduct, fetchProducts } from 'apis/api.js';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
@@ -45,8 +45,10 @@ const Product = () => {
     const loadProducts = async () => {
       try {
         const response = await fetchProducts();
-        console.log(response);
-        setProducts(response?.data);
+        const allProducts = response?.data;
+        const userId = getUserId();
+        const filteredProducts = allProducts.filter((product) => product.userId === userId); 
+        setProducts(filteredProducts);
       } catch (error) {
         toast.error('Failed to fetch products');
       }
@@ -241,9 +243,14 @@ const Product = () => {
                         </Typography>
                       </Box>
 
-                      <Typography variant="body2" color="textSecondary">
-                        {product.categoryName || 'No Category'}
-                      </Typography>
+                      <Box display="flex" justifyContent="space-between" alignItems="center">
+                        <Typography variant="body2" color="textSecondary">
+                          {product.categoryName}
+                        </Typography>
+                        <Typography>
+                          ({product.quantity})
+                        </Typography>
+                      </Box>
 
                       <Typography variant="body2">
                         {currencySymbol} {product.sellingPrice}

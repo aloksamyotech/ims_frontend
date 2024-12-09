@@ -61,6 +61,7 @@ const AuthLogin = ({ ...others }) => {
               const storageMethod = rememberMe ? localStorage : sessionStorage;
               storageMethod.setItem('imstoken', JSON.stringify(res.data.jwtToken));
               storageMethod.setItem('user', JSON.stringify(res.data.user));
+              storageMethod.setItem('userId', res.data.user._id);
               storageMethod.setItem('email', res.data.user.email);
               storageMethod.setItem('role', res.data.user.role);
               if(res.data.user.role === 'user')

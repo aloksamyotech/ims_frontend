@@ -170,3 +170,24 @@ export const fetchAdmin = async () => {
 export const updateAdmin = async (updatedAdmin) => {
     return updateEntity('admin', updatedAdmin); 
 };
+
+//subscription
+export const deleteSubscription = async (_id) => {
+    return deleteApi(urls.subscription.delete, _id); 
+};
+
+export const fetchSubscription = async () => {
+    return fetchApi(urls.subscription.fetch); 
+};
+
+export const addSubscription = async (newSubscription) => {
+    return addApi(urls.subscription.add, newSubscription); 
+};
+
+export const countSubscriptions = async () => {
+    return fetchApi(urls.subscription.count); 
+};
+
+export const updateSubscription = async (updatedSubscription) => {
+    return updateEntity('subscription', updatedSubscription); 
+};

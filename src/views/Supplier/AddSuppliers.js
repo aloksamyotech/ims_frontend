@@ -15,8 +15,10 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { FormHelperText, FormLabel } from '@mui/material';
 import { toast } from 'react-toastify';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { throttle } from 'lodash';
 import { addSupplier } from 'apis/api.js';
+import { getUserId } from 'apis/constant.js';
 
 const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,8 +68,11 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
     enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
       setIsSubmitting(true);
+      const userId = getUserId();
+
       try {
-        const response = await addSupplier(values);
+        const payload = { ...values, userId };
+        const response = await addSupplier(payload);
         onSupplierAdded(response?.data);
         toast.success('Supplier added successfully');
         resetForm();
@@ -79,6 +84,8 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
       }
     }
   });
+
+  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 20000), [formik.handleSubmit]);
 
   return (
     <Dialog open={open} onClose={handleClose}
@@ -101,10 +108,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
       </DialogTitle>
 
       <DialogContent dividers>
-        <form onSubmit={formik.handleSubmit}>
-          <Typography style={{ marginBottom: '15px' }} variant="h4">
-            Supplier Details
-          </Typography>
+      <form onSubmit={throttledSubmit}>
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={6}>
               <FormLabel>Name</FormLabel>

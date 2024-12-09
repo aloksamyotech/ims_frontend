@@ -29,7 +29,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
       .positive('Must be a positive number')
       .max(1500000, 'Price cannot exceed Rs.1500000'),
     tax: yup.number()
-      .max(20, 'Max 20% tax is allowed')
+      .max(50, 'Max 50% tax is allowed')
       .required('Tax is required'),
     margin: yup.number()
       .max(10000, 'Max 10000 margin is allowed')

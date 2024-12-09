@@ -18,6 +18,7 @@ import { toast } from 'react-toastify';
 import { useState, useCallback } from 'react';
 import { throttle } from 'lodash';
 import { addCustomer } from 'apis/api.js';
+import { getUserId } from 'apis/constant.js';
 
 const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,8 +61,11 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
     enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
       setIsSubmitting(true);
+      const userId = getUserId();
+
       try {
-        const response = await addCustomer(values);
+        const payload = { ...values, userId };
+        const response = await addCustomer(payload);
         onCustomerAdded(response?.data);
         toast.success('Customer added successfully');
         resetForm();
@@ -95,7 +99,6 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
 
       <DialogContent dividers>
         <form onSubmit={throttledSubmit}>
-          <Typography style={{ marginBottom: '15px' }} variant="h4">Customer Details</Typography>
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={6}>
               <FormLabel>Name</FormLabel>

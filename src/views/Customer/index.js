@@ -15,6 +15,7 @@ import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from 
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
+import { getUserId } from 'apis/constant.js';
 
 const Customer = () => {
   const navigate = useNavigate();
@@ -23,11 +24,19 @@ const Customer = () => {
   const [customerData, setCustomerData] = useState([]);
   const [currentCustomer, setCurrentCustomer] = useState(null);
 
-  useEffect(() => {
-    const loadCustomers = async () => {
+  const loadCustomers = async () => {
+    try {
       const response = await fetchCustomers();
-      setCustomerData(response?.data);
-    };
+      const allCustomers = response?.data;
+      const userId = getUserId();
+      const filteredCustomers = allCustomers.filter((customer) => customer.userId === userId);
+      setCustomerData(filteredCustomers);
+    } catch (error) {
+      toast.error('Failed to fetch customers');
+    }
+  };
+
+  useEffect(() => {
     loadCustomers();
   }, []);
 
@@ -83,13 +92,15 @@ const Customer = () => {
 
   const columns = [
     {
-      field: 'customernm', 
+      field: 'customernm',
       headerName: 'Name',
       flex: 1.5,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row.customernm}</Typography>
-          <Typography variant="body2" color="textSecondary">{params.row.email}</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {params.row.email}
+          </Typography>
         </Box>
       )
     },
@@ -260,6 +271,7 @@ const Customer = () => {
       if (result.isConfirmed) {
         await deleteCustomer(_id);
         setCustomerData((prev) => prev.filter((customer) => customer?._id !== _id));
+        loadCustomers();
         Swal.fire('Deleted!', 'Your customer has been deleted.', 'success');
       }
     } catch (error) {
@@ -270,11 +282,13 @@ const Customer = () => {
   const handleCustomerAdded = (newcustomer) => {
     setCustomerData((prev) => [...prev, newcustomer]);
     setOpenAdd(false);
+    loadCustomers();
   };
 
   const handleCustomerUpdated = (updatedcustomer) => {
     setCustomerData((prev) => prev.map((customer) => (customer._id === updatedcustomer._id ? updatedcustomer : customer)));
     setOpenUpdate(false);
+    loadCustomers();
   };
 
   return (
@@ -314,8 +328,8 @@ const Customer = () => {
         </Box>
 
         <TableStyle>
-          <Box width="100%" >
-            <Card style={{ height: '600px', marginTop: '20px',padding:'5px'}}>
+          <Box width="100%">
+            <Card style={{ height: '600px', marginTop: '20px', padding: '5px' }}>
               <DataGrid
                 rows={customerData}
                 columns={columns}

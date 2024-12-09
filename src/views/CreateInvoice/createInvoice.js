@@ -21,6 +21,7 @@ import { toast } from 'react-toastify';
 import { addOrder } from 'apis/api.js';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
+import { getUserId } from 'apis/constant.js';
 
 const CreateInvoice = () => {
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ const CreateInvoice = () => {
     try {
       const invoiceData = {
         date: orderData.date,
+        userId : getUserId(),
         customerId: customer._id,
         customerName: customer.customernm,
         products: products.map((product) => ({
@@ -57,6 +59,7 @@ const CreateInvoice = () => {
         toast.error('Error saving invoice');
       }
     } catch (error) {
+      console.log(error);
       toast.error('An error occurred while saving the invoice. Please try again.');
     } finally {
       setLoading(false);

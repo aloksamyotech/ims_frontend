@@ -1,48 +1,41 @@
-import React, { useState, useCallback } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, Typography, FormLabel } from '@mui/material';
+import React from 'react';
+import { Dialog, DialogTitle, DialogContent, Typography, DialogActions, Button, 
+    Grid,FormLabel,TextField } from '@mui/material';
 import { useFormik } from 'formik';
-import ClearIcon from '@mui/icons-material/Clear';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { addSubscription } from 'apis/api.js';
-import { margin } from '@mui/system';
+import { updateSubscription } from 'apis/api.js';
+import ClearIcon from '@mui/icons-material/Clear';
+import { update } from 'lodash';
 
-const AddSubscription = ({ open, handleClose, onSubscriptionAdded }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const validationSchema = yup.object({
-    title: yup.string().max(30, 'Max 30 characters are allowed').required('Title is required'),
-    desc: yup.string().max(100, 'Max 100 characters are allowed').required('Description is required'),
-    amount: yup
-      .number()
-      .required('Amount is required')
-      .positive('Must be a positive number')
-      .max(1000000, 'Price cannot exceed Rs.1000000'),
-    noOfDays: yup.number().max(365, 'Max 365 days are allowed').required('No of days is required'),
-    discount: yup.number().max(100, 'Max 5100% discount is allowed').required('Discount is required')
-  });
-
+const UpdateSubscription = ({ open, handleClose, subscription, onUpdateSubscription }) => {
   const formik = useFormik({
     initialValues: {
-      title: '',
-      desc: '',
-      amount: '',
-      noOfDays: '',
-      discount: ''
+      title: subscription?.title || '',
+      noOfDays: subscription?.noOfDays || '',
+      amount: subscription?.amount || '',
+      discount: subscription?.discount || '',
+      desc: subscription?.desc || ''
     },
-    validationSchema,
-    onSubmit: async (values, { resetForm }) => {
-      setIsSubmitting(true);
+    enableReinitialize: true,
+    validationSchema: yup.object({
+      title: yup.string().max(30, 'Max 30 characters are allowed').required('Title is required'),
+      desc: yup.string().max(100, 'Max 100 characters are allowed').required('Description is required'),
+      amount: yup
+        .number()
+        .required('Amount is required')
+        .positive('Must be a positive number')
+        .max(1000000, 'Price cannot exceed Rs.1000000'),
+        noOfDays: yup.number().max(365, 'Max 365 days are allowed').required('No of days is required'),
+      discount: yup.number().max(100, 'Max 100% discount is allowed').required('Discount is required')
+    }),
+    onSubmit: async (values) => {
       try {
-        const response = await addSubscription(values);
-        onSubscriptionAdded(response?.data);
-        handleClose();
-        toast.success('Subscription added successfully');
-        resetForm();
+        const response = await updateSubscription({ ...subscription, ...values });
+        onUpdateSubscription(response?.data);
+        toast.success('Subscription updated successfully');
       } catch (error) {
-        toast.error('Failed to add subscription');
-      } finally {
-        setIsSubmitting(false);
+        toast.error('Failed to update subscription');
       }
     }
   });
@@ -50,12 +43,11 @@ const AddSubscription = ({ open, handleClose, onSubscriptionAdded }) => {
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography variant="h3">Add Subscription</Typography>
+        <Typography variant="h3">Update Subscription</Typography>
         <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
       </DialogTitle>
 
       <DialogContent>
-        <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <FormLabel>Title</FormLabel>
@@ -115,7 +107,6 @@ const AddSubscription = ({ open, handleClose, onSubscriptionAdded }) => {
                 fullWidth
                 value={formik.values.discount}
                 onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
                 error={formik.touched.discount && Boolean(formik.errors.discount)}
                 helperText={formik.touched.discount && formik.errors.discount}
               />
@@ -137,19 +128,17 @@ const AddSubscription = ({ open, handleClose, onSubscriptionAdded }) => {
               />
             </Grid>
           </Grid>
-
-          <DialogActions>
-            <Button type="submit" disabled={isSubmitting} variant="contained" color="secondary">
-              {isSubmitting ? 'Submitting...' : 'Add Subscription'}{' '}
-            </Button>
-            <Button onClick={handleClose} variant="contained" color="error">
-              Cancel
-            </Button>
-          </DialogActions>
-        </form>
       </DialogContent>
+      <DialogActions>
+        <Button type="submit" variant="contained" color="secondary" onClick={formik.handleSubmit}>
+          Update
+        </Button>
+        <Button onClick={handleClose} variant="contained" color="error">
+          Cancel
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };
 
-export default AddSubscription;
+export default UpdateSubscription;

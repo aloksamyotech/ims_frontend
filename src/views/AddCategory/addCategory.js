@@ -4,6 +4,7 @@ import { useFormik } from 'formik';
 import ClearIcon from '@mui/icons-material/Clear';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
+import {getUserId} from 'apis/constant.js';
 import { addCategory } from 'apis/api.js';
 
 const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
@@ -17,13 +18,17 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
   const formik = useFormik({
     initialValues: {
       catnm: '',
-      desc: ''
+      desc: '',
     },
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
       setIsSubmitting(true);
+      
+      const userId = getUserId();
+
       try {
-        const response = await addCategory(values);
+        const payload = { ...values, userId };
+        const response = await addCategory(payload);
         onCategoryAdded(response?.data);
         handleClose();
         toast.success('Category added successfully');
@@ -33,7 +38,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
       } finally {
         setIsSubmitting(false);
       }
-    }
+    },
   });
 
   return (

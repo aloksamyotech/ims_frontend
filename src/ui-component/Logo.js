@@ -2,6 +2,7 @@ import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { fetchAdmin } from 'apis/api.js';
+import { toast } from 'react-toastify';
 
 const Logo = () => {
   const theme = useTheme();

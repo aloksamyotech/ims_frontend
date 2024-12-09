@@ -10,6 +10,7 @@ import { fetchPurchases } from 'apis/api.js';
 import { fetchCurrencySymbol } from 'apis/constant.js';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
+import { getUserId } from 'apis/constant.js';
 
 const CustomToolbar = () => {
   return (
@@ -53,10 +54,13 @@ const ViewSupplierPage = () => {
   useEffect(() => {
     const loadSupplier = async () => {
       try {
+        const userId = getUserId();
         const response = await axios.get(`http://localhost:4200/supplier/fetchById/${id}`);
         setSupplierData(response?.data);
         const result = await fetchPurchases();
-        setPurchaseDetails(result?.data);
+        const allPurchases = result?.data;
+        const filteredPurchases = allPurchases.filter((purchase) => purchase.userId === userId);
+        setPurchaseDetails(filteredPurchases);
       } catch (error) {
         toast.error('Error fetching supplier data');
       }

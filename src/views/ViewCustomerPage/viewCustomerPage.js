@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { useParams, Link } from 'react-router-dom';
 import moment from 'moment';
 import { fetchOrders } from 'apis/api.js';
-import { fetchCurrencySymbol } from 'apis/constant.js';
+import { fetchCurrencySymbol , getUserId } from 'apis/constant.js';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 
@@ -53,10 +53,13 @@ const ViewCustomerPage = () => {
   useEffect(() => {
     const loadCustomer = async () => {
       try {
+        const userId = getUserId();
         const response = await axios.get(`http://localhost:4200/customer/fetchById/${id}`);
         setCustomerData(response?.data);
         const result = await fetchOrders();
-        setOrderDetails(result?.data);
+        const allOrders = result?.data;
+        const filteredOrders = allOrders.filter((order) => order.userId === userId);
+        setOrderDetails(filteredOrders);
       } catch (error) {
         toast.error('Error fetching customer data');
       }

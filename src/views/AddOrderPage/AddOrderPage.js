@@ -31,11 +31,9 @@ import { Link } from 'react-router-dom';
 import { fetchProducts, fetchCustomers, addCustomer } from 'apis/api.js';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import { fetchCurrencySymbol } from 'apis/constant.js'; 
+import { fetchCurrencySymbol, getUserId } from 'apis/constant.js'; 
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
-
-const TAX_RATE = 0.07;
 
 const OrderForm = (props) => {
   const navigate = useNavigate();
@@ -87,18 +85,21 @@ const OrderForm = (props) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const userId = getUserId(); 
       try {
         const productResult = await fetchProducts();
-        setProductList(productResult?.data);
+        const filteredProducts = productResult?.data.filter(product => product.userId === userId);
+        setProductList(filteredProducts);
         const customerResult = await fetchCustomers();
-        setCustomerList(customerResult?.data);
+        const filteredCustomers = customerResult?.data.filter(customer => customer.userId === userId);
+        setCustomerList(filteredCustomers);
       } catch (error) {
-        console.error(error);
+        toast.error("Failed to fetch data");
       }
     };
 
     fetchData();
-  }, []);
+  }, []); 
 
   useEffect(() => {
     const getCurrency = async () => {
@@ -224,12 +225,11 @@ const OrderForm = (props) => {
   };
 
   const handleCreateInvoice = async () => {
-
     if (!isWalkIn && !isWholesale && !selectedCustomer) {
       toast.error("Please select a customer before creating the invoice.");
-      return; 
+      return;
     }
-
+  
     let customerData = {};
     if (isWalkIn) {
       customerData = {
@@ -237,16 +237,27 @@ const OrderForm = (props) => {
         email: walkInData.email,
         phone: walkInData.phone,
         address: walkInData.address,
-        isWholesale: false
+        isWholesale: false, 
+        userId: getUserId(),
       };
-
-      const savedCustomer = await addCustomer(customerData);
-      console.log(savedCustomer);
-      customerData._id = savedCustomer.data._id;
+  
+      try {
+        const savedCustomer = await addCustomer(customerData);
+        if (savedCustomer && savedCustomer.data) {
+          customerData._id = savedCustomer.data._id; 
+          toast.success('Walk-in customer created:');
+        } else {
+          toast.error('Failed to create walk-in customer');
+          return;
+        }
+      } catch (error) {
+        toast.error('Error creating walk-in customer');
+        return;
+      }
     } else if (isWholesale && selectedCustomer) {
       customerData = {
         ...selectedCustomer,
-        isWholesale: true
+        isWholesale: true,
       };
     }
 
@@ -256,16 +267,15 @@ const OrderForm = (props) => {
       products: products?.map((product) => ({
         productId: product._id,
         productName: product.productnm,
-        quantity: product.quantity
+        quantity: product.quantity,
       })),
       tax: invoiceTaxes,
       subtotal: invoiceSubtotal,
-      total: invoiceTotal
+      total: invoiceTotal,
     };
-
     navigate('/dashboard/orders/add-order/create-invoice', { state: { orderData, products } });
   };
-
+  
   return (
     <Container>
       <Box
