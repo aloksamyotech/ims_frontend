@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import {
   Box,
@@ -27,9 +27,11 @@ const AuthLogin = ({ ...others }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const scriptedRef = useScriptRef();
-  const [rememberMe, setRememberMe] = useState(true); // Store user's choice for remember me functionality
-  const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
-  const [isSubmitting, setIsSubmitting] = useState(false); // Handle form submission state
+  const [rememberMe, setRememberMe] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [user, setUser] = useState(null);  
+  const [role, setRole] = useState(null); 
 
   const handleClickShowPassword = () => {
     setShowPassword((prev) => !prev);
@@ -38,6 +40,23 @@ const AuthLogin = ({ ...others }) => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem('imstoken') || sessionStorage.getItem('imstoken');
+    const storedUser = JSON.parse(localStorage.getItem('user')) || JSON.parse(sessionStorage.getItem('user'));
+
+    if (token && storedUser) {
+      setUser(storedUser);
+      setRole(storedUser.role);
+      if (storedUser.role === 'user') {
+        navigate('/dashboard/default');  
+      } else if (storedUser.role === 'admin') {
+        navigate('/dashboard/admin'); 
+      }
+    } else {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   return (
     <>
@@ -57,18 +76,16 @@ const AuthLogin = ({ ...others }) => {
             console.log('Response:', res?.data);
 
             if (res?.data && res?.data?.jwtToken && res?.data?.user) {
-              // Store token and user details in localStorage or sessionStorage
               const storageMethod = rememberMe ? localStorage : sessionStorage;
               storageMethod.setItem('imstoken', JSON.stringify(res.data.jwtToken));
               storageMethod.setItem('user', JSON.stringify(res.data.user));
               storageMethod.setItem('userId', res.data.user._id);
               storageMethod.setItem('email', res.data.user.email);
               storageMethod.setItem('role', res.data.user.role);
-              if(res.data.user.role === 'user')
-              {
+
+              if (res.data.user.role === 'user') {
                 navigate('/dashboard/default');
-              }
-              else{
+              } else {
                 navigate('/dashboard/admin');
               }
 
@@ -92,7 +109,6 @@ const AuthLogin = ({ ...others }) => {
       >
         {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
-            {/* Email Input */}
             <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-email-login">Email Address</InputLabel>
               <OutlinedInput
@@ -107,7 +123,6 @@ const AuthLogin = ({ ...others }) => {
               {touched.email && errors.email && <FormHelperText error>{errors.email}</FormHelperText>}
             </FormControl>
 
-            {/* Password Input */}
             <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-password-login">Password</InputLabel>
               <OutlinedInput
@@ -135,7 +150,6 @@ const AuthLogin = ({ ...others }) => {
               {touched.password && errors.password && <FormHelperText error>{errors.password}</FormHelperText>}
             </FormControl>
 
-            {/* Remember Me Checkbox */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
               <FormControlLabel
                 control={
@@ -150,14 +164,12 @@ const AuthLogin = ({ ...others }) => {
               />
             </Stack>
 
-            {/* Error Message */}
             {errors.submit && (
               <Box sx={{ mt: 3 }}>
                 <FormHelperText error>{errors.submit}</FormHelperText>
               </Box>
             )}
 
-            {/* Submit Button */}
             <Box sx={{ mt: 2 }}>
               <AnimateButton>
                 <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="secondary">

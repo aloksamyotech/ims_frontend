@@ -39,6 +39,7 @@ export const urls = {
     delete: '/user/deleteById/:id',
     update: '/user/update/:id',
     fetch: '/user/fetch/',
+    add: '/user/save/',
   },
   order: {
     add: '/order/save/',

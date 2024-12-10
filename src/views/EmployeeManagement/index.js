@@ -110,7 +110,7 @@ const User = () => {
     },
     {
       field: 'name',
-      headerName: 'Username',
+      headerName: 'EmployeeName',
       flex: 0.8,
       renderCell: (params) => (
         <Box ml={1}>
@@ -328,7 +328,7 @@ const User = () => {
             justifyContent: 'space-between'
           }}
         >
-          <Typography variant="h4">Users</Typography>
+          <Typography variant="h4">Employees</Typography>
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}
             aria-label="breadcrumb"
@@ -337,7 +337,7 @@ const User = () => {
             <MuiLink component={Link} to="/dashboard/default" color="inherit">
               <HomeIcon sx={{ color: '#5e35b1' }} />
             </MuiLink>
-            <Typography color="text.primary">Users</Typography>
+            <Typography color="text.primary">Employees</Typography>
           </Breadcrumbs>
         </Box>
         

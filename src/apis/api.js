@@ -111,6 +111,10 @@ export const updateUser = async (updatedUser) => {
     return updateEntity('user', updatedUser); 
 };
 
+export const addUser = async (newUser) => {
+    return addApi(urls.user.add, newUser); 
+};
+
 // order
 export const deleteOrder = async (_id) => {
     return deleteApi(urls.order.delete, _id); 

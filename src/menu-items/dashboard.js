@@ -31,12 +31,6 @@ const icons = {
 };
 import AdminDashboard from 'views/dashboard/Default';
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
-
-// let imsToken = localStorage.getItem("imsToken")
-// imsToken = JSON.parse(imsToken)
-// const payload = parseJWT(imsToken)
-// console.log("payload", payload);
-
 const role = (localStorage.getItem('role'));
 
 const dashboard = {
@@ -148,9 +142,9 @@ const Admindashboard = {
     },
     {
       id: '01',
-      title: 'Employee Management',
+      title: 'Company Management',
       type: 'item',
-      url: '/dashboard/employee',
+      url: '/dashboard/company',
       icon: icons.IconAccessible,
       breadcrumbs: false
     },
@@ -169,14 +163,6 @@ const Admindashboard = {
       url: '/dashboard/subscription',
       icon: icons.IconCategory,
       breadcrumbs: false
-     },
-     {
-     id: '04',
-     title: 'Company',
-     type: 'item',
-     url: '/dashboard/company',
-     icon: icons.IconCategory,
-     breadcrumbs: false
      },
   ]
 }
