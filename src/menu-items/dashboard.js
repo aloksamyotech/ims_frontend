@@ -119,6 +119,14 @@ const dashboard = {
     },
     {
       id: '10',
+      title: 'Subscription',
+      type: 'item',
+      url: '/dashboard/user-subscription',
+      icon: icons.IconUser,
+      breadcrumbs: false
+    },
+    {
+      id: '11',
       title: 'Profile',
       type: 'item',
       url: '/dashboard/profile',

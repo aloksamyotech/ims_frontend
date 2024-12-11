@@ -47,7 +47,7 @@ const Product = () => {
         const response = await fetchProducts();
         const allProducts = response?.data;
         const userId = getUserId();
-        const filteredProducts = allProducts.filter((product) => product.userId === userId); 
+        const filteredProducts = allProducts.filter((product) => product.userId === userId);
         setProducts(filteredProducts);
       } catch (error) {
         toast.error('Failed to fetch products');
@@ -157,7 +157,7 @@ const Product = () => {
               alignItems: 'center',
               backgroundColor: '#fff',
               padding: '10px',
-              borderRadius: '8px',
+              borderRadius: '8px'
             }}
           >
             <Box
@@ -203,12 +203,25 @@ const Product = () => {
               {filteredProducts.map((product) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
                   <Card
-                    sx={{ borderRadius: 2, boxShadow: 3, position: 'relative', height: '250px', display: 'flex', flexDirection: 'column' }}
+                    sx={{  
+                      borderRadius: 2,
+                      boxShadow: 3,
+                      position: 'relative',
+                      height: '300px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      transition: 'transform 0.3s, box-shadow 0.3s',
+                      '&:hover': {
+                        transform: 'translateY(-5px)',
+                        boxShadow: 6
+                      }
+                   }}
                   >
                     <CardMedia
                       component="img"
                       image={
-                        product.imageUrl || 'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
+                        product.imageUrl ||
+                        'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
                       }
                       alt={product.productnm}
                       sx={{ height: 150, objectFit: 'fill' }}
@@ -228,10 +241,25 @@ const Product = () => {
                     </IconButton>
 
                     <CardContent>
-                      <Box display="flex" justifyContent="space-between" alignItems="center">
-                        <Typography variant="h4" noWrap>
+                      <Box display="flex" justifyContent="center" alignItems="center">
+                      <Typography variant="h4" sx={{ textTransform: 'uppercase' }}>
                           {product.productnm}
                         </Typography>
+                        </Box>
+
+                        
+                      <Box display="flex" justifyContent="center" alignItems="center">
+                        <Typography variant="body2" color="textSecondary">
+                          {product.categoryName}
+                        </Typography>
+                      </Box>
+
+                      <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
+                      <Typography variant="body2">Selling Price:
+                       &nbsp; {currencySymbol} {product.sellingPrice}
+                      </Typography></Box>
+
+                      <Box display="flex" justifyContent="center" alignItems="center"mt={1}>
                         <Typography
                           variant="body2"
                           sx={{
@@ -239,22 +267,9 @@ const Product = () => {
                             textAlign: 'right'
                           }}
                         >
-                          {product.quantity > 5 ? 'In Stock' : 'Out of Stock'}
+                          {product.quantity > 5 ? 'In Stock' : 'Out of Stock'} ({product.quantity})
                         </Typography>
                       </Box>
-
-                      <Box display="flex" justifyContent="space-between" alignItems="center">
-                        <Typography variant="body2" color="textSecondary">
-                          {product.categoryName}
-                        </Typography>
-                        <Typography>
-                          ({product.quantity})
-                        </Typography>
-                      </Box>
-
-                      <Typography variant="body2">
-                        {currencySymbol} {product.sellingPrice}
-                      </Typography>
                     </CardContent>
 
                     <Popover

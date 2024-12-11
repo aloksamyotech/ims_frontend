@@ -41,23 +41,6 @@ const AuthLogin = ({ ...others }) => {
     event.preventDefault();
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem('imstoken') || sessionStorage.getItem('imstoken');
-    const storedUser = JSON.parse(localStorage.getItem('user')) || JSON.parse(sessionStorage.getItem('user'));
-
-    if (token && storedUser) {
-      setUser(storedUser);
-      setRole(storedUser.role);
-      if (storedUser.role === 'user') {
-        navigate('/dashboard/default');  
-      } else if (storedUser.role === 'admin') {
-        navigate('/dashboard/admin'); 
-      }
-    } else {
-      navigate('/login');
-    }
-  }, [navigate]);
-
   return (
     <>
       <Formik
@@ -73,8 +56,7 @@ const AuthLogin = ({ ...others }) => {
           try {
             setIsSubmitting(true);
             const res = await axios.post('http://localhost:4200/user/login/', values);
-            console.log('Response:', res?.data);
-
+  
             if (res?.data && res?.data?.jwtToken && res?.data?.user) {
               const storageMethod = rememberMe ? localStorage : sessionStorage;
               storageMethod.setItem('imstoken', JSON.stringify(res.data.jwtToken));
@@ -85,8 +67,10 @@ const AuthLogin = ({ ...others }) => {
 
               if (res.data.user.role === 'user') {
                 navigate('/dashboard/default');
+                window.location.reload();
               } else {
                 navigate('/dashboard/admin');
+                window.location.reload();
               }
 
               if (scriptedRef.current) {

@@ -13,6 +13,7 @@ import {
   Box,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
+import { toast } from 'react-toastify';
 
 const ChangePassword = ({ open, handleClose , onchangePassword, user}) => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -49,16 +50,14 @@ const ChangePassword = ({ open, handleClose , onchangePassword, user}) => {
         }
       );
 
-      console.log(response);
       if (response.data.success) {
-        alert('Password changed successfully');
+        toast.success('Password changed successfully');
         handleClose(); 
       } else {
-        alert(response.data.message || 'Error changing password');
+        toast.error('Error changing password');
       }
     } catch (error) {
-      console.error(error.response?.data);
-      alert(error.response?.data.message || 'Something went wrong');
+      toast.error('Something went wrong');
     } finally {
       setLoading(false); 
     }

@@ -27,6 +27,7 @@ const AdminDashboard = Loadable(lazy(() => import('views/AdminComponent/DefaultD
 const AdminReports = Loadable(lazy(() => import('views/AdminComponent/ReportManagement')));
 const Subscription = Loadable(lazy(() => import('views/AdminComponent/Subscription')));
 const Company = Loadable(lazy(() => import('views/AdminComponent/Company')));
+const UserSubscription = Loadable(lazy(() => import('views/UserSubscription')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 const role = (localStorage.getItem('role'));
@@ -149,17 +150,9 @@ const MainRoutes = {
           element: <Category />
         },
         {
-          path: 'admin-reports',
-          element: <AdminReports />
+          path: 'user-subscription',
+          element: <UserSubscription />
         },
-        {
-          path: 'subscription',
-          element: <Subscription />
-        },
-        {
-          path: 'company',
-          element: <Company />
-        }
       ]
     }
   ]
