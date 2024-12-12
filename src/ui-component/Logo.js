@@ -29,7 +29,7 @@ const Logo = () => {
         src={logoUrl || 'path-to-default-logo.png'}
         alt="Inventory Management"
         width="150" 
-        height="60"
+        height="50"
       />
     </Box>
   );

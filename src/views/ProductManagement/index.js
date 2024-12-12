@@ -41,18 +41,19 @@ const Product = () => {
   const [currencySymbol, setCurrencySymbol] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const loadProducts = async () => {
+    try {
+      const response = await fetchProducts();
+      const allProducts = response?.data;
+      const userId = getUserId();
+      const filteredProducts = allProducts.filter((product) => product.userId === userId);
+      setProducts(filteredProducts);
+    } catch (error) {
+      toast.error('Failed to fetch products');
+    }
+  };
+
   useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const response = await fetchProducts();
-        const allProducts = response?.data;
-        const userId = getUserId();
-        const filteredProducts = allProducts.filter((product) => product.userId === userId);
-        setProducts(filteredProducts);
-      } catch (error) {
-        toast.error('Failed to fetch products');
-      }
-    };
     loadProducts();
   }, []);
 
@@ -112,6 +113,7 @@ const Product = () => {
   const handleProductAdded = (newproduct) => {
     setProducts((prev) => [...prev, newproduct]);
     setOpenAdd(false);
+    loadProducts();
   };
 
   const handleSearchChange = (e) => {
@@ -148,7 +150,7 @@ const Product = () => {
             <Typography color="text.primary">Products</Typography>
           </Breadcrumbs>
         </Box>
-
+        
         <Card sx={{ marginTop: '20px' }}>
           <Box
             sx={{
@@ -242,7 +244,7 @@ const Product = () => {
 
                     <CardContent>
                       <Box display="flex" justifyContent="center" alignItems="center">
-                      <Typography variant="h4" sx={{ textTransform: 'uppercase' }}>
+                      <Typography variant="h5" sx={{ textTransform: 'uppercase', fontWeight: 'bold'  }}>
                           {product.productnm}
                         </Typography>
                         </Box>

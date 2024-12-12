@@ -131,55 +131,55 @@ const Company = () => {
       flex: 1,
       minWidth: 250,
       renderCell: (params) => (
-        //   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        //   {/* Box for Active/Inactive Status */}
-        //   <Box
-        //     sx={{
-        //       display: 'flex',
-        //       alignItems: 'center',
-        //       justifyContent: 'space-between',
-        //       padding: '5px 15px',  // Padding for space around text
-        //       borderRadius: '8px',  // Rounded corners for the box
-        //       backgroundColor: params.row?.isActive ? '#4caf50' : '#f44336',  // Green for Active, Red for Inactive
-        //       width: '150px',  // Box width adjusted for both text
-        //       height: '40px',  // Box height for better spacing
-        //       cursor: 'pointer',  // Cursor indicates the text is clickable
-        //     }}
-        //     onClick={() => handleToggleStatus(params.row?._id, !params.row?.isActive)} // Toggle status on box click
-        //   >
-        //     {/* Active/Inactive Text */}
-        //     <Typography
-        //       sx={{
-        //         color: '#ffffff',  // White text color
-        //         fontWeight: 'bold',
-        //         fontSize: '14px',  // Slightly smaller text
-        //         textAlign: 'center',  // Center-align the text
-        //       }}
-        //     >
-        //       {params.row?.isActive ? 'Active' : 'Inactive'}
-        //     </Typography>
-        //   </Box>
-        // </Box>
-
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Switch
-            checked={params.row?.isActive}
-            onChange={() => handleToggleStatus(params.row?._id, !params.row?.isActive)}
-            color={params.row?.isActive ? 'success' : 'error'}
-            inputProps={{ 'aria-label': 'toggle active/inactive' }}
-            sx={{
-              '& .MuiSwitch-thumb': {
-                backgroundColor: params.row?.isActive ? '#fff' : '#fff'
+        <Switch
+          checked={params.row?.isActive}
+          onChange={() => handleToggleStatus(params.row?._id, !params.row?.isActive)}
+          inputProps={{ 'aria-label': 'toggle active/inactive' }}
+          sx={{
+            width: 58,
+            height: 30,
+            padding: 0,
+            '& .MuiSwitch-switchBase': {
+              padding: 0,
+              margin: 0,
+              transition: 'transform 300ms ease',
+              transform: params.row?.isActive ? 'translateX(28px)' : 'translateX(2px)',
+              '&.Mui-checked': {
+                color: '#fff',
+                '& + .MuiSwitch-track': {
+                  backgroundColor: '#4caf50', 
+                  opacity: 1,
+                },
               },
-              '& .MuiSwitch-track': {
-                backgroundColor: params.row?.isActive ? '#4caf50' : '#f44336'
-              }
-            }}
-          />
-          <Typography sx={{ mr: 2, color: params.row?.isActive ? '#4caf50' : '#f44336' }}>
-            {params.row?.isActive ? 'Active' : 'Inactive'}
-          </Typography>
-        </Box>
+            },
+            '& .MuiSwitch-thumb': {
+              width: 30,
+              height: 30,
+              borderRadius: '50%',
+              backgroundColor: '#fff',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)', 
+            },
+            '& .MuiSwitch-track': {
+              borderRadius: 18,
+              backgroundColor: params.row?.isActive ? '#4caf50' : '#f44336',
+              opacity: 1,
+            },
+          }}
+        />
+        {/* <Typography
+          sx={{
+            ml: 1,
+            fontWeight: 'bold',
+            color: params.row?.isActive ? '#1976d2' : '#9e9e9e', // Label color based on state
+            textTransform: 'capitalize', // Capitalize 'Active' and 'Inactive'
+          }}
+        >
+          {params.row?.isActive ? 'Active' : 'Inactive'}
+        </Typography> */}
+      </Box>
+      
+      
       )
     }
   ];
