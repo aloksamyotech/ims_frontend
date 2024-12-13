@@ -22,7 +22,7 @@ const Company = () => {
   const [openAdd, setOpenAdd] = useState(false);
   const [companyData, setCompanyData] = useState([]);
   const [currentCompany, setCurrentCompany] = useState(null);
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadCompanies = async () => {
@@ -90,11 +90,11 @@ const Company = () => {
 
   const handleToggleStatus = async (userId, newStatus) => {
     try {
-      setLoading(true); // Set loading to true when updating status
+      setLoading(true); 
       setCompanyData((prevData) => prevData.map((user) => (user._id === userId ? { ...user, isActive: newStatus } : user)));
 
       const response = await axios.patch(`http://localhost:4200/user/change-status/${userId}`, { isActive: newStatus });
-      if (response.data.success) {
+      if (response?.data.success) {
         toast.success(`Company status updated to ${newStatus ? 'Active' : 'Inactive'}`);
       } else {
         toast.error('Failed to update status');
@@ -137,8 +137,8 @@ const Company = () => {
           onChange={() => handleToggleStatus(params.row?._id, !params.row?.isActive)}
           inputProps={{ 'aria-label': 'toggle active/inactive' }}
           sx={{
-            width: 58,
-            height: 30,
+            width: 38,
+            height: 20,
             padding: 0,
             '& .MuiSwitch-switchBase': {
               padding: 0,
@@ -154,8 +154,8 @@ const Company = () => {
               },
             },
             '& .MuiSwitch-thumb': {
-              width: 30,
-              height: 30,
+              width: 18,
+              height: 18,
               borderRadius: '50%',
               backgroundColor: '#fff',
               boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)', 
@@ -216,7 +216,7 @@ const Company = () => {
             aria-label="breadcrumb"
             sx={{ display: 'flex', alignItems: 'center' }}
           >
-            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+            <MuiLink component={Link} to="/dashboard/admin" color="inherit">
               <HomeIcon sx={{ color: '#5e35b1' }} />
             </MuiLink>
             <Typography color="text.primary">Companies</Typography>

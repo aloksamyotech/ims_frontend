@@ -288,7 +288,7 @@ const Subscription = () => {
             aria-label="breadcrumb"
             sx={{ display: 'flex', alignItems: 'center' }}
           >
-            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+            <MuiLink component={Link} to="/dashboard/admin" color="inherit">
               <HomeIcon sx={{ color: '#5e35b1' }} />
             </MuiLink>
             <Typography color="text.primary">Subscription</Typography>

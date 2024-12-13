@@ -137,7 +137,7 @@ const dashboard = {
 };
 
 const Admindashboard = {
-  title: 'Admin Dashboard Menu',
+  title: <span style={{ fontWeight: 'bold' }}>Admin Dashboard-Menu</span>,
   type: 'group',
   children: [
     {

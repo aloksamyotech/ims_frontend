@@ -71,8 +71,8 @@ const AddCompany = ({ open, handleClose, company, onCompanyAdded }) => {
     <Dialog open={open} onClose={handleClose}
       PaperProps={{
         style: {
-          width: '600px',
-          height: '450px',
+          width: '450px',
+          height: '420px',
           maxWidth: 'none',
         },
       }}>
@@ -87,7 +87,7 @@ const AddCompany = ({ open, handleClose, company, onCompanyAdded }) => {
       <DialogContent dividers>
         <form onSubmit={throttledSubmit}>
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={12}>
               <FormLabel>Name</FormLabel>
               <TextField
                 required
@@ -101,7 +101,7 @@ const AddCompany = ({ open, handleClose, company, onCompanyAdded }) => {
                 helperText={formik.touched.name && formik.errors.name} 
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={12}>
               <FormLabel>Email</FormLabel>
               <TextField
                 required
@@ -115,7 +115,7 @@ const AddCompany = ({ open, handleClose, company, onCompanyAdded }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={12}>
               <FormLabel>Phone number</FormLabel>
               <TextField
                 required
@@ -129,7 +129,7 @@ const AddCompany = ({ open, handleClose, company, onCompanyAdded }) => {
                 helperText={formik.touched.phone && formik.errors.phone}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={12}>
               <FormLabel>Password</FormLabel>
               <TextField
                 required
@@ -147,7 +147,7 @@ const AddCompany = ({ open, handleClose, company, onCompanyAdded }) => {
           </Grid>
           <DialogActions>
             <Button type="submit" disabled={isSubmitting} variant="contained" color="secondary">
-              {isSubmitting ? 'Submitting...' : 'Add'}
+              {isSubmitting ? 'Submitting...' : 'Add Company'}
             </Button>
             <Button
               variant="contained"
