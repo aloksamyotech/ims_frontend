@@ -23,9 +23,14 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
       setIsSubmitting(true);
-      
+    
       const userId = getUserId();
-
+      if (!userId) {
+        toast.error('User ID is missing. Please log in again.');
+        setIsSubmitting(false);
+        return;
+      }
+    
       try {
         const payload = { ...values, userId };
         const response = await addCategory(payload);
@@ -34,11 +39,13 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
         toast.success('Category added successfully');
         resetForm();
       } catch (error) {
+        console.log(error);
         toast.error('Failed to add category');
       } finally {
         setIsSubmitting(false);
       }
-    },
+    }
+    
   });
 
   return (

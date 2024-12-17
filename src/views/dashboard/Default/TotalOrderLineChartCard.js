@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
-import { useState , useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { countOrders } from 'apis/api.js';
+import { getUserId } from 'apis/constant.js';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
@@ -67,26 +68,26 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.primary.dark,
   color: '#fff',
   overflow: 'hidden',
-  position: 'relative', 
+  position: 'relative'
 }));
 
 const TopRightIcon = styled(Box)(({ theme }) => ({
-  position: 'absolute', 
+  position: 'absolute',
   top: '20px',
   right: '10px',
   color: theme.palette.primary[100],
-  backgroundColor: '#ffff', 
-  borderRadius: '50%', 
-  padding: '12px', 
+  backgroundColor: '#ffff',
+  borderRadius: '50%',
+  padding: '12px',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'center'
 }));
 // ==============================|| DASHBOARD - TOTAL ORDER LINE CHART CARD ||============================== //
 
 const TotalOrderLineChartCard = ({ isLoading }) => {
   const theme = useTheme();
-  const[orderCount , setOrderCount] = useState(0);
+  const [orderCount, setOrderCount] = useState(0);
 
   const [timeValue, setTimeValue] = useState(false);
   const handleChangeTime = (event, newValue) => {
@@ -97,14 +98,17 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
     const getOrderCount = async () => {
       try {
         const response = await countOrders();
-        setOrderCount(response.data.count);
+        const allOrders = response.data?.count || 0;
+        const userId = getUserId();
+        const filteredByUser = allOrders.filter((order) => order.userId === userId);
+        setOrderCount(filteredByUser.length);
       } catch (err) {
-      console.log(err);
-      } 
+        console.log(err);
+      }
     };
-    getOrderCount(); 
+    getOrderCount();
   }, []);
-   
+
   return (
     <>
       {isLoading ? (
@@ -120,7 +124,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                     fontWeight: 500,
                     mr: 1,
                     mt: 1.75,
-                    mb: 0.75,
+                    mb: 0.75
                   }}
                 >
                   {orderCount}
@@ -131,7 +135,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                   sx={{
                     fontSize: '1rem',
                     fontWeight: 500,
-                    color: theme.palette.primary[200],
+                    color: theme.palette.primary[200]
                   }}
                 >
                   Total Orders
@@ -139,8 +143,8 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
               </Grid>
             </Grid>
             <TopRightIcon>
-            <IconShoppingCart size={30} color='#1e88e5' />
-          </TopRightIcon>
+              <IconShoppingCart size={30} color="#1e88e5" />
+            </TopRightIcon>
           </Box>
         </CardWrapper>
       )}

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { countCustomers } from 'apis/api.js';
+import { getUserId} from 'apis/constant.js';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -40,7 +41,10 @@ const EarningCard = ({ isLoading }) => {
     const getCustomerCount = async () => {
       try {
         const response = await countCustomers();
-        setCustomerCount(response.data.count);
+        const allCustomers = response.data?.count || 0;
+        const userId = getUserId();
+        const filteredByUser = allCustomers.filter((customer) => customer.userId === userId); 
+        setCustomerCount(filteredByUser.length);
       } catch (err) {
         console.log(err);
       }

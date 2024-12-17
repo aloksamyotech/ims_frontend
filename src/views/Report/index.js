@@ -16,7 +16,7 @@ import {
   styled
 } from '@mui/material';
 import moment from 'moment';
-import { fetchCurrencySymbol , getUserId } from 'apis/constant.js';
+import { fetchCurrencySymbol, getUserId } from 'apis/constant.js';
 import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
@@ -28,7 +28,7 @@ import { Container } from '@mui/system';
 const TabContentCard = styled(Card)(({ theme }) => ({
   boxShadow: theme.shadows[3],
   borderRadius: 8,
-  marginBottom: theme.spacing(3),
+  marginBottom: theme.spacing(1),
   marginTop: theme.spacing(2.4)
 }));
 
@@ -61,11 +61,11 @@ const ProductReport = () => {
         const userId = getUserId();
         const response = await fetchPurchases();
         const allPurchases = response?.data;
-        const filteredPurchaseByUser = allPurchases.filter((purchase) => purchase.userId === userId); 
+        const filteredPurchaseByUser = allPurchases.filter((purchase) => purchase.userId === userId);
         setPurchaseDetails(filteredPurchaseByUser);
         const result = await fetchOrders();
         const allOrders = result?.data;
-        const filteredOrderByUser = allOrders.filter((order) => order.userId === userId); 
+        const filteredOrderByUser = allOrders.filter((order) => order.userId === userId);
         setOrderDetails(filteredOrderByUser);
       } catch (error) {
         toast.error('Error fetching data');
@@ -101,14 +101,16 @@ const ProductReport = () => {
       valueGetter: (params) => moment(params.row?.date).format('DD-MM-YYYY')
     },
     {
-      field: 'supplierName', 
+      field: 'supplierName',
       headerName: 'Supplier',
       flex: 1.5,
-      minWidth:200,
+      minWidth: 200,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row?.supplierName}</Typography>
-          <Typography variant="body2" color="textSecondary">{params.row?.supplierEmail}</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {params.row?.supplierEmail}
+          </Typography>
         </Box>
       )
     },
@@ -169,14 +171,16 @@ const ProductReport = () => {
       valueGetter: (params) => moment(params.row?.date).format('DD-MM-YYYY')
     },
     {
-      field: 'customerName', 
+      field: 'customerName',
       headerName: 'Customer',
       flex: 1.5,
-      minWidth:200,
+      minWidth: 200,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row?.customerName}</Typography>
-          <Typography variant="body2" color="textSecondary">{params.row?.customerEmail}</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {params.row?.customerEmail}
+          </Typography>
         </Box>
       )
     },
@@ -278,45 +282,48 @@ const ProductReport = () => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '10px'
+          padding: '5px'
         }}
       >
-        <GridToolbarQuickFilter
-          placeholder="Search..."
-          style={{
-            width: '250px',
-            backgroundColor: '#ffff',
-            borderRadius: '8px',
-            padding: '5px 10px',
-            border: '1px solid beige'
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            width: '300px',
+            height: '35px'
           }}
-        />
+        >
+          <Box sx={{ flex: '30%' }}>
+            <FormControl fullWidth>
+              <Select
+                value={selectedDateRange}
+                onChange={handleDateRangeChange}
+              >
+                <MenuItem value="All">All</MenuItem>
+                <MenuItem value="Daily">Daily</MenuItem>
+                <MenuItem value="Last 7 Days">Weekly</MenuItem>
+                <MenuItem value="Monthly">Monthly</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
 
-        <Stack direction="row" spacing={2} alignItems="center">
-          <FormControl
-            sx={{
-              width: '120px',
-              height: '40px'
-            }}
-          >
-            <Select
-              value={selectedDateRange}
-              onChange={handleDateRangeChange}
-              sx={{
-                width: '120px',
-                height: '40px',
-                borderRadius: '8px',
-                backgroundColor: '#ffffff'
-              }}
-            >
-              <MenuItem value="All">All</MenuItem>
-              <MenuItem value="Daily">Daily</MenuItem>
-              <MenuItem value="Last 7 Days">Weekly</MenuItem>
-              <MenuItem value="Monthly">Monthly</MenuItem>
-            </Select>
-          </FormControl>
+          <Box sx={{ flex: '70%' }}>
+            <FormControl fullWidth>
+              <GridToolbarQuickFilter
+                placeholder="Search..."
+                style={{
+                  backgroundColor: '#ffff',
+                  padding: '5px 10px',
+                }}
+              />
+            </FormControl>
+          </Box>
+        </Box>
+
           <GridToolbarExport style={{ fontSize: 14 }} />
-        </Stack>
       </GridToolbarContainer>
     );
   };
@@ -349,14 +356,15 @@ const ProductReport = () => {
       </Box>
 
       <TabContentCard>
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
         <Tabs value={selectedTab} onChange={handleTabChange} aria-label="product report tabs">
           <Tab
             icon={<ShoppingCartIcon />}
-             iconPosition="start"
+            iconPosition="start"
             label="Sales"
             sx={{
-              fontSize: '12px',
-              minWidth: 120,
+              fontSize: '14px',
+              minWidth: 200,
               fontWeight: 'bold',
               textTransform: 'none',
               color: selectedTab === 0 ? '#1976d2' : '#757070'
@@ -364,20 +372,22 @@ const ProductReport = () => {
           />
           <Tab
             icon={<Inventory2Icon />}
-             iconPosition="start"
+            iconPosition="start"
             label="Purchases"
             sx={{
-              fontSize: '12px',
-              minWidth: 120,
+              fontSize: '14px',
+              minWidth: 200,
               fontWeight: 'bold',
               textTransform: 'none',
               color: selectedTab === 1 ? '#1976d2' : '#757070'
             }}
           />
         </Tabs>
+        </Box>
+        
 
         {selectedTab === 0 && (
-          <Box sx={{ height: '600px' ,padding:'10px'}}>
+          <Box sx={{ height: '600px', padding: '5px' }}>
             <DataGrid
               rows={filteredOrderData}
               columns={orderColumns}
@@ -401,7 +411,7 @@ const ProductReport = () => {
         )}
 
         {selectedTab === 1 && (
-          <Box sx={{ height: '600px' ,padding:'10px'}}>
+          <Box sx={{ height: '600px', padding: '5px' }}>
             <DataGrid
               rows={filteredPurchaseData}
               columns={purchaseColumns}
@@ -418,7 +428,7 @@ const ProductReport = () => {
                 '& .MuiDataGrid-columnHeaderTitle': {
                   fontWeight: 'bold'
                 },
-                    border: 0
+                border: 0
               }}
             />
           </Box>

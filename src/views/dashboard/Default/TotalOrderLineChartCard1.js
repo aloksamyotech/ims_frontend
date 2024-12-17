@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
-import { useState , useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { countPurchases } from 'apis/api.js';
+import { getUserId } from 'apis/constant.js';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
@@ -25,26 +26,26 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.primary.dark,
   color: '#fff',
   overflow: 'hidden',
-  position: 'relative', 
+  position: 'relative'
 }));
 
 const TopRightIcon = styled(Box)(({ theme }) => ({
-  position: 'absolute', 
+  position: 'absolute',
   top: '20px',
   right: '10px',
   color: theme.palette.primary[100],
-  backgroundColor: '#ffff', 
-  borderRadius: '50%', 
-  padding: '12px', 
+  backgroundColor: '#ffff',
+  borderRadius: '50%',
+  padding: '12px',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'center'
 }));
 // ==============================|| DASHBOARD - TOTAL ORDER LINE CHART CARD ||============================== //
 
 const TotalOrderLineChartCard = ({ isLoading }) => {
   const theme = useTheme();
-  const[purchaseCount , setPurchaseCount] = useState(0);
+  const [purchaseCount, setPurchaseCount] = useState(0);
 
   const [timeValue, setTimeValue] = useState(false);
   const handleChangeTime = (event, newValue) => {
@@ -55,17 +56,20 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
     const getPurchaseCount = async () => {
       try {
         const response = await countPurchases();
-        setPurchaseCount(response.data.count);
+        const allPurchases = response.data?.count || 0;
+        const userId = getUserId();
+        const filteredByUser = allPurchases.filter((purchase) => purchase.userId === userId);
+        setPurchaseCount(filteredByUser.length);
       } catch (err) {
-      console.log(err);
-      } 
+        console.log(err);
+      }
     };
-    getPurchaseCount(); 
+    getPurchaseCount();
   }, []);
-   
+
   return (
     <>
-     {isLoading ? (
+      {isLoading ? (
         <SkeletonTotalOrderCard />
       ) : (
         <CardWrapper border={false} content={false}>
@@ -78,7 +82,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                     fontWeight: 500,
                     mr: 1,
                     mt: 1.75,
-                    mb: 0.75,
+                    mb: 0.75
                   }}
                 >
                   {purchaseCount}
@@ -89,7 +93,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                   sx={{
                     fontSize: '1rem',
                     fontWeight: 500,
-                    color: theme.palette.primary[200],
+                    color: theme.palette.primary[200]
                   }}
                 >
                   Total Purchases
@@ -97,8 +101,8 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
               </Grid>
             </Grid>
             <TopRightIcon>
-            <IconShoppingCartPlus size={30} color='#1e88e5' />
-          </TopRightIcon>
+              <IconShoppingCartPlus size={30} color="#1e88e5" />
+            </TopRightIcon>
           </Box>
         </CardWrapper>
       )}

@@ -8,6 +8,7 @@ import {
   Breadcrumbs,
   Link as MuiLink,
   Tab,
+  Divider,
   Typography,
   FormControl,
   Select,
@@ -116,9 +117,8 @@ const ProductReport = () => {
   const UserDropdown = () => (
     <FormControl
       sx={{
-        width: '200px',
-        backgroundColor: '#ffff',
-        borderRadius: '8px',
+        backgroundColor: '#fff',
+        borderRadius: '2px'
       }}
     >
       <Select value={selectedUser} onChange={handleUserChange} displayEmpty inputProps={{ 'aria-label': '' }}>
@@ -126,7 +126,13 @@ const ProductReport = () => {
           <strong>Select Company</strong>
         </MenuItem>
         {users.map((user) => (
-          <MenuItem key={user._id} value={user._id}>
+          <MenuItem
+            key={user._id}
+            value={user._id}
+            sx={{
+              paddingY: '4px'
+            }}
+          >
             {user.name}
           </MenuItem>
         ))}
@@ -321,35 +327,46 @@ const ProductReport = () => {
       style={{
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: 'center'
       }}
     >
-      <UserDropdown />
-      <Stack direction="row" spacing={2} alignItems="center">
-        <FormControl
-          sx={{
-            width: '120px',
-            height: '40px'
-          }}
-        >
-          <Select
-            value={selectedDateRange}
-            onChange={handleDateRangeChange}
-            sx={{
-              width: '120px',
-              height: '40px',
-              borderRadius: '8px',
-              backgroundColor: '#ffffff'
-            }}
-          >
-            <MenuItem value="All">All</MenuItem>
-            <MenuItem value="Daily">Daily</MenuItem>
-            <MenuItem value="Last 7 Days">Weekly</MenuItem>
-            <MenuItem value="Monthly">Monthly</MenuItem>
-          </Select>
-        </FormControl>
-        <GridToolbarExport style={{ fontSize: 14 }} />
-      </Stack>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          border: '1px solid #ccc',
+          borderRadius: '4px',
+          overflow: 'hidden',
+          width: '300px',
+          height: '35px'
+        }}
+      >
+        <Box sx={{ flex: '30%' }}>
+          <FormControl fullWidth>
+            <Select
+              value={selectedDateRange}
+              onChange={handleDateRangeChange}
+              sx={{
+                borderRadius: '2px',
+                backgroundColor: '#ffffff',
+              }}
+            >
+              <MenuItem value="All">All</MenuItem>
+              <MenuItem value="Daily">Daily</MenuItem>
+              <MenuItem value="Last 7 Days">Weekly</MenuItem>
+              <MenuItem value="Monthly">Monthly</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+
+        <Box sx={{ flex: '70%' }}>
+          <FormControl fullWidth>
+            <UserDropdown />
+          </FormControl>
+        </Box>
+      </Box>
+
+      <GridToolbarExport style={{ fontSize: 14 }} />
     </GridToolbarContainer>
   );
 
@@ -381,32 +398,34 @@ const ProductReport = () => {
       </Box>
 
       <TabContentCard>
-        <Tabs value={selectedTab} onChange={handleTabChange} aria-label="product report tabs">
-          <Tab
-            icon={<ShoppingCartIcon />}
-            iconPosition="start"
-            label="Sales"
-            sx={{
-              fontSize: '14px',
-              minWidth: 120,
-              fontWeight: 'bold',
-              textTransform: 'none',
-              color: selectedTab === 0 ? '#1976d2' : '#757070'
-            }}
-          />
-          <Tab
-            icon={<Inventory2Icon />}
-            iconPosition="start"
-            label="Purchases"
-            sx={{
-              fontSize: '14px',
-              minWidth: 120,
-              fontWeight: 'bold',
-              textTransform: 'none',
-              color: selectedTab === 1 ? '#1976d2' : '#757070'
-            }}
-          />
-        </Tabs>
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+          <Tabs value={selectedTab} onChange={handleTabChange} aria-label="product report tabs" sx={{ alignContent: 'center' }}>
+            <Tab
+              icon={<ShoppingCartIcon />}
+              iconPosition="start"
+              label="Sales"
+              sx={{
+                fontSize: '14px',
+                minWidth: 200,
+                fontWeight: 'bold',
+                textTransform: 'none',
+                color: selectedTab === 0 ? '#1976d2' : '#757070'
+              }}
+            />
+            <Tab
+              icon={<Inventory2Icon />}
+              iconPosition="start"
+              label="Purchases"
+              sx={{
+                fontSize: '14px',
+                minWidth: 200,
+                fontWeight: 'bold',
+                textTransform: 'none',
+                color: selectedTab === 1 ? '#1976d2' : '#757070'
+              }}
+            />
+          </Tabs>
+        </Box>
 
         {selectedTab === 0 && (
           <Box sx={{ height: '600px', padding: '5px' }}>

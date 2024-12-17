@@ -115,6 +115,10 @@ export const addUser = async (newUser) => {
     return addApi(urls.user.add, newUser); 
 };
 
+export const countCompany = async () => {
+    return fetchApi(urls.user.count); 
+};
+
 // order
 export const deleteOrder = async (_id) => {
     return deleteApi(urls.order.delete, _id); 

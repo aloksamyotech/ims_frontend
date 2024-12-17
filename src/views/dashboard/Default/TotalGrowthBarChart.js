@@ -10,7 +10,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import { totalSalesAmount, totalSoldQuantity } from 'apis/api.js';
 import getChartData from './chart-data/total-growth-bar-chart'; 
-import { fetchCurrencySymbol } from 'apis/constant.js'; 
+import { fetchCurrencySymbol , getUserId } from 'apis/constant.js'; 
 
 const status = [
   {

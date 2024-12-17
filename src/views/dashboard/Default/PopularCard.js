@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { fetchProducts, fetchLowStock } from 'apis/api.js';
+import { getUserId } from 'apis/constant.js';
+import { toast } from 'react-toastify';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -17,14 +19,15 @@ import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 
 // ==============================|| DASHBOARD DEFAULT - POPULAR CARD ||============================== //
 
+
 const PopularCard = ({ isLoading }) => {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [products, setProducts] = useState([]);
   const [lowStockProducts, setLowStockProducts] = useState([]);
-  const sortedProducts = [...products].sort((a, b) => b.quantity - a.quantity);
-
+  const [loading, setLoading] = useState(true);
+  
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -34,24 +37,38 @@ const PopularCard = ({ isLoading }) => {
   };
 
   useEffect(() => {
-    const loadProducts = async () => {
+    const loadCounts = async () => {
       try {
         const response = await fetchProducts();
-        setProducts(response?.data);
+        const allProducts = Array.isArray(response?.data) ? response?.data : [];
+
+        const userId = getUserId();
+        const filteredProducts = allProducts.filter((product) => product.userId === userId);
+        setProducts(filteredProducts); 
+
         const result = await fetchLowStock();
-        setLowStockProducts(result?.data.data);
+        const allLowStocks = Array.isArray(result?.data) ? result?.data : []; 
+
+        const filteredLowStocks = allLowStocks.filter((stock) => stock.userId === userId);
+        setLowStockProducts(filteredLowStocks); 
+
       } catch (error) {
+        console.error('Failed to fetch products:', error);
         toast.error('Failed to fetch products');
+      } finally {
+        setLoading(false);
       }
     };
-    loadProducts();
+
+    loadCounts();
   }, []);
 
-  const top5Products = sortedProducts.slice(0, 5);
+  const sortedProducts = [...products].sort((a, b) => b.quantity - a.quantity); 
+  const top5Products = sortedProducts.slice(0, 5); 
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || loading ? (
         <SkeletonPopularCard />
       ) : (
         <MainCard content={false}>
@@ -99,7 +116,7 @@ const PopularCard = ({ isLoading }) => {
               <Grid item xs={12} sx={{ pt: '16px !important' }}>
                 <BajajAreaChartCard />
               </Grid>
-              {products && products.length > 0 && (
+              {products.length > 0 && (
                 <Grid item xs={12}>
                   <Grid container direction="column">
                     <Grid item>
@@ -129,7 +146,7 @@ const PopularCard = ({ isLoading }) => {
                 </Grid>
               )}
 
-              {lowStockProducts && lowStockProducts.length > 0 ? (
+              {lowStockProducts.length > 0 ? (
                 <Grid item xs={12}>
                   <Grid container direction="column">
                     <Grid item>

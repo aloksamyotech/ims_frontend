@@ -47,7 +47,7 @@ const Customer = () => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '10px'
+          padding: '5px'
         }}
       >
         <GridToolbarQuickFilter

@@ -26,7 +26,7 @@ import { deletePurchase, fetchPurchases } from 'apis/api.js';
 import moment from 'moment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { fetchCurrencySymbol , getUserId } from 'apis/constant.js';
+import { fetchCurrencySymbol, getUserId } from 'apis/constant.js';
 import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
@@ -40,19 +40,20 @@ const Purchase = () => {
   const [filterStatus, setFilterStatus] = useState('All');
   const [currencySymbol, setCurrencySymbol] = useState('');
 
+  const loadPurchase = async () => {
+    try {
+      const response = await fetchPurchases();
+      const allPurchases = response?.data;
+      const userId = getUserId();
+      const filteredByUser = allPurchases.filter((purchase) => purchase.userId === userId);
+      setPurchaseDetails(filteredByUser);
+      setFilteredPurchasers(filteredByUser);
+    } catch (error) {
+      toast.error('Failed to fetch purchase data');
+    }
+  };
+
   useEffect(() => {
-    const loadPurchase = async () => {
-      try {
-        const response = await fetchPurchases();
-        const allPurchases = response?.data;
-        const userId = getUserId();
-        const filteredByUser = allPurchases.filter((purchase) => purchase.userId === userId); 
-        setPurchaseDetails(filteredByUser);
-        setFilteredPurchasers(filteredByUser);
-      } catch (error) {
-        toast.error('Failed to fetch purchase data');
-      }
-    };
     loadPurchase();
   }, []);
 
@@ -162,14 +163,16 @@ const Purchase = () => {
       flex: 2.2
     },
     {
-      field: 'supplierName', 
+      field: 'supplierName',
       headerName: 'Supplier',
       flex: 1.5,
-      minWidth:200,
+      minWidth: 200,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row?.supplierName || 'N/A'}</Typography>
-          <Typography variant="body2" color="textSecondary">{params.row?.supplierEmail}</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {params.row?.supplierEmail}
+          </Typography>
         </Box>
       )
     },
@@ -203,29 +206,31 @@ const Purchase = () => {
         const status = params.row?.status;
         return (
           <Box
-          sx={{
-            backgroundColor: status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
-            color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-            '&:hover': {
-              backgroundColor: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-              color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-            },
-            padding: '0.5rem 1rem',
-            borderRadius: '30px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 'bold',
-            width: '90px',
-            height: '25px',
-            textTransform: 'uppercase',
-            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-            gap: '0.5rem',
-            fontSize: '12px'
-          }}
-        >
-          {status}
-        </Box>
+            sx={{
+              backgroundColor:
+                status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
+              color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+              '&:hover': {
+                backgroundColor:
+                  status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+                color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
+              },
+              padding: '0.5rem 1rem',
+              borderRadius: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 'bold',
+              width: '90px',
+              height: '25px',
+              textTransform: 'uppercase',
+              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+              gap: '0.5rem',
+              fontSize: '12px'
+            }}
+          >
+            {status}
+          </Box>
         );
       }
     },
@@ -246,13 +251,17 @@ const Purchase = () => {
               height: '40px'
             }}
           >
-            <IconButton size="small" onClick={() => handleView(params.row?._id)} color="primary" 
-             sx={{
-              '&:hover': {
-                backgroundColor: '#9abfdd', 
-                color: '#1976d2' 
-              }
-            }}>
+            <IconButton
+              size="small"
+              onClick={() => handleView(params.row?._id)}
+              color="primary"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#9abfdd',
+                  color: '#1976d2'
+                }
+              }}
+            >
               <VisibilityIcon />{' '}
             </IconButton>
           </Box>
@@ -268,13 +277,17 @@ const Purchase = () => {
                 height: '40px'
               }}
             >
-              <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error"
-               sx={{
-                '&:hover': {
-                  backgroundColor: '#ffcccc',
-                  color: '#d32f2f'
-                }
-              }}>
+              <IconButton
+                size="small"
+                onClick={() => handleDelete(params.row?._id)}
+                color="error"
+                sx={{
+                  '&:hover': {
+                    backgroundColor: '#ffcccc',
+                    color: '#d32f2f'
+                  }
+                }}
+              >
                 <DeleteIcon />
               </IconButton>
             </Box>
@@ -342,42 +355,42 @@ const Purchase = () => {
         </Box>
 
         <TableStyle>
-          <Box width="100%" >
-            <Card style={{ height: '600px', marginTop: '20px',padding:'5px'}}>
-            <DataGrid
-              rows={filteredPurchases}
-              columns={columns}
-              rowHeight={50}
-              getRowId={(row) => row._id}
-              components={{
-                Toolbar: () => (
-                  <CustomToolbar
-                    handleOpenAdd={() => navigate('/dashboard/purchases/add-purchase')}
-                    filterStatus={filterStatus}
-                    handleFilterChange={handleFilterChange}
-                  />
-                )
-              }}
-              pageSizeOptions={[5, 10, 25]}
-              initialState={{
-                pagination: {
-                  paginationModel: { pageSize: 10, page: 0 }
-                }
-              }}
-              pagination
-              sx={{
-                '& .MuiDataGrid-root': {
-                  border: 'none'
-                },
-                '& .MuiDataGrid-row': {
-                  borderBottom: '1px solid #ccc'
-                },
-                '& .MuiDataGrid-columnHeaderTitle': {
-                  fontWeight: 'bold'
-                }
-              }}
-            />
-        </Card>
+          <Box width="100%">
+            <Card style={{ height: '600px', marginTop: '20px', padding: '5px' }}>
+              <DataGrid
+                rows={filteredPurchases}
+                columns={columns}
+                rowHeight={50}
+                getRowId={(row) => row._id}
+                components={{
+                  Toolbar: () => (
+                    <CustomToolbar
+                      handleOpenAdd={() => navigate('/dashboard/purchases/add-purchase')}
+                      filterStatus={filterStatus}
+                      handleFilterChange={handleFilterChange}
+                    />
+                  )
+                }}
+                pageSizeOptions={[5, 10, 25]}
+                initialState={{
+                  pagination: {
+                    paginationModel: { pageSize: 10, page: 0 }
+                  }
+                }}
+                pagination
+                sx={{
+                  '& .MuiDataGrid-root': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    borderBottom: '1px solid #ccc'
+                  },
+                  '& .MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold'
+                  }
+                }}
+              />
+            </Card>
           </Box>
         </TableStyle>
       </Container>

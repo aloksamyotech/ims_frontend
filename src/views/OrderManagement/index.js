@@ -24,7 +24,7 @@ import { deleteOrder, fetchOrders } from 'apis/api.js';
 import moment from 'moment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { fetchCurrencySymbol , getUserId} from 'apis/constant.js';
+import { fetchCurrencySymbol, getUserId } from 'apis/constant.js';
 import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
@@ -38,19 +38,20 @@ const Order = () => {
   const [filterStatus, setFilterStatus] = useState('All');
   const [currencySymbol, setCurrencySymbol] = useState('');
 
+  const loadOrders = async () => {
+    try {
+      const response = await fetchOrders();
+      const allOrders = response?.data;
+      const userId = getUserId();
+      const filteredByUser = allOrders.filter((order) => order.userId === userId);
+      setOrderDetails(filteredByUser);
+      setFilteredOrders(filteredByUser);
+    } catch (error) {
+      toast.error('Failed to fetch orders data');
+    }
+  };
+
   useEffect(() => {
-    const loadOrders = async () => {
-      try {
-        const response = await fetchOrders();
-        const allOrders = response?.data;
-        const userId = getUserId();
-        const filteredByUser = allOrders.filter((order) => order.userId === userId); 
-        setOrderDetails(filteredByUser);
-        setFilteredOrders(filteredByUser);
-      } catch (error) {
-        toast.error('Failed to fetch orders data');
-      }
-    };
     loadOrders();
   }, []);
 
@@ -132,7 +133,7 @@ const Order = () => {
                 color: 'white',
                 cursor: 'pointer',
                 '&:hover': {
-                  backgroundColor: '#1565c0', 
+                  backgroundColor: '#1565c0',
                   color: '#ffffff'
                 }
               }}
@@ -160,14 +161,16 @@ const Order = () => {
       flex: 1.5
     },
     {
-      field: 'customerName', 
+      field: 'customerName',
       headerName: 'Customer',
       flex: 1.5,
-      minWidth:200,
+      minWidth: 200,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row?.customerName || 'N/A'}</Typography>
-          <Typography variant="body2" color="textSecondary">{params.row?.customerEmail}</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {params.row?.customerEmail}
+          </Typography>
         </Box>
       )
     },
@@ -201,29 +204,31 @@ const Order = () => {
         const status = params.row?.order_status;
         return (
           <Box
-          sx={{
-            backgroundColor: status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
-            color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-            '&:hover': {
-              backgroundColor: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-              color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-            },
-            padding: '0.5rem 1rem',
-            borderRadius: '30px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 'bold',
-            width: '90px',
-            height: '25px',
-            textTransform: 'uppercase',
-            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-            gap: '0.5rem',
-            fontSize: '12px'
-          }}
-        >
-          {status}
-        </Box>
+            sx={{
+              backgroundColor:
+                status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
+              color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+              '&:hover': {
+                backgroundColor:
+                  status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+                color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
+              },
+              padding: '0.5rem 1rem',
+              borderRadius: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 'bold',
+              width: '90px',
+              height: '25px',
+              textTransform: 'uppercase',
+              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+              gap: '0.5rem',
+              fontSize: '12px'
+            }}
+          >
+            {status}
+          </Box>
         );
       }
     },
@@ -244,14 +249,17 @@ const Order = () => {
               height: '40px'
             }}
           >
-            <IconButton size="small" onClick={() => handleView(params.row?._id)}
-                color="primary"
-                sx={{
-                  '&:hover': {
-                    backgroundColor: '#9abfdd', 
-                    color: '#1976d2' 
-                  }
-                }}>
+            <IconButton
+              size="small"
+              onClick={() => handleView(params.row?._id)}
+              color="primary"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#9abfdd',
+                  color: '#1976d2'
+                }
+              }}
+            >
               <VisibilityIcon />{' '}
             </IconButton>
           </Box>
@@ -267,13 +275,17 @@ const Order = () => {
                 height: '40px'
               }}
             >
-              <IconButton size="small" onClick={() => handleDownload(params.row?._id)} color="secondary" 
-              sx={{
-                '&:hover': {
-                  backgroundColor: '#d7cde6',
-                  color: '#512995' 
-                }
-              }}>
+              <IconButton
+                size="small"
+                onClick={() => handleDownload(params.row?._id)}
+                color="secondary"
+                sx={{
+                  '&:hover': {
+                    backgroundColor: '#d7cde6',
+                    color: '#512995'
+                  }
+                }}
+              >
                 <Iconify icon="eva:download-fill" />
               </IconButton>
             </Box>
@@ -290,13 +302,17 @@ const Order = () => {
                 height: '40px'
               }}
             >
-              <IconButton size="small" onClick={() => handleDelete(params.row?._id)} color="error"
-                  sx={{
-                    '&:hover': {
-                      backgroundColor: '#ffcccc',
-                      color: '#d32f2f'
-                    }
-                  }}>
+              <IconButton
+                size="small"
+                onClick={() => handleDelete(params.row?._id)}
+                color="error"
+                sx={{
+                  '&:hover': {
+                    backgroundColor: '#ffcccc',
+                    color: '#d32f2f'
+                  }
+                }}
+              >
                 <DeleteIcon />
               </IconButton>
             </Box>
@@ -368,8 +384,8 @@ const Order = () => {
         </Box>
 
         <TableStyle>
-          <Box width="100%" >
-            <Card style={{ height: '600px', marginTop: '20px',padding:'5px'}}>
+          <Box width="100%">
+            <Card style={{ height: '600px', marginTop: '20px', padding: '5px' }}>
               <DataGrid
                 rows={filteredOrders}
                 columns={columns}

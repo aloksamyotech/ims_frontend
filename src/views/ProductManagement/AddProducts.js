@@ -27,13 +27,10 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
   const [image, setImage] = useState('');
   const [products, setProducts] = useState([]);
   const [clist, setCatList] = useState([]);
-  // const [ulist, setUnitList] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = yup.object({
     productnm: yup.string().max(50, 'Max 30 characters are allowed').required('Product name is required'),
-    catnm: yup.string().required('Product Category is required'),
-    // unitnm: yup.string().required('Unit is required'),
     buyingPrice: yup
       .number()
       .required('Buying Price is required')
@@ -101,9 +98,10 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
     const fetchData = async () => {
       try {
         const categoryResult = await fetchCategories();
-        setCatList(categoryResult?.data);
-        // const unitResult = await fetchUnits();
-        // setUnitList(unitResult?.data);
+        const allCategories = categoryResult?.data;
+        const userId = getUserId(); 
+        const filteredCategories = allCategories.filter(category => category.userId === userId); 
+        setCatList(filteredCategories); 
       } catch (error) {
         console.error(error);
       }

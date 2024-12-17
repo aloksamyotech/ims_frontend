@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState , useEffect} from 'react';
-import { countOrders } from 'apis/api.js';
+import { countCompany } from 'apis/api.js';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
@@ -63,11 +63,47 @@ import { IconShoppingCart } from '@tabler/icons';
 //   // }
 // }));
 
+// const CardWrapper = styled(MainCard)(({ theme }) => ({
+//   backgroundColor: theme.palette.primary.dark,
+//   color: '#fff',
+//   overflow: 'hidden',
+//   position: 'relative', 
+// }));
+
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.primary.dark,
   color: '#fff',
   overflow: 'hidden',
-  position: 'relative', 
+  position: 'relative',
+  '&:after': {
+    content: '""',
+    position: 'absolute',
+    width: 210,
+    height: 210,
+    background: theme.palette.primary[800],
+    borderRadius: '50%',
+    top: -85,
+    right: -95,
+    [theme.breakpoints.down('sm')]: {
+      top: -105,
+      right: -140
+    }
+  },
+  '&:before': {
+    content: '""',
+    position: 'absolute',
+    width: 210,
+    height: 210,
+    background: theme.palette.primary[800],
+    borderRadius: '50%',
+    top: -125,
+    right: -15,
+    opacity: 0.5,
+    [theme.breakpoints.down('sm')]: {
+      top: -155,
+      right: -70
+    }
+  }
 }));
 
 const TopRightIcon = styled(Box)(({ theme }) => ({
@@ -86,7 +122,7 @@ const TopRightIcon = styled(Box)(({ theme }) => ({
 
 const TotalOrderLineChartCard = ({ isLoading }) => {
   const theme = useTheme();
-  const[orderCount , setOrderCount] = useState(0);
+  const[companyCount , setCompanyCount] = useState(0);
 
   const [timeValue, setTimeValue] = useState(false);
   const handleChangeTime = (event, newValue) => {
@@ -94,15 +130,15 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
   };
 
   useEffect(() => {
-    const getOrderCount = async () => {
+    const getCompanyCount = async () => {
       try {
-        const response = await countOrders();
-        setOrderCount(response.data.count);
+        const response = await countCompany();
+        setCompanyCount(response.data.count);
       } catch (err) {
       console.log(err);
       } 
     };
-    getOrderCount(); 
+    getCompanyCount(); 
   }, []);
    
   return (
@@ -123,7 +159,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                     mb: 0.75,
                   }}
                 >
-                  {orderCount}
+                  {companyCount}
                 </Typography>
               </Grid>
               <Grid item sx={{ mb: 1.25 }}>
@@ -134,7 +170,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                     color: theme.palette.primary[200],
                   }}
                 >
-                  Total Orders
+                  Total Companys
                 </Typography>
               </Grid>
             </Grid>

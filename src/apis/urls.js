@@ -40,6 +40,7 @@ export const urls = {
     update: '/user/update/:id',
     fetch: '/user/fetch/',
     add: '/user/save/',
+    count: '/user/count/',
   },
   order: {
     add: '/order/save/',

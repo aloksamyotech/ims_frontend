@@ -5,6 +5,7 @@ import {
   IconStackPop,
   IconChecklist,
   IconShoppingCart,
+  IconMailbox,
   IconSettingsAutomation,
   IconSettings,
   IconUser,
@@ -21,6 +22,7 @@ const icons = {
   IconStackPop,
   IconChecklist,
   IconShoppingCart,
+  IconMailbox,
   IconSettingsAutomation,
   IconSettings,
   IconUser,
@@ -122,7 +124,7 @@ const dashboard = {
       title: 'Subscription',
       type: 'item',
       url: '/dashboard/user-subscription',
-      icon: icons.IconUser,
+      icon: icons.IconMailbox,
       breadcrumbs: false
     },
     {
@@ -169,7 +171,7 @@ const Admindashboard = {
       title: 'Subscription',
       type: 'item',
       url: '/dashboard/subscription',
-      icon: icons.IconCategory,
+      icon: icons.IconMailbox,
       breadcrumbs: false
      },
   ]
