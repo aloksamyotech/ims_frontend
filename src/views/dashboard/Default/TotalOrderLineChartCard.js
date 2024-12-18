@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-import { countOrders } from 'apis/api.js';
+import axios from 'axios';
 import { getUserId } from 'apis/constant.js';
 
 // material-ui
@@ -88,6 +88,8 @@ const TopRightIcon = styled(Box)(({ theme }) => ({
 const TotalOrderLineChartCard = ({ isLoading }) => {
   const theme = useTheme();
   const [orderCount, setOrderCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [timeValue, setTimeValue] = useState(false);
   const handleChangeTime = (event, newValue) => {
@@ -97,15 +99,26 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
   useEffect(() => {
     const getOrderCount = async () => {
       try {
-        const response = await countOrders();
-        const allOrders = response.data?.count || 0;
         const userId = getUserId();
-        const filteredByUser = allOrders.filter((order) => order.userId === userId);
-        setOrderCount(filteredByUser.length);
+        if (!userId) {
+          console.log('User ID is missing');
+          setLoading(false);
+          return;
+        }
+        const response = await axios.get(`http://localhost:4200/order/count?userId=${userId}`);
+        if (response?.data?.count !== undefined) {
+          setOrderCount(response.data.count);
+        } else {
+          setOrderCount(0);
+        }
       } catch (err) {
-        console.log(err);
+        console.error('Error fetching order count:', err);
+        setError('Failed to fetch order count');
+      } finally {
+        setLoading(false);
       }
     };
+
     getOrderCount();
   }, []);
 

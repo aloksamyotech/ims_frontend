@@ -272,7 +272,7 @@ const Category = () => {
 
         <TableStyle>
           <Box width="100%">
-            <Card style={{ height: '600px', marginTop: '20px', padding: '5px' }}>
+            <Card style={{ height: '600px', marginTop: '20px', padding: '0 5px' }}>
               <DataGrid
                 rows={categories} 
                 columns={columns}

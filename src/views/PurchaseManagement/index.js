@@ -215,14 +215,14 @@ const Purchase = () => {
                   status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
                 color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
               },
-              padding: '0.5rem 1rem',
-              borderRadius: '30px',
+              padding: '1px',
+              borderRadius: '4px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 'bold',
               width: '90px',
-              height: '25px',
+              height: '20px',
               textTransform: 'uppercase',
               boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
               gap: '0.5rem',
@@ -319,6 +319,7 @@ const Purchase = () => {
         await deletePurchase(_id);
         setPurchaseDetails((prev) => prev.filter((purchase) => purchase?._id !== _id));
         Swal.fire('Deleted!', 'Your purchase has been deleted.', 'success');
+        window.location.reload();
       }
     } catch (error) {
       console.error('Error deleting purchase:', error);
@@ -356,11 +357,11 @@ const Purchase = () => {
 
         <TableStyle>
           <Box width="100%">
-            <Card style={{ height: '600px', marginTop: '20px', padding: '5px' }}>
+            <Card style={{ height: '600px', marginTop: '20px', padding: '0 5px' }}>
               <DataGrid
                 rows={filteredPurchases}
                 columns={columns}
-                rowHeight={50}
+                rowHeight={55}
                 getRowId={(row) => row._id}
                 components={{
                   Toolbar: () => (

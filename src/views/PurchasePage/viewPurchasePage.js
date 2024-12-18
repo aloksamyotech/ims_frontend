@@ -38,6 +38,9 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 
+const user = localStorage.getItem('user');
+const userObj = JSON.parse(user);
+
 const InvoiceHeader = styled(Box)({
   textAlign: 'center',
   marginBottom: '20px',
@@ -180,6 +183,19 @@ const PurchasePage = () => {
     doc.text(`Email: ${purchaseData.supplierEmail}`, 14, 68);
     doc.text(`Phone: ${purchaseData.supplierPhone}`, 14, 74);
 
+    const user = localStorage.getItem('user');
+    const userObj = JSON.parse(user);
+
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Company Details:',  120, 56);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    doc.text(`Name: ${userObj.name}`, 120, 62);
+    doc.text(`Email: ${userObj.email}`, 120, 68);
+    doc.text(`Phone: +91 56732`, 120, 74);
+    doc.text(`Address: India`, 120, 80);
+
     const tableMarginTop = 100;
     const tableColumn = ['Item', 'Quantity', 'Price', 'Subtotal'];
     const tableRows = purchaseData?.products?.map((product) => [
@@ -271,297 +287,288 @@ const PurchasePage = () => {
       </Box>
 
       <TabContentCard>
-            <Tabs value={tabIndex} onChange={handleTabChange} aria-label="purchase details tabs">
-              <Tab
-                icon={<InfoIcon />}
-                iconPosition="start"
-                label="Details"
-                sx={{
-                  fontSize: '12px',
-                  minWidth: 120,
-                  fontWeight: 'bold',
-                  textTransform: 'none',
-                  color: tabIndex === 0 ? '#1976d2' : '#757070'
-                }}
-              />
-              <Tab
-                icon={<ReceiptIcon />}
-                iconPosition="start"
-                label="Invoice"
-                sx={{
-                  fontSize: '12px',
-                  minWidth: 120,
-                  fontWeight: 'bold',
-                  textTransform: 'none',
-                  color: tabIndex === 1 ? '#1976d2' : '#757070'
-                }}
-              />
-            </Tabs>
+        <Tabs value={tabIndex} onChange={handleTabChange} aria-label="purchase details tabs">
+          <Tab
+            icon={<InfoIcon />}
+            iconPosition="start"
+            label="Details"
+            sx={{
+              fontSize: '14px',
+              minWidth: 120,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              color: tabIndex === 0 ? '#1976d2' : '#757070'
+            }}
+          />
+          <Tab
+            icon={<ReceiptIcon />}
+            iconPosition="start"
+            label="Invoice"
+            sx={{
+              fontSize: '14px',
+              minWidth: 120,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              color: tabIndex === 1 ? '#1976d2' : '#757070'
+            }}
+          />
+        </Tabs>
 
-              {tabIndex === 0 && (
-                <Card sx={{padding:'15px'}}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Box>
-                      {' '}
-                      <Typography variant="h4" fontWeight="bold">
-                        Supplier
+        {tabIndex === 0 && (
+          <Card sx={{ padding: '15px' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Box>
+                {' '}
+                <Typography variant="h4" fontWeight="bold">
+                  Supplier
+                </Typography>
+                <Typography color="text.secondary">Details of purchase #{purchase_no}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box
+                  sx={{
+                    backgroundColor:
+                      status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
+                    color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+                    '&:hover': {
+                      backgroundColor:
+                        status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+                      color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
+                    },
+                    padding: '1px',
+                    borderRadius: '4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 'bold',
+                    width: '90px',
+                    height: '20px',
+                    textTransform: 'uppercase',
+                    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+                    gap: '0.5rem',
+                    fontSize: '12px'
+                  }}
+                >
+                  {status || 'pending'}
+                </Box>
+              </Box>
+            </Box>
+
+            <Divider sx={{ margin: '16px 0' }} />
+
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 2
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <AccountCircleIcon sx={{ color: '#929aa3' }} />
+                      <Typography variant="body1">
+                        <strong>{supplierName}</strong>
                       </Typography>
-                      <Typography color="text.secondary">Details of purchase #{purchase_no}</Typography>
                     </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Box
-                        sx={{
-                          backgroundColor:
-                            status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
-                          color:
-                            status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-                          '&:hover': {
-                            backgroundColor:
-                              status === 'completed'
-                                ? '#19ab53'
-                                : status === 'pending'
-                                ? '#ff9800'
-                                : status === 'cancelled'
-                                ? '#f44336'
-                                : '',
-                            color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-                          },
-                          padding: '1rem 1rem',
-                          borderRadius: '30px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontWeight: 'bold',
-                          width: '90px',
-                          height: '25px',
-                          textTransform: 'uppercase',
-                          boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-                          gap: '0.5rem',
-                          fontSize: '12px'
-                        }}
-                      >
-                        {status || 'pending'}
-                      </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <PhoneIcon sx={{ color: '#929aa3' }} />
+                      <Typography variant="body1">{supplierPhone}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <EmailIcon sx={{ color: '#929aa3' }} />
+                      <Typography variant="body1">{supplierEmail}</Typography>
                     </Box>
                   </Box>
 
-                  <Divider sx={{ margin: '16px 0' }} />
-
-                  <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          gap: 2
-                        }}
-                      >
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <AccountCircleIcon sx={{ color: '#929aa3' }} />
-                            <Typography variant="body1">
-                              <strong>{supplierName}</strong>
-                            </Typography>
-                          </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <PhoneIcon sx={{ color: '#929aa3' }} />
-                            <Typography variant="body1">{supplierPhone}</Typography>
-                          </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <EmailIcon sx={{ color: '#929aa3' }} />
-                            <Typography variant="body1">{supplierEmail}</Typography>
-                          </Box>
-                        </Box>
-
-                        <Box>
-                          <Typography variant="body1">
-                            <strong>Placed on:</strong> {moment(date).format('DD-MM-YYYY HH:mm')}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </Grid>
-                  </Grid>
-
-                  <Divider sx={{ margin: '16px 0' }} />
-
-                  <Box sx={{ borderBottom: '1px solid #e0e0e0' }}>
-                    <Typography variant="h4" sx={{ marginBottom: 1 }}>
-                      <strong>Products</strong>
+                  <Box>
+                    <Typography variant="body1">
+                      <strong>Placed on:</strong> {moment(date).format('DD-MM-YYYY HH:mm')}
                     </Typography>
-
-                    {products.map((product, index) => {
-                      const subtotalProduct = product.quantity * product.price;
-                      return (
-                        <Box key={product.id || index} sx={{ borderBottom: '1px solid #e0e0e0' }}>
-                          <Grid container>
-                            <Grid item xs={12}>
-                              <Typography variant="h5" sx={{ marginBottom: 2, marginTop:1 ,textTransform:'uppercase' }}>
-                                <strong>
-                                  {index + 1}. {product.productName}
-                                </strong>
-                              </Typography>
-                            </Grid>
-
-                            <Grid container spacing={2}>
-                              <Grid item xs={6}>
-                                <Typography variant="body1">
-                                  <strong>Category:</strong> {product.categoryName}
-                                </Typography>
-                              </Grid>
-                              <Grid item xs={6}>
-                                <Typography variant="body1">
-                                  <strong>Quantity:</strong> {product.quantity}
-                                </Typography>
-                              </Grid>
-                              <Grid item xs={6}>
-                                <Typography variant="body1">
-                                  <strong>Price:</strong> {currencySymbol} {product.price.toFixed(2)}
-                                </Typography>
-                              </Grid>
-                              <Grid item xs={6}>
-                                <Typography variant="body1">
-                                  <strong>Subtotal:</strong> {currencySymbol} {subtotalProduct.toFixed(2)}
-                                </Typography>
-                              </Grid>
-                              <Grid item xs={6}>
-                                <Typography variant="body1">
-                                  <strong>Tax:</strong> {currencySymbol} {tax.toFixed(2)}
-                                </Typography>
-                              </Grid>
-                              <Grid item xs={6}>
-                                <Typography variant="body1">
-                                  <strong>Total:</strong> {currencySymbol} {total.toFixed(2)}
-                                </Typography>
-                              </Grid>
-                            </Grid>
-                          </Grid>
-                        </Box>
-                      );
-                    })}
                   </Box>
+                </Box>
+              </Grid>
+            </Grid>
 
-                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', padding: '5px' }}>
-                    {status === 'pending' && (
-                      <>
-                        <Button variant="contained" color="secondary" onClick={() => updatePurchaseStatus(id, 'approve')}>
-                          Approve Purchase
-                        </Button>
-                        &nbsp;&nbsp;
-                        <Button variant="contained" color="error" onClick={() => updatePurchaseStatus(id, 'cancel')}>
-                          Cancel Purchase
-                        </Button>
-                      </>
-                    )}
-                  </Box>
-                </Card>
-              )}
+            <Divider sx={{ margin: '16px 0' }} />
 
-              {tabIndex === 1 && status !== 'cancelled' && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '10px' }}>
-                  <Card variant="outlined" sx={{ padding: 2, borderRadius: 2, boxShadow: 3, width: '800px', height: 'auto' }}>
-                    <InvoiceHeader>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <img src={Logo} alt="Company Logo" style={{ maxWidth: '60px', marginBottom: '10px' }} />
-                        <Box sx={{ textAlign: 'right' }}>
-                          <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                            Inventory Management System
-                          </Typography>
-                          <Typography variant="body2">148, Greater South Avenue, Indore, M.P</Typography>
-                        </Box>
-                      </Box>
+            <Box sx={{ borderBottom: '1px solid #e0e0e0' }}>
+              <Typography variant="h4" sx={{ marginBottom: 1 }}>
+                <strong>Products</strong>
+              </Typography>
 
-                      <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: '20px', mt: 2 }}>
-                        <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                          Invoice No: {purchase_no}
+              {products.map((product, index) => {
+                const subtotalProduct = product.quantity * product.price;
+                return (
+                  <Box key={product.id || index} sx={{ borderBottom: '1px solid #e0e0e0' }}>
+                    <Grid container>
+                      <Grid item xs={12}>
+                        <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 1, textTransform: 'uppercase' }}>
+                          <strong>
+                            {index + 1}. {product.productName}
+                          </strong>
                         </Typography>
-                        <Typography variant="body1">Date: {moment(date).format('DD/MM/YYYY')}</Typography>
-                      </Box>
-                    </InvoiceHeader>
+                      </Grid>
 
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', marginTop: 2 }}>
-                      Supplier : {supplierName}
-                    </Typography>
-                    <Typography variant="body1">Email: {supplierEmail}</Typography>
-                    <Typography variant="body1">Phone: {supplierPhone}</Typography>
+                      <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Category:</strong> {product.categoryName}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Quantity:</strong> {product.quantity}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Price:</strong> {currencySymbol} {product.price.toFixed(2)}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Subtotal:</strong> {currencySymbol} {subtotalProduct.toFixed(2)}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Tax:</strong> {currencySymbol} {tax.toFixed(2)}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="body1">
+                            <strong>Total:</strong> {currencySymbol} {total.toFixed(2)}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                );
+              })}
+            </Box>
 
-                    <TableContainer
-                      component={Paper}
-                      sx={{ alignContent: 'center', marginTop: 2, borderRadius: 2, boxShadow: 2, maxWidth: 800 }}
-                    >
-                      <InvoiceTable id="invoiceTable">
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>Item</TableCell>
-                            <TableCell>Quantity</TableCell>
-                            <TableCell>Price</TableCell>
-                            <TableCell>Subtotal</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {products?.map((product, index) => (
-                            <TableRow key={index}>
-                              <TableCell>{product?.productName}</TableCell>
-                              <TableCell>{product?.quantity}</TableCell>
-                              <TableCell>
-                                {currencySymbol} {product?.price}
-                              </TableCell>
-                              <TableCell>
-                                {currencySymbol} {(product?.quantity * product?.price).toFixed(2)}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-
-                          <TableRow>
-                            <TableCell colSpan={3} align="right">
-                              Subtotal:
-                            </TableCell>
-                            <TableCell>
-                              {currencySymbol} {subtotal.toFixed(2)}
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell colSpan={3} align="right">
-                              Tax:
-                            </TableCell>
-                            <TableCell>
-                              {currencySymbol} {tax.toFixed(2)}
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell colSpan={3} align="right" sx={{ fontWeight: 'bold' }}>
-                              Total:
-                            </TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>
-                              {currencySymbol} {total.toFixed(2)}
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </InvoiceTable>
-                    </TableContainer>
-                    <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2 }}>
-                      <Button variant="contained" color="secondary" onClick={downloadInvoice}>
-                        Download Invoice
-                      </Button>
-                    </Box>
-
-                    <Typography variant="body2" align="left" sx={{ marginTop: 4 }}>
-                      Thank you for your business!
-                    </Typography>
-                    <Typography variant="body2" align="left" sx={{ marginTop: 2 }}>
-                      All payments must be made in full before the commencement of any design work.
-                    </Typography>
-                  </Card>
-                </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', padding: '5px' }}>
+              {status === 'pending' && (
+                <>
+                  <Button variant="contained" color="secondary" onClick={() => updatePurchaseStatus(id, 'approve')}>
+                    Approve Purchase
+                  </Button>
+                  &nbsp;&nbsp;
+                  <Button variant="contained" color="error" onClick={() => updatePurchaseStatus(id, 'cancel')}>
+                    Cancel Purchase
+                  </Button>
+                </>
               )}
+            </Box>
+          </Card>
+        )}
 
-              {tabIndex === 1 && status === 'cancelled' && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
-                  <Typography variant="body2" color="error">
-                    Invoice not available for cancelled purchases.
+        {tabIndex === 1 && status !== 'cancelled' && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px' }}>
+            <Card variant="outlined" sx={{ padding: 2, borderRadius: 2, width: '800px', height: 'auto' }}>
+              <InvoiceHeader>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <img src={Logo} alt="Company Logo" style={{ maxWidth: '60px', marginBottom: '10px' }} />
+                  <Box sx={{ textAlign: 'right' }}>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                      Inventory Management System
+                    </Typography>
+                    <Typography variant="body2">148, Greater South Avenue, Indore, M.P</Typography>
+                    <Typography variant="body2">{userObj.email}</Typography>
+                  </Box>
+                </Box>
+
+                <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: '20px', mt: 2 }}>
+                  <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                    Invoice No: {purchase_no}
                   </Typography>
+                  <Typography variant="body1">Date: {moment(date).format('DD/MM/YYYY')}</Typography>
                 </Box>
-              )}
+              </InvoiceHeader>
+
+              <Typography variant="h5" sx={{ fontWeight: 'bold', marginTop: 2 }}>
+                Supplier : {supplierName}
+              </Typography>
+              <Typography variant="body1">Email: {supplierEmail}</Typography>
+              <Typography variant="body1">Phone: {supplierPhone}</Typography>
+
+              <TableContainer sx={{ alignContent: 'center', marginTop: 2, borderRadius: 2, maxWidth: 800 }}>
+                <InvoiceTable id="invoiceTable">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Item</TableCell>
+                      <TableCell>Quantity</TableCell>
+                      <TableCell>Price/unit</TableCell>
+                      <TableCell>Subtotal</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {products?.map((product, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{product?.productName}</TableCell>
+                        <TableCell>{product?.quantity}</TableCell>
+                        <TableCell>
+                          {currencySymbol} {product?.price}
+                        </TableCell>
+                        <TableCell>
+                          {currencySymbol} {(product?.quantity * product?.price).toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+
+                    <TableRow>
+                      <TableCell colSpan={3} align="right">
+                        Subtotal:
+                      </TableCell>
+                      <TableCell>
+                        {currencySymbol} {subtotal.toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell colSpan={3} align="right">
+                        Tax:
+                      </TableCell>
+                      <TableCell>
+                        {currencySymbol} {tax.toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell colSpan={3} align="right" sx={{ fontWeight: 'bold' }}>
+                        Total:
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>
+                        {currencySymbol} {total.toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </InvoiceTable>
+              </TableContainer>
+              <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2 }}>
+                <Button variant="contained" color="secondary" onClick={downloadInvoice}>
+                  Download Invoice
+                </Button>
+              </Box>
+
+              <Typography variant="body2" align="left" sx={{ marginTop: 4 }}>
+                Thank you for your business!
+              </Typography>
+              <Typography variant="body2" align="left" sx={{ marginTop: 2 }}>
+                All payments must be made in full before the commencement of any design work.
+              </Typography>
+            </Card>
+          </Box>
+        )}
+
+        {tabIndex === 1 && status === 'cancelled' && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+            <Typography variant="body2" color="error">
+              Invoice not available for cancelled purchases.
+            </Typography>
+          </Box>
+        )}
       </TabContentCard>
     </Container>
   );

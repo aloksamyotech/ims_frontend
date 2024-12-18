@@ -174,6 +174,14 @@ const Admindashboard = {
       icon: icons.IconMailbox,
       breadcrumbs: false
      },
+     {
+      id: '11',
+      title: 'Profile',
+      type: 'item',
+      url: '/dashboard/admin-profile',
+      icon: icons.IconUser,
+      breadcrumbs: false
+    },
   ]
 }
 

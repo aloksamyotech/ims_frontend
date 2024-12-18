@@ -33,7 +33,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 const TabContentCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(1),
   borderRadius:8,
-  margin: theme.spacing(2.4),
+  margin: theme.spacing(0),
   padding: theme.spacing(1),
 }));
 
@@ -186,14 +186,14 @@ const ViewProductPage = () => {
                   status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
                 color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
               },
-              padding: '0.5rem 1rem',
+              padding: '1px',
               borderRadius: '30px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 'bold',
               width: '90px',
-              height: '25px',
+              height: '20px',
               textTransform: 'uppercase',
               boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
               gap: '0.5rem',
@@ -266,14 +266,14 @@ const ViewProductPage = () => {
                   status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
                 color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
               },
-              padding: '0.5rem 1rem',
-              borderRadius: '30px',
+              padding: '1px',
+              borderRadius: '4px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 'bold',
               width: '90px',
-              height: '25px',
+              height: '20px',
               textTransform: 'uppercase',
               boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
               gap: '0.5rem',
@@ -406,7 +406,7 @@ const ViewProductPage = () => {
             </Box>
 
             <Box sx={{ flex: 2, padding: 3,marginLeft:'10px' }}>
-              <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+              <Typography variant="h4" sx={{ marginBottom: 2 }}>
                 {productData?.productnm || 'NA'} ({productData?.product_no || 'NA'})
               </Typography>
 
@@ -428,12 +428,12 @@ const ViewProductPage = () => {
 
                 <Grid item xs={6}>
                   <Typography variant="body2">
-                    <strong>Buying Price:</strong> {currencySymbol} {productData?.buyingPrice || 'NA'}
+                    <strong>Buying Price /unit:</strong> {currencySymbol} {productData?.buyingPrice || 'NA'}
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography variant="body2">
-                    <strong>Selling Price:</strong> {currencySymbol} {productData?.sellingPrice || 'NA'}
+                    <strong>Selling Price/unit:</strong> {currencySymbol} {productData?.sellingPrice || 'NA'}
                   </Typography>
                 </Grid>
                 <Grid item xs={6}>
@@ -460,7 +460,7 @@ const ViewProductPage = () => {
               iconPosition="start"
               label="Sales"
               sx={{
-                fontSize: '12px',
+                fontSize: '14px',
                 minWidth: 120,
                 fontWeight: 'bold',
                 textTransform: 'none',
@@ -472,7 +472,7 @@ const ViewProductPage = () => {
               iconPosition="start"
               label="Purchases"
               sx={{
-                fontSize: '12px',
+                fontSize: '14px',
                 minWidth: 120,
                 fontWeight: 'bold',
                 textTransform: 'none',
@@ -483,7 +483,7 @@ const ViewProductPage = () => {
 
           {selectedTab === 0 && (
             <Box width="100%" overflow="hidden">
-              <Card style={{ height: '600px' ,padding:'5px'}}>
+              <Card style={{ height: '600px'}}>
                 <DataGrid
                   rows={filteredOrderData}
                   columns={orderColumns}
@@ -510,7 +510,7 @@ const ViewProductPage = () => {
 
           {selectedTab === 1 && (
             <Box width="100%" overflow="hidden">
-              <Card style={{ height: '600px' ,padding:'5px'}}>
+              <Card style={{ height: '600px'}}>
                 <DataGrid
                   rows={filteredPurchaseData}
                   columns={purchaseColumns}

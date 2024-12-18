@@ -39,6 +39,9 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
+const user = localStorage.getItem('user');
+const userObj = JSON.parse(user);
+
 const InvoiceHeader = styled(Box)({
   textAlign: 'center',
   marginBottom: '20px',
@@ -171,13 +174,26 @@ const InvoicePage = () => {
 
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('Supplier Details:', 14, 56);
+    doc.text('Customer Details:', 14, 56);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
     doc.text(`Name: ${invoiceData.customerName}`, 14, 62);
     doc.text(`Email: ${invoiceData.customerEmail}`, 14, 68);
     doc.text(`Phone: ${invoiceData.customerPhone}`, 14, 74);
     doc.text(`Address: ${invoiceData.customerAddress}`, 14, 80);
+
+    const user = localStorage.getItem('user');
+    const userObj = JSON.parse(user);
+
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Company Details:',  120, 56);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+    doc.text(`Name: ${userObj.name}`, 120, 62);
+    doc.text(`Email: ${userObj.email}`, 120, 68);
+    doc.text(`Phone: +91 56732`, 120, 74);
+    doc.text(`Address: India`, 120, 80);
 
     const tableMarginTop = 100;
     const tableColumn = ['Item', 'Quantity', 'Price', 'Subtotal'];
@@ -277,7 +293,7 @@ const InvoicePage = () => {
             iconPosition="start"
             label="Details"
             sx={{
-              fontSize: '12px',
+              fontSize: '14px',
               minWidth: 120,
               fontWeight: 'bold',
               textTransform: 'none',
@@ -289,7 +305,7 @@ const InvoicePage = () => {
             iconPosition="start"
             label="Invoice"
             sx={{
-              fontSize: '12px',
+              fontSize: '14px',
               minWidth: 120,
               fontWeight: 'bold',
               textTransform: 'none',
@@ -337,14 +353,14 @@ const InvoicePage = () => {
                                   : '',
                               color: order_status === 'completed' ? '#ffff' : order_status === 'pending' ? '#ffff' : order_status === 'cancelled' ? '#ffff' : ''
                             },
-                        padding: '1rem 1rem',
-                        borderRadius: '30px',
+                        padding: '1px',
+                        borderRadius: '4px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontWeight: 'bold',
                         width: '90px',
-                        height: '25px',
+                        height: '20px',
                         textTransform: 'uppercase',
                         boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
                         gap: '0.5rem',
@@ -436,12 +452,12 @@ const InvoicePage = () => {
                             </Grid>
                             <Grid item xs={6}>
                               <Typography variant="body1">
-                                <strong>Subtotal:</strong> {currencySymbol} {subtotalProduct.toFixed(2)}
+                                <strong>Discount:</strong>   {currencySymbol} {(product.quantity * product.price)-(subtotal).toFixed(2)}
                               </Typography>
                             </Grid>
                             <Grid item xs={6}>
                               <Typography variant="body1">
-                                <strong>Tax:</strong> {currencySymbol} {tax.toFixed(2)}
+                                <strong>Subtotal+Tax:</strong> {currencySymbol} ({subtotal.toFixed(2)} + {tax.toFixed(2)})
                               </Typography>
                             </Grid>
                             <Grid item xs={6}>
@@ -474,8 +490,8 @@ const InvoicePage = () => {
           )}
 
           {tabIndex === 1 && order_status !== 'cancelled' && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <Card sx={{ padding: 2, borderRadius: 2, boxShadow: 3, width: '800px', height: 'auto' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center',margin: '10px'}}>
+              <Card variant="outlined" sx={{ padding: 2, borderRadius: 2, width: '800px', height: 'auto' }}>
                 <InvoiceHeader>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <img src={Logo} alt="Company Logo" style={{ maxWidth: '60px', marginBottom: '10px' }} />
@@ -484,6 +500,7 @@ const InvoicePage = () => {
                         Inventory Management System
                       </Typography>
                       <Typography variant="body2">148, Greater South Avenue, Indore, M.P</Typography>
+                      <Typography variant="body2">{userObj.email}</Typography>
                     </Box>
                   </Box>
 
@@ -503,16 +520,15 @@ const InvoicePage = () => {
                 <Typography variant="body1">Address: {customerAddress}</Typography>
 
                 <TableContainer
-                  component={Paper}
-                  sx={{ alignContent: 'center', marginTop: 2, borderRadius: 2, boxShadow: 2, maxWidth: 800 }}
+                  sx={{ alignContent: 'center', marginTop: 2, borderRadius: 2,  maxWidth: 800 }}
                 >
                   <InvoiceTable id="invoiceTable">
                     <TableHead>
                       <TableRow>
                         <TableCell>Item</TableCell>
                         <TableCell>Quantity</TableCell>
-                        <TableCell>Price</TableCell>
-                        <TableCell>Subtotal</TableCell>
+                        <TableCell>Price/unit</TableCell>
+                        <TableCell>Discount</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -524,7 +540,7 @@ const InvoicePage = () => {
                             {currencySymbol} {product?.price}
                           </TableCell>
                           <TableCell>
-                            {currencySymbol} {(product?.quantity * product?.price).toFixed(2)}
+                          {currencySymbol} {(product.quantity * product.price)-(subtotal).toFixed(2)}
                           </TableCell>
                         </TableRow>
                       ))}

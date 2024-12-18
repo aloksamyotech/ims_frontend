@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { countCustomers } from 'apis/api.js';
-import { getUserId} from 'apis/constant.js';
+import { getUserId } from 'apis/constant.js';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -9,46 +9,60 @@ import { Box, Grid, Typography } from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import { IconUser} from '@tabler/icons'; 
+import { IconUser } from '@tabler/icons';
 import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
+import axios from 'axios';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.dark,
   color: '#fff',
   overflow: 'hidden',
-  position: 'relative', 
+  position: 'relative'
 }));
 
 const TopRightIcon = styled(Box)(({ theme }) => ({
-  position: 'absolute', 
+  position: 'absolute',
   top: '20px',
   right: '10px',
   color: theme.palette.secondary[100],
-  backgroundColor: '#ffff', 
-  borderRadius: '50%', 
-  padding: '12px', 
+  backgroundColor: '#ffff',
+  borderRadius: '50%',
+  padding: '12px',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'center'
 }));
 
 const EarningCard = ({ isLoading }) => {
   const theme = useTheme();
 
   const [customerCount, setCustomerCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const getCustomerCount = async () => {
       try {
-        const response = await countCustomers();
-        const allCustomers = response.data?.count || 0;
         const userId = getUserId();
-        const filteredByUser = allCustomers.filter((customer) => customer.userId === userId); 
-        setCustomerCount(filteredByUser.length);
+        if (!userId) {
+          console.log('User ID is missing');
+          setLoading(false);
+          return;
+        }
+        const response = await axios.get(`http://localhost:4200/customer/count?userId=${userId}`);
+        if (response?.data?.count !== undefined) {
+          setCustomerCount(response.data.count);
+        } else {
+          setCustomerCount(0);
+        }
       } catch (err) {
-        console.log(err);
+        console.error('Error fetching customer count:', err);
+        setError('Failed to fetch customer count');
+      } finally {
+        setLoading(false);
       }
     };
+
     getCustomerCount();
   }, []);
 
@@ -67,7 +81,7 @@ const EarningCard = ({ isLoading }) => {
                     fontWeight: 500,
                     mr: 1,
                     mt: 1.75,
-                    mb: 0.75,
+                    mb: 0.75
                   }}
                 >
                   {customerCount}
@@ -78,7 +92,7 @@ const EarningCard = ({ isLoading }) => {
                   sx={{
                     fontSize: '1rem',
                     fontWeight: 500,
-                    color: theme.palette.secondary[200],
+                    color: theme.palette.secondary[200]
                   }}
                 >
                   Active Customers
@@ -86,8 +100,8 @@ const EarningCard = ({ isLoading }) => {
               </Grid>
             </Grid>
             <TopRightIcon>
-            <IconUser size={30}  color='#673ab7' />
-          </TopRightIcon>
+              <IconUser size={30} color="#673ab7" />
+            </TopRightIcon>
           </Box>
         </CardWrapper>
       )}
@@ -96,7 +110,7 @@ const EarningCard = ({ isLoading }) => {
 };
 
 EarningCard.propTypes = {
-  isLoading: PropTypes.bool,
+  isLoading: PropTypes.bool
 };
 
 export default EarningCard;

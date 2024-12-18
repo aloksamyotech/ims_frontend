@@ -64,7 +64,7 @@ const ChangePassword = ({ open, handleClose , onchangePassword, user}) => {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm">
       <DialogTitle
     id="scroll-dialog-title"
     style={{ display: 'flex', justifyContent: 'space-between' }}
@@ -73,7 +73,7 @@ const ChangePassword = ({ open, handleClose , onchangePassword, user}) => {
     <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
   </DialogTitle>
       <DialogContent>
-        <Grid container spacing={2}>
+        <Grid container spacing={1}>
             <Grid item xs={12}>
               <FormLabel>Current Password</FormLabel>
               <TextField
@@ -83,6 +83,7 @@ const ChangePassword = ({ open, handleClose , onchangePassword, user}) => {
                 id="currentPassword"
                 name="currentPassword"
                 fullWidth
+                size='small'
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
@@ -97,6 +98,7 @@ const ChangePassword = ({ open, handleClose , onchangePassword, user}) => {
                 id="newPassword"
                 name="newPassword"
                 fullWidth
+                  size='small'
                 type="password"
                 value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
@@ -111,6 +113,7 @@ const ChangePassword = ({ open, handleClose , onchangePassword, user}) => {
                 id="confirmPassword"
                 name="confirmPassword"
                 fullWidth
+                  size='small'
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -119,7 +122,7 @@ const ChangePassword = ({ open, handleClose , onchangePassword, user}) => {
         </Grid>
       </DialogContent>
 
-      <DialogActions sx={{ padding: '16px 24px' }}>
+      <DialogActions sx={{ padding: '12px 20px' }}>
         <Button
           onClick={handleSubmit}
           variant="contained"

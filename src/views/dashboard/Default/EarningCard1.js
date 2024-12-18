@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { countSuppliers } from 'apis/api.js';
 import { getUserId} from 'apis/constant.js';
+import axios from 'axios';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -36,19 +37,32 @@ const EarningCard = ({ isLoading }) => {
   const theme = useTheme();
 
   const [supplierCount, setSupplierCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const getSupplierCount = async () => {
       try {
-        const response = await countSuppliers();
-        const allSuppliers = response.data?.count || 0;
         const userId = getUserId();
-        const filteredByUser = allSuppliers.filter((supplier) => supplier.userId === userId); 
-        setSupplierCount(filteredByUser.length);
+        if (!userId) {
+          console.log('User ID is missing');
+          setLoading(false);
+          return;
+        }
+        const response = await axios.get(`http://localhost:4200/supplier/count?userId=${userId}`);
+        if (response?.data?.count !== undefined) {
+          setSupplierCount(response.data.count);
+        } else {
+          setSupplierCount(0);
+        }
       } catch (err) {
-        console.log(err);
+        console.error('Error fetching supplier count:', err);
+        setError('Failed to fetch supplier count');
+      } finally {
+        setLoading(false);
       }
     };
+
     getSupplierCount();
   }, []);
 

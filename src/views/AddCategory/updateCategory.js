@@ -40,6 +40,7 @@ const UpdateCategory = ({ open, handleClose, category, onUpdateCategory }) => {
           margin="dense"
           label="Category Name"
           fullWidth
+          size='small'
           value={formik.values.catnm}
           onChange={formik.handleChange('catnm')}
           error={formik.touched.catnm && Boolean(formik.errors.catnm)}
@@ -49,6 +50,7 @@ const UpdateCategory = ({ open, handleClose, category, onUpdateCategory }) => {
           margin="dense"
           label="Description"
           fullWidth
+           size='small'
           value={formik.values.desc}
           onChange={formik.handleChange('desc')}
           error={formik.touched.desc && Boolean(formik.errors.desc)}

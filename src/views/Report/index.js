@@ -117,17 +117,17 @@ const ProductReport = () => {
     { field: 'supplierPhone', headerName: 'Phone', width: 150 },
     { field: 'productName', headerName: 'Product Name', width: 180 },
     { field: 'quantity', headerName: 'Quantity', width: 110 },
-    // {
-    //   field: 'price',
-    //   headerName: 'Amount',
-    //   width: 120,
-    //   valueFormatter: ({ value }) => {
-    //     if (value != null) {
-    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
-    //     }
-    //     return '$0';
-    //   }
-    // },
+    {
+      field: 'price',
+      headerName:'Price/unit',
+      width: 120,
+      valueFormatter: ({ value }) => {
+        if (value != null) {
+          return ` ${currencySymbol} ${value.toLocaleString()}`;
+        }
+        return '$0';
+      }
+    },
     // {
     //   field: 'subtotal',
     //   headerName: 'Subtotal',
@@ -187,17 +187,17 @@ const ProductReport = () => {
     { field: 'customerPhone', headerName: 'Phone', width: 150 },
     { field: 'productName', headerName: 'Product Name', width: 180 },
     { field: 'quantity', headerName: 'Quantity', width: 110 },
-    // {
-    //   field: 'price',
-    //   headerName: 'Amount',
-    //   width: 120,
-    //   valueFormatter: ({ value }) => {
-    //     if (value != null) {
-    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
-    //     }
-    //     return '$0';
-    //   }
-    // },
+    {
+      field: 'price',
+      headerName: 'Price/unit',
+      width: 120,
+      valueFormatter: ({ value }) => {
+        if (value != null) {
+          return ` ${currencySymbol} ${value.toLocaleString()}`;
+        }
+        return '$0';
+      }
+    },
     // {
     //   field: 'subtotal',
     //   headerName: 'Subtotal',
@@ -282,48 +282,45 @@ const ProductReport = () => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '5px'
+          padding: '10px'
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            overflow: 'hidden',
-            width: '300px',
-            height: '35px'
+        <GridToolbarQuickFilter
+          placeholder="Search..."
+          style={{
+            width: '250px',
+            backgroundColor: '#ffff',
+            borderRadius: '8px',
+            padding: '5px 10px',
+            border: '1px solid beige'
           }}
-        >
-          <Box sx={{ flex: '30%' }}>
-            <FormControl fullWidth>
-              <Select
-                value={selectedDateRange}
-                onChange={handleDateRangeChange}
-              >
-                <MenuItem value="All">All</MenuItem>
-                <MenuItem value="Daily">Daily</MenuItem>
-                <MenuItem value="Last 7 Days">Weekly</MenuItem>
-                <MenuItem value="Monthly">Monthly</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
+        />
 
-          <Box sx={{ flex: '70%' }}>
-            <FormControl fullWidth>
-              <GridToolbarQuickFilter
-                placeholder="Search..."
-                style={{
-                  backgroundColor: '#ffff',
-                  padding: '5px 10px',
-                }}
-              />
-            </FormControl>
-          </Box>
-        </Box>
-
+        <Stack direction="row" spacing={2} alignItems="center">
+          <FormControl
+            sx={{
+              width: '120px',
+              height: '40px'
+            }}
+          >
+            <Select
+               value={selectedDateRange}
+               onChange={handleDateRangeChange}
+              sx={{
+                width: '120px',
+                height: '40px',
+                borderRadius: '8px',
+                backgroundColor: '#ffffff'
+              }}
+            >
+              <MenuItem value="All">All</MenuItem>
+              <MenuItem value="pending">Daily</MenuItem>
+              <MenuItem value="completed">Weekly</MenuItem>
+              <MenuItem value="cancelled">Monthly</MenuItem>
+            </Select>
+          </FormControl>
           <GridToolbarExport style={{ fontSize: 14 }} />
+        </Stack>
       </GridToolbarContainer>
     );
   };
@@ -356,7 +353,6 @@ const ProductReport = () => {
       </Box>
 
       <TabContentCard>
-        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
         <Tabs value={selectedTab} onChange={handleTabChange} aria-label="product report tabs">
           <Tab
             icon={<ShoppingCartIcon />}
@@ -364,7 +360,7 @@ const ProductReport = () => {
             label="Sales"
             sx={{
               fontSize: '14px',
-              minWidth: 200,
+              minWidth: 120,
               fontWeight: 'bold',
               textTransform: 'none',
               color: selectedTab === 0 ? '#1976d2' : '#757070'
@@ -376,22 +372,20 @@ const ProductReport = () => {
             label="Purchases"
             sx={{
               fontSize: '14px',
-              minWidth: 200,
+              minWidth: 120,
               fontWeight: 'bold',
               textTransform: 'none',
               color: selectedTab === 1 ? '#1976d2' : '#757070'
             }}
           />
         </Tabs>
-        </Box>
-        
 
         {selectedTab === 0 && (
-          <Box sx={{ height: '600px', padding: '5px' }}>
+          <Box sx={{ height: '600px', padding: '0px 5px' }}>
             <DataGrid
               rows={filteredOrderData}
               columns={orderColumns}
-              rowHeight={50}
+              rowHeight={60}
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
               initialState={{
@@ -411,11 +405,11 @@ const ProductReport = () => {
         )}
 
         {selectedTab === 1 && (
-          <Box sx={{ height: '600px', padding: '5px' }}>
+          <Box sx={{ height: '600px', padding: '0px 5px'  }}>
             <DataGrid
               rows={filteredPurchaseData}
               columns={purchaseColumns}
-              rowHeight={50}
+              rowHeight={60}
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
               initialState={{

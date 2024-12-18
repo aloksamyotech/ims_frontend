@@ -61,7 +61,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
       <DialogContent>
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid item xs={12} md={12}>
               <FormLabel>Name</FormLabel>
               <TextField
                 autoFocus
@@ -69,6 +69,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
                 required
                 id="catnm"
                 name="catnm"
+                size='small'
                 fullWidth
                 type="text"
                 value={formik.values.catnm}
@@ -78,7 +79,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
                 helperText={formik.touched.catnm && formik.errors.catnm}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} md={12}>
               <FormLabel>Description</FormLabel>
               <TextField
                 required
@@ -87,6 +88,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
                 name="desc"
                 fullWidth
                 type="text"
+                size='small'
                 value={formik.values.desc}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}

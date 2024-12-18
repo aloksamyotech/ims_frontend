@@ -143,6 +143,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 required
                 id="productnm"
                 name="productnm"
+                size='small'
                 fullWidth
                 value={formik.values.productnm}
                 onChange={formik.handleChange}
@@ -154,7 +155,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <FormLabel>Product Category</FormLabel>
-                <Select required id="catnm" name="catnm" value={formik.values.catnm} onChange={formik.handleChange}>
+                <Select required id="catnm" name="catnm"  size='small' value={formik.values.catnm} onChange={formik.handleChange}>
                   {clist.map((category) => (
                     <MenuItem key={category._id} value={category._id}>
                       {category.catnm}
@@ -165,27 +166,14 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
               </FormControl>
             </Grid>
 
-            {/* <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <FormLabel>Unit</FormLabel>
-                <Select required id="unitnm" name="unitnm" value={formik.values.unitnm} onChange={formik.handleChange}>
-                  {ulist.map((unit) => (
-                    <MenuItem key={unit._id} value={unit._id}>
-                      {unit.unitnm}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText error>{formik.touched.unitnm && formik.errors.unitnm}</FormHelperText>
-              </FormControl>
-            </Grid> */}
-
             <Grid item xs={12} sm={6}>
-              <FormLabel>Buying Price</FormLabel>
+              <FormLabel>Buying Price / unit</FormLabel>
               <TextField
                 required
                 id="buyingPrice"
                 name="buyingPrice"
                 type="number"
+                 size='small'
                 fullWidth
                 value={formik.values.buyingPrice}
                 onChange={formik.handleChange}
@@ -195,12 +183,13 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <FormLabel>Selling Price</FormLabel>
+              <FormLabel>Selling Price / unit</FormLabel>
               <TextField
                 required
                 id="sellingPrice"
                 name="sellingPrice"
                 type="number"
+                 size='small'
                 fullWidth
                 value={formik.values.sellingPrice}
                 onChange={formik.handleChange}
@@ -216,6 +205,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 id="tax"
                 name="tax"
                 type="number"
+                 size='small'
                 fullWidth
                 value={formik.values.tax}
                 onChange={formik.handleChange}
@@ -231,6 +221,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 id="margin"
                 name="margin"
                 type="number"
+                 size='small'
                 fullWidth
                 value={formik.values.margin}
                 onChange={formik.handleChange}
@@ -245,6 +236,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
               <TextField
                 id="notes"
                 name="notes"
+                 size='small'
                 fullWidth
                 value={formik.values.notes}
                 onChange={formik.handleChange}

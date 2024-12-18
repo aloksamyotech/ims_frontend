@@ -34,23 +34,23 @@ const ViewUser = ({ open, handleClose, user }) => {
           <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
         </DialogTitle>
         <DialogContent dividers>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
               <FormLabel>User Name</FormLabel>
               <TextField variant="outlined" size="small" fullWidth value={user?.name || 'NA'} />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} >
               <FormLabel>Email</FormLabel>
               <TextField variant="outlined" size="small" fullWidth value={user?.email || 'NA'} />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <FormLabel>Phone</FormLabel>
               <TextField variant="outlined" size="small" fullWidth value={user?.phone || 'NA'} />
             </Grid>
 
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <FormLabel>Role</FormLabel>
               <TextField variant="outlined" size="small" fullWidth value={user?.role || 'NA'} />
             </Grid>

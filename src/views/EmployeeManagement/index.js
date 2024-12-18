@@ -343,12 +343,12 @@ const User = () => {
         
         <TableStyle>
           <Box width="100%" >
-            <Paper style={{ height: '600px', marginTop: '20px',padding:'5px'}}>
+            <Paper style={{ height: '600px', marginTop: '20px',padding:'0px 5px'}}>
               <DataGrid
                 rows={users}
                 columns={columns}
                 getRowId={(row) => row._id}
-                rowHeight={50}
+                rowHeight={55}
                 components={{ Toolbar: CustomToolbar }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{

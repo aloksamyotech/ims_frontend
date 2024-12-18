@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-import { countPurchases } from 'apis/api.js';
+import axios from 'axios';
 import { getUserId } from 'apis/constant.js';
 
 // material-ui
@@ -46,6 +46,8 @@ const TopRightIcon = styled(Box)(({ theme }) => ({
 const TotalOrderLineChartCard = ({ isLoading }) => {
   const theme = useTheme();
   const [purchaseCount, setPurchaseCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [timeValue, setTimeValue] = useState(false);
   const handleChangeTime = (event, newValue) => {
@@ -55,13 +57,23 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
   useEffect(() => {
     const getPurchaseCount = async () => {
       try {
-        const response = await countPurchases();
-        const allPurchases = response.data?.count || 0;
         const userId = getUserId();
-        const filteredByUser = allPurchases.filter((purchase) => purchase.userId === userId);
-        setPurchaseCount(filteredByUser.length);
+        if (!userId) {
+          console.log('User ID is missing');
+          setLoading(false);
+          return;
+        }
+        const response = await axios.get(`http://localhost:4200/purchase/count?userId=${userId}`);
+        if (response?.data?.count !== undefined) {
+          setPurchaseCount(response.data.count);
+        } else {
+          setPurchaseCount(0);
+        }
       } catch (err) {
-        console.log(err);
+        console.error('Error fetching purchase count:', err);
+        setError('Failed to purchase order count');
+      } finally {
+        setLoading(false);
       }
     };
     getPurchaseCount();

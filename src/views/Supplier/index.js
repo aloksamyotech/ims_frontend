@@ -122,14 +122,14 @@ const Supplier = () => {
                 backgroundColor: '#2196f3',
                 color: 'white'
               },
-              padding: '0.5rem 1rem',
-              borderRadius: '30px',
+              padding: '1px',
+              borderRadius: '4px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 'bold',
               width: '93px',
-              height: '25px',
+              height: '20px',
               textTransform: 'uppercase',
               boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
               gap: '0.5rem',
@@ -326,12 +326,12 @@ const Supplier = () => {
         </Box>
         <TableStyle>
           <Box width="100%" >
-            <Card style={{ height: '600px', marginTop: '20px',padding:'5px'}}>
+            <Card style={{ height: '600px', marginTop: '20px',padding:'0 5px'}}>
               <DataGrid
                 rows={supplierData}
                 columns={columns}
                 getRowId={(row) => row._id}
-                rowHeight={50}
+                rowHeight={55}
                 components={{
                   Toolbar: () => <CustomToolbar handleOpenAdd={handleOpenAdd} />
                 }}

@@ -28,6 +28,7 @@ const AdminReports = Loadable(lazy(() => import('views/AdminComponent/ReportMana
 const Subscription = Loadable(lazy(() => import('views/AdminComponent/Subscription')));
 const Company = Loadable(lazy(() => import('views/AdminComponent/Company')));
 const UserSubscription = Loadable(lazy(() => import('views/UserSubscription')));
+const AdminProfile = Loadable(lazy(() => import('views/AdminComponent/AdminProfile')))
 
 // ==============================|| MAIN ROUTING ||============================== //
 const role = (localStorage.getItem('role'));
@@ -184,7 +185,11 @@ const AdminRoutes = {
         {
           path: 'subscription',
           element: <Subscription />
-        }
+        },
+        {
+          path: 'admin-profile',
+          element: <AdminProfile />
+        },
       ]
     },
   ]

@@ -87,8 +87,8 @@ const PurchaseForm = () => {
       try {
         const response = await addPurchase(purchaseData);
         toast.success('Purchase added successfully');
-        navigate('/dashboard/purchases');
         formik.resetForm();
+        navigate('/dashboard/purchases');
         setRows([{ product: '', quantity: 1, price: 0, subtotal: 0 }]);
       } catch (error) {
         toast.error('Failed to add purchase');
@@ -104,6 +104,7 @@ const PurchaseForm = () => {
         const filteredProducts = productResult?.data.filter(product => product.userId === userId);
         setProductList(filteredProducts);
         const supplierResult = await fetchSuppliers();
+        console.log(supplierResult);
         const filteredSuppliers = supplierResult?.data.filter(supplier => supplier.userId === userId);
         setSupplierList(filteredSuppliers);
       } catch (error) {
@@ -208,7 +209,7 @@ const PurchaseForm = () => {
 
      <Card sx={{padding:'10px',marginTop:'20px'}}>
       <form onSubmit={formik.handleSubmit}>
-      <Grid container spacing={3} sx={{padding:'5px'}}>
+      <Grid container spacing={1} sx={{padding:'5px'}}>
         <Grid item xs={12} sm={6}>
           <FormLabel>Purchase Date</FormLabel>
           <TextField
@@ -216,6 +217,7 @@ const PurchaseForm = () => {
             id="date"
             name="date"
             type="date"
+            size='small'
             InputLabelProps={{
               shrink: true
             }}
@@ -233,6 +235,7 @@ const PurchaseForm = () => {
             <Select
               id="supplierId"
               name="supplierId"
+              size='small'
               value={formik.values.supplierId}
               onChange={formik.handleChange}
               sx={{
@@ -255,8 +258,8 @@ const PurchaseForm = () => {
           </FormControl>
         </Grid>
       
-        <Grid item xs={12}  sx={{margin:'5px'}}>
-          <TableContainer component={Paper} elevation={3}>
+        <Grid item xs={12}  sx={{margin:'2px'}}>
+          <TableContainer component={Paper} elevation={1}>
             <Table>
               <TableHead sx={{ backgroundColor:'#1976d2'}}>
                 <TableRow>
@@ -275,6 +278,7 @@ const PurchaseForm = () => {
                       <Select
                         fullWidth
                         value={row.product}
+                        size='small'
                         onChange={(event) => handleProductChange(index, event)}
                         displayEmpty
                       >
@@ -292,6 +296,7 @@ const PurchaseForm = () => {
                     <TableCell>
                       <TextField
                         type="string"
+                        size='small'
                         value={row?.categoryName}
                         inputProps={{ readOnly: true }}
                       />
@@ -299,6 +304,7 @@ const PurchaseForm = () => {
                     <TableCell>
                       <TextField
                         type="number"
+                        size='small'
                         inputProps={{
                           min: 1, 
                           max: 1000 
@@ -310,6 +316,7 @@ const PurchaseForm = () => {
                     <TableCell>
                       <TextField
                         type="number"
+                        size='small'
                         value={(row?.price || 0).toFixed(2)}
                         inputProps={{ readOnly: true }}
                       />
@@ -317,6 +324,7 @@ const PurchaseForm = () => {
                     <TableCell>
                       <TextField
                         type="number"
+                        size='small'
                         value={(row?.subtotal || 0).toFixed(2)}
                         inputProps={{ readOnly: true }}
                       />

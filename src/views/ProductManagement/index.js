@@ -44,9 +44,9 @@ const Product = () => {
   const loadProducts = async () => {
     try {
       const response = await fetchProducts();
-      const allProducts = response?.data;
+      const allProducts = response?.data || 0;
       const userId = getUserId();
-      const filteredProducts = allProducts.filter((product) => product.userId === userId);
+      const filteredProducts = allProducts.filter((product) => product?.userId === userId);
       setProducts(filteredProducts);
     } catch (error) {
       toast.error('Failed to fetch products');
@@ -150,7 +150,7 @@ const Product = () => {
             <Typography color="text.primary">Products</Typography>
           </Breadcrumbs>
         </Box>
-        
+
         <Card sx={{ marginTop: '20px' }}>
           <Box
             sx={{
@@ -205,7 +205,7 @@ const Product = () => {
               {filteredProducts.map((product) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
                   <Card
-                    sx={{  
+                    sx={{
                       borderRadius: 2,
                       boxShadow: 3,
                       position: 'relative',
@@ -217,7 +217,7 @@ const Product = () => {
                         transform: 'translateY(-5px)',
                         boxShadow: 6
                       }
-                   }}
+                    }}
                   >
                     <CardMedia
                       component="img"
@@ -244,12 +244,11 @@ const Product = () => {
 
                     <CardContent>
                       <Box display="flex" justifyContent="center" alignItems="center">
-                      <Typography variant="h5" sx={{ textTransform: 'uppercase', fontWeight: 'bold'  }}>
+                        <Typography variant="h5" sx={{ textTransform: 'uppercase', fontWeight: 'bold' }}>
                           {product.productnm}
                         </Typography>
-                        </Box>
+                      </Box>
 
-                        
                       <Box display="flex" justifyContent="center" alignItems="center">
                         <Typography variant="body2" color="textSecondary">
                           {product.categoryName}
@@ -257,20 +256,37 @@ const Product = () => {
                       </Box>
 
                       <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
-                      <Typography variant="body2">Selling Price:
-                       &nbsp; {currencySymbol} {product.sellingPrice}
-                      </Typography></Box>
-
-                      <Box display="flex" justifyContent="center" alignItems="center"mt={1}>
-                        <Typography
-                          variant="body2"
+                        <Typography variant="body2">
+                          Selling Price: &nbsp; {currencySymbol} {product.sellingPrice}
+                        </Typography>
+                      </Box>
+                      <Box display="flex" justifyContent="center" alignItems="center" mt={1}>
+                        <Box
                           sx={{
-                            color: product.quantity > 5 ? 'green' : 'red',
-                            textAlign: 'right'
+                            border: '1px solid',
+                            borderColor: product.quantity > 5 ? 'green' : 'red',
+                            padding: '2px 5px',
+                            borderRadius: '5px',
+                            '&:hover': {
+                              backgroundColor: '#19ab53',
+                              color: 'white',
+                              fontWeight: 500,
+                            }
                           }}
                         >
-                          {product.quantity > 5 ? 'In Stock' : 'Out of Stock'} ({product.quantity})
-                        </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: product.quantity > 5 ? 'green' : 'red',
+                              textAlign: 'right',
+                              '&:hover': {
+                                color: 'white',
+                              }
+                            }}
+                          >
+                            {product.quantity > 5 ? 'In Stock' : 'Out of Stock'} ({product.quantity})
+                          </Typography>
+                        </Box>
                       </Box>
                     </CardContent>
 
