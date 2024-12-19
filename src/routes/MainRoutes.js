@@ -28,7 +28,8 @@ const AdminReports = Loadable(lazy(() => import('views/AdminComponent/ReportMana
 const Subscription = Loadable(lazy(() => import('views/AdminComponent/Subscription')));
 const Company = Loadable(lazy(() => import('views/AdminComponent/Company')));
 const UserSubscription = Loadable(lazy(() => import('views/UserSubscription')));
-const AdminProfile = Loadable(lazy(() => import('views/AdminComponent/AdminProfile')))
+const AdminProfile = Loadable(lazy(() => import('views/AdminComponent/AdminProfile')));
+const ViewCompany = Loadable(lazy(() => import('views/AdminComponent/ViewCompany')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 const role = (localStorage.getItem('role'));
@@ -174,10 +175,6 @@ const AdminRoutes = {
           path: 'admin',
           element: <AdminDashboard />
         },
-        {
-          path: 'company',
-         element: <Company />
-         },
          {
           path: 'admin-report',
           element: <AdminReports />
@@ -189,6 +186,19 @@ const AdminRoutes = {
         {
           path: 'admin-profile',
           element: <AdminProfile />
+        },
+        {
+          path: 'company',
+          children: [
+            {
+              path: '',
+              element: <Company />
+            },
+            {
+              path: 'view-company/:id',
+              element: <ViewCompany />
+            }
+          ]
         },
       ]
     },

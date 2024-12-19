@@ -103,8 +103,7 @@ const ProductReport = () => {
     {
       field: 'supplierName',
       headerName: 'Supplier',
-      flex: 1.5,
-      minWidth: 200,
+      flex: 2.5,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row?.supplierName}</Typography>
@@ -114,13 +113,13 @@ const ProductReport = () => {
         </Box>
       )
     },
-    { field: 'supplierPhone', headerName: 'Phone', width: 150 },
-    { field: 'productName', headerName: 'Product Name', width: 180 },
-    { field: 'quantity', headerName: 'Quantity', width: 110 },
+    { field: 'supplierPhone', headerName: 'Phone', width: 110 },
+    { field: 'productName', headerName: 'Product Name', width: 150 },
+    { field: 'quantity', headerName: 'Quantity', width: 90 },
     {
       field: 'price',
       headerName:'Price/unit',
-      width: 120,
+      width: 110,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -174,7 +173,6 @@ const ProductReport = () => {
       field: 'customerName',
       headerName: 'Customer',
       flex: 1.5,
-      minWidth: 200,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row?.customerName}</Typography>
@@ -184,13 +182,13 @@ const ProductReport = () => {
         </Box>
       )
     },
-    { field: 'customerPhone', headerName: 'Phone', width: 150 },
-    { field: 'productName', headerName: 'Product Name', width: 180 },
+    { field: 'customerPhone', headerName: 'Phone', width: 120 },
+    { field: 'productName', headerName: 'Product Name', width: 150 },
     { field: 'quantity', headerName: 'Quantity', width: 110 },
     {
       field: 'price',
       headerName: 'Price/unit',
-      width: 120,
+      width: 100,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -223,7 +221,7 @@ const ProductReport = () => {
     {
       field: 'total',
       headerName: 'Total Amount',
-      width: 120,
+      width: 100,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;

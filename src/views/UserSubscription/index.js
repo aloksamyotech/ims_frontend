@@ -22,6 +22,10 @@ import { fetchCurrencySymbol } from 'apis/constant.js';
 import { fetchSubscription } from 'apis/api.js';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
+import StarOutlineIcon from '@mui/icons-material/StarOutline';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 
 const Product = () => {
   const navigate = useNavigate();
@@ -47,6 +51,33 @@ const Product = () => {
     };
     getCurrency();
   }, []);
+
+  const subscriptionStyles = {
+    Standard: {
+      icon: <StarOutlineIcon sx={{ color: '#FFA726', fontSize: 30 }} />,
+      borderColor: '#FFA726',
+      buttonColor: '#FFA726',
+      hoverColor: '#FB8C00'
+    },
+    Professional: {
+      icon: <TrendingUpIcon sx={{ color: '#29B6F6', fontSize: 30 }} />,
+      borderColor: '#29B6F6',
+      buttonColor: '#29B6F6',
+      hoverColor: '#0288D1'
+    },
+    Premium: {
+      icon: <EmojiEventsIcon sx={{ color: '#7E57C2', fontSize: 30 }} />,
+      borderColor: '#7E57C2',
+      buttonColor: '#7E57C2',
+      hoverColor: '#5E35B1'
+    },
+    Elite: {
+      icon: <WorkspacePremiumIcon sx={{ color: '#4CAF50', fontSize: 30 }} />,
+      borderColor: '#4CAF50',
+      buttonColor: '#4CAF50',
+      hoverColor: '#388E3C'
+    }
+  };
 
   return (
     <>
@@ -77,78 +108,93 @@ const Product = () => {
         </Box>
 
         <Card sx={{ marginTop: '20px' }}>
+          <Typography variant="h2" sx={{ textAlign: 'center', margin: '5px' }}>
+            Subscription Plans
+          </Typography>
+          <Typography variant="body1" sx={{ textAlign: 'center', margin: '5px' }}>
+          &quot;Take a subscription to use the inventory system and enhance your business operations.&quot;
+          </Typography>
+
           <Box sx={{ padding: '20px' }}>
             <Grid container spacing={3}>
-              {subscription.map((sub, index) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                  <Card
-                    sx={{
-                      borderRadius: 2,
-                      boxShadow: 3,
-                      paddingTop: 3,
-                      paddingBottom: 2,
-                      position: 'relative',
-                      height: '300px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      transition: 'transform 0.3s, box-shadow 0.3s',
-                      '&:hover': {
-                        transform: 'translateY(-5px)',
-                        boxShadow: 6
-                      }
-                    }}
-                  >
-                    <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                      <Box display="flex" justifyContent="center" alignItems="center">
-                        <Typography variant="h3" noWrap sx={{ fontWeight: 'bold' }}>
-                          {sub.title}
-                        </Typography>
-                      </Box>
+              {subscription.map((sub, index) => {
+                const styles = subscriptionStyles[sub.title] || {};
+                const discountedPrice = sub.amount - (sub.amount * sub.discount) / 100;
+                const savedAmount = sub.amount - discountedPrice;
+                const descriptionPoints = sub.desc?.split('.') || [];
 
-                      <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
-                        <Typography variant="h2">
-                          {currencySymbol} {sub.amount}
-                        </Typography>
-                      </Box>
+                return (
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                    <Card
+                      sx={{
+                        borderRadius: 3,
+                        boxShadow: 4,
+                        padding: 2,
+                        position: 'relative',
+                        height: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        border: `2px solid ${styles.borderColor || '#E0E0E0'}`,
+                        transition: 'transform 0.3s, box-shadow 0.3s',
+                        '&:hover': {
+                          transform: 'translateY(-5px)',
+                          boxShadow: 8
+                        }
+                      }}
+                    >
+                      <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                        <Box display="flex" alignItems="center" justifyContent="center" mb={2} sx={{ flexDirection: 'row' }}>
+                          <Box sx={{ marginLeft: -1 }}>{styles.icon}</Box>
 
-                      <Box display="flex" justifyContent="center" alignItems="center">
-                        <Typography variant="body2">({sub.noOfDays} Days)</Typography>
-                      </Box>
+                          <Typography variant="h3" noWrap sx={{ fontWeight: 'bold' }}>
+                            {sub.title}
+                          </Typography>
+                        </Box>
 
-                      <Box mt={2} display="flex" justifyContent="center">
+                        <Box display="flex" flexDirection="column" alignItems="center" mt={2}>
+                          <Typography variant="body1" sx={{ textDecoration: 'line-through', color: 'gray', fontWeight: 'bold' }}>
+                            {currencySymbol} {sub.amount}
+                          </Typography>
+                          <Typography variant="h4" sx={{ fontWeight: 'bold', color: styles.borderColor }}>
+                            {currencySymbol} {discountedPrice.toFixed(2)}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" mt={1}>
+                            You save: {currencySymbol} {savedAmount.toFixed(2)} ({sub.discount}% Off)
+                          </Typography>
+                        </Box>
+
+                        <Box mt={1}>
+                          {descriptionPoints.map((point, idx) =>
+                            point.trim() ? (
+                              <Typography key={idx} variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
+                                • {point.trim()}
+                              </Typography>
+                            ) : null
+                          )}
+                        </Box>
+                      </CardContent>
+
+                      <Box sx={{ padding: 2, textAlign: 'center' }}>
                         <Button
                           variant="contained"
-                          color="primary"
+                          fullWidth
                           sx={{
                             textTransform: 'none',
                             fontWeight: 'bold',
-                            backgroundColor: '#2196f3', 
+                            backgroundColor: styles.buttonColor || '#2196f3',
                             '&:hover': {
-                              backgroundColor: '#1a72bb' 
+                              backgroundColor: styles.hoverColor || '#1a72bb'
                             }
                           }}
-                          //   onClick={() => alert(`Buying: ${sub.title}`)}
                         >
-                          Buy Now
+                          Purchase
                         </Button>
-                      </Box>
-
-                      <Box display="flex" justifyContent="center" alignItems="center" textAlign="center" mt={2}
-                      sx={{padding:'3px'}}>
-                        <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                          {sub.desc}
-                        </Typography>
-                      </Box>
-
-                      <Box display="flex" justifyContent="center" alignItems="center" mt={1}>
-                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                          {sub.discount}% Off
-                        </Typography>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
+                      </Box> 
+                    </Card>
+                  </Grid>
+                );
+              })}
             </Grid>
           </Box>
         </Card>

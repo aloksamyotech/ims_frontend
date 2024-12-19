@@ -385,7 +385,7 @@ const PurchasePage = () => {
 
                   <Box>
                     <Typography variant="body1">
-                      <strong>Placed on:</strong> {moment(date).format('DD-MM-YYYY HH:mm')}
+                      <strong>Placed on:</strong> {moment(date).format('DD-MM-YYYY')}
                     </Typography>
                   </Box>
                 </Box>

@@ -149,7 +149,7 @@ const CreateInvoice = () => {
                     <TableCell>{product?.productnm}</TableCell>
                     <TableCell>{product?.sellingPrice.toFixed(2)}</TableCell>
                     <TableCell>{product?.quantity}</TableCell>
-                    <TableCell>{(product.quantity * product.sellingPrice)-(subtotal).toFixed(2)}</TableCell>
+                    <TableCell>{(product.quantity * product.sellingPrice)}</TableCell>
                   </TableRow>
                 ))}
                 <TableRow>

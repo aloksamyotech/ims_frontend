@@ -65,7 +65,7 @@ import { IconShoppingCart } from '@tabler/icons';
 // }));
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.dark,
+  backgroundColor: '#f1af4c',
   color: '#fff',
   overflow: 'hidden',
   position: 'relative'
@@ -75,7 +75,7 @@ const TopRightIcon = styled(Box)(({ theme }) => ({
   position: 'absolute',
   top: '20px',
   right: '10px',
-  color: theme.palette.primary[100],
+  color:  '#f1af4c',
   backgroundColor: '#ffff',
   borderRadius: '50%',
   padding: '12px',
@@ -133,7 +133,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
               <Grid item>
                 <Typography
                   sx={{
-                    fontSize: '2.125rem',
+                    fontSize: '2rem',
                     fontWeight: 500,
                     mr: 1,
                     mt: 1.75,
@@ -146,9 +146,9 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
               <Grid item sx={{ mb: 1.25 }}>
                 <Typography
                   sx={{
-                    fontSize: '1rem',
-                    fontWeight: 500,
-                    color: theme.palette.primary[200]
+                    fontSize: '1.2rem',
+                    fontWeight: 600,
+                    color:'#ffff',
                   }}
                 >
                   Total Orders
@@ -156,7 +156,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
               </Grid>
             </Grid>
             <TopRightIcon>
-              <IconShoppingCart size={30} color="#1e88e5" />
+              <IconShoppingCart size={30} color="#FFA726" />
             </TopRightIcon>
           </Box>
         </CardWrapper>

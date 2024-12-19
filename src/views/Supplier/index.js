@@ -96,7 +96,7 @@ const Supplier = () => {
     {
       field: 'suppliernm', 
       headerName: 'Name',
-      flex: 1.5,
+      flex: 2.5,
       minWidth:220,
       renderCell: (params) => (
         <Box>

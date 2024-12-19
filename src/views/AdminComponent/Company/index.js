@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Switch, Container, Typography, Card, Box } from '@mui/material';
+import { Stack, Avatar, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Switch, Container, Typography, Card, Box } from '@mui/material';
 import TableStyle from 'ui-component/TableStyle.js';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import AddCompany from './addCompany.js';
@@ -108,7 +108,39 @@ const Company = () => {
     }
   };
 
+  const generateRandomAvatar = (name) => {
+    const initials = name
+      .split(' ')
+      .map((word) => word[0])
+      .join('');
+    return initials;
+  };
+
   const columns = [
+    {
+      field: '#',
+      flex: 0.2,
+      sortable: false,
+      renderCell: (params) => (
+        <Avatar
+          sx={{
+            bgcolor: '#673ab7',
+            color: '#ffff',
+            width: 40,
+            height: 40,
+            fontSize: 14,
+            boxShadow: 3,
+            border: '1px solid white',
+            transition: 'transform 0.3s ease-in-out',
+            '&:hover': {
+              transform: 'scale(1.1)'
+            }
+          }}
+        >
+          {generateRandomAvatar(params.row.name || '')}
+        </Avatar>
+      )
+    },
     {
       field: 'name',
       headerName: 'Company Name',
@@ -129,7 +161,6 @@ const Company = () => {
       field: 'status',
       headerName: 'Status',
       flex: 1,
-      minWidth: 250,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Switch
@@ -167,19 +198,42 @@ const Company = () => {
             },
           }}
         />
-        {/* <Typography
-          sx={{
-            ml: 1,
-            fontWeight: 'bold',
-            color: params.row?.isActive ? '#1976d2' : '#9e9e9e', // Label color based on state
-            textTransform: 'capitalize', // Capitalize 'Active' and 'Inactive'
-          }}
-        >
-          {params.row?.isActive ? 'Active' : 'Inactive'}
-        </Typography> */}
       </Box>
-      
-      
+      )
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      flex: 1,
+      renderCell: (params) => (
+        <Stack direction="row">
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton
+              size="small"
+              onClick={() => handleView(params.row?._id)}
+              color="primary"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#9abfdd', 
+                  color: '#1976d2' 
+                }
+              }}
+            >
+              <VisibilityIcon />
+            </IconButton>
+          </Box>
+        </Stack>
       )
     }
   ];
@@ -193,6 +247,11 @@ const Company = () => {
     setCompanyData((prev) => [...prev, newCompany]);
     setOpenAdd(false);
   };
+
+  const handleView = (_id) => {
+    navigate(`/dashboard/company/view-company/${_id}`);
+  };
+
 
   return (
     <>

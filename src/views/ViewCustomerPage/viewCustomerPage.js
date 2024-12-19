@@ -224,8 +224,6 @@ const ViewCustomerPage = () => {
       </Box>
 
       <Card sx={{ marginTop: '20px' }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
             <Card style={{ margin: '20px' }}>
               <CardContent>
                 <Grid container spacing={2}>
@@ -296,31 +294,6 @@ const ViewCustomerPage = () => {
                   <Grid item xs={6}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                       <Typography variant="body1">
-                        <strong>Bank Name:</strong> {customerData?.bankName || 'NA'}
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Account Holder:</strong> {customerData?.accountHolder || 'NA'}
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Account Number:</strong>
-                        {customerData?.accountNumber || 'NA'}
-                      </Typography>
-                    </Box>
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
                         <strong>Created At:</strong> {moment(customerData?.createdAt).format('DD-MM-YYYY')}
                       </Typography>
                     </Box>
@@ -328,16 +301,14 @@ const ViewCustomerPage = () => {
                 </Grid>
               </CardContent>
             </Card>
-          </Grid>
-        </Grid>
 
         <Grid item xs={12}>
-          <Box style={{ height: '600px', padding: '10px', margin: '12px' }}>
+          <Box style={{ height: '600px', margin: '12px' }}>
             <DataGrid
               rows={filteredOrders}
               columns={columns}
               getRowId={(row) => row._id}
-              rowHeight={50}
+              rowHeight={55}
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
               initialState={{

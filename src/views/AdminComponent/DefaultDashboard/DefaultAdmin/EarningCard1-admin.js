@@ -19,7 +19,7 @@ import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
 // }));
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-  backgroundColor: theme.palette.secondary.dark,
+  backgroundColor: '#4CAF50',
   color: '#fff',
   overflow: 'hidden',
   position: 'relative',
@@ -28,7 +28,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: theme.palette.secondary[800],
+    background:'#2f9232',
     borderRadius: '50%',
     top: -85,
     right: -95,
@@ -42,7 +42,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: theme.palette.secondary[800],
+    background:'#2f9232',
     borderRadius: '50%',
     top: -125,
     right: -15,
@@ -59,7 +59,7 @@ const TopRightIcon = styled(Box)(({ theme }) => ({
   position: 'absolute', 
   top: '20px',
   right: '10px',
-  color: theme.palette.secondary[100],
+  color: '#54c758',
   backgroundColor: '#ffff', 
   borderRadius: '50%', 
   padding: '12px', 
@@ -96,7 +96,7 @@ const EarningCard = ({ isLoading }) => {
               <Grid item>
                 <Typography
                   sx={{
-                    fontSize: '2.125rem',
+                    fontSize: '2rem',
                     fontWeight: 500,
                     mr: 1,
                     mt: 1.75,
@@ -111,7 +111,7 @@ const EarningCard = ({ isLoading }) => {
                   sx={{
                     fontSize: '1rem',
                     fontWeight: 500,
-                    color: theme.palette.secondary[200],
+                    color: '#ffff',
                   }}
                 >
                   Active Suppliers

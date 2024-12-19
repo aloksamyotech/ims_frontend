@@ -9,6 +9,9 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import { Link } from 'react-router-dom';
 
+const user=localStorage.getItem('user');
+const userObj = JSON.parse(user);
+
 const ProfileSection = () => {
   const [profile, setProfile] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -81,28 +84,28 @@ const ProfileSection = () => {
             <CardContent>
               <Grid container spacing={2}>
               <Grid item xs={12}>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    Company:
+                  <Typography variant="h3" sx={{ mb:1}}>
+                    Inventory  Management
                   </Typography>
-                  <Typography variant="h5">Inventory Management</Typography>
+                  <Typography variant="h5">&quot;Efficiently track, manage, and optimize stock levels with a streamlined inventory management system.&quot;</Typography>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    Name:
+                    Company Name:
                   </Typography>
-                  <Typography variant="h5">{profile?.username || 'NA'}</Typography>
+                  <Typography variant="h5">{userObj?.name || 'NA'}</Typography>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                     Contact on:
                   </Typography>
-                  <Typography variant="h5">{profile?.phone || 'NA'}</Typography>
+                  <Typography variant="h5">{userObj?.phone || 'NA'}</Typography>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                     Email:
                   </Typography>
-                  <Typography variant="h5">{profile?.email || 'NA'}</Typography>
+                  <Typography variant="h5">{userObj?.email || 'NA'}</Typography>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="h4" sx={{ fontWeight: 'bold' }}>

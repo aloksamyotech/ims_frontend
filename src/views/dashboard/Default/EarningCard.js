@@ -14,7 +14,7 @@ import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
 import axios from 'axios';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-  backgroundColor: theme.palette.secondary.dark,
+  backgroundColor: theme.palette.primary.dark,
   color: '#fff',
   overflow: 'hidden',
   position: 'relative'
@@ -24,7 +24,7 @@ const TopRightIcon = styled(Box)(({ theme }) => ({
   position: 'absolute',
   top: '20px',
   right: '10px',
-  color: theme.palette.secondary[100],
+  color: theme.palette.primary[100],
   backgroundColor: '#ffff',
   borderRadius: '50%',
   padding: '12px',
@@ -77,7 +77,7 @@ const EarningCard = ({ isLoading }) => {
               <Grid item>
                 <Typography
                   sx={{
-                    fontSize: '2.125rem',
+                    fontSize: '2rem',
                     fontWeight: 500,
                     mr: 1,
                     mt: 1.75,
@@ -90,9 +90,9 @@ const EarningCard = ({ isLoading }) => {
               <Grid item sx={{ mb: 1.25 }}>
                 <Typography
                   sx={{
-                    fontSize: '1rem',
-                    fontWeight: 500,
-                    color: theme.palette.secondary[200]
+                    fontSize: '1.2rem',
+                    fontWeight: 600,
+                    color: '#ffff'
                   }}
                 >
                   Active Customers
@@ -100,7 +100,7 @@ const EarningCard = ({ isLoading }) => {
               </Grid>
             </Grid>
             <TopRightIcon>
-              <IconUser size={30} color="#673ab7" />
+              <IconUser size={30} color="#1e88e5" />
             </TopRightIcon>
           </Box>
         </CardWrapper>

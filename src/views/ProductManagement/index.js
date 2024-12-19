@@ -267,11 +267,6 @@ const Product = () => {
                             borderColor: product.quantity > 5 ? 'green' : 'red',
                             padding: '2px 5px',
                             borderRadius: '5px',
-                            '&:hover': {
-                              backgroundColor: '#19ab53',
-                              color: 'white',
-                              fontWeight: 500,
-                            }
                           }}
                         >
                           <Typography
@@ -279,9 +274,6 @@ const Product = () => {
                             sx={{
                               color: product.quantity > 5 ? 'green' : 'red',
                               textAlign: 'right',
-                              '&:hover': {
-                                color: 'white',
-                              }
                             }}
                           >
                             {product.quantity > 5 ? 'In Stock' : 'Out of Stock'} ({product.quantity})

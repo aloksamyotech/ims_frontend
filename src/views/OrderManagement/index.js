@@ -150,7 +150,7 @@ const Order = () => {
     {
       field: 'createdAt',
       headerName: 'Date',
-      flex: 1.5,
+      flex: 2,
       valueGetter: (params) => {
         return moment(params.row?.createdAt).format('DD-MM-YYYY');
       }
@@ -163,8 +163,7 @@ const Order = () => {
     {
       field: 'customerName',
       headerName: 'Customer',
-      flex: 1.5,
-      minWidth: 200,
+      flex: 3,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row?.customerName || 'N/A'}</Typography>
@@ -175,9 +174,14 @@ const Order = () => {
       )
     },
     {
+      field: 'customerPhone',
+      headerName: 'PhoneNo',
+      flex:2.5,
+    },
+    {
       field: 'productName',
       headerName: 'Item',
-      flex: 3,
+      flex: 2.5,
       valueGetter: (params) => {
         if (params.row?.products?.length > 0) {
           return params.row.products?.map((product) => `${product?.productName}(${product?.quantity})`).join(', ');

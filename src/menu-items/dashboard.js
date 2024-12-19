@@ -47,14 +47,14 @@ const dashboard = {
       icon: icons.IconHome,
       breadcrumbs: false
     },
-    {
-      id: '01',
-      title: 'Employee Management',
-      type: 'item',
-      url: '/dashboard/users',
-      icon: icons.IconAccessible,
-      breadcrumbs: false
-    },
+    // {
+    //   id: '01',
+    //   title: 'Employee Management',
+    //   type: 'item',
+    //   url: '/dashboard/users',
+    //   icon: icons.IconAccessible,
+    //   breadcrumbs: false
+    // },
     {
       id: '02',
       title: 'Products',

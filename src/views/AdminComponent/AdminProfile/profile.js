@@ -104,7 +104,7 @@ const ProfileSection = () => {
                   </Typography>
                   <Typography variant="h5">{profile?.email || 'NA'}</Typography>
                 </Grid>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                   <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
                     Currency Code:
                   </Typography>
@@ -115,12 +115,12 @@ const ProfileSection = () => {
                     Currency Symbol:
                   </Typography>
                   <Typography variant="h5">{profile?.currencySymbol || 'NA'}</Typography>
-                </Grid>
-                <Grid item xs={12}>
+                </Grid> */}
+                {/* <Grid item xs={12}>
                     <Button  variant="contained" size="small" color="secondary" onClick={handleEditClick}>
                      Edit Profile
                     </Button>
-                </Grid>
+                </Grid> */}
               </Grid>
             </CardContent>
           </Card>

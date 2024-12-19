@@ -21,18 +21,55 @@ import ChartDataYear from './chart-data/total-order-year-line-chart-admin';
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
+// const CardWrapper = styled(MainCard)(({ theme }) => ({
+//   backgroundColor: theme.palette.primary.dark,
+//   color: '#fff',
+//   overflow: 'hidden',
+//   position: 'relative', 
+// }));
+
+
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.dark,
+  backgroundColor: theme.palette.secondary.dark,
   color: '#fff',
   overflow: 'hidden',
-  position: 'relative', 
+  position: 'relative',
+  '&:after': {
+    content: '""',
+    position: 'absolute',
+    width: 210,
+    height: 210,
+    background: theme.palette.secondary[800],
+    borderRadius: '50%',
+    top: -85,
+    right: -95,
+    [theme.breakpoints.down('sm')]: {
+      top: -105,
+      right: -140
+    }
+  },
+  '&:before': {
+    content: '""',
+    position: 'absolute',
+    width: 210,
+    height: 210,
+    background: theme.palette.secondary[800],
+    borderRadius: '50%',
+    top: -125,
+    right: -15,
+    opacity: 0.5,
+    [theme.breakpoints.down('sm')]: {
+      top: -155,
+      right: -70
+    }
+  }
 }));
 
 const TopRightIcon = styled(Box)(({ theme }) => ({
   position: 'absolute', 
   top: '20px',
   right: '10px',
-  color: theme.palette.primary[100],
+  color: theme.palette.secondary[100],
   backgroundColor: '#ffff', 
   borderRadius: '50%', 
   padding: '12px', 
@@ -74,7 +111,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
               <Grid item>
                 <Typography
                   sx={{
-                    fontSize: '2.125rem',
+                    fontSize: '2rem',
                     fontWeight: 500,
                     mr: 1,
                     mt: 1.75,
@@ -89,7 +126,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                   sx={{
                     fontSize: '1rem',
                     fontWeight: 500,
-                    color: theme.palette.primary[200],
+                    color: 'white',
                   }}
                 >
                   Total Purchases

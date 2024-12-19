@@ -398,7 +398,6 @@ const ProductReport = () => {
       </Box>
 
       <TabContentCard>
-        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
           <Tabs value={selectedTab} onChange={handleTabChange} aria-label="product report tabs" sx={{ alignContent: 'center' }}>
             <Tab
               icon={<ShoppingCartIcon />}
@@ -425,7 +424,6 @@ const ProductReport = () => {
               }}
             />
           </Tabs>
-        </Box>
 
         {selectedTab === 0 && (
           <Box sx={{ height: '600px', padding: '5px' }}>

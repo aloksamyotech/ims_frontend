@@ -36,13 +36,6 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
       .matches(/^[1-9][0-9]{9}$/, 'Phone number must be 12 digits and cannot start with 0')
       .required('Phone number is required'),
     address: yup.string().min(10, 'Address must be at least 10 characters').max(50, 'Max 50 characters are allowed').required('Address is required'),
-    accountHolder: yup
-      .string()
-      .matches(/^[a-zA-Z\s]*$/, 'Only letters and spaces are allowed')
-      .max(30, 'Max 30 characters are allowed')
-      .required('Account holder name is required'),
-    accountNumber: yup.string().max(12, 'Max 12 numbers are allowed').matches(/^[0-9]+$/, 'Account number must be numeric'),
-    bankName: yup.string().required('Bank name is required'),
   });
 
   const initialValues = {
@@ -50,9 +43,6 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
     phone: '',
     email: '',
     address: '',
-    accountHolder: '',
-    accountNumber: '',
-    bankName: '',
   };
 
   const formik = useFormik({
@@ -85,7 +75,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
     PaperProps={{
       style: {
         width: '600px', 
-        height: '450px', 
+        height: 'auto', 
         maxWidth: 'none', 
       },
     }}>
@@ -142,7 +132,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 helperText={formik.touched.phone && formik.errors.phone}
               />
             </Grid>
-            <Grid item xs={6}>
+            {/* <Grid item xs={6}>
               <FormControl fullWidth>
                 <FormLabel>Bank Name</FormLabel>
                 <Select
@@ -190,8 +180,8 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 error={formik.touched.accountNumber && Boolean(formik.errors.accountNumber)}
                 helperText={formik.touched.accountNumber && formik.errors.accountNumber}
               />
-            </Grid>
-            <Grid item xs={12}>
+            </Grid> */}
+            <Grid item xs={6}>
               <FormLabel>Address</FormLabel>
               <TextField
                 required

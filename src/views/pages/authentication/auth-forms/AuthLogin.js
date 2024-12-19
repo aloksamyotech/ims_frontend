@@ -74,7 +74,7 @@ const AuthLogin = ({ ...others }) => {
               }
 
               if (scriptedRef.current) {
-                toast.success('User logged in successfully');
+                toast.success('Logged in successfully');
                 setStatus({ success: true });
               }
             } else {

@@ -152,7 +152,7 @@ const Purchase = () => {
     {
       field: 'date',
       headerName: 'Date',
-      flex: 2,
+      flex: 2.3,
       valueGetter: (params) => {
         return moment(params.row?.createdAt).format('DD-MM-YYYY');
       }
@@ -165,8 +165,7 @@ const Purchase = () => {
     {
       field: 'supplierName',
       headerName: 'Supplier',
-      flex: 1.5,
-      minWidth: 200,
+      flex: 4.5,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row?.supplierName || 'N/A'}</Typography>
@@ -175,6 +174,11 @@ const Purchase = () => {
           </Typography>
         </Box>
       )
+    },
+    {
+      field: 'supplierPhone',
+      headerName: 'PhoneNo',
+      flex:2.5,
     },
     {
       field: 'productName',
@@ -237,7 +241,7 @@ const Purchase = () => {
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 2,
+      flex: 1.5,
       renderCell: (params) => (
         <Stack direction="row">
           <Box

@@ -14,7 +14,7 @@ const Logo = () => {
         const response = await fetchAdmin();
 
         const adminData = Array.isArray(response.data) ? response.data[0] : response.data;
-        setLogoUrl(adminData.logoUrl || 'N/A'); 
+        setLogoUrl(adminData.logoUrl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ24Ow1xRIPVAQPRHqG3FcXsh80DR0PSCgzqA&s'); 
       } catch (error) {
         console.error('Error fetching details:', error);
         toast.error('Failed to fetch profile');
@@ -26,10 +26,11 @@ const Logo = () => {
   return (
     <Box component="div" display="flex" alignItems="center">
       <img
-        src={logoUrl || 'path-to-default-logo.png'}
+        src={logoUrl || 'assets/images/invento.png'}
         alt="Inventory Management"
-        width="150" 
-        height="50"
+        width="100" 
+        height="65"
+        style={{ alignItems: 'center'}}
       />
     </Box>
   );

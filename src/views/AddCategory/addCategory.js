@@ -100,7 +100,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
 
           <DialogActions>
             <Button type="submit" disabled={isSubmitting} variant="contained" color="secondary">
-              {isSubmitting ? 'Submitting...' : 'Add Product Category'}{' '}
+              {isSubmitting ? 'Submitting...' : 'Add'}{' '}
             </Button>
             <Button onClick={handleClose} variant="contained" color="error">
               Cancel
