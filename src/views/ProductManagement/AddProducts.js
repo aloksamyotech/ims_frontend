@@ -42,7 +42,8 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
       .positive('Must be a positive number')
       .max(1500000, 'Price cannot exceed Rs.1500000'),
     tax: yup.number().max(50, 'Max 50% tax is allowed').required('Tax is required'),
-    notes: yup.string().max(400, 'Max 400 words are allowed')
+    notes: yup.string().max(400, 'Max 400 words are allowed'),
+    quantityAlert: yup.number().required('Quantity alert is required').max(50, 'Max 50 quantity is allowed')
   });
 
   const initialValues = {
@@ -51,6 +52,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
     unitnm: 'pieces',
     buyingPrice: '',
     sellingPrice: '',
+    quantityAlert: '',
     tax: '',
     notes: '',
     image: null
@@ -69,6 +71,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
         formData.append('categoryId', values.catnm);
         formData.append('buyingPrice', values.buyingPrice);
         formData.append('sellingPrice', values.sellingPrice);
+        formData.append('quantityAlert', values.quantityAlert);
         formData.append('tax', values.tax);
         formData.append('margin', values.margin);
         formData.append('notes', values.notes);
@@ -195,6 +198,22 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 onChange={formik.handleChange}
                 error={formik.touched.sellingPrice && Boolean(formik.errors.sellingPrice)}
                 helperText={formik.touched.sellingPrice && formik.errors.sellingPrice}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <FormLabel>Quantity Alert</FormLabel>
+              <TextField
+                required
+                id="quantityAlert"
+                name="quantityAlert"
+                type="number"
+                 size='small'
+                fullWidth
+                value={formik.values.quantityAlert}
+                onChange={formik.handleChange}
+                error={formik.touched.quantityAlert && Boolean(formik.errors.quantityAlert)}
+                helperText={formik.touched.quantityAlert && formik.errors.quantityAlert}
               />
             </Grid>
 
