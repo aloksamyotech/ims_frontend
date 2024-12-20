@@ -14,6 +14,7 @@ import {
   IconAccessible,
   IconUserPlus
 } from '@tabler/icons';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 
 const icons = {
   IconHome,
@@ -29,7 +30,8 @@ const icons = {
   IconCategory,
   IconBrandUnity,
   IconAccessible,
-  IconUserPlus
+  IconUserPlus,
+  TrendingDownIcon
 };
 import AdminDashboard from 'views/dashboard/Default';
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -61,6 +63,14 @@ const dashboard = {
       type: 'item',
       url: '/dashboard/products',
       icon: icons.IconStackPop,
+      breadcrumbs: false
+    },
+    {
+      id: '02',
+      title: 'Low-Stocks',
+      type: 'item',
+      url: '/dashboard/product-report',
+      icon: icons.TrendingDownIcon,
       breadcrumbs: false
     },
     {

@@ -26,11 +26,14 @@ const Customer = () => {
 
   const loadCustomers = async () => {
     try {
-      const response = await fetchCustomers();
-      const allCustomers = response?.data;
       const userId = getUserId();
-      const filteredCustomers = allCustomers.filter((customer) => customer.userId === userId);
-      setCustomerData(filteredCustomers);
+      if (!userId) {
+        console.log('User ID is missing');
+        setLoading(false);
+        return;
+      }
+      const response = await fetchCustomers({ userId });
+      setCustomerData(response?.data);
     } catch (error) {
       toast.error('Failed to fetch customers');
     }

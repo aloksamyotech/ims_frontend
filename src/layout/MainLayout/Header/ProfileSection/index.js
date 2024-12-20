@@ -18,7 +18,7 @@ import {
   ListItemText
 } from '@mui/material';
 import { IconLogout, IconSettings } from '@tabler/icons';
-import PerfectScrollbar from 'react-perfect-scrollbar';
+import Notification from './notification.js';
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
 import User1 from 'assets/images/profile.png';
@@ -81,24 +81,30 @@ const ProfileSection = () => {
 
   return (
     <>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleLogout}
-          sx={{
-            borderRadius: '4px',
-            textTransform: 'none',
-            padding: '6px 10px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
-          }}
-        >
-          <IconLogout stroke={1.5} size="1.5rem" />
-          Logout
-        </Button>
-      </Box>
+      <Stack direction="row" spacing={3} alignItems="center">
+        <Box >
+          <Notification />
+        </Box>
+          
+        <Box>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleLogout}
+            sx={{
+              borderRadius: '4px',
+              textTransform: 'none',
+              padding: '6px 10px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
+            }}
+          >
+            <IconLogout stroke={1.5} size="1.5rem" />
+            Logout
+          </Button>
+        </Box>
+      </Stack>
     </>
   );
 };

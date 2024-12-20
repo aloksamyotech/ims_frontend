@@ -26,10 +26,15 @@ const Category = () => {
 
   const loadCategories = async () => {
     try {
-      const response = await fetchCategories(); 
-      const userId = getUserId(); 
-      const filteredCategories = response?.data.filter(category => category.userId === userId); 
-      setCategories(filteredCategories); 
+      const userId = getUserId();
+      if (!userId) {
+        console.log('User ID is missing');
+        setLoading(false);
+        return;
+      }
+      const response = await fetchCategories({userId}); 
+   
+      setCategories(response?.data); 
     } catch (error) {
       toast.error('Failed to fetch categories');
     }

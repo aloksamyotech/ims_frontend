@@ -34,6 +34,7 @@ export const urls = {
     update: '/product/update/:id',
     fetch: '/product/fetch/',
     lowstock: '/product/lowstock/',
+    quantityalert:'/product/quantityalert/',
   },
   user: {
     delete: '/user/deleteById/:id',

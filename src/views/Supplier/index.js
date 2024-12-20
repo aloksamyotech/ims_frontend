@@ -9,6 +9,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import moment from 'moment';
 import { deleteSupplier, fetchSuppliers } from 'apis/api.js';
 import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
@@ -26,13 +28,17 @@ const Supplier = () => {
 
   const loadSuppliers = async () => {
     try {
-      const response = await fetchSuppliers();
-      const allSuppliers = response?.data;
       const userId = getUserId();
-      const filteredSuppliers = allSuppliers.filter((supplier) => supplier.userId === userId);
-      setSupplierData(filteredSuppliers);
+      if (!userId) {
+        console.log('User ID is missing');
+        setLoading(false);
+        return;
+      }
+      const response = await fetchSuppliers({ userId });
+      setSupplierData(response?.data);
     } catch (error) {
       toast.error('Failed to fetch suppliers');
+      console.log(error);
     }
   };
 

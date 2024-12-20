@@ -23,9 +23,14 @@ export const deleteCategory = async (_id) => {
     return deleteApi(urls.category.delete, _id); 
 };
 
-export const fetchCategories = async () => {
-    return fetchApi(urls.category.fetch); 
-}; 
+// export const fetchCategories = async () => {
+//     return fetchApi(urls.category.fetch); 
+// }; 
+
+export const fetchCategories = async (queryParams = {}) => {
+    const queryString = new URLSearchParams(queryParams).toString(); 
+    return fetchApi(`${urls.category.fetch}?${queryString}`);
+};
 
 export const addCategory = async (newCategory) => {
     return addApi(urls.category.add, newCategory); 
@@ -40,9 +45,15 @@ export const deleteSupplier = async (_id) => {
     return deleteApi(urls.supplier.delete, _id); 
 };
 
-export const fetchSuppliers = async () => {
-    return fetchApi(urls.supplier.fetch); 
+// export const fetchSuppliers = async () => {
+//     return fetchApi(urls.supplier.fetch); 
+// };
+
+export const fetchSuppliers = async (queryParams = {}) => {
+    const queryString = new URLSearchParams(queryParams).toString(); 
+    return fetchApi(`${urls.supplier.fetch}?${queryString}`);
 };
+
 
 export const addSupplier = async (newSupplier) => {
     return addApi(urls.supplier.add, newSupplier); 
@@ -61,9 +72,12 @@ export const deleteCustomer = async (_id) => {
     return deleteApi(urls.customer.delete, _id); 
 };
 
-export const fetchCustomers = async () => {
-    return fetchApi(urls.customer.fetch); 
+
+export const fetchCustomers = async (queryParams = {}) => {
+    const queryString = new URLSearchParams(queryParams).toString(); 
+    return fetchApi(`${urls.customer.fetch}?${queryString}`);
 };
+
 
 export const addCustomer = async (newCustomer) => {
     return addApi(urls.customer.add, newCustomer); 
@@ -96,6 +110,10 @@ export const updateProduct = async (updatedProduct) => {
 
 export const fetchLowStock = async () => {
     return fetchApi(urls.product.lowstock); 
+};
+
+export const fetchQuantityAlert = async () => {
+    return fetchApi(urls.product.quantityalert); 
 };
 
 // user
