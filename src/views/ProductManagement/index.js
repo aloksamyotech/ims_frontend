@@ -36,20 +36,19 @@ const Product = () => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [openAdd, setOpenAdd] = useState(false);
-  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [currencySymbol, setCurrencySymbol] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
+  const [popoverState, setPopoverState] = useState({ anchorEl: null, productId: null });
 
   const loadProducts = async () => {
     try {
-      const response = await fetchProducts();
-      const allProducts = response?.data || 0;
       const userId = getUserId();
-      const filteredProducts = allProducts.filter((product) => product?.userId === userId);
-      setProducts(filteredProducts);
+      const response = await fetchProducts({ userId });
+      setProducts(response?.data || []);
     } catch (error) {
-      toast.error('Failed to fetch products');
+      console.error('Failed to fetch products');
     }
   };
 
@@ -65,15 +64,15 @@ const Product = () => {
     getCurrency();
   }, []);
 
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handlePopoverOpen = (event, productId) => {
+    setPopoverState({ anchorEl: event.currentTarget, productId });
   };
 
   const handlePopoverClose = () => {
-    setAnchorEl(null);
+    setPopoverState({ anchorEl: null, productId: null });
   };
 
-  const open = Boolean(anchorEl);
+  const open = Boolean(popoverState.anchorEl);
 
   const handleOpenAdd = () => {
     setSelectedProduct(null);
@@ -83,10 +82,13 @@ const Product = () => {
   const handleView = (_id) => {
     navigate(`/dashboard/products/view-product/${_id}`);
   };
-
-  const handleEdit = (product) => {
-    setSelectedProduct(product);
-    setOpenUpdateDialog(true);
+  const handleEdit = () => {
+    const product = products.find((prod) => prod._id === popoverState.productId);
+    if (product) {
+      setSelectedProduct(product);
+      setOpenUpdate(true);
+    }
+    handlePopoverClose();
   };
 
   const handleDelete = async (_id) => {
@@ -101,8 +103,8 @@ const Product = () => {
         confirmButtonText: 'Yes, delete it!'
       });
       if (result.isConfirmed) {
-        await deleteProduct(_id);
-        setProducts((prev) => prev.filter((product) => product?._id !== _id));
+        await deleteProduct(popoverState.productId);
+        setProducts((prev) => prev.filter((product) => product._id !== popoverState.productId));
         Swal.fire('Deleted!', 'Your product has been deleted.', 'success');
       }
     } catch (error) {
@@ -122,9 +124,20 @@ const Product = () => {
 
   const filteredProducts = products.filter((product) => product.productnm.toLowerCase().includes(searchTerm));
 
+  const handleProductUpdated = (updatedProduct) => {
+    setProducts((prev) => prev.map((prod) => (prod._id === updatedProduct._id ? updatedProduct : prod)));
+    setOpenUpdate(false);
+  };
+
   return (
     <>
       <AddProductPage open={openAdd} handleClose={() => setOpenAdd(false)} onProductAdded={handleProductAdded} />
+      <UpdateProduct
+        open={openUpdate}
+        handleClose={() => setOpenUpdate(false)}
+        product={selectedProduct}
+        onProductUpdated={handleProductUpdated}
+      />
       <Container>
         <Box
           sx={{
@@ -232,7 +245,7 @@ const Product = () => {
 
                     <IconButton
                       size="small"
-                      onClick={(event) => handlePopoverOpen(event)}
+                      onClick={(event) => handlePopoverOpen(event, product._id)}
                       sx={{
                         position: 'absolute',
                         top: 8,
@@ -266,14 +279,14 @@ const Product = () => {
                             border: '1px solid',
                             borderColor: product.quantity > 5 ? 'green' : 'red',
                             padding: '2px 5px',
-                            borderRadius: '5px',
+                            borderRadius: '5px'
                           }}
                         >
                           <Typography
                             variant="body2"
                             sx={{
                               color: product.quantity > 5 ? 'green' : 'red',
-                              textAlign: 'right',
+                              textAlign: 'right'
                             }}
                           >
                             {product.quantity > 5 ? 'In Stock' : 'Out of Stock'} ({product.quantity})
@@ -284,7 +297,7 @@ const Product = () => {
 
                     <Popover
                       open={open}
-                      anchorEl={anchorEl}
+                      anchorEl={popoverState.anchorEl}
                       onClose={handlePopoverClose}
                       anchorOrigin={{
                         vertical: 'bottom',
@@ -343,15 +356,6 @@ const Product = () => {
             </Grid>
           </Box>
         </Card>
-
-        <UpdateProduct
-          open={openUpdateDialog}
-          handleClose={() => setOpenUpdateDialog(false)}
-          product={selectedProduct}
-          onProductUpdated={(updatedProduct) => {
-            setProducts((prev) => prev.map((prod) => (prod._id === updatedProduct._id ? updatedProduct : prod)));
-          }}
-        />
       </Container>
     </>
   );

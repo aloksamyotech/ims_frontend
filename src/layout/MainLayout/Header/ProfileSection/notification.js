@@ -2,16 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { Badge, IconButton, Menu, Card, Box, MenuItem, List, ListItem, Typography } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { fetchQuantityAlert } from 'apis/api.js';
+import { getUserId } from 'apis/constant.js';
 
 const NotificationDropdown = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [role, setRole] = useState('');
 
   useEffect(() => {
+  const userRole = localStorage.getItem('role');
+  console.log(userRole);
+  setRole(userRole);
+    if (role === 'user') {
     const fetchNotifications = async () => {
       try {
-        const response = await fetchQuantityAlert();
+        const userId = getUserId();
+        const response = await fetchQuantityAlert({userId});
         const lowStockProducts = response?.data?.data;
 
         const notificationMessages = lowStockProducts.map(
@@ -25,6 +32,7 @@ const NotificationDropdown = () => {
     };
 
     fetchNotifications();
+  }
   }, []);
 
   const handleClick = (event) => {
@@ -35,6 +43,8 @@ const NotificationDropdown = () => {
     setAnchorEl(null);
     setUnreadCount(0);
   };
+
+  if (role !== 'user') return null;
 
   return (
     <div>

@@ -168,8 +168,8 @@ const Company = () => {
           onChange={() => handleToggleStatus(params.row?._id, !params.row?.isActive)}
           inputProps={{ 'aria-label': 'toggle active/inactive' }}
           sx={{
-            width: 46,
-            height: 20,
+            width: 44,
+            height: 17,
             padding: 0,
             '& .MuiSwitch-switchBase': {
               padding: 0,
@@ -185,8 +185,8 @@ const Company = () => {
               },
             },
             '& .MuiSwitch-thumb': {
-              width: 18,
-              height: 18,
+              width: 16,
+              height: 16,
               borderRadius: '50%',
               backgroundColor: '#fff',
               boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)', 

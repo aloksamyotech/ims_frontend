@@ -56,10 +56,9 @@ const ViewCustomerPage = () => {
         const userId = getUserId();
         const response = await axios.get(`http://localhost:4200/customer/fetchById/${id}`);
         setCustomerData(response?.data);
-        const result = await fetchOrders();
+        const result = await fetchOrders({userId});
         const allOrders = result?.data;
-        const filteredOrders = allOrders.filter((order) => order.userId === userId);
-        setOrderDetails(filteredOrders);
+        setOrderDetails(allOrders);
       } catch (error) {
         toast.error('Error fetching customer data');
       }

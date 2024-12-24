@@ -57,12 +57,11 @@ const ViewSupplierPage = () => {
         const userId = getUserId();
         const response = await axios.get(`http://localhost:4200/supplier/fetchById/${id}`);
         setSupplierData(response?.data);
-        const result = await fetchPurchases();
+        const result = await fetchPurchases({userId});
         const allPurchases = result?.data;
-        const filteredPurchases = allPurchases.filter((purchase) => purchase.userId === userId);
-        setPurchaseDetails(filteredPurchases);
+        setPurchaseDetails(allPurchases);
       } catch (error) {
-        toast.error('Error fetching supplier data');
+        console.error('Error fetching supplier data');
       }
     };
     loadSupplier();

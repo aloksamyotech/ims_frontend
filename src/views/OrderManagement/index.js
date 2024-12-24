@@ -40,14 +40,13 @@ const Order = () => {
 
   const loadOrders = async () => {
     try {
-      const response = await fetchOrders();
-      const allOrders = response?.data;
       const userId = getUserId();
-      const filteredByUser = allOrders.filter((order) => order.userId === userId);
-      setOrderDetails(filteredByUser);
-      setFilteredOrders(filteredByUser);
+      const response = await fetchOrders({userId});
+      const allOrders = response?.data;
+      setOrderDetails(allOrders);
+      setFilteredOrders(allOrders);
     } catch (error) {
-      toast.error('Failed to fetch orders data');
+      console.error('Failed to fetch orders data');
     }
   };
 

@@ -12,9 +12,10 @@ import {
   IconCategory,
   IconBrandUnity,
   IconAccessible,
-  IconUserPlus
+  IconUserPlus,
 } from '@tabler/icons';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
 const icons = {
   IconHome,
@@ -31,7 +32,8 @@ const icons = {
   IconBrandUnity,
   IconAccessible,
   IconUserPlus,
-  TrendingDownIcon
+  TrendingDownIcon,
+  MonetizationOnIcon
 };
 import AdminDashboard from 'views/dashboard/Default';
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -66,7 +68,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '02',
+      id: '03',
       title: 'Low-Stocks',
       type: 'item',
       url: '/dashboard/product-report',
@@ -74,7 +76,15 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '03',
+      id: '04',
+      title: 'Financial Summary',
+      type: 'item',
+      url: '/dashboard/financial',
+      icon: icons.MonetizationOnIcon,
+      breadcrumbs: false
+    },
+    {
+      id: '05',
       title: 'Orders',
       type: 'item',
       url: '/dashboard/orders',
@@ -82,7 +92,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '04',
+      id: '06',
       title: 'Purchases',
       type: 'item',
       url: '/dashboard/purchases',
@@ -90,13 +100,13 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '05',
+      id: '07',
       title: 'Clients',
       type: 'collapse',
       icon: icons.IconUsers,
       children: [
         {
-          id: '06',
+          id: '08',
           title: 'Suppliers',
           type: 'item',
           url: '/dashboard/suppliers',
@@ -104,7 +114,7 @@ const dashboard = {
           breadcrumbs: false
         },
         {
-          id: '07',
+          id: '09',
           title: 'Customers',
           type: 'item',
           url: '/dashboard/customers',
@@ -114,7 +124,7 @@ const dashboard = {
       ]
     },
     {
-      id: '08',
+      id: '10',
       title: 'Category',
       type: 'item',
       url: '/dashboard/category',
@@ -122,7 +132,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '09',
+      id: '11',
       title: 'Reports',
       type: 'item',
       url: '/dashboard/reports',
@@ -130,7 +140,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '10',
+      id: '12',
       title: 'Subscription',
       type: 'item',
       url: '/dashboard/user-subscription',
@@ -138,7 +148,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '11',
+      id: '13',
       title: 'Profile',
       type: 'item',
       url: '/dashboard/profile',
@@ -185,7 +195,7 @@ const Admindashboard = {
       breadcrumbs: false
      },
      {
-      id: '11',
+      id: '04',
       title: 'Profile',
       type: 'item',
       url: '/dashboard/admin-profile',

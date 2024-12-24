@@ -66,7 +66,8 @@ const ProductReport = () => {
     const loadUsers = async () => {
       try {
         const response = await fetchUsers();
-        setUsers(response?.data || []);
+        const nonAdminUsers = response?.data.filter(user => user.role !== 'admin') || [];
+        setUsers(nonAdminUsers);
       } catch (error) {
         toast.error('Error fetching users');
       }
@@ -78,13 +79,11 @@ const ProductReport = () => {
     const loadReport = async () => {
       try {
         const response = await fetchPurchases();
-        const allPurchases = response?.data;
-        const filteredPurchaseByUser = allPurchases.filter((purchase) => purchase.userId === selectedUser);
+        const filteredPurchaseByUser = response?.data.filter((purchase) => purchase.userId === selectedUser);
         setPurchaseDetails(filteredPurchaseByUser);
 
         const result = await fetchOrders();
-        const allOrders = result?.data;
-        const filteredOrderByUser = allOrders.filter((order) => order.userId === selectedUser);
+        const filteredOrderByUser = result?.data.filter((order) => order.userId === selectedUser);
         setOrderDetails(filteredOrderByUser);
       } catch (error) {
         toast.error('Error fetching data');

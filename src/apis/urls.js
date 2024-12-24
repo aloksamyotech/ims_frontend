@@ -50,6 +50,7 @@ export const urls = {
     count: '/order/count/',
     totalamount: '/order/total-amount/',
     totalquantity: '/order/total-quantity/',
+
   },
   purchase: {
     add: '/purchase/save/',

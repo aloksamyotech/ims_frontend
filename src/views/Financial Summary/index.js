@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchLowStock, fetchQuantityAlert } from 'apis/api.js';
+import { fetchProducts } from 'apis/api.js';
 import {
   CardMedia,
   Box,
@@ -23,8 +23,8 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { toast } from 'react-toastify';
 import { Container } from '@mui/system';
 import { getUserId } from 'apis/constant.js';
@@ -38,8 +38,7 @@ const TabContentCard = styled(Card)(({ theme }) => ({
 
 const CompanyReport = () => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const [lowStockProducts, setLowStockProducts] = useState([]);
-  const [stockAlert, setStockAlert] = useState([]);
+  const [products, setProducts] = useState([]);
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -49,11 +48,8 @@ const CompanyReport = () => {
     const loadData = async () => {
       try {
         const userId = getUserId();
-        const response = await fetchLowStock({userId});
-        setLowStockProducts(response?.data?.data || []);
-        const result = await fetchQuantityAlert({userId});
-        const filteredStockAlert = result?.data?.data?.filter((product) => product.quantity !== 0) || [];
-        setStockAlert(filteredStockAlert);
+        const response = await fetchProducts({ userId });
+        setProducts(response?.data || []);
       } catch (error) {
         console.error('Failed to fetch data');
       }
@@ -74,26 +70,24 @@ const CompanyReport = () => {
           justifyContent: 'space-between'
         }}
       >
-        <Typography variant="h4">Stock Reports</Typography>
+        <Typography variant="h4">Pricing Info </Typography>
 
         <Breadcrumbs
           separator={<NavigateNextIcon fontSize="small" />}
           aria-label="breadcrumb"
           sx={{ display: 'flex', alignItems: 'center' }}
         >
-          <MuiLink component={Link} to="/dashboard/admin" color="inherit">
+          <MuiLink component={Link} to="/dashboard/financial" color="inherit">
             <HomeIcon sx={{ color: '#5e35b1' }} />
           </MuiLink>
-          <Typography color="text.primary">Low Stock</Typography>
+          <Typography color="text.primary">Financial Summary</Typography>
         </Breadcrumbs>
       </Box>
 
       <TabContentCard>
         <Tabs value={selectedTab} onChange={handleTabChange} aria-label="product report tabs">
           <Tab
-          icon={<WarningAmberIcon />}
-            iconPosition="start"
-            label="Low Stock"
+            label="Tax"
             sx={{
               fontSize: '14px',
               minWidth: 120,
@@ -103,9 +97,7 @@ const CompanyReport = () => {
             }}
           />
           <Tab
-          icon={<ErrorOutlineIcon />}
-            iconPosition="start"
-            label="Out of Stock"
+            label="Margin"
             sx={{
               fontSize: '14px',
               minWidth: 120,
@@ -123,21 +115,30 @@ const CompanyReport = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Created At</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Product No</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Category</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Quantity</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Created At</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Image</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Tax(%)</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {stockAlert.map((stock) => (
+                {products.map((stock) => (
                   <TableRow key={stock._id}>
                     <TableCell>{moment(stock.createdAt).format('DD-MM-YYYY')}</TableCell>
-                    <TableCell>{stock.product_no}</TableCell>
+                    <TableCell>
+                      <img
+                        src={
+                          stock.imageUrl ||
+                          'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
+                        }
+                        alt={stock.productnm}
+                        style={{ width: 30, height: 30, borderRadius: 8, objectFit: 'cover' }}
+                      />
+                    </TableCell>
                     <TableCell>{stock.productnm}</TableCell>
                     <TableCell>{stock.categoryName}</TableCell>
-                    <TableCell>{stock.quantity}</TableCell>
+                    <TableCell>{stock.tax}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -150,27 +151,44 @@ const CompanyReport = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Created At</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Product No</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Category</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Quantity</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Created At</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Image</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Margin(%)</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {lowStockProducts.map((product) => (
-                  <TableRow key={product._id}>
-                    <TableCell>{moment(product.createdAt).format('DD-MM-YYYY')}</TableCell>
-                    <TableCell>{product.product_no}</TableCell>
-                    <TableCell>{product.productnm}</TableCell>
-                    <TableCell>{product.categoryName}</TableCell>
-                    <TableCell>{product.quantity}</TableCell>
-                  </TableRow>
-                ))}
+                {products.map((product) => {
+                  const marginColor = product.margin >= 0 ? 'green' : 'red';
+                  const profitLossText = product.margin.toFixed(2);
+
+                  return (
+                    <TableRow key={product._id}>
+                      <TableCell>{moment(product.createdAt).format('DD-MM-YYYY')}</TableCell>
+                      <TableCell>
+                      <img
+                        src={
+                          product.imageUrl ||
+                          'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
+                        }
+                        alt={product.productnm}
+                        style={{ width: 30, height: 30, borderRadius: 8, objectFit: 'cover' }}
+                      />
+                    </TableCell>
+                      <TableCell>{product.productnm}</TableCell>
+                      <TableCell>{product.categoryName}</TableCell>
+                      <TableCell sx={{ color: marginColor }}>
+                        {product.margin >= 0 ? `+${profitLossText}%` : `${profitLossText}%`}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
         )}
+
       </TabContentCard>
     </Container>
   );

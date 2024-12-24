@@ -42,12 +42,11 @@ const Purchase = () => {
 
   const loadPurchase = async () => {
     try {
-      const response = await fetchPurchases();
-      const allPurchases = response?.data;
       const userId = getUserId();
-      const filteredByUser = allPurchases.filter((purchase) => purchase.userId === userId);
-      setPurchaseDetails(filteredByUser);
-      setFilteredPurchasers(filteredByUser);
+      const response = await fetchPurchases({userId});
+      const allPurchases = response?.data;
+      setPurchaseDetails(allPurchases);
+      setFilteredPurchasers(allPurchases);
     } catch (error) {
       toast.error('Failed to fetch purchase data');
     }

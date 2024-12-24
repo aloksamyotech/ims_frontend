@@ -14,6 +14,7 @@ import { gridSpacing } from 'store/constant';
 
 // assets
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
+import { getUserId } from 'apis/constant.js';
 
 // ==============================|| DASHBOARD DEFAULT - POPULAR CARD ||============================== //
 
@@ -36,12 +37,13 @@ const PopularCard = ({ isLoading }) => {
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const response = await fetchProducts();
+        const userId = getUserId();
+        const response = await fetchProducts({userId});
         setProducts(response?.data);
-        const result = await fetchLowStock();
+        const result = await fetchLowStock({userId});
         setLowStockProducts(result?.data.data);
       } catch (error) {
-        toast.error('Failed to fetch products');
+        console.error('Failed to fetch products');
       }
     };
     loadProducts();

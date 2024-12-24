@@ -59,14 +59,12 @@ const ProductReport = () => {
     const loadReport = async () => {
       try {
         const userId = getUserId();
-        const response = await fetchPurchases();
+        const response = await fetchPurchases({userId});
         const allPurchases = response?.data;
-        const filteredPurchaseByUser = allPurchases.filter((purchase) => purchase.userId === userId);
-        setPurchaseDetails(filteredPurchaseByUser);
-        const result = await fetchOrders();
+        setPurchaseDetails(allPurchases);
+        const result = await fetchOrders({userId});
         const allOrders = result?.data;
-        const filteredOrderByUser = allOrders.filter((order) => order.userId === userId);
-        setOrderDetails(filteredOrderByUser);
+        setOrderDetails(allOrders);
       } catch (error) {
         toast.error('Error fetching data');
       }

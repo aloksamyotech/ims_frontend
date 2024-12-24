@@ -18,24 +18,20 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = yup.object({
-    productnm: yup.string().max(20, 'Max 20 characters are allowed')
-    .required('Product name is required'),
-    buyingPrice: yup.number()
+    productnm: yup.string().max(20, 'Max 20 characters are allowed').required('Product name is required'),
+    buyingPrice: yup
+      .number()
       .required('Buying Price is required')
       .positive('Must be a positive number')
       .max(1000000, 'Price cannot exceed Rs.1000000'),
-    sellingPrice: yup.number()
+    sellingPrice: yup
+      .number()
       .required('Selling price is required')
       .positive('Must be a positive number')
       .max(1500000, 'Price cannot exceed Rs.1500000'),
-    tax: yup.number()
-      .max(50, 'Max 50% tax is allowed')
-      .required('Tax is required'),
-    margin: yup.number()
-      .max(10000, 'Max 10000 margin is allowed')
-      .required('Margin is required'),
-    notes: yup.string()
-      .max(400, 'Max 400 words are allowed'),
+    tax: yup.number().max(50, 'Max 50% tax is allowed').required('Tax is required'),
+    margin: yup.number().max(10000, 'Max 10000 margin is allowed').required('Margin is required'),
+    notes: yup.string().max(400, 'Max 400 words are allowed')
   });
 
   const formik = useFormik({
@@ -46,7 +42,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
       quantity: product?.quantity || '',
       tax: product?.tax || '',
       margin: product?.margin || '',
-      notes: product?.notes || '',
+      notes: product?.notes || ''
     },
     validationSchema,
     enableReinitialize: true,
@@ -59,7 +55,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
         }
 
         const response = await updateProduct({ ...values, _id: product._id });
-        onProductUpdated(response.data);
+        onProductUpdated(response?.data);
         toast.success('Product updated successfully');
         handleClose();
       } catch (error) {
@@ -67,12 +63,12 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
       } finally {
         setIsSubmitting(false);
       }
-    },
+    }
   });
 
   useEffect(() => {
     if (!open) {
-      formik.resetForm(); 
+      formik.resetForm();
     }
   }, [open]);
 
@@ -85,16 +81,18 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
 
       <DialogContent dividers>
         <form onSubmit={formik.handleSubmit}>
-          <Typography style={{ marginBottom: '15px' }} variant="h4">Product Details</Typography>
+          <Typography style={{ marginBottom: '15px' }} variant="h4">
+            Product Details
+          </Typography>
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={6}>
-            <FormLabel>Product Name</FormLabel>
+              <FormLabel>Product Name</FormLabel>
               <TextField
                 required
                 id="productnm"
                 name="productnm"
                 fullWidth
-                size='small'
+                size="small"
                 value={formik.values.productnm}
                 onChange={formik.handleChange}
                 error={formik.touched.productnm && Boolean(formik.errors.productnm)}
@@ -102,13 +100,13 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
               />
             </Grid>
             <Grid item xs={6}>
-            <FormLabel>Buying Price</FormLabel>
+              <FormLabel>Buying Price</FormLabel>
               <TextField
                 required
                 id="buyingPrice"
                 name="buyingPrice"
                 type="number"
-                size='small'
+                size="small"
                 fullWidth
                 value={formik.values.buyingPrice}
                 onChange={formik.handleChange}
@@ -123,7 +121,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
                 id="sellingPrice"
                 name="sellingPrice"
                 type="number"
-                size='small'
+                size="small"
                 fullWidth
                 value={formik.values.sellingPrice}
                 onChange={formik.handleChange}
@@ -132,13 +130,13 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
               />
             </Grid>
             <Grid item xs={6}>
-            <FormLabel>Tax(%)</FormLabel>
+              <FormLabel>Tax(%)</FormLabel>
               <TextField
                 required
                 id="tax"
                 name="tax"
                 type="number"
-                size='small'
+                size="small"
                 fullWidth
                 value={formik.values.tax}
                 onChange={formik.handleChange}
@@ -147,12 +145,12 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
               />
             </Grid>
             <Grid item xs={6}>
-            <FormLabel>Margin(%)</FormLabel>
+              <FormLabel>Margin(%)</FormLabel>
               <TextField
                 id="margin"
                 name="margin"
                 type="number"
-                size='small'
+                size="small"
                 fullWidth
                 value={formik.values.margin}
                 onChange={formik.handleChange}
@@ -161,11 +159,11 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
               />
             </Grid>
             <Grid item xs={12}>
-            <FormLabel>Notes</FormLabel>
+              <FormLabel>Notes</FormLabel>
               <TextField
                 id="notes"
                 name="notes"
-                size='small'
+                size="small"
                 fullWidth
                 multiline
                 rows={2}
@@ -179,13 +177,7 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
         </form>
       </DialogContent>
       <DialogActions>
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          variant="contained"
-          color="secondary"
-          onClick={formik.handleSubmit}
-        >
+        <Button type="submit" disabled={isSubmitting} variant="contained" color="secondary" onClick={formik.handleSubmit}>
           {isSubmitting ? 'Submitting...' : 'Update'}
         </Button>
         <Button

@@ -44,12 +44,13 @@ const TotalGrowthBarChart = ({ isLoading }) => {
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
-        const amount = await totalSalesAmount(); 
+        const userId = getUserId();
+        const amount = await totalSalesAmount({userId}); 
         if (amount.data.success && Array.isArray(amount.data.data) && amount.data.data.length === 12) {
           setSalesData(amount.data.data); 
         }
 
-        const quantity = await totalSoldQuantity();
+        const quantity = await totalSoldQuantity({userId});
         if (quantity.data.success && Array.isArray(quantity.data.data) && quantity.data.data.length === 12) {
           setSoldQuantityData(quantity.data.data); 
         }

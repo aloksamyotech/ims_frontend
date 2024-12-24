@@ -401,11 +401,7 @@ const ViewProductPage = () => {
                   style={{ borderRadius: '12px', objectFit: 'fill', maxWidth: '250px' }}
                 />
               ) : (
-                <img
-                src="https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load"
-                alt="Inventory"
-                style={{ borderRadius: '12px', objectFit: 'fill', maxWidth: '250px' }}
-              />
+               <Typography>No image available</Typography>
               )}
             </Box>
 
