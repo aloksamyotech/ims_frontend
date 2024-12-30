@@ -32,6 +32,7 @@ const AdminProfile = Loadable(lazy(() => import('views/AdminComponent/AdminProfi
 const ViewCompany = Loadable(lazy(() => import('views/AdminComponent/ViewCompany')));
 const LowStock = Loadable(lazy(()=> import('views/LowStock')));
 const FinancialSummary = Loadable(lazy(() => import('views/Financial Summary')));
+const Statistics = Loadable(lazy(() => import('views/Statistics')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 const role = (localStorage.getItem('role'));
@@ -50,6 +51,10 @@ const MainRoutes = {
         {
           path: 'default',
           element: <DashboardDefault />
+        },
+        {
+          path: 'statistics',
+          element: <Statistics />
         },
         {
           path: 'users',

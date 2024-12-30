@@ -23,8 +23,6 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { toast } from 'react-toastify';
 import { Container } from '@mui/system';
 import { getUserId } from 'apis/constant.js';
@@ -42,6 +40,13 @@ const CompanyReport = () => {
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
+  };
+
+  const calculateProfitLoss = (sellingPrice, avgCost) => {
+    const profitLoss = (sellingPrice - avgCost) / 100;
+    const profit = profitLoss > 0 ? profitLoss : 0;
+    const loss = profitLoss < 0 ? Math.abs(profitLoss) : 0;
+    return { profitLoss, profit, loss };
   };
 
   useEffect(() => {
@@ -106,6 +111,16 @@ const CompanyReport = () => {
               color: selectedTab === 1 ? '#1976d2' : '#757070'
             }}
           />
+          <Tab
+            label="Profit/Loss"
+            sx={{
+              fontSize: '14px',
+              minWidth: 120,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              color: selectedTab === 2 ? '#1976d2' : '#757070'
+            }}
+          />
         </Tabs>
 
         <Divider sx={{ opacity: 1 }} />
@@ -167,19 +182,19 @@ const CompanyReport = () => {
                     <TableRow key={product._id}>
                       <TableCell>{moment(product.createdAt).format('DD-MM-YYYY')}</TableCell>
                       <TableCell>
-                      <img
-                        src={
-                          product.imageUrl ||
-                          'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
-                        }
-                        alt={product.productnm}
-                        style={{ width: 30, height: 30, borderRadius: 8, objectFit: 'cover' }}
-                      />
-                    </TableCell>
+                        <img
+                          src={
+                            product.imageUrl ||
+                            'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
+                          }
+                          alt={product.productnm}
+                          style={{ width: 30, height: 30, borderRadius: 8, objectFit: 'cover' }}
+                        />
+                      </TableCell>
                       <TableCell>{product.productnm}</TableCell>
                       <TableCell>{product.categoryName}</TableCell>
                       <TableCell sx={{ color: marginColor }}>
-                        {product.margin >= 0 ? `+${profitLossText}%` : `${profitLossText}%`}
+                        {product.margin >= 0 ? `+${profitLossText}` : `${profitLossText}`}
                       </TableCell>
                     </TableRow>
                   );
@@ -189,6 +204,48 @@ const CompanyReport = () => {
           </TableContainer>
         )}
 
+        {selectedTab === 2 && (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Created At</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Image</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Profit/Loss (%)</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {products.map((product) => {
+                  const { profitLoss, profit, loss } = calculateProfitLoss(product.sellingPrice, product.avgCost);
+                  const profitLossText = profitLoss.toFixed(2);
+                  const profitColor = profitLoss >= 0 ? 'green' : 'red';
+                  return (
+                    <TableRow key={product._id}>
+                      <TableCell>{moment(product.createdAt).format('DD-MM-YYYY')}</TableCell>
+                      <TableCell>
+                        <img
+                          src={
+                            product.imageUrl ||
+                            'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
+                          }
+                          alt={product.productnm}
+                          style={{ width: 30, height: 30, borderRadius: 8, objectFit: 'cover' }}
+                        />
+                      </TableCell>
+                      <TableCell>{product.productnm}</TableCell>
+                      <TableCell>{product.categoryName}</TableCell>
+                      <TableCell sx={{ color: profitLoss >= 0 ? 'green' : 'red' }}>
+                        {profitLoss >= 0 ? `+${profitLossText}` : `-${Math.abs(profitLossText)}`}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </TabContentCard>
     </Container>
   );

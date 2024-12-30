@@ -14,6 +14,9 @@ import {
   IconAccessible,
   IconUserPlus,
 } from '@tabler/icons';
+import InsightsIcon from '@mui/icons-material/Insights';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 
@@ -33,7 +36,9 @@ const icons = {
   IconAccessible,
   IconUserPlus,
   TrendingDownIcon,
-  MonetizationOnIcon
+  MonetizationOnIcon,
+  InsightsIcon,
+  AssessmentIcon
 };
 import AdminDashboard from 'views/dashboard/Default';
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -59,6 +64,14 @@ const dashboard = {
     //   icon: icons.IconAccessible,
     //   breadcrumbs: false
     // },
+      {
+      id: '01',
+      title: 'Statistics',
+      type: 'item',
+      url: '/dashboard/statistics',
+      icon: icons.AssessmentIcon,
+      breadcrumbs: false
+    },
     {
       id: '02',
       title: 'Products',

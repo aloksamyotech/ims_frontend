@@ -169,6 +169,10 @@ export const totalSoldQuantity = async (queryParams = {}) => {
   return fetchApi(`${urls.order.totalquantity}?${queryString}`);
 };
 
+export const getTotalSales = async () => {
+  return fetchApi(urls.order.totalsales);
+};
+
 // purchase
 export const deletePurchase = async (_id) => {
   return deleteApi(urls.purchase.delete, _id);
