@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import { Box, Typography, CircularProgress, Grid, Paper, TextField, Button } from '@mui/material';
+import { Box, Typography, CircularProgress, Grid, Paper, Divider, Button } from '@mui/material';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { getUserId } from 'apis/constant';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import StoreIcon from '@mui/icons-material/Store';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
 
 const SoldQuantityDisplay = () => {
   const [soldQuantity, setSoldQuantity] = useState(null);
   const [soldSales, setSoldSales] = useState(null);
-  const [orderCount , setOrdersCount] = useState(null);
-  const [purchaseCount , setPurchasesCount] = useState(null);
+  const [orderCount, setOrdersCount] = useState(null);
+  const [purchaseCount, setPurchasesCount] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
@@ -55,31 +58,30 @@ const SoldQuantityDisplay = () => {
         }
 
         const countOrder = await axios.get('http://localhost:4200/order/count', {
-            params: {
-              fromDate: formattedFromDate,
-              toDate: formattedToDate,
-              userId
-            }
-          });
-          console.log(countOrder.data.count);
-          if (countOrder.data.success) {
-            setOrdersCount(countOrder.data.count);
-          } else {
-            setOrdersCount(0);
+          params: {
+            fromDate: formattedFromDate,
+            toDate: formattedToDate,
+            userId
           }
+        });
+        if (countOrder.data.success) {
+          setOrdersCount(countOrder.data.count);
+        } else {
+          setOrdersCount(0);
+        }
 
-          const countPurchase = await axios.get('http://localhost:4200/purchase/count', {
-            params: {
-              fromDate: formattedFromDate,
-              toDate: formattedToDate,
-              userId
-            }
-          });
-          if (countPurchase.data.success) {
-            setPurchasesCount(countPurchase.data.count);
-          } else {
-            setPurchasesCount(0);
+        const countPurchase = await axios.get('http://localhost:4200/purchase/count', {
+          params: {
+            fromDate: formattedFromDate,
+            toDate: formattedToDate,
+            userId
           }
+        });
+        if (countPurchase.data.success) {
+          setPurchasesCount(countPurchase.data.count);
+        } else {
+          setPurchasesCount(0);
+        }
       } catch (err) {
         setError('Error fetching sold data');
       } finally {
@@ -92,39 +94,104 @@ const SoldQuantityDisplay = () => {
 
   return (
     <Box>
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={4}>
-          <Typography variant="subtitle1">From Date</Typography>
-          <DatePicker
-            selected={fromDate}
-            onChange={(date) => setFromDate(date)}
-            dateFormat="yyyy/MM/dd"
-            placeholderText="Select From Date"
-            isClearable
-            maxDate={toDate}
-          />
-        </Grid>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          backgroundColor: '#fff',
+          borderRadius: 2,
+          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+          padding: 2
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            width: '100%',
+            maxWidth: '300px',
+            border: '1px solid #673ab7',
+            borderRadius: 2,
+            padding: '4px 8px'
+          }}
+        >
+          <CalendarMonthIcon sx={{ color: '#673ab7' }} />
+          <Box sx={{ flexShrink: 0 }}>
+            <span>From Date</span>
+          </Box>
 
-        <Grid item xs={12} sm={4}>
-          <Typography variant="subtitle1">To Date</Typography>
-          <DatePicker
-            selected={toDate}
-            onChange={(date) => setToDate(date)}
-            dateFormat="yyyy/MM/dd"
-            placeholderText="Select To Date"
-            isClearable
-            minDate={fromDate}
-          />
-        </Grid>
+          <Box sx={{ flexGrow: 1, mx: 2 }}>
+            <DatePicker
+              selected={fromDate}
+              onChange={(date) => setFromDate(date)}
+              dateFormat="yyyy/MM/dd"
+              placeholderText="Select Date"
+              isClearable
+              maxDate={toDate}
+              style={{
+                border: 'none',
+                outline: 'none',
+                width: '100%',
+                fontSize: '14px'
+              }}
+            />
+          </Box>
+        </Box>
 
-        <Grid item xs={12} sm={4} sx={{ display: 'flex', alignItems: 'flex-end' }}>
-          <Button variant="contained" color="primary" onClick={handleApplyClick} fullWidth>
-            Apply
-          </Button>
-        </Grid>
-      </Grid>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            width: '100%',
+            maxWidth: '280px',
+            border: '1px solid #673ab7',
+            borderRadius: 2,
+            padding: '4px 8px'
+          }}
+        >
+          <CalendarMonthIcon sx={{ color: '#673ab7' }} />
+          <Box sx={{ flexShrink: 0 }}>
+            <span>To Date</span>
+          </Box>
 
-      {loading && <CircularProgress sx={{ display: 'block', margin: 'auto', mt: 3 }} />}
+          <Box sx={{ flexGrow: 1, mx: 2 }}>
+            <DatePicker
+              selected={toDate}
+              onChange={(date) => setToDate(date)}
+              dateFormat="yyyy/MM/dd"
+              placeholderText="Select Date"
+              isClearable
+              minDate={fromDate}
+              style={{
+                border: 'none',
+                outline: 'none',
+                width: '100%',
+                fontSize: '14px'
+              }}
+            />
+          </Box>
+        </Box>
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleApplyClick}
+          sx={{
+            px: 2,
+            py: 0.7,
+            fontWeight: 600,
+            borderRadius: 2,
+            width: '100%',
+            maxWidth: '250px'
+          }}
+        >
+          Apply Filter
+        </Button>
+      </Box>
+
+      {loading && <CircularProgress sx={{ display: 'block', margin: 'auto', mt: 1 }} />}
 
       {error && (
         <Typography variant="body1" color="error" sx={{ textAlign: 'center' }}>
@@ -132,12 +199,12 @@ const SoldQuantityDisplay = () => {
         </Typography>
       )}
 
-      <Box sx={{ padding: '5px', mt: 3 }}>
+      <Box sx={{ mt: 2.5 }}>
         <Grid container spacing={2}>
           {soldQuantity !== null && !loading && !error && (
-            <Grid item xs={12} sm={6} md={6}>
-              <Paper sx={{ p: 2, textAlign: 'center', boxShadow: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <TrendingUpIcon sx={{ mr: 2, fontSize: 40, color: 'primary.main' }} />
+            <Grid item xs={6} sm={3} md={3}>
+              <Paper sx={{ p: 2, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Inventory2Icon sx={{ mr: 2, fontSize: 40, color: 'primary.main' }} />
                 <div>
                   <Typography variant="h6">Total Sold Quantity</Typography>
                   <Typography variant="h4">{soldQuantity}</Typography>
@@ -147,9 +214,9 @@ const SoldQuantityDisplay = () => {
           )}
 
           {soldSales !== null && !loading && !error && (
-            <Grid item xs={12} sm={6} md={6}>
+            <Grid item xs={6} sm={3} md={3}>
               <Paper sx={{ p: 2, textAlign: 'center', boxShadow: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ShoppingCartIcon sx={{ mr: 2, fontSize: 40, color: 'secondary.main' }} />
+                <TrendingUpIcon sx={{ mr: 2, fontSize: 40, color: 'secondary.main' }} />
                 <div>
                   <Typography variant="h6">Sold Amount</Typography>
                   <Typography variant="h4">{soldSales}</Typography>
@@ -159,9 +226,9 @@ const SoldQuantityDisplay = () => {
           )}
 
           {orderCount !== null && !loading && !error && (
-            <Grid item xs={12} sm={6} md={6}>
-              <Paper sx={{ p: 2, textAlign: 'center', boxShadow: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ShoppingCartIcon sx={{ mr: 2, fontSize: 40, color: 'secondary.main' }} />
+            <Grid item xs={6} sm={3} md={3}>
+              <Paper sx={{ p: 2, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ShoppingCartIcon sx={{ mr: 2, fontSize: 40, color: '#4caf50' }} />
                 <div>
                   <Typography variant="h6">Total Orders</Typography>
                   <Typography variant="h4">{orderCount}</Typography>
@@ -170,10 +237,10 @@ const SoldQuantityDisplay = () => {
             </Grid>
           )}
 
-{purchaseCount !== null && !loading && !error && (
-            <Grid item xs={12} sm={6} md={6}>
-              <Paper sx={{ p: 2, textAlign: 'center', boxShadow: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ShoppingCartIcon sx={{ mr: 2, fontSize: 40, color: 'secondary.main' }} />
+          {purchaseCount !== null && !loading && !error && (
+            <Grid item xs={6} sm={3} md={3}>
+              <Paper sx={{ p: 2, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <StoreIcon sx={{ mr: 2, fontSize: 40, color: '#ffa726' }} />
                 <div>
                   <Typography variant="h6">Total Purchases</Typography>
                   <Typography variant="h4">{purchaseCount}</Typography>
