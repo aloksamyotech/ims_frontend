@@ -16,6 +16,7 @@ import {
   Breadcrumbs,
   Link as MuiLink
 } from '@mui/material';
+import ReactPaginate from 'react-paginate';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import AddIcon from '@mui/icons-material/Add';
 import { Link, useNavigate } from 'react-router-dom';
@@ -30,6 +31,14 @@ import { deleteProduct, fetchProducts } from 'apis/api.js';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
+import BulkUpload from './bulkproduct.js';
+
+const items = Array.from({ length: 50 }, (_, index) => ({
+  id: index + 1,
+  name: `Item ${index + 1}`
+}));
+
+const ITEMS_PER_PAGE = 8;
 
 const Product = () => {
   const navigate = useNavigate();
@@ -41,6 +50,11 @@ const Product = () => {
   const [currencySymbol, setCurrencySymbol] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [popoverState, setPopoverState] = useState({ anchorEl: null, productId: null });
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const handlePageClick = (data) => {
+    setCurrentPage(data.selected);
+  };
 
   const loadProducts = async () => {
     try {
@@ -123,6 +137,7 @@ const Product = () => {
   };
 
   const filteredProducts = products.filter((product) => product.productnm.toLowerCase().includes(searchTerm));
+  const paginatedProducts = filteredProducts.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE);
 
   const handleProductUpdated = (updatedProduct) => {
     setProducts((prev) => prev.map((prod) => (prod._id === updatedProduct._id ? updatedProduct : prod)));
@@ -189,33 +204,37 @@ const Product = () => {
               <TextField value={searchTerm} onChange={handleSearchChange} placeholder="Search..." variant="standard" fullWidth />
             </Box>
 
-            <Tooltip title="Add Product" arrow>
-              <IconButton
-                onClick={handleOpenAdd}
-                sx={{
-                  backgroundColor: '#1e88e5',
-                  color: '#fff',
-                  width: '35px',
-                  height: '35px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  boxShadow: 3,
-                  justifyContent: 'center',
-                  borderRadius: '50%',
-                  '&:hover': {
-                    backgroundColor: '#1565c0',
-                    color: '#ffffff'
-                  }
-                }}
-              >
-                <AddIcon />
-              </IconButton>
-            </Tooltip>
+            <Stack direction="row" spacing={2} alignItems="center">
+              <BulkUpload />
+
+              <Tooltip title="Add Product" arrow>
+                <IconButton
+                  onClick={handleOpenAdd}
+                  sx={{
+                    backgroundColor: '#1e88e5',
+                    color: '#fff',
+                    width: '35px',
+                    height: '35px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    boxShadow: 3,
+                    justifyContent: 'center',
+                    borderRadius: '50%',
+                    '&:hover': {
+                      backgroundColor: '#1565c0',
+                      color: '#ffffff'
+                    }
+                  }}
+                >
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+            </Stack>
           </Box>
 
           <Box sx={{ padding: '8px 20px' }}>
             <Grid container spacing={3}>
-              {filteredProducts.map((product) => (
+              {paginatedProducts.map((product) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
                   <Card
                     sx={{
@@ -355,6 +374,58 @@ const Product = () => {
               ))}
             </Grid>
           </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              m: 2
+            }}
+          >
+            <ReactPaginate
+              previousLabel="<"
+              nextLabel=">"
+              pageCount={Math.ceil(filteredProducts.length / ITEMS_PER_PAGE)}
+              onPageChange={handlePageClick}
+              containerClassName="pagination"
+              activeClassName="active"
+              previousClassName="prev-button"
+              nextClassName="next-button"
+            />
+          </Box>
+
+<style>
+   {`
+  .pagination {
+    display: flex;
+    list-style: none;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+  }
+  .pagination li {
+    display: inline-block;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+  .pagination li:hover {
+    background-color: #f0f0f0;
+  }
+  .pagination .active {
+    background-color: #5e35b1;
+    color: #fff;
+    border-color: #5e35b1;
+  }
+  .prev-button,
+  .next-button {
+    font-weight: bold;
+    color: #5e35b1;
+  }
+`   }
+  </style>
         </Card>
       </Container>
     </>

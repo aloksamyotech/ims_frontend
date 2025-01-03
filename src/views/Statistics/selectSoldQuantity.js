@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { Box, Typography, CircularProgress, Grid, Paper, Divider, Button } from '@mui/material';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -9,16 +9,44 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import StoreIcon from '@mui/icons-material/Store';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
+import { useTheme, styled } from '@mui/material/styles';
+import { fetchCurrencySymbol } from 'apis/constant.js'; 
+
+const CategoryBox = styled(Box)(({ theme, borderColor }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexDirection: 'column',
+  padding: theme.spacing(3),
+  borderRadius: 10,
+  backgroundColor: '#fff',
+  height: '100%',
+  textAlign: 'center',
+  color: theme.palette.text.primary,
+  border: `2px solid ${borderColor || theme.palette.primary.main}`,
+}));
+
 
 const SoldQuantityDisplay = () => {
   const [soldQuantity, setSoldQuantity] = useState(null);
   const [soldSales, setSoldSales] = useState(null);
   const [orderCount, setOrdersCount] = useState(null);
   const [purchaseCount, setPurchasesCount] = useState(null);
+  const [topCategories, setTopCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [error, setError] = useState(null);
+  const [currencySymbol, setCurrencySymbol] = useState('');
+
+   useEffect(() => {
+      const getCurrency = async () => {
+        const symbol = await fetchCurrencySymbol();
+        setCurrencySymbol(symbol);
+      };
+      getCurrency();
+    }, []);
+  
 
   const handleApplyClick = async () => {
     if (fromDate && toDate) {
@@ -81,6 +109,19 @@ const SoldQuantityDisplay = () => {
           setPurchasesCount(countPurchase.data.count);
         } else {
           setPurchasesCount(0);
+        }
+
+        const topCategory = await axios.get('http://localhost:4200/order/total-category', {
+          params: {
+            fromDate: formattedFromDate,
+            toDate: formattedToDate,
+            userId
+          }
+        });
+        if (topCategory?.data?.data) {
+          setTopCategories(topCategory.data.data);
+        } else {
+          setTopCategories([]);
         }
       } catch (err) {
         setError('Error fetching sold data');
@@ -206,7 +247,7 @@ const SoldQuantityDisplay = () => {
               <Paper sx={{ p: 2, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Inventory2Icon sx={{ mr: 2, fontSize: 40, color: 'primary.main' }} />
                 <div>
-                  <Typography variant="h6">Total Sold Quantity</Typography>
+                  <Typography variant="h6">Sold Quantity</Typography>
                   <Typography variant="h4">{soldQuantity}</Typography>
                 </div>
               </Paper>
@@ -218,8 +259,8 @@ const SoldQuantityDisplay = () => {
               <Paper sx={{ p: 2, textAlign: 'center', boxShadow: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <TrendingUpIcon sx={{ mr: 2, fontSize: 40, color: 'secondary.main' }} />
                 <div>
-                  <Typography variant="h6">Sold Amount</Typography>
-                  <Typography variant="h4">{soldSales}</Typography>
+                  <Typography variant="h6">Sales Amount</Typography>
+                  <Typography variant="h4">{currencySymbol} {soldSales}</Typography>
                 </div>
               </Paper>
             </Grid>
@@ -230,7 +271,7 @@ const SoldQuantityDisplay = () => {
               <Paper sx={{ p: 2, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ShoppingCartIcon sx={{ mr: 2, fontSize: 40, color: '#4caf50' }} />
                 <div>
-                  <Typography variant="h6">Total Orders</Typography>
+                  <Typography variant="h6">Orders</Typography>
                   <Typography variant="h4">{orderCount}</Typography>
                 </div>
               </Paper>
@@ -242,12 +283,29 @@ const SoldQuantityDisplay = () => {
               <Paper sx={{ p: 2, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <StoreIcon sx={{ mr: 2, fontSize: 40, color: '#ffa726' }} />
                 <div>
-                  <Typography variant="h6">Total Purchases</Typography>
+                  <Typography variant="h6">Purchases </Typography>
                   <Typography variant="h4">{purchaseCount}</Typography>
                 </div>
               </Paper>
             </Grid>
           )}
+
+          <Grid container spacing={2} sx={{ mt: 1, pl: 1 }}>
+            {topCategories &&
+              topCategories.length > 0 &&
+              topCategories.slice(0, 3).map((category, index) => (
+                <Grid item xs={12} sm={4} key={index}>
+                   <CategoryBox borderColor={index === 0 ? '#1e88e5' : index === 1 ? '#6034a7' : 'green'}>
+                    <Typography variant="h5" sx={{ fontWeight: 600, textTransform: 'uppercase' }}>
+                      {category.category}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'gray' }}>
+                      Total Quantity: {category.totalQuantity}
+                    </Typography>
+                  </CategoryBox>
+                </Grid>
+              ))}
+          </Grid>
         </Grid>
       </Box>
     </Box>

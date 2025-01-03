@@ -26,6 +26,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { toast } from 'react-toastify';
 import { Container } from '@mui/system';
 import { getUserId } from 'apis/constant.js';
+import axios from 'axios';
 
 const TabContentCard = styled(Card)(({ theme }) => ({
   boxShadow: theme.shadows[3],
@@ -37,16 +38,10 @@ const TabContentCard = styled(Card)(({ theme }) => ({
 const CompanyReport = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [products, setProducts] = useState([]);
+  const [profitLoss, setProfitLoss] = useState({});
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
-  };
-
-  const calculateProfitLoss = (sellingPrice, avgCost) => {
-    const profitLoss = (sellingPrice - avgCost) / 100;
-    const profit = profitLoss > 0 ? profitLoss : 0;
-    const loss = profitLoss < 0 ? Math.abs(profitLoss) : 0;
-    return { profitLoss, profit, loss };
   };
 
   useEffect(() => {
@@ -55,6 +50,13 @@ const CompanyReport = () => {
         const userId = getUserId();
         const response = await fetchProducts({ userId });
         setProducts(response?.data || []);
+
+        const result = await axios.get(`http://localhost:4200/order/total-profit`, {
+          params: {
+            userId
+          }
+        });
+        setProfitLoss(result?.data?.data || {});
       } catch (error) {
         console.error('Failed to fetch data');
       }
@@ -193,9 +195,7 @@ const CompanyReport = () => {
                       </TableCell>
                       <TableCell>{product.productnm}</TableCell>
                       <TableCell>{product.categoryName}</TableCell>
-                      <TableCell sx={{ color: marginColor }}>
-                        {product.margin >= 0 ? `+${profitLossText}` : `${profitLossText}`}
-                      </TableCell>
+                      <TableCell sx={{ color: marginColor }}>{product.margin >= 0 ? `+${profitLossText}` : `${profitLossText}`}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -209,36 +209,23 @@ const CompanyReport = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Created At</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Image</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Profit/Loss (%)</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Sold Quantity</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Sold Amount</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Profit/Loss</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {products.map((product) => {
-                  const { profitLoss, profit, loss } = calculateProfitLoss(product.sellingPrice, product.avgCost);
-                  const profitLossText = profitLoss.toFixed(2);
-                  const profitColor = profitLoss >= 0 ? 'green' : 'red';
+                {Object.values(profitLoss).map((product) => {
+                  const profitLossText =
+                    product.totalProfitOrLoss >= 0 ? `+${product.totalProfitOrLoss.toFixed(2)}` : `${product.totalProfitOrLoss.toFixed(2)}`;
+
                   return (
-                    <TableRow key={product._id}>
-                      <TableCell>{moment(product.createdAt).format('DD-MM-YYYY')}</TableCell>
-                      <TableCell>
-                        <img
-                          src={
-                            product.imageUrl ||
-                            'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
-                          }
-                          alt={product.productnm}
-                          style={{ width: 30, height: 30, borderRadius: 8, objectFit: 'cover' }}
-                        />
-                      </TableCell>
-                      <TableCell>{product.productnm}</TableCell>
-                      <TableCell>{product.categoryName}</TableCell>
-                      <TableCell sx={{ color: profitLoss >= 0 ? 'green' : 'red' }}>
-                        {profitLoss >= 0 ? `+${profitLossText}` : `-${Math.abs(profitLossText)}`}
-                      </TableCell>
+                    <TableRow key={product.productName}>
+                      <TableCell>{product.productName}</TableCell>
+                      <TableCell>{product.soldQuantity}</TableCell>
+                      <TableCell>{product.soldAmount}</TableCell>
+                      <TableCell>{profitLossText}</TableCell>
                     </TableRow>
                   );
                 })}

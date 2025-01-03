@@ -5,6 +5,7 @@ import { Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 // project imports
+import SoldQuantityDisplay from './soldQuantity';
 import EarningCard from './EarningCard';
 import EarningCard1 from './EarningCard1';
 import PopularCard from './PopularCard';
@@ -47,6 +48,17 @@ const Dashboard = () => {
           </Grid>
         </Grid>
       </Grid>
+
+      <Grid container spacing={gridSpacing} sx={{ marginTop: '5px' }}>
+        <Grid item xs={12}>
+          <Grid container spacing={gridSpacing}>
+            <Grid item xs={12}>
+              <SoldQuantityDisplay isLoading={isLoading} />
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+      
       <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
           <Grid item xs={12} md={8}>

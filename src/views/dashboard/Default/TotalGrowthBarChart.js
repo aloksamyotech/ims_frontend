@@ -9,8 +9,8 @@ import SkeletonTotalGrowthBarChart from 'ui-component/cards/Skeleton/TotalGrowth
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import { totalSalesAmount, totalSoldQuantity } from 'apis/api.js';
-import getChartData from './chart-data/total-growth-bar-chart'; 
-import { fetchCurrencySymbol , getUserId } from 'apis/constant.js'; 
+import getChartData from './chart-data/total-growth-bar-chart';
+import { fetchCurrencySymbol, getUserId } from 'apis/constant.js';
 
 const status = [
   {
@@ -20,11 +20,12 @@ const status = [
   {
     value: 'sold_quantity',
     label: 'Sold Quantity'
-  },
+  }
 ];
 
 const TotalGrowthBarChart = ({ isLoading }) => {
   const [value, setValue] = useState('sales_amount');
+  const [year, setYear] = useState(new Date().getFullYear());
   const theme = useTheme();
   const [salesData, setSalesData] = useState([]);
   const [soldQuantities, setSoldQuantityData] = useState([]);
@@ -45,14 +46,14 @@ const TotalGrowthBarChart = ({ isLoading }) => {
     const fetchSalesData = async () => {
       try {
         const userId = getUserId();
-        const amount = await totalSalesAmount({userId}); 
+        const amount = await totalSalesAmount({ userId, year });
         if (amount.data.success && Array.isArray(amount.data.data) && amount.data.data.length === 12) {
-          setSalesData(amount.data.data); 
+          setSalesData(amount.data.data);
         }
 
-        const quantity = await totalSoldQuantity({userId});
+        const quantity = await totalSoldQuantity({ userId, year });
         if (quantity.data.success && Array.isArray(quantity.data.data) && quantity.data.data.length === 12) {
-          setSoldQuantityData(quantity.data.data); 
+          setSoldQuantityData(quantity.data.data);
         }
       } catch (error) {
         console.error('Error fetching sales data:', error);
@@ -60,24 +61,40 @@ const TotalGrowthBarChart = ({ isLoading }) => {
     };
 
     fetchSalesData();
-  }, []);
+  }, [year]);
 
   useEffect(() => {
     const getCurrency = async () => {
       const symbol = await fetchCurrencySymbol();
-      setCurrencySymbol(symbol);  
+      setCurrencySymbol(symbol);
     };
     getCurrency();
   }, []);
 
   useEffect(() => {
-    const newChartData = getChartData(salesData, soldQuantities, value , currencySymbol);
+    const newChartData = getChartData(salesData, soldQuantities, value, currencySymbol);
 
     if (!isLoading && (salesData.length > 0 || soldQuantities.length > 0)) {
       ApexCharts.exec('bar-chart', 'updateOptions', newChartData.options);
       ApexCharts.exec('bar-chart', 'updateSeries', newChartData.series);
     }
-  }, [navType, primary200, primaryDark, secondaryMain, secondaryLight, primary, grey200, isLoading, grey500, salesData, soldQuantities, value]);
+  }, [
+    navType,
+    primary200,
+    primaryDark,
+    secondaryMain,
+    secondaryLight,
+    primary,
+    grey200,
+    isLoading,
+    grey500,
+    salesData,
+    soldQuantities,
+    value,
+    year
+  ]);
+
+  const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
 
   return (
     <>
@@ -89,34 +106,38 @@ const TotalGrowthBarChart = ({ isLoading }) => {
             <Grid item xs={12}>
               <Grid container alignItems="center" justifyContent="space-between">
                 <Grid item>
-                  <Grid container direction="column" spacing={1}>
-                    <Grid item>
-                      <Typography variant="h4">Sales Report</Typography>
-                    </Grid>
-                  </Grid>
+                  <Typography variant="h4">Sales Report</Typography>
                 </Grid>
                 <Grid item>
-                  <TextField
-                    id="standard-select-currency"
-                    select
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                  >
-                    {status.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+                  <Grid container spacing={2} justifyContent="flex-end">
+                    <Grid item>
+                      <TextField id="select-year" select value={year} onChange={(e) => setYear(e.target.value)}>
+                        {years.map((yearOption) => (
+                          <MenuItem key={yearOption} value={yearOption}>
+                            {yearOption}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    </Grid>
+                    <Grid item>
+                      <TextField id="standard-select-currency" select value={value} onChange={(e) => setValue(e.target.value)}>
+                        {status.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
             <Grid item xs={12}>
-              <Chart 
-                options={getChartData(salesData, soldQuantities, value , currencySymbol).options} 
-                series={getChartData(salesData, soldQuantities, value , currencySymbol).series} 
-                type="bar" 
-                height={480} 
+              <Chart
+                options={getChartData(salesData, soldQuantities, value, currencySymbol).options}
+                series={getChartData(salesData, soldQuantities, value, currencySymbol).series}
+                type="bar"
+                height={480}
               />
             </Grid>
           </Grid>

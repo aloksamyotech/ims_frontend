@@ -16,6 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
 import { getUserId } from 'apis/constant.js';
 import { toast } from 'react-toastify';
+import FileInput from './xlfile.js';
 
 const Category = () => {
   const [openAdd, setOpenAdd] = useState(false);
@@ -32,16 +33,16 @@ const Category = () => {
         setLoading(false);
         return;
       }
-      const response = await fetchCategories({userId}); 
-   
-      setCategories(response?.data); 
+      const response = await fetchCategories({ userId });
+
+      setCategories(response?.data);
     } catch (error) {
       toast.error('Failed to fetch categories');
     }
   };
 
   useEffect(() => {
-    loadCategories(); 
+    loadCategories();
   }, []);
 
   const CustomToolbar = ({ handleOpenAdd }) => {
@@ -66,6 +67,7 @@ const Category = () => {
         />
         <Stack direction="row" spacing={2} alignItems="center">
           <GridToolbarExport style={{ fontSize: 14 }} />
+          <FileInput />
           <Tooltip title="Add Category" arrow>
             <IconButton
               onClick={handleOpenAdd}
@@ -95,8 +97,8 @@ const Category = () => {
   };
 
   const columns = [
-    { field: 'catnm', headerName: 'Category Name', flex: 1},
-    { field: 'desc', headerName: 'Description', flex: 1},
+    { field: 'catnm', headerName: 'Category Name', flex: 1 },
+    { field: 'desc', headerName: 'Description', flex: 1 },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -121,8 +123,8 @@ const Category = () => {
               color="primary"
               sx={{
                 '&:hover': {
-                  backgroundColor: '#9abfdd', 
-                  color: '#1976d2' 
+                  backgroundColor: '#9abfdd',
+                  color: '#1976d2'
                 }
               }}
             >
@@ -149,7 +151,7 @@ const Category = () => {
               sx={{
                 '&:hover': {
                   backgroundColor: '#d7cde6',
-                  color: '#512995' 
+                  color: '#512995'
                 }
               }}
             >
@@ -216,7 +218,7 @@ const Category = () => {
       });
       if (result.isConfirmed) {
         await deleteCategory(_id);
-        loadCategories(); 
+        loadCategories();
         setCategories((prev) => prev.filter((category) => category._id !== _id));
         loadCategories();
         Swal.fire('Deleted!', 'Your category has been deleted.', 'success');
@@ -278,7 +280,7 @@ const Category = () => {
           <Box width="100%">
             <Card style={{ height: '600px', marginTop: '20px', padding: '0 5px' }}>
               <DataGrid
-                rows={categories} 
+                rows={categories}
                 columns={columns}
                 getRowId={(row) => row._id}
                 components={{

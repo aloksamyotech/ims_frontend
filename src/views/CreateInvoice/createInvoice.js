@@ -140,7 +140,7 @@ const CreateInvoice = () => {
                   <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Item</TableCell>
                   <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Price/unit</TableCell>
                   <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Quantity</TableCell>
-                  <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Discount</TableCell>
+                  <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Subtotal</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -154,7 +154,7 @@ const CreateInvoice = () => {
                 ))}
                 <TableRow>
                   <TableCell colSpan={3} align="right">
-                    Subtotal
+                    After Discount
                   </TableCell>
                   <TableCell>{orderData?.subtotal.toFixed(2)}</TableCell>
                 </TableRow>

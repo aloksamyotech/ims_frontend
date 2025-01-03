@@ -23,7 +23,6 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import EarningCard from './EarningCard';
 import EarningCard1 from './EarningCard1';
-import TotalOrderLineChartCard from './TotalOrderLineChartCard';
 import TotalOrderLineChartCard1 from './TotalOrderLineChartCard1';
 import SoldQuantityDisplay from './soldQuantity';
 import SelectSoldQuantity from './selectSoldQuantity';
@@ -76,7 +75,7 @@ const Analytics = () => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={gridSpacing} sx={{ marginTop: '10px' }}>
+      <Grid container spacing={gridSpacing} sx={{ marginTop: '8px' }}>
         <Grid item xs={12}>
           <Grid container spacing={gridSpacing}>
             <Grid item lg={4} md={6} sm={6} xs={12}>
@@ -88,16 +87,6 @@ const Analytics = () => {
 
             <Grid item lg={4} md={6} sm={6} xs={12}>
               <EarningCard1 isLoading={isLoading} />
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Grid container spacing={gridSpacing} sx={{ marginTop: '5px' }}>
-        <Grid item xs={12}>
-          <Grid container spacing={gridSpacing}>
-            <Grid item xs={12}>
-              <TotalOrderLineChartCard isLoading={isLoading} />
             </Grid>
           </Grid>
         </Grid>
