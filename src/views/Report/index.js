@@ -59,10 +59,10 @@ const ProductReport = () => {
     const loadReport = async () => {
       try {
         const userId = getUserId();
-        const response = await fetchPurchases({userId});
+        const response = await fetchPurchases({ userId });
         const allPurchases = response?.data;
         setPurchaseDetails(allPurchases);
-        const result = await fetchOrders({userId});
+        const result = await fetchOrders({ userId });
         const allOrders = result?.data;
         setOrderDetails(allOrders);
       } catch (error) {
@@ -116,7 +116,7 @@ const ProductReport = () => {
     { field: 'quantity', headerName: 'Quantity', width: 90 },
     {
       field: 'price',
-      headerName:'Price/unit',
+      headerName: 'Price/unit',
       width: 110,
       valueFormatter: ({ value }) => {
         if (value != null) {
@@ -125,28 +125,6 @@ const ProductReport = () => {
         return '$0';
       }
     },
-    // {
-    //   field: 'subtotal',
-    //   headerName: 'Subtotal',
-    //   width: 120,
-    //   valueFormatter: ({ value }) => {
-    //     if (value != null) {
-    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
-    //     }
-    //     return '$0';
-    //   }
-    // },
-    // {
-    //   field: 'tax',
-    //   headerName: 'Tax',
-    //   width: 100,
-    //   valueFormatter: ({ value }) => {
-    //     if (value != null) {
-    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
-    //     }
-    //     return '$0';
-    //   }
-    // },
     {
       field: 'total',
       headerName: 'Total Amount',
@@ -194,28 +172,6 @@ const ProductReport = () => {
         return '$0';
       }
     },
-    // {
-    //   field: 'subtotal',
-    //   headerName: 'Subtotal',
-    //   width: 120,
-    //   valueFormatter: ({ value }) => {
-    //     if (value != null) {
-    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
-    //     }
-    //     return '$0';
-    //   }
-    // },
-    // {
-    //   field: 'tax',
-    //   headerName: 'Tax',
-    //   width: 100,
-    //   valueFormatter: ({ value }) => {
-    //     if (value != null) {
-    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
-    //     }
-    //     return '$0';
-    //   }
-    // },
     {
       field: 'total',
       headerName: 'Total Amount',
@@ -300,8 +256,8 @@ const ProductReport = () => {
             }}
           >
             <Select
-               value={selectedDateRange}
-               onChange={handleDateRangeChange}
+              value={selectedDateRange}
+              onChange={handleDateRangeChange}
               sx={{
                 width: '120px',
                 height: '40px',
@@ -310,9 +266,9 @@ const ProductReport = () => {
               }}
             >
               <MenuItem value="All">All</MenuItem>
-              <MenuItem value="pending">Daily</MenuItem>
-              <MenuItem value="completed">Weekly</MenuItem>
-              <MenuItem value="cancelled">Monthly</MenuItem>
+              <MenuItem value="Daily">Daily</MenuItem>
+              <MenuItem value="Last 7 Days">Weekly</MenuItem>
+              <MenuItem value="Monthly">Monthly</MenuItem>
             </Select>
           </FormControl>
           <GridToolbarExport style={{ fontSize: 14 }} />
@@ -401,7 +357,7 @@ const ProductReport = () => {
         )}
 
         {selectedTab === 1 && (
-          <Box sx={{ height: '600px', padding: '0px 5px'  }}>
+          <Box sx={{ height: '600px', padding: '0px 5px' }}>
             <DataGrid
               rows={filteredPurchaseData}
               columns={purchaseColumns}

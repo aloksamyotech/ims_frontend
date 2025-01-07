@@ -3,15 +3,17 @@ import { Dialog, DialogTitle, DialogContent, Typography, DialogActions, Button, 
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { updateUser } from 'apis/api.js';
+import { updateEmployee } from 'apis/api.js';
 import ClearIcon from '@mui/icons-material/Clear';
 
-const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
+const Employee = ({ open, handleClose, employee, onUpdateEmployee }) => {
   const formik = useFormik({
     initialValues: {
-      name: user?.name || '',
-      email: user?.email || '',
-      phone: user?.phone || ''
+      name: employee?.name || '',
+      email: employee?.email || '',
+      phone: employee?.phone || '',
+      address: employee?.address || '',
+      password: employee?.password || ''
     },
     enableReinitialize: true,
     validationSchema: yup.object({
@@ -20,20 +22,35 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
         .matches(/^[a-zA-Z\s]*$/, 'Only letters and spaces are allowed')
         .min(2, 'Min 2 character are allowed')
         .max(30, 'Max 30 character are allowed')
-        .required('User Name is required'),
+        .required('Employee Name is required'),
       email: yup.string().email('Invalid email format').required('Email is required'),
+      password: yup
+        .string()
+        .required('Password is required')
+        .min(8, 'Password must be at least 8 characters long')
+        .max(20, 'Password cannot be longer than 20 characters')
+        .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+        .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+        .matches(/[0-9]/, 'Password must contain at least one number')
+        .matches(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character'),
       phone: yup
         .string()
         .matches(/^[1-9][0-9]{9}$/, 'Phone number must be 12 digits and cannot start with 0')
-        .required('Phone number is required')
+        .required('Phone number is required'),
+      address: yup
+        .string()
+        .min(10, 'Address must be at least 10 characters')
+        .max(50, 'Max 50 characters are allowed')
+        .required('Address is required')
     }),
     onSubmit: async (values) => {
       try {
-        const response = await updateUser({ ...user, ...values });
-        onUpdateUser(response?.data);
-        toast.success('User updated successfully');
+        const response = await updateEmployee({ ...employee, ...values });
+        onUpdateEmployee(response.data);
+        toast.success('Employee updated successfully');
       } catch (error) {
-        toast.error('Failed to update user');
+        console.log(error);
+        toast.error('Failed to update employee');
       }
     }
   });
@@ -41,7 +58,7 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography variant="h3">Update User</Typography>
+        <Typography variant="h3">Update Employee</Typography>
         <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
       </DialogTitle>
       <DialogContent dividers>
@@ -75,6 +92,20 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
+            <Grid item xs={6}>
+              <FormLabel>Password</FormLabel>
+              <TextField
+                required
+                id="password"
+                name="password"
+                size="small"
+                fullWidth
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                error={formik.touched.password && Boolean(formik.errors.password)}
+                helperText={formik.touched.password && formik.errors.password}
+              />
+            </Grid>
             <Grid item xs={12} sm={6}>
               <FormLabel>Phone Number</FormLabel>
               <TextField
@@ -88,6 +119,22 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
                 onChange={formik.handleChange}
                 error={formik.touched.phone && Boolean(formik.errors.phone)}
                 helperText={formik.touched.phone && formik.errors.phone}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <FormLabel>Address</FormLabel>
+              <TextField
+                required
+                id="address"
+                name="address"
+                size="small"
+                multiline
+                fullWidth
+                rows={2}
+                value={formik.values.address}
+                onChange={formik.handleChange}
+                error={formik.touched.address && Boolean(formik.errors.address)}
+                helperText={formik.touched.address && formik.errors.address}
               />
             </Grid>
           </Grid>
@@ -105,4 +152,4 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
   );
 };
 
-export default UpdateUser;
+export default Employee;

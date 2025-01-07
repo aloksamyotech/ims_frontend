@@ -117,7 +117,6 @@ const PurchaseForm = () => {
         const filteredProducts = productResult?.data.filter((product) => product.userId === userId);
         setProductList(filteredProducts);
         const supplierResult = await fetchSuppliers();
-        console.log(supplierResult);
         const filteredSuppliers = supplierResult?.data.filter((supplier) => supplier.userId === userId);
         setSupplierList(filteredSuppliers);
       } catch (error) {

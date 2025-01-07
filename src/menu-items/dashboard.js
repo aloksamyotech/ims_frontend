@@ -56,16 +56,16 @@ const dashboard = {
       icon: icons.IconHome,
       breadcrumbs: false
     },
-    // {
-    //   id: '01',
-    //   title: 'Employee Management',
-    //   type: 'item',
-    //   url: '/dashboard/users',
-    //   icon: icons.IconAccessible,
-    //   breadcrumbs: false
-    // },
-      {
+    {
       id: '01',
+      title: 'Employee Management',
+      type: 'item',
+      url: '/dashboard/employee',
+      icon: icons.IconAccessible,
+      breadcrumbs: false
+    },
+      {
+      id: '02',
       title: 'Statistics',
       type: 'item',
       url: '/dashboard/statistics',
@@ -73,7 +73,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '02',
+      id: '03',
       title: 'Products',
       type: 'item',
       url: '/dashboard/products',
@@ -81,7 +81,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '03',
+      id: '04',
       title: 'Low-Stocks',
       type: 'item',
       url: '/dashboard/product-report',
@@ -89,7 +89,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '04',
+      id: '05',
       title: 'Financial Summary',
       type: 'item',
       url: '/dashboard/financial',
@@ -97,7 +97,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '05',
+      id: '06',
       title: 'Orders',
       type: 'item',
       url: '/dashboard/orders',
@@ -105,7 +105,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '06',
+      id: '07',
       title: 'Purchases',
       type: 'item',
       url: '/dashboard/purchases',
@@ -113,13 +113,13 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '07',
+      id: '08',
       title: 'Clients',
       type: 'collapse',
       icon: icons.IconUsers,
       children: [
         {
-          id: '08',
+          id: '09',
           title: 'Suppliers',
           type: 'item',
           url: '/dashboard/suppliers',
@@ -127,7 +127,7 @@ const dashboard = {
           breadcrumbs: false
         },
         {
-          id: '09',
+          id: '10',
           title: 'Customers',
           type: 'item',
           url: '/dashboard/customers',
@@ -137,7 +137,7 @@ const dashboard = {
       ]
     },
     {
-      id: '10',
+      id: '11',
       title: 'Category',
       type: 'item',
       url: '/dashboard/category',
@@ -145,7 +145,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '11',
+      id: '12',
       title: 'Reports',
       type: 'item',
       url: '/dashboard/reports',
@@ -153,7 +153,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '12',
+      id: '13',
       title: 'Subscription',
       type: 'item',
       url: '/dashboard/user-subscription',
@@ -161,7 +161,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '13',
+      id: '14',
       title: 'Profile',
       type: 'item',
       url: '/dashboard/profile',

@@ -1,91 +1,113 @@
-import { useState, useEffect } from 'react';
-import { Stack, IconButton, Breadcrumbs, Link as MuiLink, Popover,Paper, Container, Typography, Card, Box, Dialog } from '@mui/material';
-import TableStyle from '../../ui-component/TableStyle';
-import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
+import React, { useState, useEffect } from 'react';
+import {
+  Stack,
+  IconButton,
+  Breadcrumbs,
+  Link as MuiLink,
+  Paper,
+  Tooltip,
+  Container,
+  Typography,
+  Box,
+  Avatar
+} from '@mui/material';
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarExport,
+  GridToolbarQuickFilter
+} from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import LockIcon from '@mui/icons-material/Lock';
-import { fetchUsers, deleteUser } from 'apis/api.js';
-import ViewUser from './view.js';
-import UpdateUser from './updateEmployee.js';
-import moment from 'moment';
-import ChangePassword from './changePassword.js';
-import Swal from 'sweetalert2';
+import AddIcon from '@mui/icons-material/Add';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
-import { Link } from 'react-router-dom';
-import { Avatar } from '@mui/material';
-import { filter } from 'lodash';
+import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import moment from 'moment';
+import { getUserId } from 'apis/constant.js';
+import { deleteEmployee ,fetchEmployees } from 'apis/api.js';
+import AddEmployee from './addEmployee.js';
+import UpdateEmployee from './updateEmployee.js';
+import TableStyle from '../../ui-component/TableStyle';
 
 const User = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [openView, setOpenView] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
-  const [openChangePassword, setOpenChangePassword] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentEmployee, setCurrentEmployee] = useState(null);
 
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  const loadEmployees = async () => {
+    try {
+      const userId = getUserId();
+      const response = await fetchEmployees({userId});
+      
+      setUsers(response?.data || []);
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
   };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const loadUsers = async () => {
-      try {
-        const response = await fetchUsers();
-        const filteredUsers = response?.data.filter(user => user.role === 'user'); 
-        setUsers(filteredUsers); 
-        console.log(filteredUsers);
-      } catch (error) {
-        setError('Error fetching users');
-      }
-    };
-    loadUsers();
+    loadEmployees();
   }, []);
 
-  const CustomToolbar = () => {
-    return (
-      <GridToolbarContainer
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '10px'
-        }}
-      >
-        <GridToolbarQuickFilter
-          placeholder="Search..."
-          style={{
-            width: '250px',
-            backgroundColor: '#ffff',
-            borderRadius: '8px',
-            padding: '5px 10px',
-            border: '1px solid beige'
-          }}
-        />
-        <GridToolbarExport style={{ fontSize: 14 }} />
-      </GridToolbarContainer>
-    );
-  };
-
   const generateRandomAvatar = (name) => {
-    const initials = name
+    if (!name) return '';
+    return name
       .split(' ')
       .map((word) => word[0])
       .join('');
-    return initials;
   };
+
+  const CustomToolbar = () => (
+    <GridToolbarContainer
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '5px'
+      }}
+    >
+      <GridToolbarQuickFilter
+        placeholder="Search..."
+        style={{
+          width: '250px',
+          backgroundColor: '#ffff',
+          borderRadius: '8px',
+          padding: '5px 10px',
+          border: '1px solid beige'
+        }}
+      />
+      <Stack direction="row" spacing={2} alignItems="center">
+        <GridToolbarExport style={{ fontSize: 14 }} />
+        <Tooltip title="Add Employee" arrow>
+          <IconButton
+            onClick={() => setOpenAdd(true)}
+            sx={{
+              backgroundColor: '#1e88e5',
+              borderRadius: '50%',
+              width: '35px',
+              height: '35px',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: '#1565c0'
+              }
+            }}
+          >
+            <AddIcon />
+          </IconButton>
+        </Tooltip>
+      </Stack>
+    </GridToolbarContainer>
+  );
 
   const columns = [
     {
-      field: '#',
+      field: 'avatar',
+      headerName: '#',
       flex: 0.2,
       sortable: false,
       renderCell: (params) => (
@@ -95,22 +117,16 @@ const User = () => {
             color: '#ffff',
             width: 40,
             height: 40,
-            fontSize: 14,
-            boxShadow: 3,
-            border: '1px solid white',
-            transition: 'transform 0.3s ease-in-out',
-            '&:hover': {
-              transform: 'scale(1.1)'
-            }
+            fontSize: 14
           }}
         >
-          {generateRandomAvatar(params.row.name || '')}
+          {generateRandomAvatar(params.row.employeenm)}
         </Avatar>
       )
     },
     {
       field: 'name',
-      headerName: 'EmployeeName',
+      headerName: 'Employee Name',
       flex: 0.8,
       renderCell: (params) => (
         <Box ml={1}>
@@ -122,6 +138,7 @@ const User = () => {
       )
     },
     { field: 'phone', headerName: 'Phone', flex: 0.8 },
+    { field: 'address', headerName: 'Address', flex: 0.8 },
     {
       field: 'date',
       headerName: 'Date',
@@ -132,12 +149,14 @@ const User = () => {
       field: 'actions',
       headerName: 'Actions',
       flex: 1,
+      minWidth: 250,
       renderCell: (params) => (
         <Stack direction="row">
           <Box
             sx={{
               borderRadius: '8px',
               padding: '8px',
+              paddingTop: '8px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -147,10 +166,13 @@ const User = () => {
           >
             <IconButton
               size="small"
-              onClick={() => handleView(params.row)}
+              onClick={() => handleView(params.row?._id)}
               color="primary"
               sx={{
-                '&:hover': { backgroundColor: '#9abfdd', color: '#1976d2' }
+                '&:hover': {
+                  backgroundColor: '#9abfdd',
+                  color: '#1976d2'
+                }
               }}
             >
               <VisibilityIcon />
@@ -161,6 +183,7 @@ const User = () => {
             sx={{
               borderRadius: '8px',
               padding: '8px',
+              paddingTop: '8px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -170,10 +193,13 @@ const User = () => {
           >
             <IconButton
               size="small"
-              onClick={(event) => handlePopoverOpen(event, params.row)}
+              onClick={() => handleEdit(params.row)}
               color="secondary"
               sx={{
-                '&:hover': { backgroundColor: '#d7cde6', color: '#512995' }
+                '&:hover': {
+                  backgroundColor: '#d7cde6',
+                  color: '#512995'
+                }
               }}
             >
               <EditIcon />
@@ -184,6 +210,7 @@ const User = () => {
             sx={{
               borderRadius: '8px',
               padding: '8px',
+              paddingTop: '8px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -196,82 +223,46 @@ const User = () => {
               onClick={() => handleDelete(params.row?._id)}
               color="error"
               sx={{
-                '&:hover': { backgroundColor: '#ffcccc', color: '#d32f2f' }
+                '&:hover': {
+                  backgroundColor: '#ffcccc',
+                  color: '#d32f2f'
+                }
               }}
             >
               <DeleteIcon />
             </IconButton>
           </Box>
-
-          <Popover
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handlePopoverClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left'
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left'
-            }}
-          >
-            <Box sx={{ padding: 2, width: '200px' }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  marginBottom: 1,
-                  cursor: 'pointer',
-                  '&:hover': { backgroundColor: '#b7a5d7' },
-                  padding: '8px',
-                  borderRadius: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: '#5e35b1'
-                }}
-                onClick={() => {
-                  handleEdit(params.row);
-                  handlePopoverClose();
-                }}
-              >
-                <EditIcon sx={{ marginRight: 1 }} />
-                Edit Profile
-              </Typography>
-
-              <Typography
-                variant="body2"
-                sx={{
-                  cursor: 'pointer',
-                  '&:hover': { backgroundColor: '#ffebee' },
-                  padding: '8px',
-                  borderRadius: '4px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: '#d32f2f'
-                }}
-                onClick={() => {
-                  handleChangePassword(params.row);
-                  handlePopoverClose();
-                }}
-              >
-                <LockIcon sx={{ marginRight: 1 }} />
-                Change Password
-              </Typography>
-            </Box>
-          </Popover>
         </Stack>
       )
     }
   ];
 
-  const handleView = (user) => {
-    setCurrentUser(user);
-    setOpenView(true);
+  const handleView = (_id) => {
+    navigate(`/dashboard/employee/view-employee/${_id}`);
   };
 
-  const handleEdit = (user) => {
-    setCurrentUser(user);
+  const handleOpenAdd = () => {
+    setCurrentEmployee(null);
+    setOpenAdd(true);
+  };
+
+  const handleEdit = (employee) => {
+    setCurrentEmployee(employee);
     setOpenUpdate(true);
+  };
+
+  const handleEmployeeAdded = (newEmployee) => {
+    setUsers((prev) => [...prev, newEmployee]);
+    setOpenAdd(false);
+  };
+
+  const handleEmployeeUpdated = (updatedEmployee) => {
+    setUsers((prev) =>
+      prev.map((employee) =>
+        employee._id === updatedEmployee._id ? updatedEmployee : employee
+      )
+    );
+    setOpenUpdate(false);
   };
 
   const handleDelete = async (_id) => {
@@ -285,46 +276,37 @@ const User = () => {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes, delete it!'
       });
+
       if (result.isConfirmed) {
-        await deleteUser(_id);
-        setUsers((prev) => prev.filter((user) => user?._id !== _id));
-        Swal.fire('Deleted!', 'Your user has been deleted.', 'success');
+        await deleteEmployee(_id);
+        setUsers((prev) => prev.filter((employee) => employee?._id !== _id));
+        Swal.fire('Deleted!', 'Your employee has been deleted.', 'success');
       }
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error('Error deleting employee:', error);
     }
-  };
-
-  const handleUserUpdated = (updatedUser) => {
-    setUsers((prev) => prev.map((user) => (user._id === updatedUser._id ? updatedUser : user)));
-    setOpenUpdate(false);
-  };
-
-  const handleChangePassword = (user) => {
-    setCurrentUser(user);
-    setOpenChangePassword(true);
   };
 
   return (
     <>
-      <UpdateUser open={openUpdate} handleClose={() => setOpenUpdate(false)} user={currentUser} onUpdateUser={handleUserUpdated} />
-      <ViewUser open={openView} handleClose={() => setOpenView(false)} user={currentUser} />
-      <ChangePassword
-        open={openChangePassword}
-        handleClose={() => setOpenChangePassword(false)}
-        user={currentUser}
-        onchangePassword={handleChangePassword}
+      <AddEmployee
+        open={openAdd}
+        handleClose={() => setOpenAdd(false)}
+        onEmployeeAdded={handleEmployeeAdded}
       />
-
+      <UpdateEmployee
+        open={openUpdate}
+        handleClose={() => setOpenUpdate(false)}
+        employee={currentEmployee}
+        onUpdateEmployee={handleEmployeeUpdated}
+      />
       <Container>
         <Box
           sx={{
             backgroundColor: '#ffff',
             padding: '10px',
             borderRadius: '8px',
-            width: '100%',
             display: 'flex',
-            alignItems: 'center',
             justifyContent: 'space-between'
           }}
         >
@@ -332,7 +314,6 @@ const User = () => {
           <Breadcrumbs
             separator={<NavigateNextIcon fontSize="small" />}
             aria-label="breadcrumb"
-            sx={{ display: 'flex', alignItems: 'center' }}
           >
             <MuiLink component={Link} to="/dashboard/default" color="inherit">
               <HomeIcon sx={{ color: '#5e35b1' }} />
@@ -340,16 +321,18 @@ const User = () => {
             <Typography color="text.primary">Employees</Typography>
           </Breadcrumbs>
         </Box>
-        
+
         <TableStyle>
-          <Box width="100%" >
-            <Paper style={{ height: '600px', marginTop: '20px',padding:'0px 5px'}}>
+          <Box width="100%">
+            <Paper style={{ height: '600px', marginTop: '20px' }}>
               <DataGrid
                 rows={users}
                 columns={columns}
                 getRowId={(row) => row._id}
                 rowHeight={55}
-                components={{ Toolbar: CustomToolbar }}
+                components={{
+                  Toolbar: () => <CustomToolbar handleOpenAdd={handleOpenAdd} />
+                }}
                 pageSizeOptions={[5, 10, 25]}
                 initialState={{
                   pagination: {
@@ -358,9 +341,6 @@ const User = () => {
                 }}
                 pagination
                 sx={{
-                  '& .MuiDataGrid-root': {
-                    border: 'none'
-                  },
                   '& .MuiDataGrid-row': {
                     borderBottom: '1px solid #ccc'
                   },

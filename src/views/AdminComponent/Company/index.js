@@ -249,7 +249,7 @@ const Company = () => {
   };
 
   const handleView = (_id) => {
-    navigate(`/dashboard/company/view-company/${_id}`);
+    navigate(`/dashboard/view-company/${_id}`);
   };
 
 

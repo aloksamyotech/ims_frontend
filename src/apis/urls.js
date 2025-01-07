@@ -1,4 +1,3 @@
-import { Subscript } from "@mui/icons-material";
 
 export const urls = {
   base: 'http://localhost:4200',
@@ -27,6 +26,13 @@ export const urls = {
     update: '/customer/update/:id',
     fetch: '/customer/fetch/',
     count: '/customer/count/',
+  },
+  employee: {
+    add: '/employee/save/',
+    delete: '/employee/deleteById/:id',
+    update: '/employee/update/:id',
+    fetch: '/employee/fetch/',
+    count: '/employee/count/',
   },
   product: {
     add: '/product/save/',

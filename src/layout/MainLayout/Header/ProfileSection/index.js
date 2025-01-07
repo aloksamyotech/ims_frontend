@@ -48,6 +48,7 @@ const ProfileSection = () => {
     localStorage.removeItem('user._id');
     localStorage.removeItem('user.email');
     localStorage.removeItem('role');
+    localStorage.removeItem('permissions');
 
     toast.success('Logged out successfully');
 

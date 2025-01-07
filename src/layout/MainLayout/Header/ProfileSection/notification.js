@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , useCallback} from 'react';
 import { Badge, IconButton, Menu, Card, Box, MenuItem, List, ListItem, Typography } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { fetchQuantityAlert } from 'apis/api.js';
@@ -11,29 +11,39 @@ const NotificationDropdown = () => {
   const [role, setRole] = useState('');
 
   useEffect(() => {
-  const userRole = localStorage.getItem('role');
-  console.log(userRole);
-  setRole(userRole);
+    const userRole = localStorage.getItem('role');
+    setRole(userRole);
+  }, []); 
+
+  const fetchNotifications = useCallback(async () => {
     if (role === 'user') {
-    const fetchNotifications = async () => {
       try {
         const userId = getUserId();
-        const response = await fetchQuantityAlert({userId});
+        const response = await fetchQuantityAlert({ userId });
         const lowStockProducts = response?.data?.data;
 
         const notificationMessages = lowStockProducts.map(
-          (product) => `Quantity Alert Restock for ${product.productnm}, current quantity ${product.quantity}.`
+          (product) =>
+            `Quantity Alert Restock for ${product.productnm}, current quantity ${product.quantity}.`
         );
+
         setNotifications(notificationMessages);
         setUnreadCount(notificationMessages.length);
       } catch (error) {
         console.error('Error fetching notifications:', error);
       }
-    };
+    }
+  }, [role, fetchQuantityAlert]);
 
-    fetchNotifications();
-  }
-  }, []);
+  useEffect(() => {
+    if (role === 'user') {
+      const interval = setInterval(() => {
+        fetchNotifications();
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [role, fetchNotifications]); 
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -92,7 +102,7 @@ const NotificationDropdown = () => {
                     cursor: 'pointer',
                     mb: 1,
                     display: 'flex',
-                    alignItems: 'center', 
+                    alignItems: 'center',
                     '&:hover': {
                       backgroundColor: 'rgba(0, 0, 0, 0.08)'
                     }
@@ -104,8 +114,8 @@ const NotificationDropdown = () => {
                       width: '8px',
                       height: '8px',
                       borderRadius: '50%',
-                      backgroundColor: index % 2 === 0 ? 'primary.main' : 'secondary.main', 
-                      mr: 2 
+                      backgroundColor: index % 2 === 0 ? 'primary.main' : 'secondary.main',
+                      mr: 2
                     }}
                   />
                   <Typography variant="body1">{notification}</Typography>

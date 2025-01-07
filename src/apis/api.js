@@ -88,6 +88,28 @@ export const countCustomers = async () => {
   return fetchApi(urls.customer.count);
 };
 
+//employee
+export const deleteEmployee = async (_id) => {
+  return deleteApi(urls.employee.delete, _id);
+};
+
+export const fetchEmployees = async (queryParams = {}) => {
+  const queryString = new URLSearchParams(queryParams).toString();
+  return fetchApi(`${urls.employee.fetch}?${queryString}`);
+};
+
+export const addEmployee = async (newEmployee) => {
+  return addApi(urls.employee.add, newEmployee);
+};
+
+export const updateEmployee = async (updatedEmployee) => {
+  return updateEntity('employee', updatedEmployee);
+};
+
+export const countEmployees = async () => {
+  return fetchApi(urls.employee.count);
+};
+
 // product
 export const deleteProduct = async (_id) => {
   return deleteApi(urls.product.delete, _id);
