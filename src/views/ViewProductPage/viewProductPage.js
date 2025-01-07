@@ -57,7 +57,7 @@ const ViewProductPage = () => {
   useEffect(() => {
     const loadProduct = async () => {
       try {
-        const response = await axios.get(`http://localhost:4200/product/fetchById/${id}`);
+        const response = await axios.get(`http://139.59.25.198:4200/product/fetchById/${id}`);
         setProductData(response?.data);
 
         const userId = getUserId(); 
