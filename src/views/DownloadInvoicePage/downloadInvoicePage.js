@@ -62,7 +62,7 @@ const DownloadInvoicePage = () => {
   useEffect(() => {
     const loadInvoice = async () => {
       try {
-        const response = await axios.get(`http://localhost:4200/order/fetchById/${id}`);
+        const response = await axios.get(`http://139.59.25.198:4200/order/fetchById/${id}`);
         setInvoiceData(response.data);
       } catch (error) {
         setError('Failed to fetch invoice data');

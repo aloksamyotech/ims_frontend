@@ -41,7 +41,7 @@ const UpdateProfile = ({ open, onClose, profile, setProfile }) => {
 
     try {
       const response = await axios.post(
-        `http://localhost:4200/admin/update`,  
+        `http://139.59.25.198:4200/admin/update`,  
         formData,
         {
           headers: {

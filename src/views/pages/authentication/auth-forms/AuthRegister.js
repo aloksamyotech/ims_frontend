@@ -60,7 +60,7 @@ const AuthRegister = ({ ...others }) => {
         console.log('Attempting to register user:', values);
         try {
           if (scriptedRef.current) {
-            const res = await axios.post('http://localhost:4200/user/save/', values);
+            const res = await axios.post('http://139.59.25.198:4200/user/save/', values);
             console.log('User registered successfully:', res.data);
             setStatus({ success: true });
             toast.success('Customer added successfully');

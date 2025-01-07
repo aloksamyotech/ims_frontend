@@ -47,7 +47,7 @@ const ViewEmployeePage = () => {
   useEffect(() => {
     const loadEmployee = async () => {
       try {
-        const response = await axios.get(`http://localhost:4200/employee/fetchById/${id}`);
+        const response = await axios.get(`http://139.59.25.198:4200/employee/fetchById/${id}`);
         setEmpData(response?.data);
       } catch (error) {
         toast.error('Error fetching employee data');
@@ -59,7 +59,7 @@ const ViewEmployeePage = () => {
   useEffect(() => {
     const fetchPermissions = async () => {
       try {
-        const response = await axios.get(`http://localhost:4200/permissions/fetch/${id}`);
+        const response = await axios.get(`http://139.59.25.198:4200/permissions/fetch/${id}`);
         setSelectedPermissions(response.data.permissions || []);
         setLoading(false);
       } catch (error) {
@@ -80,7 +80,7 @@ const ViewEmployeePage = () => {
 
   const savePermissions = async () => {
     try {
-      await axios.post('http://localhost:4200/permissions/save', {
+      await axios.post('http://139.59.25.198:4200/permissions/save', {
         empId: id,
         permissions: selectedPermissions
       });

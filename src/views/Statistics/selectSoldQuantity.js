@@ -59,7 +59,7 @@ const SoldQuantityDisplay = () => {
         const formattedFromDate = fromDate.toISOString();
         const formattedToDate = toDate.toISOString();
 
-        const response = await axios.get('http://localhost:4200/order/sold-quantity-date', {
+        const response = await axios.get('http://139.59.25.198:4200/order/sold-quantity-date', {
           params: {
             fromDate: formattedFromDate,
             toDate: formattedToDate,
@@ -72,7 +72,7 @@ const SoldQuantityDisplay = () => {
           setSoldQuantity(0);
         }
 
-        const result = await axios.get('http://localhost:4200/order/sold-sales-date', {
+        const result = await axios.get('http://139.59.25.198:4200/order/sold-sales-date', {
           params: {
             fromDate: formattedFromDate,
             toDate: formattedToDate,
@@ -85,7 +85,7 @@ const SoldQuantityDisplay = () => {
           setSoldSales(0);
         }
 
-        const countOrder = await axios.get('http://localhost:4200/order/count', {
+        const countOrder = await axios.get('http://139.59.25.198:4200/order/count', {
           params: {
             fromDate: formattedFromDate,
             toDate: formattedToDate,
@@ -98,7 +98,7 @@ const SoldQuantityDisplay = () => {
           setOrdersCount(0);
         }
 
-        const countPurchase = await axios.get('http://localhost:4200/purchase/count', {
+        const countPurchase = await axios.get('http://139.59.25.198:4200/purchase/count', {
           params: {
             fromDate: formattedFromDate,
             toDate: formattedToDate,
@@ -111,7 +111,7 @@ const SoldQuantityDisplay = () => {
           setPurchasesCount(0);
         }
 
-        const topCategory = await axios.get('http://localhost:4200/order/total-category', {
+        const topCategory = await axios.get('http://139.59.25.198:4200/order/total-category', {
           params: {
             fromDate: formattedFromDate,
             toDate: formattedToDate,

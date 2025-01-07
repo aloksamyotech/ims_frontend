@@ -54,7 +54,7 @@ const ViewCustomerPage = () => {
     const loadCustomer = async () => {
       try {
         const userId = getUserId();
-        const response = await axios.get(`http://localhost:4200/customer/fetchById/${id}`);
+        const response = await axios.get(`http://139.59.25.198:4200/customer/fetchById/${id}`);
         setCustomerData(response?.data);
         const result = await fetchOrders({userId});
         const allOrders = result?.data;

@@ -56,7 +56,7 @@ const EarningCard = ({ isLoading }) => {
           setLoading(false);
           return;
         }
-        const response = await axios.get(`http://localhost:4200/customer/count?userId=${userId}`);
+        const response = await axios.get(`http://139.59.25.198:4200/customer/count?userId=${userId}`);
         if (response?.data?.count !== undefined) {
           setCustomerCount(response.data.count);
         } else {

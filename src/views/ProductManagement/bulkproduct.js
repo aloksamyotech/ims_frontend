@@ -46,7 +46,7 @@ function FileInput() {
 
   const sendToBackend = async () => {
     try {
-      const response = await axios.post('http://localhost:4200/product/bulkUpload', {
+      const response = await axios.post('http://139.59.25.198:4200/product/bulkUpload', {
         productsData: data.map(product => ({
           ...product,
           userId : userId

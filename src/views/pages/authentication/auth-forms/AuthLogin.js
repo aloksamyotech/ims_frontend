@@ -55,7 +55,7 @@ const AuthLogin = ({ ...others }) => {
         onSubmit={async (values, { setErrors, setStatus }) => {
           try {
             setIsSubmitting(true);
-            const res = await axios.post('http://localhost:4200/user/login/', values);
+            const res = await axios.post('http://139.59.25.198:4200/user/login/', values);
   
             if (res?.data && res?.data?.jwtToken && res?.data?.user) {
               const storageMethod = rememberMe ? localStorage : sessionStorage;

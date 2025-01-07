@@ -79,7 +79,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
         if (values.image) {
           formData.append('image', values.image);
         }
-        const response = await axios.post('http://localhost:4200/product/save', formData, {
+        const response = await axios.post('http://139.59.25.198:4200/product/save', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         if (onProductAdded) {

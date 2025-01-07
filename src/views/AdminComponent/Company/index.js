@@ -93,7 +93,7 @@ const Company = () => {
       setLoading(true); 
       setCompanyData((prevData) => prevData.map((user) => (user._id === userId ? { ...user, isActive: newStatus } : user)));
 
-      const response = await axios.patch(`http://localhost:4200/user/change-status/${userId}`, { isActive: newStatus });
+      const response = await axios.patch(`http://139.59.25.198:4200/user/change-status/${userId}`, { isActive: newStatus });
       if (response?.data.success) {
         toast.success(`Company status updated to ${newStatus ? 'Active' : 'Inactive'}`);
       } else {

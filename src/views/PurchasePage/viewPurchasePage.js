@@ -93,7 +93,7 @@ const PurchasePage = () => {
   useEffect(() => {
     const loadPurchase = async () => {
       try {
-        const response = await axios.get(`http://localhost:4200/purchase/fetchById/${id}`);
+        const response = await axios.get(`http://139.59.25.198:4200/purchase/fetchById/${id}`);
         setPurchaseData(response?.data);
       } catch (error) {
         setError('Failed to fetch purchase data');
@@ -115,7 +115,7 @@ const PurchasePage = () => {
 
   const updatePurchaseStatus = async (id, action) => {
     try {
-      const response = await axios.patch(`http://localhost:4200/purchase/update-status/${id}`, { action });
+      const response = await axios.patch(`http://:4200/purchase/update-status/${id}`, { action });
       if (response.status === 200) {
         setPurchaseData((prev) => ({
           ...prev,

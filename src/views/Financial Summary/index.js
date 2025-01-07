@@ -51,7 +51,7 @@ const CompanyReport = () => {
         const response = await fetchProducts({ userId });
         setProducts(response?.data || []);
 
-        const result = await axios.get(`http://localhost:4200/order/total-profit`, {
+        const result = await axios.get(`http://139.59.25.198:4200/order/total-profit`, {
           params: {
             userId
           }

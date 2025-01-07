@@ -55,7 +55,7 @@ const ViewSupplierPage = () => {
     const loadSupplier = async () => {
       try {
         const userId = getUserId();
-        const response = await axios.get(`http://localhost:4200/supplier/fetchById/${id}`);
+        const response = await axios.get(`http://139.59.25.198:4200/supplier/fetchById/${id}`);
         setSupplierData(response?.data);
         const result = await fetchPurchases({userId});
         const allPurchases = result?.data;

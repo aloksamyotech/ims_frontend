@@ -70,7 +70,7 @@ const Analytics = () => {
     const fetchData = async () => {
       try {
         const userId = getUserId();
-        const response = await axios.get(`http://localhost:4200/customer/count?userId=${userId}`);
+        const response = await axios.get(`http://139.59.25.198:4200/customer/count?userId=${userId}`);
         setCustomerData(response.data.success ? response.data.data : []);
 
         setLoading(false);

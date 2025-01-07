@@ -1,6 +1,6 @@
 
 export const urls = {
-  base: 'http://localhost:4200',
+  base: 'http://139.59.25.198:4200',
   unit: {
     add: '/unit/save/',
     delete: '/unit/deleteById/:id',

@@ -41,7 +41,7 @@ function FileInput() {
 
   const sendToBackend = async () => {
     try {
-      const response = await axios.post('http://localhost:4200/category/uploadBulk', {
+      const response = await axios.post('http://139.59.25.198:4200/category/uploadBulk', {
         categories: data,
         userId
       });
