@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { getUserId } from 'apis/constant.js';
+import { countOrders } from 'apis/api.js';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
@@ -21,48 +21,6 @@ import ChartDataYear from './chart-data/total-order-year-line-chart';
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { IconShoppingCart } from '@tabler/icons';
-
-// const CardWrapper = styled(MainCard)(({ theme }) => ({
-//   backgroundColor: theme.palette.primary.dark,
-//   color: '#fff',
-//   overflow: 'hidden',
-//   position: 'relative',
-//   '&>div': {
-//     position: 'relative',
-//     zIndex: 5
-//   },
-//   // '&:after': {
-//   //   content: '""',
-//   //   position: 'absolute',
-//   //   width: 210,
-//   //   height: 210,
-//   //   background: theme.palette.primary[800],
-//   //   borderRadius: '50%',
-//   //   zIndex: 1,
-//   //   top: -85,
-//   //   right: -95,
-//   //   [theme.breakpoints.down('sm')]: {
-//   //     top: -105,
-//   //     right: -140
-//   //   }
-//   // },
-//   // '&:before': {
-//   //   content: '""',
-//   //   position: 'absolute',
-//   //   zIndex: 1,
-//   //   width: 210,
-//   //   height: 210,
-//   //   background: theme.palette.primary[800],
-//   //   borderRadius: '50%',
-//   //   top: -125,
-//   //   right: -15,
-//   //   opacity: 0.5,
-//   //   [theme.breakpoints.down('sm')]: {
-//   //     top: -155,
-//   //     right: -70
-//   //   }
-//   // }
-// }));
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: '#f1af4c',
@@ -105,9 +63,9 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
           setLoading(false);
           return;
         }
-        const response = await axios.get(`http://localhost:4200/order/count?userId=${userId}`);
+        const response = await countOrders({userId});
         if (response?.data?.count !== undefined) {
-          setOrderCount(response.data.count);
+          setOrderCount(response.data.count || 0);
         } else {
           setOrderCount(0);
         }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchProducts } from 'apis/api.js';
+import { fetchProducts, totalSoldProfit } from 'apis/api.js';
 import {
   CardMedia,
   Box,
@@ -51,11 +51,7 @@ const CompanyReport = () => {
         const response = await fetchProducts({ userId });
         setProducts(response?.data || []);
 
-        const result = await axios.get(`http://139.59.25.198:4200/order/total-profit`, {
-          params: {
-            userId
-          }
-        });
+        const result = await totalSoldProfit({ userId });
         setProfitLoss(result?.data?.data || {});
       } catch (error) {
         console.error('Failed to fetch data');

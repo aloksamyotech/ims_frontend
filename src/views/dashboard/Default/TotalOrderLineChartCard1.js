@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { getUserId } from 'apis/constant.js';
 
 // material-ui
@@ -21,6 +20,7 @@ import ChartDataYear from './chart-data/total-order-year-line-chart';
 // assets
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { countPurchases } from 'apis/api.js';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.dark,
@@ -63,9 +63,9 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
           setLoading(false);
           return;
         }
-        const response = await axios.get(`http://localhost:4200/purchase/count?userId=${userId}`);
+        const response = await countPurchases({userId});
         if (response?.data?.count !== undefined) {
-          setPurchaseCount(response.data.count);
+          setPurchaseCount(response.data.count || 0);
         } else {
           setPurchaseCount(0);
         }

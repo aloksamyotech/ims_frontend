@@ -6,6 +6,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
 import MainCard from 'ui-component/cards/MainCard';
 import { IconShoppingBag, IconShoppingCart, IconUser, IconTruck } from '@tabler/icons';
+import { countCustomers } from 'apis/api.js';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: '#4CAF50',
@@ -70,8 +71,8 @@ const Analytics = () => {
     const fetchData = async () => {
       try {
         const userId = getUserId();
-        const response = await axios.get(`http://139.59.25.198:4200/customer/count?userId=${userId}`);
-        setCustomerData(response.data.success ? response.data.data : []);
+        const response = await countCustomers({userId});
+        setCustomerData(response?.data?.success ? response.data.data : []);
 
         setLoading(false);
       } catch (error) {

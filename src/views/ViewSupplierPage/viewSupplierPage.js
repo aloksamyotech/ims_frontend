@@ -6,7 +6,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useParams, Link } from 'react-router-dom';
 import moment from 'moment';
-import { fetchPurchases } from 'apis/api.js';
+import { fetchPurchases, fetchSupplierById } from 'apis/api.js';
 import { fetchCurrencySymbol } from 'apis/constant.js';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
@@ -55,7 +55,7 @@ const ViewSupplierPage = () => {
     const loadSupplier = async () => {
       try {
         const userId = getUserId();
-        const response = await axios.get(`http://139.59.25.198:4200/supplier/fetchById/${id}`);
+        const response = await fetchSupplierById(id);
         setSupplierData(response?.data);
         const result = await fetchPurchases({userId});
         const allPurchases = result?.data;

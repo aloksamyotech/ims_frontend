@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, CircularProgress, Grid, Paper, Divider, Button } from '@mui/material';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -10,7 +10,8 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import StoreIcon from '@mui/icons-material/Store';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { useTheme, styled } from '@mui/material/styles';
-import { fetchCurrencySymbol } from 'apis/constant.js'; 
+import { fetchCurrencySymbol } from 'apis/constant.js';
+import { countOrders, countPurchases, soldQuantityByDate, soldSalesByDate, getTopSellingCatgeory } from 'apis/api.js';
 
 const CategoryBox = styled(Box)(({ theme, borderColor }) => ({
   display: 'flex',
@@ -23,9 +24,8 @@ const CategoryBox = styled(Box)(({ theme, borderColor }) => ({
   height: '100%',
   textAlign: 'center',
   color: theme.palette.text.primary,
-  border: `2px solid ${borderColor || theme.palette.primary.main}`,
+  border: `2px solid ${borderColor || theme.palette.primary.main}`
 }));
-
 
 const SoldQuantityDisplay = () => {
   const [soldQuantity, setSoldQuantity] = useState(null);
@@ -39,14 +39,13 @@ const SoldQuantityDisplay = () => {
   const [error, setError] = useState(null);
   const [currencySymbol, setCurrencySymbol] = useState('');
 
-   useEffect(() => {
-      const getCurrency = async () => {
-        const symbol = await fetchCurrencySymbol();
-        setCurrencySymbol(symbol);
-      };
-      getCurrency();
-    }, []);
-  
+  useEffect(() => {
+    const getCurrency = async () => {
+      const symbol = await fetchCurrencySymbol();
+      setCurrencySymbol(symbol);
+    };
+    getCurrency();
+  }, []);
 
   const handleApplyClick = async () => {
     if (fromDate && toDate) {
@@ -59,67 +58,57 @@ const SoldQuantityDisplay = () => {
         const formattedFromDate = fromDate.toISOString();
         const formattedToDate = toDate.toISOString();
 
-        const response = await axios.get('http://139.59.25.198:4200/order/sold-quantity-date', {
-          params: {
-            fromDate: formattedFromDate,
-            toDate: formattedToDate,
-            userId
-          }
+        const response = await soldQuantityByDate({
+          fromDate: formattedFromDate,
+          toDate: formattedToDate,
+          userId
         });
-        if (response.data.success) {
-          setSoldQuantity(response.data.data);
+        if (response?.data?.success) {
+          setSoldQuantity(response.data.data || 0);
         } else {
           setSoldQuantity(0);
         }
 
-        const result = await axios.get('http://139.59.25.198:4200/order/sold-sales-date', {
-          params: {
-            fromDate: formattedFromDate,
-            toDate: formattedToDate,
-            userId
-          }
+        const result = await soldSalesByDate({
+          fromDate: formattedFromDate,
+          toDate: formattedToDate,
+          userId
         });
-        if (result.data.success) {
-          setSoldSales(result.data.data);
+        if (result?.data?.success) {
+          setSoldSales(result.data.data || 0);
         } else {
           setSoldSales(0);
         }
 
-        const countOrder = await axios.get('http://139.59.25.198:4200/order/count', {
-          params: {
-            fromDate: formattedFromDate,
-            toDate: formattedToDate,
-            userId
-          }
+        const countOrder = await countOrders({
+          fromDate: formattedFromDate,
+          toDate: formattedToDate,
+          userId
         });
-        if (countOrder.data.success) {
-          setOrdersCount(countOrder.data.count);
+        if (countOrder?.data?.success) {
+          setOrdersCount(countOrder.data.count || 0);
         } else {
           setOrdersCount(0);
         }
 
-        const countPurchase = await axios.get('http://139.59.25.198:4200/purchase/count', {
-          params: {
-            fromDate: formattedFromDate,
-            toDate: formattedToDate,
-            userId
-          }
+        const countPurchase = await countPurchases({
+          fromDate: formattedFromDate,
+          toDate: formattedToDate,
+          userId
         });
-        if (countPurchase.data.success) {
-          setPurchasesCount(countPurchase.data.count);
+        if (countPurchase?.data?.success) {
+          setPurchasesCount(countPurchase.data.count || 0);
         } else {
           setPurchasesCount(0);
         }
 
-        const topCategory = await axios.get('http://139.59.25.198:4200/order/total-category', {
-          params: {
-            fromDate: formattedFromDate,
-            toDate: formattedToDate,
-            userId
-          }
+        const topCategory = await getTopSellingCatgeory({
+          fromDate: formattedFromDate,
+          toDate: formattedToDate,
+          userId
         });
         if (topCategory?.data?.data) {
-          setTopCategories(topCategory.data.data);
+          setTopCategories(topCategory.data.data || []);
         } else {
           setTopCategories([]);
         }
@@ -260,7 +249,9 @@ const SoldQuantityDisplay = () => {
                 <TrendingUpIcon sx={{ mr: 2, fontSize: 40, color: 'secondary.main' }} />
                 <div>
                   <Typography variant="h6">Sales Amount</Typography>
-                  <Typography variant="h4">{currencySymbol} {soldSales}</Typography>
+                  <Typography variant="h4">
+                    {currencySymbol} {soldSales}
+                  </Typography>
                 </div>
               </Paper>
             </Grid>
@@ -295,7 +286,7 @@ const SoldQuantityDisplay = () => {
               topCategories.length > 0 &&
               topCategories.slice(0, 3).map((category, index) => (
                 <Grid item xs={12} sm={4} key={index}>
-                   <CategoryBox borderColor={index === 0 ? '#1e88e5' : index === 1 ? '#6034a7' : 'green'}>
+                  <CategoryBox borderColor={index === 0 ? '#1e88e5' : index === 1 ? '#6034a7' : 'green'}>
                     <Typography variant="h5" sx={{ fontWeight: 600, textTransform: 'uppercase' }}>
                       {category.category}
                     </Typography>

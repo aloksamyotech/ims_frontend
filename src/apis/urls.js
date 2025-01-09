@@ -1,6 +1,6 @@
 
 export const urls = {
-  base: 'http://139.59.25.198:4200',
+  base: 'http://localhost:4200',
   unit: {
     add: '/unit/save/',
     delete: '/unit/deleteById/:id',
@@ -19,6 +19,7 @@ export const urls = {
     update: '/supplier/update/:id',
     fetch: '/supplier/fetch/',
     count: '/supplier/count/',
+    fetchbyid: '/supplier/fetchById/:id'
   },
   customer: {
     add: '/customer/save/',
@@ -26,6 +27,7 @@ export const urls = {
     update: '/customer/update/:id',
     fetch: '/customer/fetch/',
     count: '/customer/count/',
+    fetchbyid: '/customer/fetchById/:id'
   },
   employee: {
     add: '/employee/save/',
@@ -41,6 +43,7 @@ export const urls = {
     fetch: '/product/fetch/',
     lowstock: '/product/lowstock/',
     quantityalert:'/product/quantityalert/',
+    fetchbyid: '/product/fetchById/:id'
   },
   user: {
     delete: '/user/deleteById/:id',
@@ -54,9 +57,13 @@ export const urls = {
     delete: '/order/deleteById/:id',
     fetch: '/order/fetch/',
     count: '/order/count/',
+    totalprofit: '/order/total-profit',
     totalamount: '/order/total-amount/',
     totalquantity: '/order/total-quantity/',
     totalsales: '/order/total-sales',
+    soldquantitybydate: '/order/sold-quantity-date',
+    soldsalesbydate: '/order/sold-sales-date',
+    topcategory: '/order/total-category',
   },
   purchase: {
     add: '/purchase/save/',

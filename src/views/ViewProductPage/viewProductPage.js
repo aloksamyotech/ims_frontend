@@ -21,7 +21,7 @@ import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from 
 import { toast } from 'react-toastify';
 import { useParams, Link } from 'react-router-dom';
 import moment from 'moment';
-import { fetchPurchases, fetchOrders } from 'apis/api.js';
+import { fetchPurchases, fetchOrders, fetchProductById } from 'apis/api.js';
 import { fetchCurrencySymbol , getUserId } from 'apis/constant.js';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
@@ -57,7 +57,7 @@ const ViewProductPage = () => {
   useEffect(() => {
     const loadProduct = async () => {
       try {
-        const response = await axios.get(`http://139.59.25.198:4200/product/fetchById/${id}`);
+        const response = await fetchProductById(id);
         setProductData(response?.data);
 
         const userId = getUserId(); 

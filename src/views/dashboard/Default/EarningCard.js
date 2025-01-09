@@ -11,7 +11,6 @@ import { Box, Grid, Typography } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import { IconUser } from '@tabler/icons';
 import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
-import axios from 'axios';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.primary.dark,
@@ -49,9 +48,9 @@ const EarningCard = ({ isLoading }) => {
           setLoading(false);
           return;
         }
-        const response = await axios.get(`http://localhost:4200/customer/count?userId=${userId}`);
+        const response = await countCustomers({userId});
         if (response?.data?.count !== undefined) {
-          setCustomerCount(response.data.count);
+          setCustomerCount(response.data.count || 0);
         } else {
           setCustomerCount(0);
         }

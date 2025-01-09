@@ -16,7 +16,6 @@ import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
 import { getUserId } from 'apis/constant.js';
 import { toast } from 'react-toastify';
-import FileInput from './xlfile.js';
 
 const Category = () => {
   const [openAdd, setOpenAdd] = useState(false);
@@ -67,7 +66,6 @@ const Category = () => {
         />
         <Stack direction="row" spacing={2} alignItems="center">
           <GridToolbarExport style={{ fontSize: 14 }} />
-          <FileInput />
           <Tooltip title="Add Category" arrow>
             <IconButton
               onClick={handleOpenAdd}

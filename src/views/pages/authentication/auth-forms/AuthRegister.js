@@ -25,6 +25,7 @@ import useScriptRef from 'hooks/useScriptRef';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { addUser } from 'apis/api.js';
 
 const AuthRegister = ({ ...others }) => {
   const theme = useTheme();
@@ -60,7 +61,7 @@ const AuthRegister = ({ ...others }) => {
         console.log('Attempting to register user:', values);
         try {
           if (scriptedRef.current) {
-            const res = await axios.post('http://139.59.25.198:4200/user/save/', values);
+            const res = await addUser(values);
             console.log('User registered successfully:', res.data);
             setStatus({ success: true });
             toast.success('Customer added successfully');
