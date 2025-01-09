@@ -15,7 +15,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
 import { toast } from 'react-toastify';
 import { fetchUsers } from 'apis/api.js';
-import axios from 'axios';
+import { updateApi } from 'apis/common.js';
 
 const Company = () => {
   const navigate = useNavigate();
@@ -92,8 +92,13 @@ const Company = () => {
     try {
       setLoading(true); 
       setCompanyData((prevData) => prevData.map((user) => (user._id === userId ? { ...user, isActive: newStatus } : user)));
-
-      const response = await axios.patch(`http://localhost:4200/user/change-status/${userId}`, { isActive: newStatus });
+     
+      const updatedUser = {
+        _id: userId,       
+        isActive: newStatus,
+      };
+    
+        const response = await updateApi('/user/change-status/:id', updatedUser);
       if (response?.data.success) {
         toast.success(`Company status updated to ${newStatus ? 'Active' : 'Inactive'}`);
       } else {
@@ -249,7 +254,7 @@ const Company = () => {
   };
 
   const handleView = (_id) => {
-    navigate(`/dashboard/view-company/${_id}`);
+    navigate(`/dashboard/company/view-company/${_id}`);
   };
 
 

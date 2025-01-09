@@ -142,6 +142,7 @@ const Product = () => {
   const handleProductUpdated = (updatedProduct) => {
     setProducts((prev) => prev.map((prod) => (prod._id === updatedProduct._id ? updatedProduct : prod)));
     setOpenUpdate(false);
+    loadProducts();
   };
 
   return (

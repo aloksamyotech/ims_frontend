@@ -101,6 +101,10 @@ export const fetchEmployees = async (queryParams = {}) => {
   return fetchApi(`${urls.employee.fetch}?${queryString}`);
 };
 
+export const fetchEmployeeById = async (id) => {
+  return fetchApi(`${urls.employee.fetchbyid.replace(':id', id)}`);
+};
+
 export const addEmployee = async (newEmployee) => {
   return addApi(urls.employee.add, newEmployee);
 };
@@ -177,6 +181,10 @@ export const fetchOrders = async (queryParams = {}) => {
   return fetchApi(`${urls.order.fetch}?${queryString}`);
 };
 
+export const fetchOrderById = async (id) => {
+  return fetchApi(`${urls.order.fetchbyid.replace(':id', id)}`);
+};
+
 export const addOrder = async (newOrder) => {
   return addApi(urls.order.add, newOrder);
 };
@@ -229,6 +237,10 @@ export const deletePurchase = async (_id) => {
 export const fetchPurchases = async (queryParams = {}) => {
   const queryString = new URLSearchParams(queryParams).toString();
   return fetchApi(`${urls.purchase.fetch}?${queryString}`);
+};
+
+export const fetchPurchaseById = async (id) => {
+  return fetchApi(`${urls.purchase.fetchbyid.replace(':id', id)}`);
 };
 
 export const addPurchase = async (newPurchase) => {

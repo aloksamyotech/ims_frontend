@@ -23,7 +23,6 @@ import {
 } from '@mui/material';
 import Swal from 'sweetalert2';
 import moment from 'moment';
-import axios from 'axios';
 import jsPDF from 'jspdf';
 import Logo from '../../assets/images/images.png';
 import autoTable from 'jspdf-autotable';
@@ -37,6 +36,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
+import { fetchPurchaseById } from 'apis/api.js';
+import { updateApi } from 'apis/common.js';
 
 const user = localStorage.getItem('user');
 const userObj = JSON.parse(user);
@@ -93,7 +94,7 @@ const PurchasePage = () => {
   useEffect(() => {
     const loadPurchase = async () => {
       try {
-        const response = await axios.get(`http://localhost:4200/purchase/fetchById/${id}`);
+        const response = await fetchPurchaseById(id);
         setPurchaseData(response?.data);
       } catch (error) {
         setError('Failed to fetch purchase data');
@@ -114,8 +115,13 @@ const PurchasePage = () => {
   }, []);
 
   const updatePurchaseStatus = async (id, action) => {
+    const updatedPurchase = {
+      _id: id,
+      action: action
+    };
+
     try {
-      const response = await axios.patch(`http://:4200/purchase/update-status/${id}`, { action });
+      const response = await updateApi('/purchase/update-status/:id', updatedPurchase);
       if (response.status === 200) {
         setPurchaseData((prev) => ({
           ...prev,
@@ -188,7 +194,7 @@ const PurchasePage = () => {
 
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('Company Details:',  120, 56);
+    doc.text('Company Details:', 120, 56);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
     doc.text(`Name: ${userObj.name}`, 120, 62);

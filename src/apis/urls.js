@@ -35,6 +35,7 @@ export const urls = {
     update: '/employee/update/:id',
     fetch: '/employee/fetch/',
     count: '/employee/count/',
+    fetchbyid: '/employee/fetchById/:id'
   },
   product: {
     add: '/product/save/',
@@ -56,6 +57,7 @@ export const urls = {
     add: '/order/save/',
     delete: '/order/deleteById/:id',
     fetch: '/order/fetch/',
+    fetchbyid: '/order/fetchById/:id',
     count: '/order/count/',
     totalprofit: '/order/total-profit',
     totalamount: '/order/total-amount/',
@@ -69,6 +71,7 @@ export const urls = {
     add: '/purchase/save/',
     delete: '/purchase/deleteById/:id',
     fetch: '/purchase/fetch/',
+    fetchbyid: '/purchase/fetchById/:id',
     count: '/purchase/count/',
   },
   report: {

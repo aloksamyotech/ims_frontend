@@ -5,6 +5,7 @@ import currencySymbolMap from 'currency-symbol-map';
 import { toast } from 'react-toastify';
 import ClearIcon from '@mui/icons-material/Clear';
 import { Formik, Field, Form } from 'formik';
+import { addApi } from 'apis/common.js';
 
 const currency = [
   'USD', 'EUR', 'GBP', 'INR', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK',
@@ -40,8 +41,8 @@ const UpdateProfile = ({ open, onClose, profile, setProfile }) => {
     }
 
     try {
-      const response = await axios.post(
-        `http://localhost:4200/admin/update`,  
+      const response = await addApi(
+        '/admin/update',  
         formData,
         {
           headers: {

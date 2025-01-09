@@ -22,6 +22,7 @@ import AnimateButton from 'ui-component/extended/AnimateButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router';
+import { addApi } from 'apis/common.js';
 
 const AuthLogin = ({ ...others }) => {
   const theme = useTheme();
@@ -55,7 +56,7 @@ const AuthLogin = ({ ...others }) => {
         onSubmit={async (values, { setErrors, setStatus }) => {
           try {
             setIsSubmitting(true);
-            const res = await axios.post('http://localhost:4200/user/login/', values);
+            const res = await addApi('/user/login/', values);
   
             if (res?.data && res?.data?.jwtToken && res?.data?.user) {
               const storageMethod = rememberMe ? localStorage : sessionStorage;

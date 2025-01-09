@@ -19,7 +19,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import ClearIcon from '@mui/icons-material/Clear';
-import axios from 'axios';
+import { addApi } from 'apis/common.js';
 import { fetchCategories } from 'apis/api.js';
 import { getUserId } from 'apis/constant.js';
 
@@ -79,7 +79,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
         if (values.image) {
           formData.append('image', values.image);
         }
-        const response = await axios.post('http://localhost:4200/product/save', formData, {
+        const response = await addApi('/product/save', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         if (onProductAdded) {

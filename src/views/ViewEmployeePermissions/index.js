@@ -20,6 +20,8 @@ import { useParams, Link } from 'react-router-dom';
 import moment from 'moment';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
+import { fetchEmployeeById } from 'apis/api.js';
+import { fetchApi , addApi } from 'apis/common.js';
 
 const permissionsList = [
   { id: 'default', label: 'Dashboard' },
@@ -47,7 +49,7 @@ const ViewEmployeePage = () => {
   useEffect(() => {
     const loadEmployee = async () => {
       try {
-        const response = await axios.get(`http://localhost:4200/employee/fetchById/${id}`);
+        const response = await fetchEmployeeById(id);
         setEmpData(response?.data);
       } catch (error) {
         toast.error('Error fetching employee data');
@@ -59,7 +61,7 @@ const ViewEmployeePage = () => {
   useEffect(() => {
     const fetchPermissions = async () => {
       try {
-        const response = await axios.get(`http://localhost:4200/permissions/fetch/${id}`);
+        const response = await fetchApi(`/permissions/fetch/${id}`);
         setSelectedPermissions(response.data.permissions || []);
         setLoading(false);
       } catch (error) {
@@ -80,13 +82,12 @@ const ViewEmployeePage = () => {
 
   const savePermissions = async () => {
     try {
-      await axios.post('http://localhost:4200/permissions/save', {
+      await addApi('/permissions/save', {
         empId: id,
         permissions: selectedPermissions
       });
       toast.success('Permissions updated successfully!');
     } catch (error) {
-      console.error('Error saving permissions', error);
       toast.error('Failed to update permissions.');
     }
   };

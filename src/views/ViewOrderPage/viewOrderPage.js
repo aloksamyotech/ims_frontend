@@ -38,6 +38,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { fetchOrderById } from 'apis/api.js';
+import { updateApi } from 'apis/common.js';
 
 const user = localStorage.getItem('user');
 const userObj = JSON.parse(user);
@@ -93,7 +95,7 @@ const InvoicePage = () => {
   useEffect(() => {
     const loadInvoice = async () => {
       try {
-        const response = await axios.get(`http://localhost:4200/order/fetchById/${id}`);
+        const response = await fetchOrderById(id);
         setInvoiceData(response?.data);
       } catch (error) {
         setError('Failed to fetch invoice data');
@@ -113,8 +115,13 @@ const InvoicePage = () => {
   }, []);
 
   const updateOrderStatus = async (id, action) => {
+    const updatedOrder = {
+      _id: id,       
+      action: action 
+    };
+  
     try {
-      const response = await axios.patch(`http://localhost:4200/order/update-status/${id}`, { action });
+      const response = await updateApi('/order/update-status/:id', updatedOrder);
       if (response.status === 200) {
         setInvoiceData((prev) => ({
           ...prev,
