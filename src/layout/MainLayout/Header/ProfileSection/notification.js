@@ -1,4 +1,4 @@
-import React, { useState, useEffect , useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Badge, IconButton, Menu, Card, Box, MenuItem, List, ListItem, Typography } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { fetchQuantityAlert } from 'apis/api.js';
@@ -13,37 +13,35 @@ const NotificationDropdown = () => {
   useEffect(() => {
     const userRole = localStorage.getItem('role');
     setRole(userRole);
-  }, []); 
+  }, []);
 
-  const fetchNotifications = useCallback(async () => {
-    if (role === 'user') {
-      try {
-        const userId = getUserId();
-        const response = await fetchQuantityAlert({ userId });
-        const lowStockProducts = response?.data?.data;
+const fetchNotifications = async () => {
+  if (role === 'user') {
+    try {
+      const userId = getUserId();
+      const response = await fetchQuantityAlert({ userId });
+      const lowStockProducts = response?.data?.data;
 
-        const notificationMessages = lowStockProducts.map(
-          (product) =>
-            `Quantity Alert Restock for ${product.productnm}, current quantity ${product.quantity}.`
-        );
+      const notificationMessages = lowStockProducts.map(
+        (product) => `Quantity Alert Restock for ${product.productnm}, current quantity ${product.quantity}.`
+      );
 
-        setNotifications(notificationMessages);
-        setUnreadCount(notificationMessages.length);
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
-      }
+      setNotifications(notificationMessages);
+      setUnreadCount(notificationMessages.length);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
     }
-  }, [role, fetchQuantityAlert]);
+  }
+};
+
+useEffect(() => {
+  fetchNotifications(); 
+}, []);
+
 
   useEffect(() => {
-    if (role === 'user') {
-      const interval = setInterval(() => {
-        fetchNotifications();
-      }, 5000);
-
-      return () => clearInterval(interval);
-    }
-  }, [role, fetchNotifications]); 
+    fetchNotifications();
+  }, []);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

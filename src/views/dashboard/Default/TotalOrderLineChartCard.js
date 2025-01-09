@@ -63,8 +63,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
           setLoading(false);
           return;
         }
-        const response = await countOrders({userId});
-        if (response?.data?.count !== undefined) {
+        if (response && response?.data && response?.data?.count !== undefined) {
           setOrderCount(response.data.count || 0);
         } else {
           setOrderCount(0);

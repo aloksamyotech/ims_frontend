@@ -37,8 +37,7 @@ const Supplier = () => {
       const response = await fetchSuppliers({ userId });
       setSupplierData(response?.data);
     } catch (error) {
-      toast.error('Failed to fetch suppliers');
-      console.log(error);
+      console.log('Failed to fetch or no data found');
     }
   };
 

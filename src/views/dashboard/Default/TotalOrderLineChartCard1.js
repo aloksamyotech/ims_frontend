@@ -64,7 +64,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
           return;
         }
         const response = await countPurchases({userId});
-        if (response?.data?.count !== undefined) {
+        if (response && response?.data && response?.data?.count !== undefined) {
           setPurchaseCount(response.data.count || 0);
         } else {
           setPurchaseCount(0);

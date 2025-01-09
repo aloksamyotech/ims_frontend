@@ -35,7 +35,7 @@ const Customer = () => {
       const response = await fetchCustomers({ userId });
       setCustomerData(response?.data);
     } catch (error) {
-      toast.error('Failed to fetch customers');
+      console.error('Failed to fetch or no customers');
     }
   };
 
