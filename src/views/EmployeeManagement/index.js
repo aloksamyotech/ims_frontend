@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Stack,
+  Grid,
   IconButton,
   Breadcrumbs,
   Link as MuiLink,
@@ -301,7 +302,7 @@ const User = () => {
         employee={currentEmployee}
         onUpdateEmployee={handleEmployeeUpdated}
       />
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -353,7 +354,7 @@ const User = () => {
             </Paper>
           </Box>
         </TableStyle>
-      </Container>
+      </Grid>
     </>
   );
 };

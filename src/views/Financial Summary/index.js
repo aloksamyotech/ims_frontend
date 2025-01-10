@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchProducts, totalSoldProfit } from 'apis/api.js';
 import {
-  CardMedia,
+  Grid,
   Box,
   Card,
   Tabs,
@@ -61,7 +61,7 @@ const CompanyReport = () => {
   }, []);
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -213,6 +213,7 @@ const CompanyReport = () => {
               </TableHead>
               <TableBody>
                 {Object.values(profitLoss).map((product) => {
+                  const marginColor = product.totalProfitOrLoss >= 0 ? 'green' : 'red';
                   const profitLossText =
                     product.totalProfitOrLoss >= 0 ? `+${product.totalProfitOrLoss.toFixed(2)}` : `${product.totalProfitOrLoss.toFixed(2)}`;
 
@@ -221,7 +222,7 @@ const CompanyReport = () => {
                       <TableCell>{product.productName}</TableCell>
                       <TableCell>{product.soldQuantity}</TableCell>
                       <TableCell>{product.soldAmount}</TableCell>
-                      <TableCell>{profitLossText}</TableCell>
+                      <TableCell sx={{ color: marginColor }}>{product.totalProfitOrLoss >= 0 ? `${profitLossText}` : `${profitLossText}`}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -230,7 +231,7 @@ const CompanyReport = () => {
           </TableContainer>
         )}
       </TabContentCard>
-    </Container>
+    </Grid>
   );
 };
 

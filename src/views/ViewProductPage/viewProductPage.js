@@ -353,7 +353,7 @@ const ViewProductPage = () => {
   const filteredPurchaseData = filterDataByDate(formattedPurchaseData);
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -536,7 +536,7 @@ const ViewProductPage = () => {
           )}
         </TabContentCard>
       </Card>
-    </Container>
+    </Grid>
   );
 };
 

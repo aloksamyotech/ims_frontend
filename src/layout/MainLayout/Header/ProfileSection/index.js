@@ -45,8 +45,9 @@ const ProfileSection = () => {
   const handleLogout = () => {
     // Step 1: Clear localStorage
     localStorage.removeItem('imstoken');
-    localStorage.removeItem('user._id');
-    localStorage.removeItem('user.email');
+    localStorage.removeItem('user');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('email');
     localStorage.removeItem('role');
     localStorage.removeItem('permissions');
 

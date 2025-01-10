@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Container, Typography, Card, Box } from '@mui/material';
+import { Stack, Button, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Grid, Typography, Card, Box } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import AddCustomer from './AddCustomers.js';
@@ -304,7 +304,7 @@ const Customer = () => {
         onCustomerUpdated={handleCustomerUpdated}
       />
 
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -363,7 +363,7 @@ const Customer = () => {
             </Card>
           </Box>
         </TableStyle>
-      </Container>
+      </Grid>
     </>
   );
 };

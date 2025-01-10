@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import {
   Stack,
   Button,
-  IconButton,
-  Container,
   Typography,
   Card,
   Box,
@@ -81,7 +79,7 @@ const Product = () => {
 
   return (
     <>
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -198,7 +196,7 @@ const Product = () => {
             </Grid>
           </Box>
         </Card>
-      </Container>
+      </Grid>
     </>
   );
 };

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Typography,
   Box,
-  Paper,
   Grid,
   Table,
   TableBody,
@@ -264,7 +263,7 @@ const InvoicePage = () => {
   } = invoiceData || {};
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -602,7 +601,7 @@ const InvoicePage = () => {
           </Box>
         )}
       </TabContentCard>
-    </Container>
+    </Grid>
   );
 };
 

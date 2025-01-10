@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Stack,
-  Container,
+  Grid,
   Typography,
   Box,
   Card,
@@ -361,7 +361,7 @@ const Order = () => {
   return (
     <>
       <AddOrders open={openAdd} handleClose={handleCloseAdd} />
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -426,7 +426,7 @@ const Order = () => {
             </Card>
           </Box>
         </TableStyle>
-      </Container>
+      </Grid>
     </>
   );
 };

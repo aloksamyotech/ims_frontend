@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Grid, Typography, Card, CardContent, Breadcrumbs, Container, Link as MuiLink, Button } from '@mui/material';
+import { Box, Grid, Typography, Card, CardContent, Breadcrumbs,Link as MuiLink, Button } from '@mui/material';
 import { fetchAdmin } from 'apis/api.js';
 import logo from 'assets/images/profile.png';
 import { toast } from 'react-toastify';
@@ -49,7 +49,7 @@ const ProfileSection = () => {
   };
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -152,7 +152,7 @@ const ProfileSection = () => {
       <UpdateProfileForm open={openDialog} onClose={handleDialogCloseEditProfile} profile={profile} setProfile={setProfile}/>
 
       <UpdateCurrency open={currencyDialog} onClose={handleDialogClose} profile={profile} setProfile={setProfile} load={load} />
-    </Container>
+    </Grid>
   );
 };
 

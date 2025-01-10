@@ -296,7 +296,7 @@ const invoiceTotal = invoiceTaxes + invoiceSubtotal;
   };
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -633,7 +633,7 @@ const invoiceTotal = invoiceTaxes + invoiceSubtotal;
         </Grid>
       </form>
       <ToastContainer />
-    </Container>
+    </Grid>
   );
 };
 

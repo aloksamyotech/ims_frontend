@@ -15,29 +15,24 @@ const NotificationDropdown = () => {
     setRole(userRole);
   }, []);
 
-const fetchNotifications = async () => {
-  if (role === 'user') {
-    try {
-      const userId = getUserId();
-      const response = await fetchQuantityAlert({ userId });
-      const lowStockProducts = response?.data?.data;
+  const fetchNotifications = async () => {
+    if (role === 'user') {
+      try {
+        const userId = getUserId();
+        const response = await fetchQuantityAlert({ userId });
+        const lowStockProducts = response?.data?.data;
+        
+        const notificationMessages = lowStockProducts.map(
+          (product) => `Quantity Alert Restock for ${product.productnm}, current quantity ${product.quantity}.`
+        );
 
-      const notificationMessages = lowStockProducts.map(
-        (product) => `Quantity Alert Restock for ${product.productnm}, current quantity ${product.quantity}.`
-      );
-
-      setNotifications(notificationMessages);
-      setUnreadCount(notificationMessages.length);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
+        setNotifications(notificationMessages);
+        setUnreadCount(notificationMessages.length);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
     }
-  }
-};
-
-useEffect(() => {
-  fetchNotifications(); 
-}, []);
-
+  };
 
   useEffect(() => {
     fetchNotifications();

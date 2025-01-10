@@ -4,6 +4,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import {
   Box,
   Tabs,
+  Grid,
   Stack,
   Breadcrumbs,
   Link as MuiLink,
@@ -23,10 +24,9 @@ import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { Link } from 'react-router-dom';
-import { Container } from '@mui/system';
 
 const TabContentCard = styled(Card)(({ theme }) => ({
-  boxShadow: theme.shadows[3],
+  boxShadow: theme.shadows[1],
   borderRadius: 8,
   marginBottom: theme.spacing(1),
   marginTop: theme.spacing(2.4)
@@ -278,7 +278,7 @@ const ProductReport = () => {
   };
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -380,7 +380,7 @@ const ProductReport = () => {
           </Box>
         )}
       </TabContentCard>
-    </Container>
+    </Grid>
   );
 };
 

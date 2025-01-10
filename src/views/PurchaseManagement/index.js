@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Stack,
-  Button,
-  Container,
+  Grid,
   Typography,
   Card,
   Box,
@@ -332,7 +331,7 @@ const Purchase = () => {
   return (
     <>
       <AddPurchases open={openAdd} handleClose={handleCloseAdd} />
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -397,7 +396,7 @@ const Purchase = () => {
             </Card>
           </Box>
         </TableStyle>
-      </Container>
+      </Grid>
     </>
   );
 };

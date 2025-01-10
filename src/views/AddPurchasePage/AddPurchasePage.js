@@ -191,7 +191,7 @@ const PurchaseForm = () => {
   const purchaseTotal = purchaseSubtotal + purchaseTaxes;
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -395,7 +395,7 @@ const PurchaseForm = () => {
           </Grid>
         </form>
       </Card>
-    </Container>
+    </Grid>
   );
 };
 

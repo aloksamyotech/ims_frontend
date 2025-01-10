@@ -154,7 +154,7 @@ const Product = () => {
         product={selectedProduct}
         onProductUpdated={handleProductUpdated}
       />
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -206,7 +206,7 @@ const Product = () => {
             </Box>
 
             <Stack direction="row" spacing={2} alignItems="center">
-              <BulkUpload />
+              <BulkUpload  loadProducts={loadProducts}/>
 
               <Tooltip title="Add Product" arrow>
                 <IconButton
@@ -428,7 +428,7 @@ const Product = () => {
 `   }
   </style>
         </Card>
-      </Container>
+      </Grid>
     </>
   );
 };

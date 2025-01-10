@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { getUserId } from 'apis/constant.js';
 import {addApi} from 'apis/common.js'; 
 
-function FileInput() {
+const FileInput = ({loadProducts}) => {
   const userId = getUserId();
   const [data, setData] = useState(null);
   const [open, setOpen] = useState(false);
@@ -52,6 +52,7 @@ function FileInput() {
           userId: userId,
         })),
       });
+      loadProducts();
       toast.success('Bulk upload successfully');
       setOpen(false);
     } catch (error) {

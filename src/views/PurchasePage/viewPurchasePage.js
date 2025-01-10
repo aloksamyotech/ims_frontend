@@ -263,7 +263,7 @@ const PurchasePage = () => {
   } = purchaseData || {};
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -439,21 +439,23 @@ const PurchasePage = () => {
                             <strong>Subtotal:</strong> {currencySymbol} {subtotalProduct.toFixed(2)}
                           </Typography>
                         </Grid>
-                        <Grid item xs={6}>
-                          <Typography variant="body1">
-                            <strong>Tax:</strong> {currencySymbol} {tax.toFixed(2)}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Typography variant="body1">
-                            <strong>Total:</strong> {currencySymbol} {total.toFixed(2)}
-                          </Typography>
-                        </Grid>
                       </Grid>
                     </Grid>
                   </Box>
                 );
               })}
+              <Grid container spacing={2} sx={{ m: 2 }}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="body1">
+                  <strong>Subtotal+Tax:</strong> {currencySymbol} ({subtotal.toFixed(2)} + {tax.toFixed(2)})
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="body1">
+                    <strong>Total:</strong> {currencySymbol} {total.toFixed(2)}
+                  </Typography>
+                </Grid>
+              </Grid>
             </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', padding: '5px' }}>
@@ -576,7 +578,7 @@ const PurchasePage = () => {
           </Box>
         )}
       </TabContentCard>
-    </Container>
+    </Grid>
   );
 };
 

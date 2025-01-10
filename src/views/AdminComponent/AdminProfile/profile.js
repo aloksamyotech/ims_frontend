@@ -39,7 +39,7 @@ const ProfileSection = () => {
   }
 
   return (
-   <Container>
+   <Grid>
        <Box
         sx={{
           backgroundColor: '#ffff',
@@ -128,7 +128,7 @@ const ProfileSection = () => {
 
       <UpdateProfile open={openDialog} onClose={handleDialogClose} profile={profile} setProfile={setProfile} />
     </Card>
-    </Container>
+    </Grid>
   );
 };
 

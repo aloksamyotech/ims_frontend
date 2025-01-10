@@ -230,5 +230,5 @@ const AdminRoutes = {
   ]
 };
 
-const render = (role === 'user') ? MainRoutes : AdminRoutes;
+const render = (role === 'admin') ? AdminRoutes : MainRoutes;
 export default render;

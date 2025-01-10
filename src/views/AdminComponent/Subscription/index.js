@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Container, Typography, Card, Box, Dialog } from '@mui/material';
+import { Stack, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Grid, Typography, Card, Box, Dialog } from '@mui/material';
 import TableStyle from 'ui-component/TableStyle.js';
 import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -271,7 +271,7 @@ const Subscription = () => {
       />
       <ViewSubscription open={openView} handleClose={() => setOpenView(false)} subscription={currentSubscription} />
 
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -327,7 +327,7 @@ const Subscription = () => {
             </Card>
           </Box>
         </TableStyle>
-      </Container>
+      </Grid>
     </>
   );
 };

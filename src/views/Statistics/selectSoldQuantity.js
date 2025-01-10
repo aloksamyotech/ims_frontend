@@ -113,7 +113,7 @@ const SoldQuantityDisplay = () => {
           setTopCategories([]);
         }
       } catch (err) {
-        setError('Error fetching sold data');
+        setError('No sold data');
       } finally {
         setLoading(false);
       }
@@ -233,7 +233,7 @@ const SoldQuantityDisplay = () => {
         <Grid container spacing={2}>
           {soldQuantity !== null && !loading && !error && (
             <Grid item xs={6} sm={3} md={3}>
-              <Paper sx={{ p: 2, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Paper sx={{ p: 2, textAlign: 'center',boxShadow: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Inventory2Icon sx={{ mr: 2, fontSize: 40, color: 'primary.main' }} />
                 <div>
                   <Typography variant="h6">Sold Quantity</Typography>
@@ -245,7 +245,7 @@ const SoldQuantityDisplay = () => {
 
           {soldSales !== null && !loading && !error && (
             <Grid item xs={6} sm={3} md={3}>
-              <Paper sx={{ p: 2, textAlign: 'center', boxShadow: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Paper sx={{ p: 2, textAlign: 'center', boxShadow: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <TrendingUpIcon sx={{ mr: 2, fontSize: 40, color: 'secondary.main' }} />
                 <div>
                   <Typography variant="h6">Sales Amount</Typography>
@@ -259,7 +259,7 @@ const SoldQuantityDisplay = () => {
 
           {orderCount !== null && !loading && !error && (
             <Grid item xs={6} sm={3} md={3}>
-              <Paper sx={{ p: 2, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Paper sx={{ p: 2, textAlign: 'center',boxShadow: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ShoppingCartIcon sx={{ mr: 2, fontSize: 40, color: '#4caf50' }} />
                 <div>
                   <Typography variant="h6">Orders</Typography>
@@ -271,7 +271,7 @@ const SoldQuantityDisplay = () => {
 
           {purchaseCount !== null && !loading && !error && (
             <Grid item xs={6} sm={3} md={3}>
-              <Paper sx={{ p: 2, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Paper sx={{ p: 2, textAlign: 'center',boxShadow: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <StoreIcon sx={{ mr: 2, fontSize: 40, color: '#ffa726' }} />
                 <div>
                   <Typography variant="h6">Purchases </Typography>
@@ -281,7 +281,7 @@ const SoldQuantityDisplay = () => {
             </Grid>
           )}
 
-          <Grid container spacing={2} sx={{ mt: 1, pl: 1 }}>
+          <Grid container spacing={2} sx={{ mt: 1, pl: 2 }}>
             {topCategories &&
               topCategories.length > 0 &&
               topCategories.slice(0, 3).map((category, index) => (

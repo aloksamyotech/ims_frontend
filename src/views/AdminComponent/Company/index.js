@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, Avatar, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Switch, Container, Typography, Card, Box } from '@mui/material';
+import { Stack, Avatar, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Switch, Grid, Typography, Card, Box } from '@mui/material';
 import TableStyle from 'ui-component/TableStyle.js';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import AddCompany from './addCompany.js';
@@ -262,7 +262,7 @@ const Company = () => {
     <>
       <AddCompany open={openAdd} handleClose={() => setOpenAdd(false)} onCompanyAdded={handleCompanyAdded} />
 
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -320,7 +320,7 @@ const Company = () => {
             </Card>
           </Box>
         </TableStyle>
-      </Container>
+      </Grid>
     </>
   );
 };

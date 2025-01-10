@@ -35,8 +35,8 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
         const payload = { ...values, userId };
         const response = await addCategory(payload);
         onCategoryAdded(response?.data);
-        handleClose();
         toast.success('Category added successfully');
+        handleClose();
         resetForm();
       } catch (error) {
         console.log(error);

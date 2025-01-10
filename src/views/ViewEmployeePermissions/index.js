@@ -3,9 +3,8 @@ import {
   Box,
   Divider,
   Card,
-  Grid,
   CardContent,
-  Container,
+  Grid,
   Breadcrumbs,
   Link as MuiLink,
   Button,
@@ -14,7 +13,6 @@ import {
   Typography,
   Paper
 } from '@mui/material';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useParams, Link } from 'react-router-dom';
 import moment from 'moment';
@@ -52,7 +50,7 @@ const ViewEmployeePage = () => {
         const response = await fetchEmployeeById(id);
         setEmpData(response?.data);
       } catch (error) {
-        toast.error('Error fetching employee data');
+        toast.error('No employee data found');
       }
     };
     loadEmployee();
@@ -62,7 +60,7 @@ const ViewEmployeePage = () => {
     const fetchPermissions = async () => {
       try {
         const response = await fetchApi(`/permissions/fetch/${id}`);
-        setSelectedPermissions(response.data.permissions || []);
+        setSelectedPermissions(response?.data?.permissions || []);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching permissions', error);
@@ -93,7 +91,7 @@ const ViewEmployeePage = () => {
   };
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -210,7 +208,7 @@ const ViewEmployeePage = () => {
           </Paper>
         </div>
       </Card>
-    </Container>
+    </Grid>
   );
 };
 

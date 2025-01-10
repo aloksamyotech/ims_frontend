@@ -4,7 +4,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import {
   Box,
   Tabs,
-  Stack,
+  Grid,
   Breadcrumbs,
   Link as MuiLink,
   Tab,
@@ -370,7 +370,7 @@ const ProductReport = () => {
   );
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -472,7 +472,7 @@ const ProductReport = () => {
           </Box>
         )}
       </TabContentCard>
-    </Container>
+    </Grid>
   );
 };
 

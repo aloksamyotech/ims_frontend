@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Container,
   Card,
   Grid,
   Box,
@@ -70,7 +69,7 @@ const CreateInvoice = () => {
   };
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           marginTop: '20px',
@@ -184,7 +183,7 @@ const CreateInvoice = () => {
       </Card>
 
    
-    </Container>
+    </Grid>
   );
 };
 

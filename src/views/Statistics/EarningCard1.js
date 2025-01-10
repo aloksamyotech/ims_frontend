@@ -53,7 +53,7 @@ const EarningCard = ({ isLoading }) => {
         const userId = getUserId();
         const amount = await getTotalSales({ userId });
   
-        if (amount.data.success && Array.isArray(amount.data.data)) {
+        if (amount?.data?.success && Array.isArray(amount?.data?.data)) {
           const filteredSalesData = amount.data.data.filter(item => item.companyId === userId);
           if (filteredSalesData.length > 0) {
             setSalesData(filteredSalesData[0]);

@@ -39,7 +39,7 @@ const Analytics = () => {
   }, []);
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -75,7 +75,7 @@ const Analytics = () => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={gridSpacing} sx={{ marginTop: '8px' }}>
+      <Grid container spacing={gridSpacing} sx={{ marginTop: '1px' }}>
         <Grid item xs={12}>
           <Grid container spacing={gridSpacing}>
             <Grid item lg={4} md={6} sm={6} xs={12}>
@@ -113,7 +113,7 @@ const Analytics = () => {
       </Grid>
 
      
-    </Container>
+    </Grid>
   );
 };
 

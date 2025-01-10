@@ -409,7 +409,7 @@ const CompanyReport = () => {
   ];
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -743,7 +743,7 @@ const CompanyReport = () => {
           </TableStyle>
         )}
       </TabContentCard>
-    </Container>
+    </Grid>
   );
 };
 

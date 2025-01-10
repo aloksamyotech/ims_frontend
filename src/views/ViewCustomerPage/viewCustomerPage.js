@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Card, Typography, Grid, CardContent, Divider, Container, Breadcrumbs, Link as MuiLink, Button, Stack } from '@mui/material';
+import { Box, Card, Typography, Grid, CardContent, Breadcrumbs, Link as MuiLink, Button, Stack } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import axios from 'axios';
@@ -193,7 +193,7 @@ const ViewCustomerPage = () => {
   const filteredOrders = orderDetails.filter((order) => order.customerId === customerData?._id);
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -331,7 +331,7 @@ const ViewCustomerPage = () => {
           </Box>
         </Grid>
       </Card>
-    </Container>
+    </Grid>
   );
 };
 
