@@ -1,6 +1,6 @@
 
 export const urls = {
-  base: 'http://ims.samyotech.in:4200',
+  base: 'https://ims.samyotech.in/api',
   unit: {
     add: '/unit/save/',
     delete: '/unit/deleteById/:id',

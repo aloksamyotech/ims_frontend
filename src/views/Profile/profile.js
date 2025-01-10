@@ -24,7 +24,6 @@ const ProfileSection = () => {
       setProfile(adminData);
     } catch (error) {
       console.error('Error fetching details:', error);
-      toast.error('Failed to fetch profile');
     }
   };
 
