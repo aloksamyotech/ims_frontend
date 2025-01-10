@@ -149,7 +149,7 @@ const ProfileSection = () => {
         </Grid>
       </Card>
 
-      <UpdateProfileForm open={openDialog} onClose={handleDialogCloseEditProfile} profile={profile} setProfile={setProfile} load={load} />
+      <UpdateProfileForm open={openDialog} onClose={handleDialogCloseEditProfile} profile={profile} setProfile={setProfile}/>
 
       <UpdateCurrency open={currencyDialog} onClose={handleDialogClose} profile={profile} setProfile={setProfile} load={load} />
     </Container>

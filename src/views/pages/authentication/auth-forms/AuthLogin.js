@@ -84,8 +84,8 @@ const AuthLogin = ({ ...others }) => {
           } catch (error) {
             if (scriptedRef.current) {
               setStatus({ success: false });
-              toast.error(error.response?.data?.message || 'Failed to log in');
-              setErrors({ submit: error.message });
+              toast.error(error.response?.data?.message || "something went wrong");
+              // setErrors({ submit: error.message });
             }
           } finally {
             setIsSubmitting(false);

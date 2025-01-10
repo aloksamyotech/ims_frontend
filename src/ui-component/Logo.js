@@ -17,6 +17,7 @@ const Logo = () => {
         setLogoUrl(adminData.logoUrl || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ24Ow1xRIPVAQPRHqG3FcXsh80DR0PSCgzqA&s'); 
       } catch (error) {
         console.error('Error fetching details:', error);
+       
       }
     };
     load();

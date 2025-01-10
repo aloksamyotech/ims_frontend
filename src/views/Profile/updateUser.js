@@ -8,7 +8,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 const user = localStorage.getItem('user');
 const userObj = JSON.parse(user);
 
-const UpdateProfileForm = ({ open, onClose, profile, setProfile, load }) => {
+const UpdateProfileForm = ({ open, onClose, profile, setProfile }) => {
   const [formData, setFormData] = useState({
     name: userObj?.name || '',
     email: userObj?.email || '',
@@ -30,9 +30,9 @@ const UpdateProfileForm = ({ open, onClose, profile, setProfile, load }) => {
         setProfile((prevProfile) => ({ ...prevProfile, ...response.data }));
 
         localStorage.setItem('user', JSON.stringify(response.data));
-
+      
         toast.success('Profile updated successfully!');
-        load();
+    
         onClose();
       } else {
         toast.error('Profile update failed');
