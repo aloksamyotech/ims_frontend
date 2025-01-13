@@ -50,7 +50,7 @@ const CompanyReport = () => {
       try {
         const userId = getUserId();
         const response = await fetchLowStock({ userId });
-        setLowStockProducts(response?.data?.data || []);
+        setLowStockProducts(response?.data?.data?.filter((product) => product.quantity == 0) || []);
         const result = await fetchQuantityAlert({ userId });
         const filteredStockAlert = result?.data?.data?.filter((product) => product.quantity !== 0) || [];
         setStockAlert(filteredStockAlert);

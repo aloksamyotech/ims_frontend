@@ -319,15 +319,15 @@ const PurchaseForm = () => {
                           />
                         </TableCell>
                         <TableCell>
-                          <TextField 
-                          type="number" 
-                          size="small" 
-                          value={(row?.price || 0).toFixed(2)} 
-                          inputProps={{ readOnly: true }}
+                          <TextField
+                            type="number"
+                            size="small"
+                            value={(row?.price || 0).toFixed(2)}
+                            inputProps={{ readOnly: true }}
                             InputProps={{
                               startAdornment: <span>{currencySymbol}</span>
                             }}
-                            />
+                          />
                         </TableCell>
                         <TableCell>
                           <TextField
@@ -335,7 +335,7 @@ const PurchaseForm = () => {
                             size="small"
                             value={(row?.subtotal || 0).toFixed(2)}
                             inputProps={{
-                              readOnly: true,
+                              readOnly: true
                             }}
                             InputProps={{
                               startAdornment: <span>{currencySymbol}</span>
@@ -362,7 +362,8 @@ const PurchaseForm = () => {
                         Subtotal
                       </TableCell>
                       <TableCell align="right">
-                        {currencySymbol}{purchaseSubtotal.toFixed(2)}
+                        {currencySymbol}
+                        {purchaseSubtotal.toFixed(2)}
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -370,7 +371,8 @@ const PurchaseForm = () => {
                         Tax
                       </TableCell>
                       <TableCell align="right">
-                        {currencySymbol}{purchaseTaxes.toFixed(2)}
+                        {currencySymbol}
+                        {purchaseTaxes.toFixed(2)}
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -378,7 +380,8 @@ const PurchaseForm = () => {
                         Total
                       </TableCell>
                       <TableCell align="right">
-                        {currencySymbol}{purchaseTotal.toFixed(2)}
+                        {currencySymbol}
+                        {purchaseTotal.toFixed(2)}
                       </TableCell>
                     </TableRow>
                   </TableBody>

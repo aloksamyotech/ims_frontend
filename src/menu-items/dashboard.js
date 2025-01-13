@@ -12,13 +12,13 @@ import {
   IconCategory,
   IconBrandUnity,
   IconAccessible,
-  IconUserPlus,
+  IconUserPlus
 } from '@tabler/icons';
 import InsightsIcon from '@mui/icons-material/Insights';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 const icons = {
   IconHome,
@@ -42,9 +42,10 @@ const icons = {
 };
 import AdminDashboard from 'views/dashboard/Default';
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
-const role = (localStorage.getItem('role'));
+const role = localStorage.getItem('role');
+const permissions = (localStorage.getItem('permissions') || '').split(',');
 
-const dashboard = {
+export const dashboard = {
   title: <span style={{ fontWeight: 'bold' }}> Dashboard-Menu</span>,
   type: 'group',
   children: [
@@ -64,7 +65,7 @@ const dashboard = {
       icon: icons.IconAccessible,
       breadcrumbs: false
     },
-      {
+    {
       id: '02',
       title: 'Statistics',
       type: 'item',
@@ -167,7 +168,7 @@ const dashboard = {
       url: '/dashboard/profile',
       icon: icons.IconUser,
       breadcrumbs: false
-    },
+    }
   ]
 };
 
@@ -206,16 +207,33 @@ const Admindashboard = {
       url: '/dashboard/subscription',
       icon: icons.IconMailbox,
       breadcrumbs: false
-     },
-     {
+    },
+    {
       id: '04',
       title: 'Profile',
       type: 'item',
       url: '/dashboard/admin-profile',
       icon: icons.IconUser,
       breadcrumbs: false
-    },
+    }
   ]
+};
+
+export const filterMenuItems = (menuItems, permissions) => {
+  return menuItems.filter((item) => permissions.includes(item.id));
+};
+
+let finalMenu = [];
+
+if (role === 'user') {
+  finalMenu = dashboard;
+} else if (role === 'employee') {
+  finalMenu = {
+    ...dashboard,
+    children: filterMenuItems(dashboard.children, permissions)
+  };
+} else if (role === 'admin') {
+  finalMenu = Admindashboard;
 }
 
-export default (role === 'user') ? dashboard : Admindashboard;
+export default finalMenu;

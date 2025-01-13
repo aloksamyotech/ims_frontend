@@ -11,18 +11,18 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  Stack,
+  Stack
 } from '@mui/material';
 import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { Formik } from 'formik';
-import axios from 'axios';
 import useScriptRef from 'hooks/useScriptRef.js';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router';
 import { addApi } from 'apis/common.js';
+import { filterMenuItems, dashboard } from '../../../../menu-items/dashboard.js';
 
 const AuthLogin = ({ ...others }) => {
   const theme = useTheme();
@@ -31,8 +31,8 @@ const AuthLogin = ({ ...others }) => {
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [user, setUser] = useState(null);  
-  const [role, setRole] = useState(null); 
+  const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
 
   const handleClickShowPassword = () => {
     setShowPassword((prev) => !prev);
@@ -47,17 +47,17 @@ const AuthLogin = ({ ...others }) => {
       <Formik
         initialValues={{
           email: '',
-          password: '',
+          password: ''
         }}
         validationSchema={Yup.object().shape({
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().required('Password is required'),
+          password: Yup.string().required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setStatus }) => {
           try {
             setIsSubmitting(true);
             const res = await addApi('/user/login/', values);
-  
+
             if (res?.data && res?.data?.jwtToken && res?.data?.user) {
               const storageMethod = rememberMe ? localStorage : sessionStorage;
               storageMethod.setItem('imstoken', JSON.stringify(res.data.jwtToken));
@@ -65,28 +65,29 @@ const AuthLogin = ({ ...others }) => {
               storageMethod.setItem('userId', res.data.user._id);
               storageMethod.setItem('email', res.data.user.email);
               storageMethod.setItem('role', res.data.user.role);
+              storageMethod.setItem('permissions', res.data.user.permissions || []);
 
               if (res.data.user.role === 'user') {
                 navigate('/dashboard/default');
                 window.location.reload();
-              } else {
+              } else if (res.data.user.role === 'admin') {
                 navigate('/dashboard/admin');
                 window.location.reload();
+              } else if (res.data.user.role === 'employee') {
+                const permissions = (localStorage.getItem('permissions') || '').split(',');
+                const filteredMenu = filterMenuItems(dashboard.children, permissions);
+                const firstAvailableRoute = filteredMenu.length > 0 ? filteredMenu[0].url : '/dashboard/default';
+
+                window.location.replace(firstAvailableRoute);
               }
 
-              if (scriptedRef.current) {
-                toast.success('Logged in successfully');
-                setStatus({ success: true });
-              }
+              toast.success('Logged in successfully');
             } else {
               throw new Error('Unexpected response structure');
             }
           } catch (error) {
-            if (scriptedRef.current) {
-              setStatus({ success: false });
-              toast.error(error.response?.data?.message || "something went wrong");
-              // setErrors({ submit: error.message });
-            }
+            console.log(error);
+            toast.error(error.response?.data?.message || 'Something went wrong');
           } finally {
             setIsSubmitting(false);
           }

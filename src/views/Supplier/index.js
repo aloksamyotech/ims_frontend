@@ -36,7 +36,7 @@ const Supplier = () => {
       const response = await fetchSuppliers({ userId });
       setSupplierData(response?.data);
     } catch (error) {
-      console.log('Failed to fetch or no data found');
+      console.error('Failed to fetch or no data found');
     }
   };
 

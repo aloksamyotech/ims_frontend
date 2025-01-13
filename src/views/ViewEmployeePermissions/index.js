@@ -30,6 +30,7 @@ const permissionsList = [
   { id: '05', label: 'Financial Summary' },
   { id: '06', label: 'Orders' },
   { id: '07', label: 'Purchases' },
+  { id: '08', label: 'Clients' }, 
   { id: '09', label: 'Suppliers' },
   { id: '10', label: 'Customers' },
   { id: '11', label: 'Category' },

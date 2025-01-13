@@ -51,13 +51,13 @@ const SoldQuantityDisplay = () => {
     if (fromDate && toDate) {
       setLoading(true);
       setError(null);
-
+  
       try {
         const userId = getUserId();
 
-        const formattedFromDate = fromDate.toISOString();
-        const formattedToDate = toDate.toISOString();
-
+        const formattedFromDate = new Date(fromDate.setHours(0, 0, 0, 0)).toISOString();
+        const formattedToDate = new Date(toDate.setHours(23, 59, 59, 999)).toISOString();
+  
         const response = await soldQuantityByDate({
           fromDate: formattedFromDate,
           toDate: formattedToDate,
@@ -68,7 +68,7 @@ const SoldQuantityDisplay = () => {
         } else {
           setSoldQuantity(0);
         }
-
+  
         const result = await soldSalesByDate({
           fromDate: formattedFromDate,
           toDate: formattedToDate,
@@ -79,7 +79,7 @@ const SoldQuantityDisplay = () => {
         } else {
           setSoldSales(0);
         }
-
+  
         const countOrder = await countOrders({
           fromDate: formattedFromDate,
           toDate: formattedToDate,
@@ -90,7 +90,7 @@ const SoldQuantityDisplay = () => {
         } else {
           setOrdersCount(0);
         }
-
+  
         const countPurchase = await countPurchases({
           fromDate: formattedFromDate,
           toDate: formattedToDate,
@@ -101,7 +101,7 @@ const SoldQuantityDisplay = () => {
         } else {
           setPurchasesCount(0);
         }
-
+  
         const topCategory = await getTopSellingCatgeory({
           fromDate: formattedFromDate,
           toDate: formattedToDate,
@@ -121,7 +121,7 @@ const SoldQuantityDisplay = () => {
       setError('Please select both from and to dates');
     }
   };
-
+  
   return (
     <Box>
       <Box

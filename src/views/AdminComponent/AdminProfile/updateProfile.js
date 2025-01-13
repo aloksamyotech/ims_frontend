@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Button, TextField, FormControl, Select, MenuItem, InputLabel, Dialog, DialogActions, DialogContent, DialogTitle, Typography, Grid, Box } from '@mui/material';
-import axios from 'axios';
 import currencySymbolMap from 'currency-symbol-map';
 import { toast } from 'react-toastify';
 import ClearIcon from '@mui/icons-material/Clear';

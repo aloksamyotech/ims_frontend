@@ -90,15 +90,15 @@ const Company = () => {
 
   const handleToggleStatus = async (userId, newStatus) => {
     try {
-      setLoading(true); 
+      setLoading(true);
       setCompanyData((prevData) => prevData.map((user) => (user._id === userId ? { ...user, isActive: newStatus } : user)));
-     
+
       const updatedUser = {
-        _id: userId,       
-        isActive: newStatus,
+        _id: userId,
+        isActive: newStatus
       };
-    
-        const response = await updateApi('/user/change-status/:id', updatedUser);
+
+      const response = await updateApi('/user/change-status/:id', updatedUser);
       if (response?.data.success) {
         toast.success(`Company status updated to ${newStatus ? 'Active' : 'Inactive'}`);
       } else {
@@ -168,42 +168,42 @@ const Company = () => {
       flex: 1,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Switch
-          checked={params.row?.isActive}
-          onChange={() => handleToggleStatus(params.row?._id, !params.row?.isActive)}
-          inputProps={{ 'aria-label': 'toggle active/inactive' }}
-          sx={{
-            width: 40,
-            height: 16,
-            padding: 0,
-            '& .MuiSwitch-switchBase': {
+          <Switch
+            checked={params.row?.isActive}
+            onChange={() => handleToggleStatus(params.row?._id, !params.row?.isActive)}
+            inputProps={{ 'aria-label': 'toggle active/inactive' }}
+            sx={{
+              width: 45,
+              height: 21,
               padding: 0,
-              margin: 0,
-              transition: 'transform 300ms ease',
-              transform: params.row?.isActive ? 'translateX(28px)' : 'translateX(2px)',
-              '&.Mui-checked': {
-                color: '#fff',
-                '& + .MuiSwitch-track': {
-                  backgroundColor: '#4caf50', 
-                  opacity: 1,
-                },
+              '& .MuiSwitch-switchBase': {
+                padding: 0,
+                transform: params.row?.isActive ? 'translateX(24px)' : 'translateX(2px)',
+                transition: 'transform 300ms ease',
+                '&.Mui-checked': {
+                  color: '#fff',
+                  '& + .MuiSwitch-track': {
+                    backgroundColor: '#4caf50',
+                    opacity: 1
+                  }
+                }
               },
-            },
-            '& .MuiSwitch-thumb': {
-              width: 14,
-              height: 14,
-              borderRadius: '50%',
-              backgroundColor: '#fff',
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)', 
-            },
-            '& .MuiSwitch-track': {
-              borderRadius: 18,
-              backgroundColor: params.row?.isActive ? '#4caf50' : '#f44336',
-              opacity: 1,
-            },
-          }}
-        />
-      </Box>
+              '& .MuiSwitch-thumb': {
+                width: 20,
+                height: 20,
+                borderRadius: '50%',
+                backgroundColor: '#fff',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
+              },
+              '& .MuiSwitch-track': {
+                borderRadius: 12,
+                backgroundColor: params.row?.isActive ? '#4caf50' : '#f44336',
+                opacity: 1,
+                transition: 'background-color 300ms ease'
+              }
+            }}
+          />
+        </Box>
       )
     },
     {
@@ -230,8 +230,8 @@ const Company = () => {
               color="primary"
               sx={{
                 '&:hover': {
-                  backgroundColor: '#9abfdd', 
-                  color: '#1976d2' 
+                  backgroundColor: '#9abfdd',
+                  color: '#1976d2'
                 }
               }}
             >
@@ -256,7 +256,6 @@ const Company = () => {
   const handleView = (_id) => {
     navigate(`/dashboard/company/view-company/${_id}`);
   };
-
 
   return (
     <>
