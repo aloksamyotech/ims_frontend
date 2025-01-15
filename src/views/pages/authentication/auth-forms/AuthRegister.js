@@ -202,7 +202,7 @@ const AuthRegister = ({ ...others }) => {
             {touched.phone && errors.phone && <FormHelperText error>{errors.phone}</FormHelperText>}
           </Grid>
 
-          <Grid container alignItems="center" justifyContent="space-between">
+          {/* <Grid container alignItems="center" justifyContent="space-between">
             <Grid item>
               <FormControlLabel
                 control={
@@ -218,7 +218,7 @@ const AuthRegister = ({ ...others }) => {
                 }
               />
             </Grid>
-          </Grid>
+          </Grid> */}
 
           {errors.submit && (
             <Box sx={{ mt: 1 }}>

@@ -92,7 +92,7 @@ const Analytics = () => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={gridSpacing} sx={{ marginTop: '5px' }}>
+      {/* <Grid container spacing={gridSpacing} sx={{ marginTop: '5px' }}>
         <Grid item xs={12}>
           <Grid container spacing={gridSpacing}>
             <Grid item xs={12}>
@@ -100,7 +100,7 @@ const Analytics = () => {
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      </Grid> */}
 
       <Grid container spacing={gridSpacing} sx={{ marginTop: '5px' }}>
         <Grid item xs={12}>

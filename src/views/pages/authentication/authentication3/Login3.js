@@ -133,9 +133,6 @@ const Login = () => {
           </Box>
         </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <AuthFooter />
-      </Grid>
     </AuthWrapper1>
   );
 };

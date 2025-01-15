@@ -180,7 +180,7 @@ const AuthLogin = ({ ...others }) => {
               />
               {touched.password && errors.password && <FormHelperText error>{errors.password}</FormHelperText>}
             </FormControl>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+            {/* <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -192,7 +192,7 @@ const AuthLogin = ({ ...others }) => {
                 }
                 label="Remember me"
               />
-            </Stack>
+            </Stack> */}
 
             <Box sx={{ width: '100%' }}>
               <Accordion expanded={expanded === 'panel1'} onChange={handleAccordian('panel1')}>
