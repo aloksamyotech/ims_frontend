@@ -1,24 +1,34 @@
-import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-
-// material-ui
+import { useTheme } from '@mui/material/styles';
+import { useEffect, useState } from 'react';
+import { fetchAdmin } from 'apis/api.js';
 import { ButtonBase } from '@mui/material';
 
-// project imports
-import config from 'config';
-import { MENU_OPEN } from 'store/actions';
-import { height, width } from '@mui/system';
+const Logo = () => {
+  const theme = useTheme();
+  const [logoUrl, setLogoUrl] = useState('');
 
-// ==============================|| MAIN LOGO ||============================== //
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const response = await fetchAdmin();
+        const adminData = Array.isArray(response.data) ? response.data[0] : response.data;
+        setLogoUrl(adminData.logoUrl); 
+      } catch (error) {
+        console.error('Error fetching details:', error);
+       
+      }
+    };
+    load();
+  }, []);
 
-const LogoSection = () => {
-  const defaultId = useSelector((state) => state.customization.defaultId);
-  const dispatch = useDispatch();
   return (
-    <ButtonBase disableRipple onClick={() => dispatch({ type: MENU_OPEN, id: defaultId })}>
-      <img alt="" src="/inventory-logo.png" style={{ height: '70px', width: '160px' }} />
-    </ButtonBase>
+
+    <ButtonBase >
+    <img alt="" src={logoUrl || '/inventory-logo.png'} style={{ height: '70px', width: '160px' }} />
+  </ButtonBase>
+  
   );
 };
 
-export default LogoSection;
+export default Logo;
+

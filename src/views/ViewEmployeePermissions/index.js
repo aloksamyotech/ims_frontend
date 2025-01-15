@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box,
-  Divider,
+  styled,
   Card,
   CardContent,
   Grid,
@@ -11,15 +11,25 @@ import {
   FormControlLabel,
   Checkbox,
   Typography,
-  Paper
+  Paper,
+  Tabs,
+  Tab
 } from '@mui/material';
 import { toast } from 'react-toastify';
 import { useParams, Link } from 'react-router-dom';
 import moment from 'moment';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
+import InfoIcon from '@mui/icons-material/Info';
+import SecurityIcon from '@mui/icons-material/Security';
 import { fetchEmployeeById } from 'apis/api.js';
-import { fetchApi , addApi } from 'apis/common.js';
+import { fetchApi, addApi } from 'apis/common.js';
+
+const TabContentCard = styled(Card)(({ theme }) => ({
+  boxShadow: theme.shadows[3],
+  borderRadius: 8,
+  marginTop: theme.spacing(2.4)
+}));
 
 const permissionsList = [
   { id: 'default', label: 'Dashboard' },
@@ -30,13 +40,14 @@ const permissionsList = [
   { id: '05', label: 'Financial Summary' },
   { id: '06', label: 'Orders' },
   { id: '07', label: 'Purchases' },
-  { id: '08', label: 'Clients' }, 
+  { id: '08', label: 'Clients' },
   { id: '09', label: 'Suppliers' },
   { id: '10', label: 'Customers' },
   { id: '11', label: 'Category' },
   { id: '12', label: 'Reports' },
   { id: '13', label: 'Subscription' },
-  { id: '14', label: 'Profile' }
+  { id: '14', label: 'Profile' },
+  { id: '15', label: 'AI Expert' }
 ];
 
 const ViewEmployeePage = () => {
@@ -44,6 +55,7 @@ const ViewEmployeePage = () => {
   const [empData, setEmpData] = useState(null);
   const [selectedPermissions, setSelectedPermissions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
     const loadEmployee = async () => {
@@ -64,7 +76,6 @@ const ViewEmployeePage = () => {
         setSelectedPermissions(response?.data?.permissions || []);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching permissions', error);
         setLoading(false);
       }
     };
@@ -91,6 +102,10 @@ const ViewEmployeePage = () => {
     }
   };
 
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
+
   return (
     <Grid>
       <Box
@@ -98,117 +113,119 @@ const ViewEmployeePage = () => {
           backgroundColor: '#ffff',
           padding: '10px',
           borderRadius: '8px',
-          width: '100%',
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
+          justifyContent: 'space-between'
         }}
       >
-        <Typography variant="h4">Employee Permissions</Typography>
-
-        <Breadcrumbs
-          separator={<NavigateNextIcon fontSize="small" />}
-          aria-label="breadcrumb"
-          sx={{ display: 'flex', alignItems: 'center' }}
-        >
+        <Typography variant="h4">View Employees</Typography>
+        <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
           <MuiLink component={Link} to="/dashboard/default" color="inherit">
             <HomeIcon sx={{ color: '#5e35b1' }} />
           </MuiLink>
           <MuiLink component={Link} to="/dashboard/employee" color="inherit">
             <Typography color="text.primary">Employee</Typography>
           </MuiLink>
-          <Typography color="text.primary">View Employee</Typography>
+          <Typography color="text.primary">ViewEmployee</Typography>
         </Breadcrumbs>
       </Box>
 
-      <Card sx={{ marginTop: '20px' }}>
-        <Card style={{ margin: '20px' }}>
-          <CardContent>
+      <TabContentCard>
+        <Tabs value={activeTab} onChange={handleTabChange} indicatorColor="primary" textColor="primary">
+          <Tab
+            icon={<InfoIcon />}
+            iconPosition="start"
+            label="Employee Details"
+            sx={{
+              fontSize: '14px',
+              fontWeight: 'bold',
+              minWidth: 120,
+              textTransform: 'none',
+              color: activeTab === 0 ? '#1976d2' : '#757070'
+            }}
+          />
+          <Tab
+            icon={<SecurityIcon />}
+            iconPosition="start"
+            label="Permissions"
+            sx={{
+              fontSize: '14px',
+              fontWeight: 'bold',
+              minWidth: 120,
+              textTransform: 'none',
+              color: activeTab === 1 ? '#1976d2' : '#757070'
+            }}
+          />
+        </Tabs>
+
+        {activeTab === 0 && (
+          <CardContent sx={{ m: 1 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="h4">
-                    <strong>{empData?.name || 'NA'}</strong>
-                  </Typography>
-                </Box>
+              <Grid item xs={12} sm={12}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    textTransform: 'uppercase',
+                    fontWeight: 'bold',
+                    fontSize: '1rem'
+                  }}
+                >
+                  {empData?.name || 'NA'}
+                </Typography>
               </Grid>
 
-              <Grid item xs={6}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">
-                    <strong>Email:</strong> {empData?.email || 'NA'}
-                  </Typography>
-                </Box>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body1">
+                  <strong>Email:</strong> {empData?.email || 'NA'}
+                </Typography>
               </Grid>
-
-              <Grid item xs={6}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">
-                    <strong>Phone:</strong> {empData?.phone || 'NA'}
-                  </Typography>
-                </Box>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body1">
+                  <strong>Phone:</strong> {empData?.phone || 'NA'}
+                </Typography>
               </Grid>
-
-              <Grid item xs={6}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">
-                    <strong>Address:</strong> {empData?.address || 'NA'}
-                  </Typography>
-                </Box>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body1">
+                  <strong>Address:</strong> {empData?.address || 'NA'}
+                </Typography>
               </Grid>
-
-              <Grid item xs={6}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant="body1">
-                    <strong>Created At:</strong> {moment(empData?.createdAt).format('DD-MM-YYYY')}
-                  </Typography>
-                </Box>
+              <Grid item xs={12} sm={6}>
+                <Typography variant="body1">
+                  <strong>Date:</strong> {moment(empData?.createdAt).format('DD-MM-YYYY')}
+                </Typography>
               </Grid>
             </Grid>
           </CardContent>
-        </Card>
-        <Divider />
-        <div>
-          <Typography
-            variant="h3"
-            sx={{
-              fontWeight: 'bold',
-              marginBottom: '20px',
-              textAlign: 'center',
-              mt:3
-            }}
-          >
-            Manage Permissions
-          </Typography>
+        )}
 
-          <Paper sx={{ padding: '20px' }}>
-            <Grid container spacing={3}>
-              {permissionsList.map((permission) => (
-                <Grid item xs={12} sm={4} md={4} key={permission.id}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        value={permission.id}
-                        checked={selectedPermissions.includes(permission.id)}
-                        onChange={() => handleCheckboxChange(permission.id)}
-                        color="primary"
-                      />
-                    }
-                    label={<Typography variant="body1">{permission.label}</Typography>}
-                    sx={{ display: 'flex', alignItems: 'center' }}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
-              <Button variant="contained" color="primary" onClick={savePermissions}>
-                Save Permissions
-              </Button>
-            </Box>
-          </Paper>
-        </div>
-      </Card>
+        {activeTab === 1 && (
+          <CardContent>
+            <Paper sx={{ padding: '20px' }}>
+              <Grid container spacing={3}>
+                {permissionsList.map((permission) => (
+                  <Grid item xs={12} sm={6} md={4} key={permission.id}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          value={permission.id}
+                          checked={selectedPermissions.includes(permission.id)}
+                          onChange={() => handleCheckboxChange(permission.id)}
+                          color="primary"
+                        />
+                      }
+                      label={<Typography variant="body1">{permission.label}</Typography>}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+                <Button variant="contained" color="primary" onClick={savePermissions}>
+                  Save Permissions
+                </Button>
+              </Box>
+            </Paper>
+          </CardContent>
+        )}
+      </TabContentCard>
     </Grid>
   );
 };

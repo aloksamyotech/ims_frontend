@@ -168,6 +168,14 @@ export const dashboard = {
       url: '/dashboard/profile',
       icon: icons.IconUser,
       breadcrumbs: false
+    },
+    {
+      id: '15',
+      title: 'AI Expert',
+      type: 'item',
+      url: '/dashboard/ai',
+      icon: icons.IconUser,
+      breadcrumbs: false
     }
   ]
 };
