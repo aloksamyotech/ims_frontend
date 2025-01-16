@@ -2,62 +2,47 @@ import React, { useState, useRef, useEffect } from 'react';
 import './chat.css';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { getUserId } from 'apis/constant.js';
-import { urls } from 'apis/urls.js';
-
-const baseUrl = urls.base;
+import { chatbotApi } from 'apis/common.js';
 
 const ChatBox = () => {
   const [userInput, setUserInput] = useState('');
-  const [messages, setMessages] = useState([
-    { text: 'Welcome! How can I help you today?', sender: 'bot' },
-  ]);
+  const [messages, setMessages] = useState([{ text: 'Welcome! How can I help you today?', sender: 'bot' }]);
   const textareaRef = useRef(null);
 
   useEffect(() => {
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { text: 'Welcome! How can I help you today?', sender: 'bot' },
-    ]);
+    setMessages((prevMessages) => [...prevMessages, { text: 'Welcome! How can I help you today?', sender: 'bot' }]);
   }, []);
 
   const handleSendMessage = async (event) => {
     event.preventDefault();
     if (!userInput.trim()) return;
 
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { text: userInput, sender: 'user' },
-    ]);
+    setMessages((prevMessages) => [...prevMessages, { text: userInput, sender: 'user' }]);
 
     try {
-    const userId = getUserId();
-      const response = await fetch(
-        `${baseUrl}/ai/get-product-quantity?userId=${userId}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ message: userInput }),
-        }
-      );
-      const data = await response.json();
+      const userId = getUserId();
 
-      if (response.ok) {
+      const response = await chatbotApi(`/ai/get-product-quantity`, {
+        method: 'POST',
+        params: { userId },
+        data: { message: userInput }
+      });
+
+      if (response.product && response.quantity) {
         setMessages((prevMessages) => [
           ...prevMessages,
           {
-            text: `The quantity of product ${data.product} is ${data.quantity}`,
-            sender: 'bot',
-          },
+            text: `The quantity of product ${response.product} is ${response.quantity}`,
+            sender: 'bot'
+          }
         ]);
       } else {
         setMessages((prevMessages) => [
           ...prevMessages,
           {
-            text: `${data.message}`,
-            sender: 'bot',
-          },
+            text: response.message || 'Unable to fetch product data.',
+            sender: 'bot'
+          }
         ]);
       }
     } catch (error) {
@@ -65,12 +50,12 @@ const ChatBox = () => {
         ...prevMessages,
         {
           text: 'Unable to fetch product data.',
-          sender: 'bot',
-        },
+          sender: 'bot'
+        }
       ]);
     }
 
-    setUserInput(''); 
+    setUserInput('');
   };
 
   const handleInputChange = (event) => {
@@ -105,10 +90,7 @@ const ChatBox = () => {
     <div className="chat-container">
       <div className="messages-container">
         {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`message ${message.sender === 'user' ? 'user-message' : 'bot-message'}`}
-          >
+          <div key={index} className={`message ${message.sender === 'user' ? 'user-message' : 'bot-message'}`}>
             {message.text}
           </div>
         ))}
