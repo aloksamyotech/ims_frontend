@@ -20,7 +20,7 @@ import { throttle } from 'lodash';
 import { addCustomer } from 'apis/api.js';
 import { getUserId } from 'apis/constant.js';
 
-const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
+const AddCustomer = ({ open, handleClose, customer, onCustomerAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = yup.object({
@@ -35,14 +35,18 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
       .string()
       .matches(/^[1-9][0-9]{9}$/, 'Phone number must be 12 digits and cannot start with 0')
       .required('Phone number is required'),
-    address: yup.string().min(10, 'Address must be at least 10 characters').max(50, 'Max 50 characters are allowed').required('Address is required'),
+    address: yup
+      .string()
+      .min(10, 'Address must be at least 10 characters')
+      .max(50, 'Max 50 characters are allowed')
+      .required('Address is required')
   });
 
   const initialValues = {
     customernm: '',
     phone: '',
     email: '',
-    address: '',
+    address: ''
   };
 
   const formik = useFormik({
@@ -56,33 +60,42 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
       try {
         const payload = { ...values, userId };
         const response = await addCustomer(payload);
-        onCustomerAdded(response?.data);
-        toast.success('Customer added successfully');
-        resetForm();
+
+        if (response?.data && response?.data?.message) {
+          toast.error(response.data.message);
+        } else {
+          onCustomerAdded(response?.data);
+          toast.success('Customer added successfully');
+          resetForm();
+          handleClose();
+        }
       } catch (error) {
-        toast.error('Failed to add customer');
+        if (error.response && error.response.data && error.response.data.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Failed to add customer');
+        }
       } finally {
         setIsSubmitting(false);
-        handleClose();
       }
-    },
+    }
   });
 
   const throttledSubmit = useCallback(throttle(formik.handleSubmit, 20000), [formik.handleSubmit]);
 
   return (
-    <Dialog open={open} onClose={handleClose}
-    PaperProps={{
-      style: {
-        width: '600px', 
-        height: 'auto', 
-        maxWidth: 'none', 
-      },
-    }}>
-      <DialogTitle
-        id="scroll-dialog-title"
-        style={{ display: 'flex', justifyContent: 'space-between' }}
-      >
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      PaperProps={{
+        style: {
+          width: '600px',
+          height: 'auto',
+          maxWidth: 'none'
+        }
+      }}
+    >
+      <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h3">Add Customer</Typography>
         <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
       </DialogTitle>
@@ -96,7 +109,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 required
                 id="customernm"
                 name="customernm"
-                size='small'
+                size="small"
                 fullWidth
                 value={formik.values.customernm}
                 onChange={formik.handleChange}
@@ -104,13 +117,13 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 helperText={formik.touched.customernm && formik.errors.customernm}
               />
             </Grid>
-            <Grid item xs={6} >
+            <Grid item xs={6}>
               <FormLabel>Email</FormLabel>
               <TextField
                 required
                 id="email"
                 name="email"
-                size='small'
+                size="small"
                 fullWidth
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -118,13 +131,13 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            <Grid item xs={6} >
+            <Grid item xs={6}>
               <FormLabel>Phone number</FormLabel>
               <TextField
                 required
                 id="phone"
                 name="phone"
-                size='small'
+                size="small"
                 fullWidth
                 value={formik.values.phone}
                 onChange={formik.handleChange}
@@ -187,7 +200,7 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 required
                 id="address"
                 name="address"
-                size='small'
+                size="small"
                 multiline
                 fullWidth
                 rows={2}
@@ -216,8 +229,6 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
           </DialogActions>
         </form>
       </DialogContent>
-
-      
     </Dialog>
   );
 };

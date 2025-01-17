@@ -166,45 +166,34 @@ const Company = () => {
       field: 'status',
       headerName: 'Status',
       flex: 1,
-      renderCell: (params) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Switch
-            checked={params.row?.isActive}
-            onChange={() => handleToggleStatus(params.row?._id, !params.row?.isActive)}
-            inputProps={{ 'aria-label': 'toggle active/inactive' }}
-            sx={{
-              width: 45,
-              height: 21,
-              padding: 0,
-              '& .MuiSwitch-switchBase': {
-                padding: 0,
-                transform: params.row?.isActive ? 'translateX(24px)' : 'translateX(2px)',
-                transition: 'transform 300ms ease',
-                '&.Mui-checked': {
-                  color: '#fff',
-                  '& + .MuiSwitch-track': {
-                    backgroundColor: '#4caf50',
-                    opacity: 1
-                  }
+      renderCell: (params) => {
+        const label = { inputProps: { 'aria-label': 'toggle active/inactive' } };
+
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Switch
+              {...label}
+              checked={params.row?.isActive}
+              onChange={() => handleToggleStatus(params.row?._id, !params.row?.isActive)}
+              defaultChecked
+              sx={{
+                '& .MuiSwitch-switchBase.Mui-checked': {
+                  color: '#4caf50'
+                },
+                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                  backgroundColor: '#4caf50' 
+                },
+                '& .MuiSwitch-switchBase': {
+                  color: '#dd132e' 
+                },
+                '& .MuiSwitch-switchBase + .MuiSwitch-track': {
+                  backgroundColor: '#dd132e' 
                 }
-              },
-              '& .MuiSwitch-thumb': {
-                width: 20,
-                height: 20,
-                borderRadius: '50%',
-                backgroundColor: '#fff',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
-              },
-              '& .MuiSwitch-track': {
-                borderRadius: 12,
-                backgroundColor: params.row?.isActive ? '#4caf50' : '#f44336',
-                opacity: 1,
-                transition: 'background-color 300ms ease'
-              }
-            }}
-          />
-        </Box>
-      )
+              }}
+            />
+          </Box>
+        );
+      }
     },
     {
       field: 'actions',

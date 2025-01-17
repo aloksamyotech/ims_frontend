@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import ClearIcon from '@mui/icons-material/Clear';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import {getUserId} from 'apis/constant.js';
+import { getUserId } from 'apis/constant.js';
 import { addCategory } from 'apis/api.js';
 
 const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
@@ -18,45 +18,48 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
   const formik = useFormik({
     initialValues: {
       catnm: '',
-      desc: '',
+      desc: ''
     },
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
       setIsSubmitting(true);
-    
+
       const userId = getUserId();
       if (!userId) {
         toast.error('User ID is missing. Please log in again.');
         setIsSubmitting(false);
         return;
       }
-    
       try {
         const payload = { ...values, userId };
         const response = await addCategory(payload);
-        onCategoryAdded(response?.data);
-        toast.success('Category added successfully');
-        handleClose();
-        resetForm();
+
+        if (response?.data && response?.data?.message) {
+          toast.error(response.data.message);
+        } else {
+          onCategoryAdded(response?.data);
+          toast.success('Category added successfully');
+          handleClose();
+          resetForm();
+        }
       } catch (error) {
-        console.log(error);
-        toast.error('Failed to add category');
+        if (error.response && error.response.data && error.response.data.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Failed to add category');
+        }
       } finally {
         setIsSubmitting(false);
       }
     }
-    
   });
 
   return (
     <Dialog open={open} onClose={handleClose}>
-    <DialogTitle
-    id="scroll-dialog-title"
-    style={{ display: 'flex', justifyContent: 'space-between' }}
-  >
-    <Typography variant="h3">Add Product Category</Typography>
-    <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
-  </DialogTitle>
+      <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant="h3">Add Product Category</Typography>
+        <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
+      </DialogTitle>
 
       <DialogContent>
         <form onSubmit={formik.handleSubmit}>
@@ -69,7 +72,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
                 required
                 id="catnm"
                 name="catnm"
-                size='small'
+                size="small"
                 fullWidth
                 type="text"
                 value={formik.values.catnm}
@@ -88,7 +91,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
                 name="desc"
                 fullWidth
                 type="text"
-                size='small'
+                size="small"
                 value={formik.values.desc}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}

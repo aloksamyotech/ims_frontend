@@ -20,7 +20,7 @@ import { throttle } from 'lodash';
 import { addEmployee } from 'apis/api.js';
 import { getUserId } from 'apis/constant.js';
 
-const AddEmployee = ({ open, handleClose,employee, onEmployeeAdded }) => {
+const AddEmployee = ({ open, handleClose, employee, onEmployeeAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = yup.object({
@@ -32,19 +32,23 @@ const AddEmployee = ({ open, handleClose,employee, onEmployeeAdded }) => {
       .required('Employee Name is required'),
     email: yup.string().email('Invalid email format').required('Email is required'),
     password: yup
-    .string()
-    .required('Password is required')
-    .min(8, 'Password must be at least 8 characters long')
-    .max(20, 'Password cannot be longer than 20 characters')
-    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .matches(/[0-9]/, 'Password must contain at least one number')
-    .matches(/[!@#$%^&*(),.?":{}|<>]/,  'Password must contain at least one special character'),
+      .string()
+      .required('Password is required')
+      .min(8, 'Password must be at least 8 characters long')
+      .max(20, 'Password cannot be longer than 20 characters')
+      .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+      .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+      .matches(/[0-9]/, 'Password must contain at least one number')
+      .matches(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character'),
     phone: yup
       .string()
       .matches(/^[1-9][0-9]{9}$/, 'Phone number must be 12 digits and cannot start with 0')
       .required('Phone number is required'),
-    address: yup.string().min(10, 'Address must be at least 10 characters').max(50, 'Max 50 characters are allowed').required('Address is required'),
+    address: yup
+      .string()
+      .min(10, 'Address must be at least 10 characters')
+      .max(50, 'Max 50 characters are allowed')
+      .required('Address is required')
   });
 
   const initialValues = {
@@ -66,33 +70,42 @@ const AddEmployee = ({ open, handleClose,employee, onEmployeeAdded }) => {
       try {
         const payload = { ...values, userId };
         const response = await addEmployee(payload);
-        onEmployeeAdded(response?.data);
-        toast.success('Employee added successfully');
-        resetForm();
+
+        if (response?.data && response?.data?.message) {
+          toast.error(response.data.message);
+        } else {
+          onEmployeeAdded(response?.data);
+          toast.success('Employee added successfully');
+          resetForm();
+          handleClose();
+        }
       } catch (error) {
-        toast.error('Failed to add employee');
+        if (error.response && error.response.data && error.response.data.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Failed to add employee');
+        }
       } finally {
         setIsSubmitting(false);
-        handleClose();
       }
-    },
+    }
   });
 
   const throttledSubmit = useCallback(throttle(formik.handleSubmit, 20000), [formik.handleSubmit]);
 
   return (
-    <Dialog open={open} onClose={handleClose}
-    PaperProps={{
-      style: {
-        width: '600px', 
-        height: 'auto', 
-        maxWidth: 'none', 
-      },
-    }}>
-      <DialogTitle
-        id="scroll-dialog-title"
-        style={{ display: 'flex', justifyContent: 'space-between' }}
-      >
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      PaperProps={{
+        style: {
+          width: '600px',
+          height: 'auto',
+          maxWidth: 'none'
+        }
+      }}
+    >
+      <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h3">Add Enployee</Typography>
         <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
       </DialogTitle>
@@ -106,7 +119,7 @@ const AddEmployee = ({ open, handleClose,employee, onEmployeeAdded }) => {
                 required
                 id="name"
                 name="name"
-                size='small'
+                size="small"
                 fullWidth
                 value={formik.values.name}
                 onChange={formik.handleChange}
@@ -114,13 +127,13 @@ const AddEmployee = ({ open, handleClose,employee, onEmployeeAdded }) => {
                 helperText={formik.touched.name && formik.errors.name}
               />
             </Grid>
-            <Grid item xs={6} >
+            <Grid item xs={6}>
               <FormLabel>Email</FormLabel>
               <TextField
                 required
                 id="email"
                 name="email"
-                size='small'
+                size="small"
                 fullWidth
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -128,13 +141,13 @@ const AddEmployee = ({ open, handleClose,employee, onEmployeeAdded }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            <Grid item xs={6} >
+            <Grid item xs={6}>
               <FormLabel>Password</FormLabel>
               <TextField
                 required
                 id="password"
                 name="password"
-                size='small'
+                size="small"
                 fullWidth
                 value={formik.values.password}
                 onChange={formik.handleChange}
@@ -142,13 +155,13 @@ const AddEmployee = ({ open, handleClose,employee, onEmployeeAdded }) => {
                 helperText={formik.touched.password && formik.errors.password}
               />
             </Grid>
-            <Grid item xs={6} >
+            <Grid item xs={6}>
               <FormLabel>Phone number</FormLabel>
               <TextField
                 required
                 id="phone"
                 name="phone"
-                size='small'
+                size="small"
                 fullWidth
                 value={formik.values.phone}
                 onChange={formik.handleChange}
@@ -162,7 +175,7 @@ const AddEmployee = ({ open, handleClose,employee, onEmployeeAdded }) => {
                 required
                 id="address"
                 name="address"
-                size='small'
+                size="small"
                 multiline
                 fullWidth
                 rows={2}
@@ -190,7 +203,7 @@ const AddEmployee = ({ open, handleClose,employee, onEmployeeAdded }) => {
             </Button>
           </DialogActions>
         </form>
-      </DialogContent> 
+      </DialogContent>
     </Dialog>
   );
 };
