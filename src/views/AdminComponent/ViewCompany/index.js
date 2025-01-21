@@ -96,7 +96,14 @@ const CompanyReport = () => {
 
   const categoryColumns = [
     { field: 'catnm', headerName: 'Category Name', flex: 0.4 },
-    { field: 'desc', headerName: 'Description', flex: 1 }
+    {
+      field: 'desc',
+      headerName: 'Description',
+      flex: 1,
+      renderCell: (params) => {
+        return params.value ? params.value : 'No description added';
+      },
+    },
   ];
 
   const customerColumns = [

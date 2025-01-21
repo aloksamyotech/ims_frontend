@@ -67,20 +67,6 @@ const Login = () => {
               <Grid item xs={12}>
                 <Divider sx={{ backgroundColor: '#ffffff' }} />
               </Grid>
-              <Grid item xs={12} textAlign="center">
-                <Typography
-                  component={Link}
-                  to="/register"
-                  variant="subtitle1"
-                  sx={{
-                    textDecoration: 'none',
-                    color: 'black',
-                    '&:hover': { textDecoration: 'underline' }
-                  }}
-                >
-                  Don&apos;t have an account?<span style={{ color: '#441572', fontWeight: 'bold' }}>Register here</span>
-                </Typography>
-              </Grid>
             </Grid>
           </AuthCardWrapper>
         </Grid>

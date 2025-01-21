@@ -13,7 +13,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper
+  Paper,
+  CircularProgress
 } from '@mui/material';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -104,13 +105,13 @@ const CreateInvoice = () => {
 
       <Card sx={{ marginTop: '20px' }}>
         <Grid container sx={{ marginBottom: 3, margin: '10px 32px' }}>
-            <Typography variant="h4" fontWeight="bold" sx={{ paddingTop: '10px' }}>
-              Date: {orderData?.date}
-            </Typography>
+          <Typography variant="h4" fontWeight="bold" sx={{ paddingTop: '10px' }}>
+            Date: {orderData?.date}
+          </Typography>
         </Grid>
 
         <Box display="flex" justifyContent="space-between" alignItems="flex" mt={2} mb={2}>
-          <Box sx={{  marginLeft:'40px' }}>
+          <Box sx={{ marginLeft: '40px' }}>
             <Typography variant="body1" fontWeight="bold">
               Customer Details
             </Typography>
@@ -120,7 +121,7 @@ const CreateInvoice = () => {
             <Typography>Address: {customer?.address}</Typography>
           </Box>
 
-          <Box sx={{  marginRight: '40px' }}>
+          <Box sx={{ marginRight: '40px' }}>
             <Typography variant="body1" fontWeight="bold">
               Company Details
             </Typography>
@@ -132,7 +133,7 @@ const CreateInvoice = () => {
         </Box>
 
         <Grid item xs={12}>
-          <TableContainer component={Paper} elevation={2} sx={{margin:'30px', width:'850px' }}>
+          <TableContainer component={Paper} elevation={2} sx={{ margin: '30px', width: '850px' }}>
             <Table>
               <TableHead sx={{ backgroundColor: '#1976d2' }}>
                 <TableRow>
@@ -148,7 +149,7 @@ const CreateInvoice = () => {
                     <TableCell>{product?.productnm}</TableCell>
                     <TableCell>{product?.sellingPrice.toFixed(2)}</TableCell>
                     <TableCell>{product?.quantity}</TableCell>
-                    <TableCell>{(product.quantity * product.sellingPrice)}</TableCell>
+                    <TableCell>{product.quantity * product.sellingPrice}</TableCell>
                   </TableRow>
                 ))}
                 <TableRow>
@@ -172,17 +173,20 @@ const CreateInvoice = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          
-        <Grid item xs={12} sx={{ textAlign: 'right', margin: 5 }}>
-        <Button variant="contained" color="secondary" onClick={handleSubmit} disabled={loading || isSubmitted}>
-          {isSubmitted ? 'Submitted' : loading ? 'Submitting...' : 'Submit'}
-        </Button>
-      </Grid>
+
+          <Grid item xs={12} sx={{ textAlign: 'right', margin: 5 }}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleSubmit}
+              disabled={loading || isSubmitted}
+              startIcon={loading && <CircularProgress size={20} color="inherit" />}
+            >
+              {isSubmitted ? 'Submitted' : loading ? 'Submitting...' : 'Submit'}
+            </Button>
+          </Grid>
         </Grid>
-
       </Card>
-
-   
     </Grid>
   );
 };

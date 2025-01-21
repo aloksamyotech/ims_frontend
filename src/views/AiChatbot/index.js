@@ -22,11 +22,12 @@ const ChatBox = () => {
     try {
       const userId = getUserId();
 
-      const response = await chatbotApi(`/ai/get-product-quantity`, {
+      const response = await chatbotApi(`/user/ai/report`, {
         method: 'POST',
-        params: { userId },
         data: { message: userInput }
       });
+
+      console.log(response);
 
       if (response.product && response.quantity) {
         setMessages((prevMessages) => [

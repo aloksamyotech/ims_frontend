@@ -252,15 +252,6 @@ export const countPurchases = async (queryParams = {}) => {
   return fetchApi(`${urls.purchase.count}?${queryString}`);
 };
 
-//report
-export const getSupplierProductReport = async () => {
-  return fetchApi(urls.report.getSupplierProductReport);
-};
-
-export const getCustomerProductReport = async () => {
-  return fetchApi(urls.report.getCustomerProductReport);
-};
-
 //admin
 export const fetchAdmin = async () => {
   return fetchApi(urls.admin.fetch);

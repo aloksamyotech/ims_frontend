@@ -95,8 +95,25 @@ const Category = () => {
   };
 
   const columns = [
-    { field: 'catnm', headerName: 'Category Name', flex: 1 },
-    { field: 'desc', headerName: 'Description', flex: 1 },
+    {
+      field: 'catnm',
+      headerName: 'Category Name',
+      flex: 1,
+      valueFormatter: (params) => {
+        if (params.value) {
+          return params.value.charAt(0).toUpperCase() + params.value.slice(1).toLowerCase();
+        }
+        return '';
+      }
+    },
+    {
+      field: 'desc',
+      headerName: 'Description',
+      flex: 1,
+      renderCell: (params) => {
+        return params.value ? params.value : 'No description added';
+      },
+    },
     {
       field: 'actions',
       headerName: 'Actions',
