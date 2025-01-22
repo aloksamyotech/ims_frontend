@@ -18,10 +18,11 @@ const ChatBox = () => {
     event.preventDefault();
     if (!userInput.trim()) return;
 
+    // Immediately show user input
     setMessages((prevMessages) => [...prevMessages, { text: userInput, sender: 'user' }]);
-    setUserInput('');
+    setUserInput(''); // Clear input field
 
-    setIsLoading(true);
+    setIsLoading(true); // Bot starts processing
 
     setTimeout(async () => {
       try {
@@ -30,17 +31,16 @@ const ChatBox = () => {
           data: { text: userInput }
         });
 
-        setIsLoading(false);
+        setIsLoading(false); // Hide loading dots once response is received
 
-        console.log(response);
-
+        // Show bot's response
         if (response?.success && response?.count?.message) {
           setMessages((prevMessages) => [...prevMessages, { text: response.count.message, sender: 'bot' }]);
         } else {
           setMessages((prevMessages) => [...prevMessages, { text: response?.message || 'Unable to fetch product data.', sender: 'bot' }]);
         }
       } catch (error) {
-        setIsLoading(false);
+        setIsLoading(false); // Hide loading dots on error
         setMessages((prevMessages) => [...prevMessages, { text: 'Unable to fetch product data.', sender: 'bot' }]);
       }
     }, 1500);
@@ -75,7 +75,9 @@ const ChatBox = () => {
       <div className="messages-container">
         {messages.map((message, index) => (
           <div key={index} className={`message ${message.sender === 'user' ? 'user-message' : 'bot-message'}`}>
-            {message.sender === 'bot' && (
+            {message.sender === 'user' ? (
+              <div className="message-content">{message.text}</div>
+            ) : (
               <div className="message-content">
                 <img alt="Bot" src={AIIcon} style={{ width: 24, height: 24, marginRight: '10px' }} />
                 {message.text}
@@ -86,7 +88,10 @@ const ChatBox = () => {
 
         {isLoading && (
           <div className="message bot-message">
-            <span className="loading-dots"></span>
+            <div className="message-content">
+              <img alt="Bot" src={AIIcon} style={{ width: 24, height: 24, marginRight: '10px' }} />
+              <span className="loading-dots"></span>
+            </div>
           </div>
         )}
       </div>
