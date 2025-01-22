@@ -14,10 +14,10 @@ import {
   IconAccessible,
   IconUserPlus
 } from '@tabler/icons';
-import InsightsIcon from '@mui/icons-material/Insights';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import SmartToyIcon  from '@mui/icons-material/SmartToy';
 
 const icons = {
   IconHome,
@@ -36,7 +36,7 @@ const icons = {
   IconUserPlus,
   TrendingDownIcon,
   MonetizationOnIcon,
-  InsightsIcon,
+  SmartToyIcon,
   AssessmentIcon,
 };
 import AdminDashboard from 'views/dashboard/Default';
@@ -61,7 +61,7 @@ export const dashboard = {
       title: 'AI Expert',
       type: 'item',
       url: '/dashboard/ai',
-      icon: icons.InsightsIcon,
+      icon: icons.SmartToyIcon,
       breadcrumbs: false
     },
     {

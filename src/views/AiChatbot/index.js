@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './chat.css';
-import SendRoundedIcon from '@mui/icons-material/SendRounded';
-import { getUserId } from 'apis/constant.js';
+import AIIcon from 'assets/images/ai-icon.png';
+import SendIcon from '@mui/icons-material/Send';
 import { chatbotApi } from 'apis/common.js';
 
 const ChatBox = () => {
   const [userInput, setUserInput] = useState('');
   const [messages, setMessages] = useState([{ text: 'Welcome! How can I help you today?', sender: 'bot' }]);
+  const [isLoading, setIsLoading] = useState(false);
   const textareaRef = useRef(null);
 
   useEffect(() => {
@@ -18,53 +19,34 @@ const ChatBox = () => {
     if (!userInput.trim()) return;
 
     setMessages((prevMessages) => [...prevMessages, { text: userInput, sender: 'user' }]);
-
-    try {
-      const userId = getUserId();
-
-      const response = await chatbotApi(`/user/ai/report`, {
-        method: 'POST',
-        data: { message: userInput }
-      });
-
-      console.log(response);
-
-      if (response.product && response.quantity) {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            text: `The quantity of product ${response.product} is ${response.quantity}`,
-            sender: 'bot'
-          }
-        ]);
-      } else {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            text: response.message || 'Unable to fetch product data.',
-            sender: 'bot'
-          }
-        ]);
-      }
-    } catch (error) {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          text: 'Unable to fetch product data.',
-          sender: 'bot'
-        }
-      ]);
-    }
-
     setUserInput('');
+
+    setIsLoading(true);
+
+    setTimeout(async () => {
+      try {
+        const response = await chatbotApi(`/user/ai/report`, {
+          method: 'POST',
+          data: { text: userInput }
+        });
+
+        setIsLoading(false);
+
+        console.log(response);
+
+        if (response?.success && response?.count?.message) {
+          setMessages((prevMessages) => [...prevMessages, { text: response.count.message, sender: 'bot' }]);
+        } else {
+          setMessages((prevMessages) => [...prevMessages, { text: response?.message || 'Unable to fetch product data.', sender: 'bot' }]);
+        }
+      } catch (error) {
+        setIsLoading(false);
+        setMessages((prevMessages) => [...prevMessages, { text: 'Unable to fetch product data.', sender: 'bot' }]);
+      }
+    }, 1500);
   };
 
   const handleInputChange = (event) => {
-    setUserInput(event.target.value);
-    autoResize(event.target);
-  };
-
-  const handlePaste = (event) => {
     setUserInput(event.target.value);
     autoResize(event.target);
   };
@@ -83,6 +65,7 @@ const ChatBox = () => {
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
+      event.preventDefault();
       handleSendMessage(event);
     }
   };
@@ -92,9 +75,20 @@ const ChatBox = () => {
       <div className="messages-container">
         {messages.map((message, index) => (
           <div key={index} className={`message ${message.sender === 'user' ? 'user-message' : 'bot-message'}`}>
-            {message.text}
+            {message.sender === 'bot' && (
+              <div className="message-content">
+                <img alt="Bot" src={AIIcon} style={{ width: 24, height: 24, marginRight: '10px' }} />
+                {message.text}
+              </div>
+            )}
           </div>
         ))}
+
+        {isLoading && (
+          <div className="message bot-message">
+            <span className="loading-dots"></span>
+          </div>
+        )}
       </div>
       <div className="chat-input-box">
         <textarea
@@ -102,13 +96,12 @@ const ChatBox = () => {
           className="chat-input"
           value={userInput}
           onChange={handleInputChange}
-          onPaste={handlePaste}
           onKeyDown={handleKeyPress}
           placeholder="Type your message..."
           rows="3"
         />
         <button className="send-button" onClick={handleSendMessage}>
-          <SendRoundedIcon sx={{ color: '#2196f3' }} />
+          <SendIcon sx={{ color: '#2196f3' }} />
         </button>
       </div>
     </div>

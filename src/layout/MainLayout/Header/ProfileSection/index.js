@@ -2,11 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Box, Button, Stack } from '@mui/material';
+import { Box, Button, Stack, Tooltip } from '@mui/material';
 import { IconLogout } from '@tabler/icons';
 import Notification from './notification.js';
 import { toast } from 'react-toastify';
-import { SmartToy } from '@mui/icons-material';
+import AIIcon from 'assets/images/ai-icon.png';
 
 // ==============================|| PROFILE MENU ||============================== //
 
@@ -73,27 +73,19 @@ const ProfileSection = () => {
     <>
       <Stack direction="row" spacing={3} alignItems="center">
         <Box>
-          <Button
-            variant="contained"
-            onClick={handleAiButtonClick}
-            sx={{
-              background: 'linear-gradient(45deg, #441572, #7c4bad)',
-              borderRadius: '10px',
-              '&:hover': {
-                background: 'linear-gradient(to right, #4b6cb7, #1a78c5)',
-                boxShadow: '2'
-              },
-              textTransform: 'none',
-              padding: '6px 10px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              color: 'white'
-            }}
-          >
-            <SmartToy sx={{ fontSize: '1.5rem' }} />
-            <span>Chat with AI Agent</span>
-          </Button>
+          <Tooltip title="Chat with AI expert" arrow>
+            <button
+              onClick={handleAiButtonClick}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer'
+              }}
+            >
+              <img alt="Bot" src={AIIcon} style={{ width: 36, height: 36 }} />
+            </button>
+          </Tooltip>
         </Box>
 
         <Box>
