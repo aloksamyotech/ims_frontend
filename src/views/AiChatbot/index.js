@@ -18,11 +18,10 @@ const ChatBox = () => {
     event.preventDefault();
     if (!userInput.trim()) return;
 
-    // Immediately show user input
     setMessages((prevMessages) => [...prevMessages, { text: userInput, sender: 'user' }]);
-    setUserInput(''); // Clear input field
+    setUserInput('');
 
-    setIsLoading(true); // Bot starts processing
+    setIsLoading(true);
 
     setTimeout(async () => {
       try {
@@ -31,16 +30,18 @@ const ChatBox = () => {
           data: { text: userInput }
         });
 
-        setIsLoading(false); // Hide loading dots once response is received
+        console.log(response);
 
-        // Show bot's response
+        setIsLoading(false);
+
+       
         if (response?.success && response?.count?.message) {
           setMessages((prevMessages) => [...prevMessages, { text: response.count.message, sender: 'bot' }]);
         } else {
           setMessages((prevMessages) => [...prevMessages, { text: response?.message || 'Unable to fetch product data.', sender: 'bot' }]);
         }
       } catch (error) {
-        setIsLoading(false); // Hide loading dots on error
+        setIsLoading(false);
         setMessages((prevMessages) => [...prevMessages, { text: 'Unable to fetch product data.', sender: 'bot' }]);
       }
     }, 1500);
@@ -95,7 +96,7 @@ const ChatBox = () => {
           </div>
         )}
       </div>
-      <div className="chat-input-box">
+      <div className="chat-input-wrapper">
         <textarea
           ref={textareaRef}
           className="chat-input"
