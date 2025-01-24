@@ -83,6 +83,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         if (onProductAdded) {
+          
           onProductAdded(response.data);
           toast.success('Product added successfully');
         }

@@ -3,6 +3,7 @@ import './chat.css';
 import AIIcon from 'assets/images/ai-icon.png';
 import SendIcon from '@mui/icons-material/Send';
 import { chatbotApi } from 'apis/common.js';
+import { getUserId } from 'apis/constant.js';
 
 const ChatBox = () => {
   const [userInput, setUserInput] = useState('');
@@ -24,10 +25,11 @@ const ChatBox = () => {
     setIsLoading(true);
 
     setTimeout(async () => {
+      const userId = getUserId();
       try {
         const response = await chatbotApi(`/user/ai/report`, {
           method: 'POST',
-          data: { text: userInput }
+          data: { text: userInput, userId : userId }
         });
 
         console.log(response);
