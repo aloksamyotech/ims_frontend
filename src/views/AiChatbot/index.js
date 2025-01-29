@@ -29,7 +29,7 @@ const ChatBox = () => {
       try {
         const response = await chatbotApi(`/user/ai/report`, {
           method: 'POST',
-          data: { text: userInput, userId : userId }
+          data: { text: userInput }
         });
 
         console.log(response);
@@ -37,8 +37,8 @@ const ChatBox = () => {
         setIsLoading(false);
 
        
-        if (response?.success && response?.count?.message) {
-          setMessages((prevMessages) => [...prevMessages, { text: response.count.message, sender: 'bot' }]);
+        if (response?.success && response?.message) {
+          setMessages((prevMessages) => [...prevMessages, { text: response.data.response, sender: 'bot' }]);
         } else {
           setMessages((prevMessages) => [...prevMessages, { text: response?.message || 'Unable to fetch product data.', sender: 'bot' }]);
         }
