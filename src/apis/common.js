@@ -68,7 +68,6 @@ export const chatbotApi = async (url, options = {}) => {
     });
     return response.data;
   } catch (error) {
-    console.error(`Error in API call: ${error.message}`);
     throw error;
   }
 };

@@ -29,7 +29,7 @@ const ChatBox = () => {
       try {
         const response = await chatbotApi(`/user/ai/report`, {
           method: 'POST',
-          data: { text: userInput }
+          data: { text: userInput, userId : userId }
         });
 
         console.log(response);

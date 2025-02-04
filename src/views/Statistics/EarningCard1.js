@@ -64,7 +64,6 @@ const EarningCard = ({ isLoading }) => {
           setSalesData([]); 
         }
       } catch (error) {
-        console.error('Error fetching sales data:', error);
         setSalesData([]);
       }
     };
@@ -96,7 +95,7 @@ const EarningCard = ({ isLoading }) => {
                     color: '#ffff'
                   }}
                 >
-                  Total Sales
+                 Revenue
                 </Typography>
               </Grid>
               <Grid item>

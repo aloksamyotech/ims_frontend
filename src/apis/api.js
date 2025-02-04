@@ -252,6 +252,10 @@ export const countPurchases = async (queryParams = {}) => {
   return fetchApi(`${urls.purchase.count}?${queryString}`);
 };
 
+export const getTotalPurchase = async () => {
+  return fetchApi(urls.purchase.totalpurchase);
+};
+
 //admin
 export const fetchAdmin = async () => {
   return fetchApi(urls.admin.fetch);
