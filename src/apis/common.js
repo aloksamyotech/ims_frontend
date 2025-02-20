@@ -55,7 +55,6 @@ export const updateEntity = async (entityType, updatedEntity) => {
 export const chatbotApi = async (url, options = {}) => {
   const { method = 'GET', data = null, params = {}, headers = {} } = options;
 
-  try {
     const response = await axios({
       url: `${baseUrl}${url}`,
       method,
@@ -66,8 +65,4 @@ export const chatbotApi = async (url, options = {}) => {
       params,
       data: method !== 'GET' ? data : undefined, 
     });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
 };

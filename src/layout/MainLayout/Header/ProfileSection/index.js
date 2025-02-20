@@ -18,6 +18,12 @@ const ProfileSection = () => {
   const [user, setUser] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
+  const [role, setRole] = useState('');
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem('role');
+    setRole(storedRole);
+  }, []);
 
   const anchorRef = useRef(null);
 
@@ -72,21 +78,23 @@ const ProfileSection = () => {
   return (
     <>
       <Stack direction="row" spacing={3} alignItems="center">
-        <Box>
-          <Tooltip title="Chat with AI expert" arrow>
-            <button
-              onClick={handleAiButtonClick}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                padding: 0,
-                cursor: 'pointer'
-              }}
-            >
-              <img alt="Bot" src={AIIcon} style={{ width: 36, height: 36 }} />
-            </button>
-          </Tooltip>
-        </Box>
+        {role === 'user' && (
+          <Box>
+            <Tooltip title="Chat with AI expert" arrow>
+              <button
+                onClick={handleAiButtonClick}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer'
+                }}
+              >
+                <img alt="Bot" src={AIIcon} style={{ width: 36, height: 36 }} />
+              </button>
+            </Tooltip>
+          </Box>
+        )}
 
         <Box>
           <Notification />
