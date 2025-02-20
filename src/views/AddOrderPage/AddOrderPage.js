@@ -62,7 +62,7 @@ const OrderForm = (props) => {
   const validationSchema = yup.object({
     date: yup.date().required('Date is required'),
     customernm: yup.string().required('Customer is required'),
-    email: yup.string().email('Invalid email format'),
+    email: yup.string().email('Invalid email format').required('Email is required'),
     phone: yup
       .string()
       .matches(/^[1-9][0-9]{9}$/, 'Phone number must be 12 digits and cannot start with 0')
@@ -243,8 +243,15 @@ const invoiceTotal = invoiceTaxes + invoiceSubtotal;
     formik.setFieldValue('customernm', customerName);
   };
 
+  
+  const isCreateInvoiceDisabled = 
+  products.length === 0 || 
+  (isWholesale && !selectedCustomer) || 
+  (isWalkIn && (!walkInData.phone || walkInData.phone.trim() === ""));
+
+
   const handleCreateInvoice = async () => {
-    if (!isWalkIn && !isWholesale && !selectedCustomer) {
+    if (!isWalkIn && !isWholesale && !selectedCustomer && !products) {
       toast.error('Please select a customer before creating the invoice.');
       return;
     }
@@ -253,7 +260,7 @@ const invoiceTotal = invoiceTaxes + invoiceSubtotal;
     if (isWalkIn) {
       customerData = {
         customernm: walkInData.customernm || 'N/A',
-        email: walkInData.email || 'N/A',
+        email: walkInData.email,
         phone: walkInData.phone,
         address: walkInData.address || 'N/A',
         isWholesale: false,
@@ -402,7 +409,7 @@ const invoiceTotal = invoiceTaxes + invoiceSubtotal;
                       />
                     </Grid>
                     <Grid item xs={4}>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>Email *</FormLabel>
                       <TextField
                         fullWidth
                         id="email"
@@ -546,7 +553,7 @@ const invoiceTotal = invoiceTaxes + invoiceSubtotal;
               </Grid>
 
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1, marginRight: '12px' }}>
-                <Button variant="contained" color="secondary" onClick={handleCreateInvoice}>
+                <Button variant="contained" color="secondary" onClick={handleCreateInvoice} disabled={isCreateInvoiceDisabled}>
                   Create Invoice
                 </Button>
               </Box>

@@ -42,13 +42,12 @@ const permissionsList = [
   { id: '06', label: 'Orders' },
   { id: '07', label: 'Purchases' },
   { id: '08', label: 'Clients' },
-  { id: '09', label: 'Suppliers' },
-  { id: '10', label: 'Customers' },
-  { id: '11', label: 'Category' },
-  { id: '12', label: 'Reports' },
-  { id: '13', label: 'Subscription' },
-  { id: '14', label: 'Profile' },
-  { id: '15', label: 'AI Expert' }
+  { id: '08', label: 'Suppliers' },
+  { id: '08', label: 'Customers' },
+  { id: '09', label: 'Category' },
+  { id: '10', label: 'Reports' },
+  { id: '11', label: 'Subscription' },
+  { id: '12', label: 'Profile' },
 ];
 
 const ViewEmployeePage = () => {
