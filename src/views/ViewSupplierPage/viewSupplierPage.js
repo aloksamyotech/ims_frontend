@@ -57,7 +57,7 @@ const ViewSupplierPage = () => {
         const userId = getUserId();
         const response = await fetchSupplierById(id);
         setSupplierData(response?.data);
-        const result = await fetchPurchases({userId});
+        const result = await fetchPurchases({ userId });
         const allPurchases = result?.data;
         setPurchaseDetails(allPurchases);
       } catch (error) {
@@ -224,91 +224,92 @@ const ViewSupplierPage = () => {
       </Box>
 
       <Card sx={{ marginTop: '20px' }}>
-            <Card style={{ margin: '20px' }}>
-              <CardContent>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="h4">
-                        <strong> {supplierData?.suppliernm || 'NA'} </strong>
-                      </Typography>
-                    </Box>
-                  </Grid>
+        <Card style={{ margin: '20px' }}>
+          <CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="h4">
+                    <strong> {supplierData?.suppliernm || 'NA'} </strong>
+                  </Typography>
+                </Box>
+              </Grid>
 
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Email:</strong> {supplierData?.email || 'NA'}
-                      </Typography>
-                    </Box>
-                  </Grid>
+              <Grid item xs={6}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body1">
+                    <strong>Email:</strong> {supplierData?.email || 'NA'}
+                  </Typography>
+                </Box>
+              </Grid>
 
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Phone:</strong> {supplierData?.phone || 'NA'}
-                      </Typography>
-                    </Box>
-                  </Grid>
+              <Grid item xs={6}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body1">
+                    <strong>Phone:</strong> {supplierData?.phone || 'NA'}
+                  </Typography>
+                </Box>
+              </Grid>
 
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Address:</strong> {supplierData?.address || 'NA'}
-                      </Typography>
-                    </Box>
-                  </Grid>
+              <Grid item xs={6}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body1">
+                    <strong>Address:</strong> {supplierData?.address || 'NA'}
+                  </Typography>
+                </Box>
+              </Grid>
 
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex' }}>
-                      <Typography variant="body1">
-                        <strong>Type of Supplier:</strong>&nbsp;&nbsp;
-                      </Typography>
-                      <Box
-                        sx={{
-                          backgroundColor: '#e3f2fd',
-                          color: '#2196f3',
-                          '&:hover': {
-                            backgroundColor: '#2196f3',
-                            color: 'white'
-                          },
-                          padding: '1px',
-                          borderRadius: '4px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontWeight: 'bold',
-                          width: '100px',
-                          height: '20px',
-                          textTransform: 'uppercase',
-                          boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-                          gap: '0.5rem',
-                          fontSize: '12px'
-                        }}
-                      >
-                        {supplierData?.typeOfSupplier || 'NA'}
-                      </Box>
-                    </Box>
-                  </Grid>
+              <Grid item xs={6}>
+                <Box sx={{ display: 'flex' }}>
+                  <Typography variant="body1">
+                    <strong>Type of Supplier:</strong>&nbsp;&nbsp;
+                  </Typography>
+                  <Box
+                    sx={{
+                      backgroundColor: '#e3f2fd',
+                      color: '#2196f3',
+                      // '&:hover': {
+                      //   backgroundColor: '#2196f3',
+                      //   color: 'white'
+                      // },
+                      cursor: 'pointer',
+                      padding: '1px',
+                      borderRadius: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 'bold',
+                      width: '100px',
+                      height: '20px',
+                      textTransform: 'uppercase',
+                      boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+                      gap: '0.5rem',
+                      fontSize: '12px'
+                    }}
+                  >
+                    {supplierData?.typeOfSupplier || 'NA'}
+                  </Box>
+                </Box>
+              </Grid>
 
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Shop Name:</strong> {supplierData?.shopName || 'NA'}
-                      </Typography>
-                    </Box>
-                  </Grid>
+              <Grid item xs={6}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body1">
+                    <strong>Shop Name:</strong> {supplierData?.shopName || 'NA'}
+                  </Typography>
+                </Box>
+              </Grid>
 
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Created At:</strong> {moment(supplierData?.createdAt).format('DD-MM-YYYY')}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
+              <Grid item xs={6}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body1">
+                    <strong>Created At:</strong> {moment(supplierData?.createdAt).format('DD-MM-YYYY')}
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
 
         <Grid item xs={12}>
           <Box style={{ height: '600px', margin: '12px' }}>
@@ -334,7 +335,10 @@ const ViewSupplierPage = () => {
                 },
                 '& .MuiDataGrid-columnHeaderTitle': {
                   fontWeight: 'bold'
-                }
+                },
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: '#eeeeee',
+                },
               }}
             />
           </Box>

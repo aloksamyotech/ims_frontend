@@ -18,7 +18,8 @@ import {
   Select,
   MenuItem,
   Card,
-  styled
+  styled,
+  Button
 } from '@mui/material';
 import moment from 'moment';
 import { fetchCurrencySymbol, getUserId } from 'apis/constant.js';
@@ -58,44 +59,64 @@ const CompanyReport = () => {
     setSelectedTab(newValue);
   };
 
+  const getCurrency = async () => {
+    const symbol = await fetchCurrencySymbol();
+    setCurrencySymbol(symbol);
+  };
   useEffect(() => {
-    const getCurrency = async () => {
-      const symbol = await fetchCurrencySymbol();
-      setCurrencySymbol(symbol);
-    };
     getCurrency();
   }, []);
 
+  const loadData = async () => {
+    try {
+      const categories = await fetchCategories();
+      const filteredCategories = categories?.data.filter((category) => category.userId === id);
+      const rows = filteredCategories?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+      setCategories(rows);
+
+      const products = await fetchProducts();
+      const filteredProducts = products?.data.filter((product) => product?.userId === id);
+      const rowsProduct = filteredProducts?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+      setProducts(rowsProduct);
+
+      const customers = await fetchCustomers();
+      const filteredCustomers = customers?.data.filter((customer) => customer.userId === id);
+      const rowsCustomer = filteredCustomers?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+      setCustomers(rowsCustomer);
+
+      const suppliers = await fetchSuppliers();
+      const filteredSuppliers = suppliers?.data.filter((supplier) => supplier.userId === id);
+      const rowsSupplier = filteredSuppliers?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+      setSuppliers(rowsSupplier);
+
+      const orders = await fetchOrders();
+      const filteredOrders = orders?.data.filter((order) => order.userId === id);
+      const rowsOrder = filteredOrders?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+      setOrders(rowsOrder);
+
+      const purchases = await fetchPurchases();
+      const filteredPurchases = purchases?.data.filter((purchase) => purchase.userId === id);
+      const rowsPurchase = filteredPurchases?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+      setPurchases(rowsPurchase);
+    } catch (error) {
+      toast.error('Failed to fetch data');
+    }
+  };
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const categories = await fetchCategories();
-        const filteredCategories = categories?.data.filter((category) => category.userId === id);
-        setCategories(filteredCategories);
-        const products = await fetchProducts();
-        const filteredProducts = products?.data.filter((product) => product?.userId === id);
-        setProducts(filteredProducts);
-        const customers = await fetchCustomers();
-        const filteredCustomers = customers?.data.filter((customer) => customer.userId === id);
-        setCustomers(filteredCustomers);
-        const suppliers = await fetchSuppliers();
-        const filteredSuppliers = suppliers?.data.filter((supplier) => supplier.userId === id);
-        setSuppliers(filteredSuppliers);
-        const orders = await fetchOrders();
-        const filteredOrders = orders?.data.filter((order) => order.userId === id);
-        setOrders(filteredOrders);
-        const purchases = await fetchPurchases();
-        const filteredPurchases = purchases?.data.filter((purchase) => purchase.userId === id);
-        setPurchases(filteredPurchases);
-      } catch (error) {
-        toast.error('Failed to fetch data');
-      }
-    };
     loadData();
   }, []);
 
   const categoryColumns = [
-    { field: 'catnm', headerName: 'Category Name', flex: 0.4 },
+    {
+      field: 'index',
+      headerName: '#',
+      flex: 0.1
+    },
+    {
+      field: 'catnm',
+      headerName: 'Category Name',
+      flex: 0.4
+    },
     {
       field: 'desc',
       headerName: 'Description',
@@ -107,6 +128,11 @@ const CompanyReport = () => {
   ];
 
   const customerColumns = [
+    {
+      field: 'index',
+      headerName: '#',
+      flex: 0.1
+    },
     {
       field: 'createdAt',
       headerName: 'Created At',
@@ -139,36 +165,22 @@ const CompanyReport = () => {
       },
       renderCell: (params) => {
         return (
-          <Box
-            sx={{
-              backgroundColor: '#e3f2fd',
-              color: '#2196f3',
-              '&:hover': {
-                backgroundColor: '#2196f3',
-                color: 'white'
-              },
-              padding: '1px',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              width: '90px',
-              height: '20px',
-              textTransform: 'uppercase',
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              gap: '0.5rem',
-              fontSize: '12px'
-            }}
-          >
-            {params.value}
-          </Box>
+          <Grid container>
+            <Grid item xs={12}>
+              <Button variant='contained' size='small' sx={{ borderRadius: '20px', color: '#2194f3', bgcolor: '#e3f2fd', boxShadow: 'none', '&:hover': { color: '#2194f3', bgcolor: '#e3f2fd', boxShadow: 'none' } }}>{params?.formattedValue}</Button>
+            </Grid>
+          </Grid>
         );
       }
     }
   ];
 
   const supplierColumns = [
+    {
+      field: 'index',
+      headerName: '#',
+      flex: 0.1
+    },
     {
       field: 'createdAt',
       headerName: 'Created At',
@@ -201,36 +213,22 @@ const CompanyReport = () => {
       minWidth: 150,
       renderCell: (params) => {
         return (
-          <Box
-            sx={{
-              backgroundColor: '#e3f2fd',
-              color: '#2196f3',
-              '&:hover': {
-                backgroundColor: '#2196f3',
-                color: 'white'
-              },
-              padding: '1px',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              width: '93px',
-              height: '20px',
-              textTransform: 'uppercase',
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              gap: '0.5rem',
-              fontSize: '12px'
-            }}
-          >
-            {params.value}
-          </Box>
+          <Grid container>
+            <Grid item xs={12}>
+              <Button variant='contained' size='small' sx={{ borderRadius: '20px', color: '#2194f3', bgcolor: '#e3f2fd', boxShadow: 'none', '&:hover': { color: '#2194f3', bgcolor: '#e3f2fd', boxShadow: 'none' } }}>{params?.formattedValue}</Button>
+            </Grid>
+          </Grid>
         );
       }
     }
   ];
 
   const orderColumns = [
+    {
+      field: 'index',
+      headerName: '#',
+      flex: 0.1
+    },
     {
       field: 'createdAt',
       headerName: 'Date',
@@ -260,19 +258,24 @@ const CompanyReport = () => {
     {
       field: 'customerPhone',
       headerName: 'PhoneNo',
-      flex:2.5,
+      flex: 2.5,
     },
     {
       field: 'productName',
       headerName: 'Item',
-      flex: 2
-      ,
+      flex: 2,
       valueGetter: (params) => {
         if (params.row?.products?.length > 0) {
           return params.row.products?.map((product) => `${product?.productName}(${product?.quantity})`).join(', ');
         }
         return 'N/A';
-      }
+      },
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography>{(params?.value?.length > 14) ? params?.value?.substr(0, 14) + "..." : params?.value}</Typography>
+          </Grid>
+        </Grid>
     },
     {
       field: 'total',
@@ -288,42 +291,31 @@ const CompanyReport = () => {
     {
       field: 'order_status',
       headerName: 'Status',
+      headerAlign: 'center',
       flex: 2,
-      renderCell: (params) => {
-        const status = params.row?.order_status;
-        return (
-          <Box
-            sx={{
-              backgroundColor:
-                status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
-              color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-              '&:hover': {
-                backgroundColor:
-                  status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-                color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-              },
-              padding: '1px',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              width: '90px',
-              height: '20px',
-              textTransform: 'uppercase',
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              gap: '0.5rem',
-              fontSize: '12px'
-            }}
-          >
-            {status}
-          </Box>
-        );
-      }
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12} textAlign='center'>
+            <Button size='small' variant='contained'
+              sx={{
+                color: (params?.value) === 'pending' ? '#ffc107' : ((params?.value) === 'completed' ? '#00c853' : '#d84315'),
+                backgroundColor: (params?.value) === 'pending' ? '#fff8e1' : ((params?.value) === 'completed' ? '#b9f6ca' : '#fbe9e7'), boxShadow: 'none', borderRadius: '10px', padding: '0px', paddingX: '10px', fontWeight: '400',
+                '&:hover': {
+                  color: (params?.value) === 'pending' ? '#ffc107' : ((params?.value) === 'completed' ? '#00c853' : '#d84315'),
+                  backgroundColor: (params?.value) === 'pending' ? '#fff8e1' : ((params?.value) === 'completed' ? '#b9f6ca' : '#fbe9e7'), boxShadow: 'none'
+                }
+              }}>{params?.value}</Button>
+          </Grid>
+        </Grid >
     }
   ];
 
   const purchaseColumns = [
+    {
+      field: 'index',
+      headerName: '#',
+      flex: 0.1
+    },
     {
       field: 'date',
       headerName: 'Date',
@@ -353,7 +345,7 @@ const CompanyReport = () => {
     {
       field: 'supplierPhone',
       headerName: 'PhoneNo',
-      flex:2,
+      flex: 2,
     },
     {
       field: 'productName',
@@ -364,7 +356,13 @@ const CompanyReport = () => {
           return params.row.products?.map((product) => `${product?.productName}(${product?.quantity})`).join(', ');
         }
         return 'N/A';
-      }
+      },
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography>{(params?.value?.length > 14) ? params?.value?.substr(0, 14) + "..." : params?.value}</Typography>
+          </Grid>
+        </Grid>
     },
     {
       field: 'total',
@@ -380,38 +378,22 @@ const CompanyReport = () => {
     {
       field: 'status',
       headerName: 'Status',
+      headerAlign: 'center',
       flex: 2,
-      renderCell: (params) => {
-        const status = params.row?.status;
-        return (
-          <Box
-            sx={{
-              backgroundColor:
-                status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
-              color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-              '&:hover': {
-                backgroundColor:
-                  status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-                color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-              },
-              padding: '1px',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              width: '90px',
-              height: '20px',
-              textTransform: 'uppercase',
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              gap: '0.5rem',
-              fontSize: '12px'
-            }}
-          >
-            {status}
-          </Box>
-        );
-      }
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12} textAlign='center'>
+            <Button size='small' variant='contained'
+              sx={{
+                color: (params?.value) === 'pending' ? '#ffc107' : ((params?.value) === 'completed' ? '#00c853' : '#d84315'),
+                backgroundColor: (params?.value) === 'pending' ? '#fff8e1' : ((params?.value) === 'completed' ? '#b9f6ca' : '#fbe9e7'), boxShadow: 'none', borderRadius: '10px', padding: '0px', paddingX: '10px', fontWeight: '400',
+                '&:hover': {
+                  color: (params?.value) === 'pending' ? '#ffc107' : ((params?.value) === 'completed' ? '#00c853' : '#d84315'),
+                  backgroundColor: (params?.value) === 'pending' ? '#fff8e1' : ((params?.value) === 'completed' ? '#b9f6ca' : '#fbe9e7'), boxShadow: 'none'
+                }
+              }}>{params?.value}</Button>
+          </Grid>
+        </Grid >
     }
   ];
 
@@ -545,7 +527,10 @@ const CompanyReport = () => {
                       },
                       '& .MuiDataGrid-columnHeaderTitle': {
                         fontWeight: 'bold'
-                      }
+                      },
+                      '& .MuiDataGrid-columnHeaders': {
+                        backgroundColor: '#eeeeee',
+                      },
                     }}
                   />
                 </Card>
@@ -555,7 +540,7 @@ const CompanyReport = () => {
         )}
 
         {selectedTab === 1 && (
-          <Box sx={{ padding: '8px 20px',margin:'10px' }}>
+          <Box sx={{ padding: '8px 20px', margin: '10px', minHeight: '500px' }}>
             <Grid container spacing={3}>
               {products.map((product) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
@@ -596,7 +581,7 @@ const CompanyReport = () => {
                       </Box>
 
                       <Box display="flex" justifyContent="center" alignItems="center" mt={1}>
-                      <Typography variant="body2">Quantity:  &nbsp; </Typography>
+                        <Typography variant="body2">Quantity:  &nbsp; </Typography>
                         <Box
                           sx={{
                             border: '1px solid',
@@ -605,8 +590,8 @@ const CompanyReport = () => {
                             borderRadius: '5px',
                           }}
                         >
-                          <Typography sx={{fontWeight:'bold'}} >
-                          {product.quantity}
+                          <Typography sx={{ fontWeight: 'bold' }} >
+                            {product.quantity}
                           </Typography>
                         </Box>
                       </Box>
@@ -626,6 +611,12 @@ const CompanyReport = () => {
                   </Card>
                 </Grid>
               ))}
+              {
+                products.length === 0 &&
+                <Box sx={{ minHeight: 300, display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                  < Typography >No Rows</Typography>
+                </Box>
+              }
             </Grid>
           </Box>
         )}
@@ -652,7 +643,10 @@ const CompanyReport = () => {
                     },
                     '& .MuiDataGrid-columnHeaderTitle': {
                       fontWeight: 'bold'
-                    }
+                    },
+                    '& .MuiDataGrid-columnHeaders': {
+                      backgroundColor: '#eeeeee',
+                    },
                   }}
                 />
               </Card>
@@ -682,7 +676,10 @@ const CompanyReport = () => {
                     },
                     '& .MuiDataGrid-columnHeaderTitle': {
                       fontWeight: 'bold'
-                    }
+                    },
+                    '& .MuiDataGrid-columnHeaders': {
+                      backgroundColor: '#eeeeee',
+                    },
                   }}
                 />
               </Card>
@@ -712,7 +709,10 @@ const CompanyReport = () => {
                     },
                     '& .MuiDataGrid-columnHeaderTitle': {
                       fontWeight: 'bold'
-                    }
+                    },
+                    '& .MuiDataGrid-columnHeaders': {
+                      backgroundColor: '#eeeeee',
+                    },
                   }}
                 />
               </Card>
@@ -742,7 +742,10 @@ const CompanyReport = () => {
                     },
                     '& .MuiDataGrid-columnHeaderTitle': {
                       fontWeight: 'bold'
-                    }
+                    },
+                    '& .MuiDataGrid-columnHeaders': {
+                      backgroundColor: '#eeeeee',
+                    },
                   }}
                 />
               </Card>
@@ -750,7 +753,7 @@ const CompanyReport = () => {
           </TableStyle>
         )}
       </TabContentCard>
-    </Grid>
+    </Grid >
   );
 };
 

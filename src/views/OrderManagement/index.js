@@ -11,7 +11,8 @@ import {
   Link as MuiLink,
   Select,
   IconButton,
-  FormControl
+  FormControl,
+  Button
 } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
@@ -41,24 +42,23 @@ const Order = () => {
   const loadOrders = async () => {
     try {
       const userId = getUserId();
-      const response = await fetchOrders({userId});
-      const allOrders = response?.data;
-      setOrderDetails(allOrders);
-      setFilteredOrders(allOrders);
+      const response = await fetchOrders({ userId });
+      const rows = response?.data?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+      setOrderDetails(rows);
+      setFilteredOrders(rows);
     } catch (error) {
       console.error('Failed to fetch orders data');
     }
   };
-
   useEffect(() => {
     loadOrders();
   }, []);
 
+  const getCurrency = async () => {
+    const symbol = await fetchCurrencySymbol();
+    setCurrencySymbol(symbol);
+  };
   useEffect(() => {
-    const getCurrency = async () => {
-      const symbol = await fetchCurrencySymbol();
-      setCurrencySymbol(symbol);
-    };
     getCurrency();
   }, []);
 
@@ -147,22 +147,14 @@ const Order = () => {
 
   const columns = [
     {
-      field: 'createdAt',
-      headerName: 'Date',
-      flex: 2,
-      valueGetter: (params) => {
-        return moment(params.row?.createdAt).format('DD-MM-YYYY');
-      }
-    },
-    {
-      field: 'invoice_no',
-      headerName: 'Invoice no',
-      flex: 1.5
+      field: 'index',
+      headerName: '#',
+      flex: 0.3
     },
     {
       field: 'customerName',
       headerName: 'Customer',
-      flex: 3,
+      flex: 1.5,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row?.customerName || 'N/A'}</Typography>
@@ -174,71 +166,105 @@ const Order = () => {
     },
     {
       field: 'customerPhone',
-      headerName: 'PhoneNo',
-      flex:2.5,
+      headerName: 'Number',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>,
+    },
+    {
+      field: 'invoice_no',
+      headerName: 'Invoice no',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>,
     },
     {
       field: 'productName',
       headerName: 'Item',
-      flex: 2.5,
+      headerAlign: 'center',
+      flex: 1,
       valueGetter: (params) => {
         if (params.row?.products?.length > 0) {
           return params.row.products?.map((product) => `${product?.productName}(${product?.quantity})`).join(', ');
         }
         return 'N/A';
-      }
+      },
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'><Typography textAlign='center'>{(params?.value?.length > 14) ? params?.value?.substr(0, 14) + "..." : params?.value}</Typography></Typography>
+          </Grid>
+        </Grid>,
     },
     {
       field: 'total',
       headerName: 'Total Amount',
-      flex: 1.8,
+      headerAlign: 'center',
+      flex: 1,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
         }
         return '$0';
-      }
+      },
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.formattedValue}</Typography>
+          </Grid>
+        </Grid>,
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Date',
+      headerAlign: 'center',
+      flex: 1,
+      valueGetter: (params) => {
+        return moment(params.row?.createdAt).format('DD-MM-YYYY');
+      },
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.formattedValue}</Typography>
+          </Grid>
+        </Grid>,
+
     },
     {
       field: 'order_status',
       headerName: 'Status',
-      flex: 2,
-      renderCell: (params) => {
-        const status = params.row?.order_status;
-        return (
-          <Box
-            sx={{
-              backgroundColor:
-                status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
-              color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-              '&:hover': {
-                backgroundColor:
-                  status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-                color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-              },
-              padding: '1px',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              width: '90px',
-              height: '20px',
-              textTransform: 'uppercase',
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              gap: '0.5rem',
-              fontSize: '12px'
-            }}
-          >
-            {status}
-          </Box>
-        );
-      }
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12} textAlign='center'>
+            <Button size='small' variant='contained'
+              sx={{
+                color: (params?.value) === 'pending' ? '#ffc107' : ((params?.value) === 'completed' ? '#00c853' : '#d84315'),
+                backgroundColor: (params?.value) === 'pending' ? '#fff8e1' : ((params?.value) === 'completed' ? '#b9f6ca' : '#fbe9e7'), boxShadow: 'none', borderRadius: '10px', padding: '0px', fontWeight: '400',
+                '&:hover': {
+                  color: (params?.value) === 'pending' ? '#ffc107' : ((params?.value) === 'completed' ? '#00c853' : '#d84315'),
+                  backgroundColor: (params?.value) === 'pending' ? '#fff8e1' : ((params?.value) === 'completed' ? '#b9f6ca' : '#fbe9e7'), boxShadow: 'none'
+                }
+              }}>{params?.value}</Button>
+          </Grid>
+        </Grid >
     },
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 1.5,
+      headerAlign: 'center',
+      flex: 1,
       renderCell: (params) => (
         <Stack direction="row">
           <Box
@@ -420,7 +446,10 @@ const Order = () => {
                   },
                   '& .MuiDataGrid-columnHeaderTitle': {
                     fontWeight: 'bold'
-                  }
+                  },
+                  '& .MuiDataGrid-columnHeaders': {
+                    backgroundColor: '#eeeeee',
+                  },
                 }}
               />
             </Card>

@@ -17,7 +17,7 @@ import {
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import SmartToyIcon  from '@mui/icons-material/SmartToy';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 
 const icons = {
   IconHome,
@@ -65,62 +65,6 @@ export const dashboard = {
       breadcrumbs: false
     },
     {
-      id: '01',
-      title: 'Employee Management',
-      type: 'item',
-      url: '/dashboard/employee',
-      icon: icons.IconAccessible,
-      breadcrumbs: false
-    },
-    {
-      id: '02',
-      title: 'Statistics',
-      type: 'item',
-      url: '/dashboard/statistics',
-      icon: icons.AssessmentIcon,
-      breadcrumbs: false
-    },
-    {
-      id: '03',
-      title: 'Products',
-      type: 'item',
-      url: '/dashboard/products',
-      icon: icons.IconStackPop,
-      breadcrumbs: false
-    },
-    {
-      id: '04',
-      title: 'Low-Stocks',
-      type: 'item',
-      url: '/dashboard/product-report',
-      icon: icons.TrendingDownIcon,
-      breadcrumbs: false
-    },
-    {
-      id: '05',
-      title: 'Financial Summary',
-      type: 'item',
-      url: '/dashboard/financial',
-      icon: icons.MonetizationOnIcon,
-      breadcrumbs: false
-    },
-    {
-      id: '06',
-      title: 'Orders',
-      type: 'item',
-      url: '/dashboard/orders',
-      icon: icons.IconBriefcase,
-      breadcrumbs: false
-    },
-    {
-      id: '07',
-      title: 'Purchases',
-      type: 'item',
-      url: '/dashboard/purchases',
-      icon: icons.IconShoppingCart,
-      breadcrumbs: false
-    },
-    {
       id: '08',
       title: 'Clients',
       type: 'collapse',
@@ -153,11 +97,67 @@ export const dashboard = {
       breadcrumbs: false
     },
     {
+      id: '03',
+      title: 'Products',
+      type: 'item',
+      url: '/dashboard/products',
+      icon: icons.IconStackPop,
+      breadcrumbs: false
+    },
+    {
+      id: '07',
+      title: 'Purchases',
+      type: 'item',
+      url: '/dashboard/purchases',
+      icon: icons.IconShoppingCart,
+      breadcrumbs: false
+    },
+    {
+      id: '06',
+      title: 'Orders',
+      type: 'item',
+      url: '/dashboard/orders',
+      icon: icons.IconBriefcase,
+      breadcrumbs: false
+    },
+    {
+      id: '02',
+      title: 'Statistics',
+      type: 'item',
+      url: '/dashboard/statistics',
+      icon: icons.AssessmentIcon,
+      breadcrumbs: false
+    },
+    {
+      id: '04',
+      title: 'Low-Stocks',
+      type: 'item',
+      url: '/dashboard/product-report',
+      icon: icons.TrendingDownIcon,
+      breadcrumbs: false
+    },
+    {
+      id: '05',
+      title: 'Financial Summary',
+      type: 'item',
+      url: '/dashboard/financial',
+      icon: icons.MonetizationOnIcon,
+      breadcrumbs: false
+    },
+    {
       id: '12',
       title: 'Reports',
       type: 'item',
       url: '/dashboard/reports',
       icon: icons.IconChecklist,
+      breadcrumbs: false
+    },
+    {
+      id: '01',
+      title: 'Employee Management',
+      type: 'item',
+      url: '/dashboard/employee',
+      icon: icons.IconAccessible,
       breadcrumbs: false
     },
     {

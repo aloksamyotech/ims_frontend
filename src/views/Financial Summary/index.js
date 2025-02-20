@@ -27,6 +27,7 @@ import { toast } from 'react-toastify';
 import { Container } from '@mui/system';
 import { getUserId } from 'apis/constant.js';
 import axios from 'axios';
+import { DataGrid } from '@mui/x-data-grid';
 
 const TabContentCard = styled(Card)(({ theme }) => ({
   boxShadow: theme.shadows[3],
@@ -44,21 +45,111 @@ const CompanyReport = () => {
     setSelectedTab(newValue);
   };
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const userId = getUserId();
-        const response = await fetchProducts({ userId });
-        setProducts(response?.data || []);
+  const loadData = async () => {
+    try {
+      const userId = getUserId();
 
-        const result = await totalSoldProfit({ userId });
-        setProfitLoss(result?.data?.data || {});
-      } catch (error) {
-        console.error('Failed to fetch data');
-      }
-    };
+      const response = await fetchProducts({ userId });
+      const rows = response?.data?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+      setProducts(rows);
+
+      const result = await totalSoldProfit({ userId });
+      setProfitLoss(result?.data?.data || {});
+
+    } catch (error) {
+      console.error(error, 'Failed to fetch data');
+    }
+  };
+  useEffect(() => {
     loadData();
   }, []);
+
+  const columns = [
+    {
+      field: 'index',
+      headerName: '#',
+      flex: 0.5,
+      renderCell: (params) =>
+        <Typography >{params.value}</Typography>
+    },
+    {
+      field: 'image',
+      headerName: 'Image',
+      flex: 0.7,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12} sx={{ display: 'flex' }}>
+            <img
+              src={
+                params.value ||
+                'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
+              }
+              alt={params.value}
+              style={{ width: 45, height: 45, borderRadius: '2px', objectFit: 'cover' }}
+            />
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'productnm',
+      headerName: 'Product Name',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography>{params?.value}</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'categoryName',
+      headerName: 'Category',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', overflow: 'hidden', borderRadius: '10px' }}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'tax',
+      headerName: 'Tax',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}%</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'margin',
+      headerName: 'Margin',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center' sx={{ color: params?.value >= 0 ? 'green' : 'red' }}>{params?.value >= 0 ? `+${params?.value}%` : params?.value}</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Created At',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{moment.utc(params.value).local().format('ll')}</Typography>
+          </Grid>
+        </Grid>
+    },
+  ]
 
   return (
     <Grid>
@@ -90,7 +181,7 @@ const CompanyReport = () => {
       <TabContentCard>
         <Tabs value={selectedTab} onChange={handleTabChange} aria-label="product report tabs">
           <Tab
-            label="Tax"
+            label="Details"
             sx={{
               fontSize: '14px',
               minWidth: 120,
@@ -100,7 +191,7 @@ const CompanyReport = () => {
             }}
           />
           <Tab
-            label="Margin"
+            label="Profit/Loss"
             sx={{
               fontSize: '14px',
               minWidth: 120,
@@ -109,102 +200,34 @@ const CompanyReport = () => {
               color: selectedTab === 1 ? '#1976d2' : '#757070'
             }}
           />
-          <Tab
-            label="Profit/Loss"
-            sx={{
-              fontSize: '14px',
-              minWidth: 120,
-              fontWeight: 'bold',
-              textTransform: 'none',
-              color: selectedTab === 2 ? '#1976d2' : '#757070'
-            }}
-          />
         </Tabs>
 
         <Divider sx={{ opacity: 1 }} />
 
         {selectedTab === 0 && (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Created At</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Image</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Tax(%)</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {products.map((stock) => (
-                  <TableRow key={stock._id}>
-                    <TableCell>{moment(stock.createdAt).format('DD-MM-YYYY')}</TableCell>
-                    <TableCell>
-                      <img
-                        src={
-                          stock.imageUrl ||
-                          'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
-                        }
-                        alt={stock.productnm}
-                        style={{ width: 30, height: 30, borderRadius: 8, objectFit: 'cover' }}
-                      />
-                    </TableCell>
-                    <TableCell>{stock.productnm}</TableCell>
-                    <TableCell>{stock.categoryName}</TableCell>
-                    <TableCell>{stock.tax}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Box sx={{ height: 500, width: '100%' }}>
+            <DataGrid
+              rows={products}
+              columns={columns}
+              getRowId={(row) => row?.id}
+              sx={{
+                '& .MuiDataGrid-columnHeaderTitle': {
+                  fontWeight: 'bold'
+                },
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: '#eeeeee',
+                },
+              }}>
+            </DataGrid>
+          </Box>
         )}
 
         {selectedTab === 1 && (
-          <TableContainer component={Paper}>
+          <TableContainer component={Paper} sx={{minHeight:'70vh',borderRadius:0}}>
             <Table>
-              <TableHead>
+              <TableHead sx={{bgcolor:'#eeeeee'}}>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Created At</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Image</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Margin(%)</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {products.map((product) => {
-                  const marginColor = product.margin >= 0 ? 'green' : 'red';
-                  const profitLossText = product.margin.toFixed(2);
-
-                  return (
-                    <TableRow key={product._id}>
-                      <TableCell>{moment(product.createdAt).format('DD-MM-YYYY')}</TableCell>
-                      <TableCell>
-                        <img
-                          src={
-                            product.imageUrl ||
-                            'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
-                          }
-                          alt={product.productnm}
-                          style={{ width: 30, height: 30, borderRadius: 8, objectFit: 'cover' }}
-                        />
-                      </TableCell>
-                      <TableCell>{product.productnm}</TableCell>
-                      <TableCell>{product.categoryName}</TableCell>
-                      <TableCell sx={{ color: marginColor }}>{product.margin >= 0 ? `+${profitLossText}` : `${profitLossText}`}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-
-        {selectedTab === 2 && (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
+                  <TableCell sx={{ fontWeight: 'bold' }}>#</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Sold Quantity</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Sold Amount</TableCell>
@@ -212,13 +235,14 @@ const CompanyReport = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Object.values(profitLoss).map((product) => {
+                {Object.values(profitLoss).map((product, index) => {
                   const marginColor = product.totalProfitOrLoss >= 0 ? 'green' : 'red';
                   const profitLossText =
                     product.totalProfitOrLoss >= 0 ? `+${product.totalProfitOrLoss.toFixed(2)}` : `${product.totalProfitOrLoss.toFixed(2)}`;
 
                   return (
                     <TableRow key={product.productName}>
+                      <TableCell>{index + 1}</TableCell>
                       <TableCell>{product.productName}</TableCell>
                       <TableCell>{product.soldQuantity}</TableCell>
                       <TableCell>{product.soldAmount}</TableCell>

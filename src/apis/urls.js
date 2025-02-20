@@ -1,6 +1,7 @@
 
 export const urls = {
   base: 'https://ims.samyotech.in/api',
+  // base: 'http://localhost:4200/api',
   unit: {
     add: '/unit/save/',
     delete: '/unit/deleteById/:id',

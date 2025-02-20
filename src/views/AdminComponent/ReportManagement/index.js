@@ -24,7 +24,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { Link } from 'react-router-dom';
-import { Container } from '@mui/system';
+import { Container, width } from '@mui/system';
 
 const TabContentCard = styled(Card)(({ theme }) => ({
   boxShadow: theme.shadows[3],
@@ -54,25 +54,23 @@ const ProductReport = () => {
     setSelectedUser(event.target.value);
   };
 
-  useEffect(() => {
-    const getCurrency = async () => {
-      const symbol = await fetchCurrencySymbol();
-      setCurrencySymbol(symbol);
-    };
-    getCurrency();
-  }, []);
+  const getCurrency = async () => {
+    const symbol = await fetchCurrencySymbol();
+    setCurrencySymbol(symbol);
+  };
 
+  const loadUsers = async () => {
+    try {
+      const response = await fetchUsers();
+      const nonAdminUsers = response?.data.filter(user => user.role !== 'admin') || [];
+      setUsers(nonAdminUsers);
+    } catch (error) {
+      toast.error('Error fetching users');
+    }
+  };
   useEffect(() => {
-    const loadUsers = async () => {
-      try {
-        const response = await fetchUsers();
-        const nonAdminUsers = response?.data.filter(user => user.role !== 'admin') || [];
-        setUsers(nonAdminUsers);
-      } catch (error) {
-        toast.error('Error fetching users');
-      }
-    };
     loadUsers();
+    getCurrency();
   }, []);
 
   useEffect(() => {
@@ -80,11 +78,14 @@ const ProductReport = () => {
       try {
         const response = await fetchPurchases();
         const filteredPurchaseByUser = response?.data.filter((purchase) => purchase.userId === selectedUser);
-        setPurchaseDetails(filteredPurchaseByUser);
+        const rowsPurchase = filteredPurchaseByUser?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+        setPurchaseDetails(rowsPurchase);
 
         const result = await fetchOrders();
         const filteredOrderByUser = result?.data.filter((order) => order.userId === selectedUser);
-        setOrderDetails(filteredOrderByUser);
+        const rowsOrder = filteredOrderByUser?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+        setOrderDetails(rowsOrder);
+
       } catch (error) {
         toast.error('Error fetching data');
       }
@@ -140,6 +141,11 @@ const ProductReport = () => {
   );
 
   const purchaseColumns = [
+    {
+      field: 'index',
+      headerName: '#',
+      width: 50
+    },
     {
       field: 'date',
       headerName: 'Purchase Date',
@@ -210,6 +216,11 @@ const ProductReport = () => {
   ];
 
   const orderColumns = [
+    {
+      field: 'index',
+      headerName: '#',
+      width: 50
+    },
     {
       field: 'date',
       headerName: 'Order Date',
@@ -292,7 +303,8 @@ const ProductReport = () => {
         price: product.price,
         total: purchase.total,
         subtotal: purchase.subtotal,
-        tax: purchase.tax
+        tax: purchase.tax,
+        index: purchase?.index
       }));
     });
   };
@@ -310,7 +322,8 @@ const ProductReport = () => {
         price: product.price,
         total: order.total,
         subtotal: order.subtotal,
-        tax: order.tax
+        tax: order.tax,
+        index: order?.index
       }));
     });
   };
@@ -397,32 +410,32 @@ const ProductReport = () => {
       </Box>
 
       <TabContentCard>
-          <Tabs value={selectedTab} onChange={handleTabChange} aria-label="product report tabs" sx={{ alignContent: 'center' }}>
-            <Tab
-              icon={<ShoppingCartIcon />}
-              iconPosition="start"
-              label="Sales"
-              sx={{
-                fontSize: '14px',
-                minWidth: 200,
-                fontWeight: 'bold',
-                textTransform: 'none',
-                color: selectedTab === 0 ? '#1976d2' : '#757070'
-              }}
-            />
-            <Tab
-              icon={<Inventory2Icon />}
-              iconPosition="start"
-              label="Purchases"
-              sx={{
-                fontSize: '14px',
-                minWidth: 200,
-                fontWeight: 'bold',
-                textTransform: 'none',
-                color: selectedTab === 1 ? '#1976d2' : '#757070'
-              }}
-            />
-          </Tabs>
+        <Tabs value={selectedTab} onChange={handleTabChange} aria-label="product report tabs" sx={{ alignContent: 'center' }}>
+          <Tab
+            icon={<ShoppingCartIcon />}
+            iconPosition="start"
+            label="Sales"
+            sx={{
+              fontSize: '14px',
+              minWidth: 200,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              color: selectedTab === 0 ? '#1976d2' : '#757070'
+            }}
+          />
+          <Tab
+            icon={<Inventory2Icon />}
+            iconPosition="start"
+            label="Purchases"
+            sx={{
+              fontSize: '14px',
+              minWidth: 200,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              color: selectedTab === 1 ? '#1976d2' : '#757070'
+            }}
+          />
+        </Tabs>
 
         {selectedTab === 0 && (
           <Box sx={{ height: '600px', padding: '5px' }}>
@@ -442,7 +455,10 @@ const ProductReport = () => {
                 border: 0,
                 '& .MuiDataGrid-columnHeaderTitle': {
                   fontWeight: 'bold'
-                }
+                },
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: '#eeeeee',
+                },
               }}
             />
           </Box>
@@ -465,6 +481,9 @@ const ProductReport = () => {
               sx={{
                 '& .MuiDataGrid-columnHeaderTitle': {
                   fontWeight: 'bold'
+                },
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: '#eeeeee',
                 },
                 border: 0
               }}

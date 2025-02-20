@@ -33,12 +33,12 @@ const Customer = () => {
         return;
       }
       const response = await fetchCustomers({ userId });
-      setCustomerData(response?.data);
+      const rows = response?.data?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+      setCustomerData(rows);
     } catch (error) {
       console.error('Failed to fetch or no customers');
     }
   };
-
   useEffect(() => {
     loadCustomers();
   }, []);
@@ -95,6 +95,11 @@ const Customer = () => {
 
   const columns = [
     {
+      field: 'index',
+      headerName: '#',
+      flex: 0.3
+    },
+    {
       field: 'customernm',
       headerName: 'Name',
       flex: 1.5,
@@ -107,58 +112,59 @@ const Customer = () => {
         </Box>
       )
     },
-    { field: 'phone', headerName: 'Phone', flex: 1.5 },
+    {
+      field: 'phone',
+      headerName: 'Number',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>,
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Created At',
+      headerAlign: 'center',
+      flex: 1,
+      valueGetter: (params) => {
+        return moment(params.row?.createdAt).format('DD-MM-YYYY');
+      },
+      renderCell: (params) => {
+        return (
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography textAlign='center'>{params?.formattedValue}</Typography>
+            </Grid>
+          </Grid>
+        );
+      }
+    },
     {
       field: 'customerType',
       headerName: 'Type of Customer',
-      flex: 1.5,
-      minWidth: 150,
+      headerAlign: 'center',
+      flex: 1,
       valueGetter: (params) => {
         return params.row.isWholesale ? 'Wholesale' : 'Walk-in';
       },
       renderCell: (params) => {
         return (
-          <Box
-            sx={{
-              backgroundColor: '#e3f2fd',
-              color: '#2196f3',
-              '&:hover': {
-                backgroundColor: '#2196f3',
-                color: 'white'
-              },
-              padding: '1px',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              width: '90px',
-              height: '20px',
-              textTransform: 'uppercase',
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              gap: '0.5rem',
-              fontSize: '12px'
-            }}
-          >
-            {params.value}
-          </Box>
+          <Grid container>
+            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Button variant='contained' size='small' sx={{ borderRadius: '20px', color: '#2194f3', bgcolor: '#e3f2fd', boxShadow: 'none', '&:hover': { color: '#2194f3', bgcolor: '#e3f2fd', boxShadow: 'none' } }}>{params?.formattedValue}</Button>
+            </Grid>
+          </Grid>
         );
-      }
-    },
-    {
-      field: 'createdAt',
-      headerName: 'Created At',
-      flex: 1,
-      minWidth: 150,
-      valueGetter: (params) => {
-        return moment(params.row?.createdAt).format('DD-MM-YYYY');
       }
     },
     {
       field: 'actions',
       headerName: 'Actions',
+      headerAlign: 'center',
       flex: 1,
-      minWidth: 250,
       renderCell: (params) => (
         <Stack direction="row">
           <Box
@@ -357,7 +363,10 @@ const Customer = () => {
                   },
                   '& .MuiDataGrid-columnHeaderTitle': {
                     fontWeight: 'bold'
-                  }
+                  },
+                  '& .MuiDataGrid-columnHeaders': {
+                    backgroundColor: '#eeeeee',
+                  },
                 }}
               />
             </Card>

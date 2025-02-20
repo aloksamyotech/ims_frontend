@@ -13,7 +13,8 @@ import {
   Typography,
   Paper,
   Tabs,
-  Tab
+  Tab,
+  Divider
 } from '@mui/material';
 import { toast } from 'react-toastify';
 import { useParams, Link } from 'react-router-dom';
@@ -158,51 +159,40 @@ const ViewEmployeePage = () => {
         </Tabs>
 
         {activeTab === 0 && (
-          <CardContent sx={{ m: 1 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    textTransform: 'uppercase',
-                    fontWeight: 'bold',
-                    fontSize: '1rem'
-                  }}
-                >
-                  {empData?.name || 'NA'}
-                </Typography>
+          <CardContent sx={{ m: 1, minHeight: '70vh' }}>
+            <Paper elevation={3} sx={{ p: '10px' }}>
+              <Grid container>
+                <Grid item xs={6}>
+                  <Typography fontWeight='700' sx={{ marginTop: '10px' }}>Full Name:</Typography>
+                  <Typography sx={{ marginTop: '2px' }}>{empData?.name}</Typography>
+                  <Typography fontWeight='700' sx={{ marginTop: '10px' }}>Email Address: </Typography>
+                  <Typography sx={{ marginTop: '2px' }}>{empData?.email}</Typography>
+                  <Typography fontWeight='700' sx={{ marginTop: '10px' }}>Phone Number:</Typography>
+                  <Typography sx={{ marginTop: '2px' }}>{empData?.phone}</Typography>
+                  <Typography fontWeight='700' sx={{ marginTop: '10px' }}>Address: </Typography>
+                  <Typography sx={{ marginTop: '2px' }}>{empData?.address}</Typography>
+                </Grid>
+                <Grid item xs={6}>
+                  <Typography fontWeight='700' sx={{ marginTop: '10px' }}>Account Status: </Typography>
+                  <Typography sx={{ marginTop: '2px', bgcolor: '#b9f6ca', display: 'inline', color: '#00c853', padding: '2px', borderRadius: '5px' }}>{empData?.isActive ? 'Active' : 'Inactive'}</Typography>
+                  <Typography fontWeight='700' sx={{ marginTop: '10px' }}>Role: </Typography>
+                  <Typography sx={{ marginTop: '2px' }}>{empData?.role}</Typography>
+                  <Typography fontWeight='700' sx={{ marginTop: '10px' }}>Date of Joining: </Typography>
+                  <Typography sx={{ marginTop: '2px' }}>{moment.utc(empData?.createdAt).local().format('ll')}</Typography>
+                </Grid>
               </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Email:</strong> {empData?.email || 'NA'}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Phone:</strong> {empData?.phone || 'NA'}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Address:</strong> {empData?.address || 'NA'}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Date:</strong> {moment(empData?.createdAt).format('DD-MM-YYYY')}
-                </Typography>
-              </Grid>
-            </Grid>
+            </Paper>
           </CardContent>
         )}
 
         {activeTab === 1 && (
-          <CardContent>
-            <Paper sx={{ padding: '20px' }}>
-              <Grid container spacing={3}>
+          <CardContent sx={{ m: 1, minHeight: '70vh' }}>
+            <Paper elevation={3} sx={{ p: '20px' }}>
+              <Typography gutterBottom sx={{ opacity: '0.6' }}>Manage Permissions</Typography>
+              <Divider sx={{ marginY: '10px' }} />
+              <Grid container spacing={1}>
                 {permissionsList.map((permission) => (
-                  <Grid item xs={12} sm={6} md={4} key={permission.id}>
+                  <Grid item xs={12} sm={6} md={2} key={permission.id}>
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -217,6 +207,7 @@ const ViewEmployeePage = () => {
                   </Grid>
                 ))}
               </Grid>
+              <Divider sx={{marginY:'10px'}}/>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
                 <Button variant="contained" color="primary" onClick={savePermissions}>
                   Save Permissions

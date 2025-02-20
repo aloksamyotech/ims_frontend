@@ -9,15 +9,13 @@ import { IconShoppingBag, IconShoppingCart, IconUser, IconTruck } from '@tabler/
 import { countCustomers } from 'apis/api.js';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-  backgroundColor: '#4CAF50',
+  backgroundColor: '#659287',
   color: '#fff',
   overflow: 'hidden',
   position: 'relative',
-  padding: '16px',
-  height: '150px', 
+  padding: '15px',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
   borderRadius: '8px',
   boxShadow: theme.shadows[3],
   '&:hover': {
@@ -36,7 +34,7 @@ const TopRightIcon = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   '& svg': {
-    color: 'white',
+    color: '#fff',
     fontSize: '3rem',
   },
 }));
@@ -48,8 +46,14 @@ const EarningCard = ({ title, value, icon: Icon, isLoading }) => {
         <SkeletonEarningCard />
       ) : (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-          <Typography variant="h6">{title}</Typography>
-          <Typography variant="h5">{value}</Typography>
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography sx={{ fontSize: '15px', fontWeight: '600' }}>{title}</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography>{value ? value : '-'}</Typography>
+            </Grid>
+          </Grid>
           <TopRightIcon>
             <Icon />
           </TopRightIcon>
@@ -71,7 +75,7 @@ const Analytics = () => {
     const fetchData = async () => {
       try {
         const userId = getUserId();
-        const response = await countCustomers({userId});
+        const response = await countCustomers({ userId });
         setCustomerData(response?.data?.success ? response.data.data : []);
 
         setLoading(false);
@@ -95,7 +99,7 @@ const Analytics = () => {
   return (
     <Box sx={{ padding: '5px' }}>
       <Grid container spacing={2}>
-     
+
         <Grid item xs={12} sm={6} md={3}>
           <EarningCard
             title="Total Sales"

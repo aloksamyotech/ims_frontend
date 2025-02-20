@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, Avatar, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Switch, Grid, Typography, Card, Box } from '@mui/material';
+import { Stack, Avatar, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Switch, Grid, Typography, Card, Box, Button } from '@mui/material';
 import TableStyle from 'ui-component/TableStyle.js';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import AddCompany from './addCompany.js';
@@ -24,17 +24,31 @@ const Company = () => {
   const [currentCompany, setCurrentCompany] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const loadCompanies = async () => {
+    try {
+      const response = await fetchUsers();
+      const filteredUsers = response?.data.filter((user) => user.role === 'user').map((item, index) => {
+        const date = moment.utc(item?.createdAt).local().format('ll');
+        let data = {
+          _id: item?._id,
+          index: index + 1,
+          name: item?.name,
+          email: item?.email,
+          role: item?.role,
+          phone: item?.phone,
+          status: (item?.isActive) ? 'active' : 'inActive',
+          isActive: item?.isActive,
+          createdAt: date,
+        }
+        return data
+      })
+      setCompanyData(filteredUsers);
+    } catch (error) {
+      setError('Error fetching users');
+      toast.error('Failed to fetch companies');
+    }
+  };
   useEffect(() => {
-    const loadCompanies = async () => {
-      try {
-        const response = await fetchUsers();
-        const filteredUsers = response?.data.filter((user) => user.role === 'user');
-        setCompanyData(filteredUsers);
-      } catch (error) {
-        setError('Error fetching users');
-        toast.error('Failed to fetch companies');
-      }
-    };
     loadCompanies();
   }, []);
 
@@ -123,56 +137,92 @@ const Company = () => {
 
   const columns = [
     {
-      field: '#',
-      flex: 0.2,
-      sortable: false,
-      renderCell: (params) => (
-        <Avatar
-          sx={{
-            bgcolor: '#673ab7',
-            color: '#ffff',
-            width: 40,
-            height: 40,
-            fontSize: 14,
-            boxShadow: 3,
-            border: '1px solid white',
-            transition: 'transform 0.3s ease-in-out',
-            '&:hover': {
-              transform: 'scale(1.1)'
-            }
-          }}
-        >
-          {generateRandomAvatar(params.row.name || '')}
-        </Avatar>
-      )
+      field: 'index',
+      headerName: '#',
+      flex: 0.3,
+      renderCell: (params) =>
+        <Typography >{params?.value}</Typography>
     },
     {
       field: 'name',
-      headerName: 'Company Name',
-      flex: 1.5
+      headerName: 'Company Profile',
+      flex: 1.5,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={4}>
+            <Avatar src={params?.row?.name} alt={params?.row?.name} />
+          </Grid>
+          <Grid item xs={8} sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography color='primary'>{(params?.row?.name?.length > 14) ? params?.row?.name?.substr(0, 14) + "..." : params?.row?.name}</Typography>
+          </Grid >
+        </Grid>
     },
-    { field: 'email', headerName: 'Company Email', flex: 1.5 },
-    { field: 'phone', headerName: 'Phone', flex: 1.5 },
+    {
+      field: 'email',
+      headerName: 'Email Address',
+      flex: 1,
+      headerAlign: 'center',
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'phone',
+      headerName: 'Number',
+      flex: 1, headerAlign: 'center',
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>
+    },
     {
       field: 'createdAt',
       headerName: 'Created At',
       flex: 1,
-      minWidth: 150,
-      valueGetter: (params) => {
-        return moment(params.row?.createdAt).format('DD-MM-YYYY');
-      }
+      headerAlign: 'center',
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>
     },
     {
       field: 'status',
       headerName: 'Status',
+      headerAlign: 'center',
       flex: 1,
-      renderCell: (params) => {
-        const label = { inputProps: { 'aria-label': 'toggle active/inactive' } };
-
-        return (
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button size='small' variant='contained'
+              sx={{
+                color: params?.row?.isActive ? '#00c853' : '#d84315',
+                backgroundColor: params?.row?.isActive ? '#b9f6ca' : '#fbe9e7',
+                boxShadow: 'none', borderRadius: '10px', padding: '0px', fontWeight: '400',
+                '&:hover': {
+                  color: params?.row?.isActive ? '#00c853' : '#d84315',
+                  backgroundColor: params?.row?.isActive ? '#b9f6ca' : '#fbe9e7',
+                  boxShadow: 'none'
+                }
+              }}>{params?.value}</Button>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) => (
+        <Stack direction="row">
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Switch
-              {...label}
               checked={params.row?.isActive}
               onChange={() => handleToggleStatus(params.row?._id, !params.row?.isActive)}
               defaultChecked
@@ -181,26 +231,17 @@ const Company = () => {
                   color: '#4caf50'
                 },
                 '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                  backgroundColor: '#4caf50' 
+                  backgroundColor: '#4caf50'
                 },
                 '& .MuiSwitch-switchBase': {
-                  color: '#dd132e' 
+                  color: '#dd132e'
                 },
                 '& .MuiSwitch-switchBase + .MuiSwitch-track': {
-                  backgroundColor: '#dd132e' 
+                  backgroundColor: '#dd132e'
                 }
               }}
             />
           </Box>
-        );
-      }
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 1,
-      renderCell: (params) => (
-        <Stack direction="row">
           <Box
             sx={{
               borderRadius: '8px',
@@ -281,7 +322,6 @@ const Company = () => {
               <DataGrid
                 rows={companyData}
                 columns={columns}
-                rowHeight={50}
                 getRowId={(row) => row._id}
                 components={{
                   Toolbar: () => <CustomToolbar handleOpenAdd={handleOpenAdd} />
@@ -294,15 +334,12 @@ const Company = () => {
                 }}
                 pagination
                 sx={{
-                  '& .MuiDataGrid-root': {
-                    border: 'none'
-                  },
-                  '& .MuiDataGrid-row': {
-                    borderBottom: '1px solid #ccc'
-                  },
                   '& .MuiDataGrid-columnHeaderTitle': {
-                    fontWeight: 'bold'
-                  }
+                    fontWeight: 'bold',
+                  },
+                  '& .MuiDataGrid-columnHeaders': {
+                    backgroundColor: '#eeeeee',
+                  },
                 }}
               />
             </Card>

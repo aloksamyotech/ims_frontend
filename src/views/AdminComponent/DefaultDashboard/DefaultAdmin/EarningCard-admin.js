@@ -8,7 +8,7 @@ import { Box, Grid, Typography } from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import { IconUser} from '@tabler/icons'; 
+import { IconUser } from '@tabler/icons';
 import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
 
 // const CardWrapper = styled(MainCard)(({ theme }) => ({
@@ -55,13 +55,13 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 }));
 
 const TopRightIcon = styled(Box)(({ theme }) => ({
-  position: 'absolute', 
+  position: 'absolute',
   top: '20px',
   right: '10px',
   color: theme.palette.primary[100],
-  backgroundColor: '#ffff', 
-  borderRadius: '50%', 
-  padding: '12px', 
+  backgroundColor: '#ffff',
+  borderRadius: '50%',
+  padding: '12px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -113,13 +113,13 @@ const EarningCard = ({ isLoading }) => {
                     color: '#ffff',
                   }}
                 >
-                  Active Customers
+                  Active Customer
                 </Typography>
               </Grid>
             </Grid>
             <TopRightIcon>
-            <IconUser size={30}  color='#673ab7' />
-          </TopRightIcon>
+              <IconUser size={30} color='#673ab7' />
+            </TopRightIcon>
           </Box>
         </CardWrapper>
       )}

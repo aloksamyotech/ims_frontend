@@ -8,7 +8,7 @@ import { Box, Grid, Typography } from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import { IconUserCheck } from '@tabler/icons'; 
+import { IconUserCheck } from '@tabler/icons';
 import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
 
 // const CardWrapper = styled(MainCard)(({ theme }) => ({
@@ -28,7 +28,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background:'#2f9232',
+    background: '#2f9232',
     borderRadius: '50%',
     top: -85,
     right: -95,
@@ -42,7 +42,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background:'#2f9232',
+    background: '#2f9232',
     borderRadius: '50%',
     top: -125,
     right: -15,
@@ -56,13 +56,13 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 
 const TopRightIcon = styled(Box)(({ theme }) => ({
-  position: 'absolute', 
+  position: 'absolute',
   top: '20px',
   right: '10px',
   color: '#54c758',
-  backgroundColor: '#ffff', 
-  borderRadius: '50%', 
-  padding: '12px', 
+  backgroundColor: '#ffff',
+  borderRadius: '50%',
+  padding: '12px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -114,13 +114,13 @@ const EarningCard = ({ isLoading }) => {
                     color: '#ffff',
                   }}
                 >
-                  Active Suppliers
+                  Active Supplier
                 </Typography>
               </Grid>
             </Grid>
             <TopRightIcon>
-            <IconUserCheck size={30}  color='#673ab7' />
-          </TopRightIcon>
+              <IconUserCheck size={30} color='#673ab7' />
+            </TopRightIcon>
           </Box>
         </CardWrapper>
       )}
