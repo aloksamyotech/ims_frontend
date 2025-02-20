@@ -251,7 +251,7 @@ const Purchase = () => {
             <Button size='small' variant='contained'
               sx={{
                 color: (params?.value) === 'pending' ? '#ffc107' : ((params?.value) === 'completed' ? '#00c853' : '#d84315'),
-                backgroundColor: (params?.value) === 'pending' ? '#fff8e1' : ((params?.value) === 'completed' ? '#b9f6ca' : '#fbe9e7'), boxShadow: 'none', borderRadius: '10px', padding: '0px', fontWeight: '400',
+                backgroundColor: (params?.value) === 'pending' ? '#fff8e1' : ((params?.value) === 'completed' ? '#b9f6ca' : '#fbe9e7'), boxShadow: 'none', borderRadius: '10px', padding: '0px', paddingX: '10px', fontWeight: '400',
                 '&:hover': {
                   color: (params?.value) === 'pending' ? '#ffc107' : ((params?.value) === 'completed' ? '#00c853' : '#d84315'),
                   backgroundColor: (params?.value) === 'pending' ? '#fff8e1' : ((params?.value) === 'completed' ? '#b9f6ca' : '#fbe9e7'), boxShadow: 'none'
