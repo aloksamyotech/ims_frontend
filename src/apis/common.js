@@ -66,3 +66,20 @@ export const chatbotApi = async (url, options = {}) => {
       data: method !== 'GET' ? data : undefined, 
     });
 };
+
+export const updateMultipartApi = async (url, formData, method = 'PUT') => {
+  try {
+    const response = await axios({
+      url: `${baseUrl}${url}`,
+      method,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      data: formData
+    });
+
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Something went wrong');
+  }
+};

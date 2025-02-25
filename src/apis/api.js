@@ -1,4 +1,4 @@
-import { deleteApi, addApi, fetchApi, updateEntity } from './common.js';
+import { deleteApi, addApi, fetchApi, updateEntity, updateMultipartApi } from './common.js';
 import { urls } from './urls.js';
 
 // unit
@@ -135,9 +135,9 @@ export const addProduct = async (newProduct) => {
   return addApi(urls.product.add, newProduct);
 };
 
-
-export const updateProduct = async (updatedProduct) => {
-  return updateEntity('product', updatedProduct);
+export const updateProduct = async (id, updatedData) => {
+  const url = urls.product.update.replace(':id', id); 
+  return await updateMultipartApi(url, updatedData);
 };
 
 export const fetchLowStock = async (queryParams = {}) => {
