@@ -65,6 +65,7 @@ export const chatbotApi = async (url, options = {}) => {
       params,
       data: method !== 'GET' ? data : undefined, 
     });
+    return response.data;
 };
 
 export const updateMultipartApi = async (url, formData, method = 'PUT') => {
