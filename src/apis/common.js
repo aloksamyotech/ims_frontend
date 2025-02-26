@@ -55,6 +55,7 @@ export const updateEntity = async (entityType, updatedEntity) => {
 export const chatbotApi = async (url, options = {}) => {
   const { method = 'GET', data = null, params = {}, headers = {} } = options;
 
+
     const response = await axios({
       url: `${baseUrl}${url}`,
       method,

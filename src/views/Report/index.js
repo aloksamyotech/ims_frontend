@@ -14,7 +14,8 @@ import {
   Select,
   MenuItem,
   Card,
-  styled
+  styled,
+  Button
 } from '@mui/material';
 import moment from 'moment';
 import { fetchCurrencySymbol, getUserId } from 'apis/constant.js';
@@ -24,6 +25,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { Link } from 'react-router-dom';
+import { minWidth, width } from '@mui/system';
 
 const TabContentCard = styled(Card)(({ theme }) => ({
   boxShadow: theme.shadows[1],
@@ -47,29 +49,27 @@ const ProductReport = () => {
     setSelectedDateRange(event.target.value);
   };
 
-  useEffect(() => {
-    const getCurrency = async () => {
-      const symbol = await fetchCurrencySymbol();
-      setCurrencySymbol(symbol);
-    };
-    getCurrency();
-  }, []);
+  const getCurrency = async () => {
+    const symbol = await fetchCurrencySymbol();
+    setCurrencySymbol(symbol);
+  };
 
+  const loadReport = async () => {
+    try {
+      const userId = getUserId();
+      const response = await fetchPurchases({ userId });
+      const rows = response?.data?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+      setPurchaseDetails(rows);
+      const result = await fetchOrders({ userId });
+      const rowData = result?.data?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+      setOrderDetails(rowData);
+    } catch (error) {
+      toast.error('Error fetching data');
+    }
+  };
   useEffect(() => {
-    const loadReport = async () => {
-      try {
-        const userId = getUserId();
-        const response = await fetchPurchases({ userId });
-        const allPurchases = response?.data;
-        setPurchaseDetails(allPurchases);
-        const result = await fetchOrders({ userId });
-        const allOrders = result?.data;
-        setOrderDetails(allOrders);
-      } catch (error) {
-        toast.error('Error fetching data');
-      }
-    };
     loadReport();
+    getCurrency();
   }, []);
 
   const filterDataByDate = (data) => {
@@ -93,96 +93,286 @@ const ProductReport = () => {
 
   const purchaseColumns = [
     {
-      field: 'date',
-      headerName: 'Purchase Date',
-      width: 120,
-      valueGetter: (params) => moment(params.row?.date).format('DD-MM-YYYY')
+      field: 'index',
+      headerName: '#',
+      width: 50,
+    },
+    {
+      field: 'purchase_no',
+      headerName: 'Purchase ID',
+      minWidth: 100,
     },
     {
       field: 'supplierName',
       headerName: 'Supplier',
-      flex: 1,
-      renderCell: (params) => (
-        <Box>
-          <Typography variant="h5">{params.row?.supplierName}</Typography>
-          <Typography variant="body2" color="textSecondary">
-            {params.row?.supplierEmail}
-          </Typography>
-        </Box>
-      )
+      minWidth: 150,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography>{params?.value}</Typography>
+            <Typography>{params?.row?.supplierEmail}</Typography>
+          </Grid>
+        </Grid>,
     },
-    { field: 'supplierPhone', headerName: 'Phone', width: 120 },
-    { field: 'productName', headerName: 'Product Name', width: 150 },
-    { field: 'quantity', headerName: 'Quantity', width: 100 },
     {
-      field: 'price',
-      headerName: 'Price/unit',
-      width: 100,
+      field: 'supplierPhone',
+      headerName: 'Number',
+      headerAlign: 'center',
+      minWidth: 100,
+    },
+    {
+      field: 'productName',
+      headerName: 'Product',
+      headerAlign: 'center',
+      minWidth: 100,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>,
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Purchase Date',
+      headerAlign: 'center',
+      minWidth: 100,
+      valueGetter: (params) => moment(params.row?.createdAt).format('DD-MM-YYYY'),
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>,
+    },
+    {
+      field: 'quantity',
+      headerName: 'Quantity',
+      headerAlign: 'center',
+      minWidth: 100,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'subtotal',
+      headerName: 'Subtotal',
+      headerAlign: 'center',
+      minWidth: 100,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
         }
         return '$0';
-      }
+      },
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.formattedValue}</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'tax',
+      headerName: 'Tax',
+      headerAlign: 'center',
+      minWidth: 100,
+      valueFormatter: ({ value }) => {
+        if (value != null) {
+          return ` ${currencySymbol} ${value.toLocaleString()}`;
+        }
+        return '$0';
+      },
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.formattedValue}</Typography>
+          </Grid>
+        </Grid>,
     },
     {
       field: 'total',
       headerName: 'Total Amount',
-      width: 100,
+      headerAlign: 'center',
+      minWidth: 100,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
         }
         return '$0';
-      }
-    }
+      },
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.formattedValue}</Typography>
+          </Grid>
+        </Grid>,
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      headerAlign: 'center',
+      minWidth: 100,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12} textAlign='center'>
+            <Button size='small' variant='contained'
+              sx={{
+                color: (params?.value) === 'pending' ? '#ffc107' : ((params?.value) === 'completed' ? '#00c853' : '#d84315'),
+                backgroundColor: (params?.value) === 'pending' ? '#fff8e1' : ((params?.value) === 'completed' ? '#b9f6ca' : '#fbe9e7'), boxShadow: 'none', borderRadius: '10px', padding: '0px', paddingX: '10px', fontWeight: '400',
+                '&:hover': {
+                  color: (params?.value) === 'pending' ? '#ffc107' : ((params?.value) === 'completed' ? '#00c853' : '#d84315'),
+                  backgroundColor: (params?.value) === 'pending' ? '#fff8e1' : ((params?.value) === 'completed' ? '#b9f6ca' : '#fbe9e7'), boxShadow: 'none'
+                }
+              }}>{params?.value}</Button>
+          </Grid>
+        </Grid >
+    },
   ];
-
   const orderColumns = [
     {
-      field: 'date',
-      headerName: 'Order Date',
-      width: 120,
-      valueGetter: (params) => moment(params.row?.date).format('DD-MM-YYYY')
+      field: 'index',
+      headerName: '#',
+      width: 50,
+    },
+    {
+      field: 'invoice_no',
+      headerName: 'Invoice No.',
+      minWidth: 100,
     },
     {
       field: 'customerName',
       headerName: 'Customer',
-      flex: 1,
-      renderCell: (params) => (
-        <Box>
-          <Typography variant="h5">{params.row?.customerName}</Typography>
-          <Typography variant="body2" color="textSecondary">
-            {params.row?.customerEmail}
-          </Typography>
-        </Box>
-      )
+      minWidth: 150,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography >{params?.value}</Typography>
+            <Typography >{params?.row?.customerEmail}</Typography>
+          </Grid>
+        </Grid>
     },
-    { field: 'customerPhone', headerName: 'Phone', width: 120 },
-    { field: 'productName', headerName: 'Product Name', width: 150 },
-    { field: 'quantity', headerName: 'Quantity', width: 110 },
     {
-      field: 'price',
-      headerName: 'Price/unit',
-      width: 100,
+      field: 'customerPhone',
+      headerName: 'Number',
+      headerAlign: 'center',
+      minWidth: 100,
+    },
+    {
+      field: 'productName',
+      headerName: 'Product',
+      headerAlign: 'center',
+      minWidth: 100,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>,
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Order Date',
+      headerAlign: 'center',
+      minWidth: 100,
+      valueGetter: (params) => moment(params.row?.createdAt).format('DD-MM-YYYY'),
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'quantity',
+      headerName: 'Quantity',
+      headerAlign: 'center',
+      minWidth: 100,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>
+
+    },
+    {
+      field: 'subtotal',
+      headerName: 'Subtotal',
+      headerAlign: 'center',
+      minWidth: 100,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
         }
         return '$0';
-      }
+      },
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.formattedValue}</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'tax',
+      headerName: 'Tax',
+      headerAlign: 'center',
+      minWidth: 100,
+      valueFormatter: ({ value }) => {
+        if (value != null) {
+          return ` ${currencySymbol} ${value.toLocaleString()}`;
+        }
+        return '$0';
+      },
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.formattedValue}</Typography>
+          </Grid>
+        </Grid>
     },
     {
       field: 'total',
       headerName: 'Total Amount',
-      width: 100,
+      headerAlign: 'center',
+      minWidth: 100,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
         }
         return '$0';
-      }
-    }
+      },
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.formattedValue}</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'order_status',
+      headerName: 'Status',
+      headerAlign: 'center',
+      minWidth: 100,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12} textAlign='center'>
+            <Button size='small' variant='contained'
+              sx={{
+                color: (params?.value) === 'pending' ? '#ffc107' : ((params?.value) === 'completed' ? '#00c853' : '#d84315'),
+                backgroundColor: (params?.value) === 'pending' ? '#fff8e1' : ((params?.value) === 'completed' ? '#b9f6ca' : '#fbe9e7'), boxShadow: 'none', borderRadius: '10px', padding: '0px', paddingX: '10px', fontWeight: '400',
+                '&:hover': {
+                  color: (params?.value) === 'pending' ? '#ffc107' : ((params?.value) === 'completed' ? '#00c853' : '#d84315'),
+                  backgroundColor: (params?.value) === 'pending' ? '#fff8e1' : ((params?.value) === 'completed' ? '#b9f6ca' : '#fbe9e7'), boxShadow: 'none'
+                }
+              }}>{params?.value}</Button>
+          </Grid>
+        </Grid >
+    },
   ];
 
   const flattenPurchaseData = (purchaseData) => {
@@ -198,7 +388,10 @@ const ProductReport = () => {
         price: product.price,
         total: purchase.total,
         subtotal: purchase.subtotal,
-        tax: purchase.tax
+        tax: purchase.tax,
+        purchase_no: purchase.purchase_no,
+        index: purchase?.index,
+        status: purchase?.status
       }));
     });
   };
@@ -216,7 +409,10 @@ const ProductReport = () => {
         price: product.price,
         total: order.total,
         subtotal: order.subtotal,
-        tax: order.tax
+        tax: order.tax,
+        index: order?.index,
+        invoice_no: order?.invoice_no,
+        order_status: order?.order_status
       }));
     });
   };
@@ -350,7 +546,10 @@ const ProductReport = () => {
                 border: 0,
                 '& .MuiDataGrid-columnHeaderTitle': {
                   fontWeight: 'bold'
-                }
+                },
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: '#eeeeee',
+                },
               }}
             />
           </Box>
@@ -361,7 +560,6 @@ const ProductReport = () => {
             <DataGrid
               rows={filteredPurchaseData}
               columns={purchaseColumns}
-              rowHeight={60}
               components={{ Toolbar: CustomToolbar }}
               pageSizeOptions={[5, 10, 25]}
               initialState={{
@@ -373,6 +571,9 @@ const ProductReport = () => {
               sx={{
                 '& .MuiDataGrid-columnHeaderTitle': {
                   fontWeight: 'bold'
+                },
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: '#eeeeee',
                 },
                 border: 0
               }}

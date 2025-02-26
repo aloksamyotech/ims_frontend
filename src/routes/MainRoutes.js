@@ -30,10 +30,10 @@ const Company = Loadable(lazy(() => import('views/AdminComponent/Company')));
 const UserSubscription = Loadable(lazy(() => import('views/UserSubscription')));
 const AdminProfile = Loadable(lazy(() => import('views/AdminComponent/AdminProfile')));
 const ViewCompany = Loadable(lazy(() => import('views/AdminComponent/ViewCompany')));
-const LowStock = Loadable(lazy(()=> import('views/LowStock')));
+const LowStock = Loadable(lazy(() => import('views/LowStock')));
 const FinancialSummary = Loadable(lazy(() => import('views/Financial Summary')));
 const Statistics = Loadable(lazy(() => import('views/Statistics')));
-const ViewEmployee= Loadable(lazy(() => import('views/ViewEmployeePermissions')));
+const ViewEmployee = Loadable(lazy(() => import('views/ViewEmployeePermissions')));
 const AiChatbot = Loadable(lazy(() => import('views/AiChatbot')));
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -45,6 +45,10 @@ const MainRoutes = {
   children: [
     {
       path: '/',
+      element: <DashboardDefault />
+    },
+    {
+      path: '/*',
       element: <DashboardDefault />
     },
     {
@@ -86,11 +90,11 @@ const MainRoutes = {
         },
         {
           path: 'product-report',
-          element: <LowStock/>
+          element: <LowStock />
         },
         {
           path: 'financial',
-          element: <FinancialSummary/>
+          element: <FinancialSummary />
         },
         {
           path: 'orders',
@@ -196,7 +200,11 @@ const AdminRoutes = {
   children: [
     {
       path: '/',
-      element: <DashboardDefault />
+      element: <AdminDashboard />
+    },
+    {
+      path: '/*',
+      element: <AdminDashboard />
     },
     {
       path: 'dashboard',
@@ -205,7 +213,7 @@ const AdminRoutes = {
           path: 'admin',
           element: <AdminDashboard />
         },
-         {
+        {
           path: 'admin-report',
           element: <AdminReports />
         },

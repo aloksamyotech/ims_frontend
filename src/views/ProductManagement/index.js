@@ -242,7 +242,7 @@ const Product = () => {
             </Stack>
           </Box>
 
-          <Box sx={{ padding: '8px 20px' }}>
+          <Box sx={{ padding: '8px 20px', minHeight: '70vh' }}>
             <Grid container spacing={3}>
               {paginatedProducts.map((product) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
@@ -251,14 +251,14 @@ const Product = () => {
                       borderRadius: 2,
                       boxShadow: 3,
                       position: 'relative',
-                      height: '300px',
                       display: 'flex',
                       flexDirection: 'column',
                       transition: 'transform 0.3s, box-shadow 0.3s',
                       '&:hover': {
-                        transform: 'translateY(-5px)',
+                        transform: 'translateY(-1px)',
                         boxShadow: 6
-                      }
+                      },
+                      cursor: 'pointer'
                     }}
                   >
                     <CardMedia
@@ -268,10 +268,9 @@ const Product = () => {
                         'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
                       }
                       alt={product.productnm}
-                      sx={{ height: 150, objectFit: 'fill' }}
+                      sx={{ height: 150, objectFit: 'cover' }}
                       onClick={() => handleView(product._id)}
                     />
-
                     <IconButton
                       size="small"
                       onClick={(event) => handlePopoverOpen(event, product._id)}
@@ -281,47 +280,35 @@ const Product = () => {
                         right: 8
                       }}
                     >
-                      <MoreHorizIcon sx={{ color: 'black' }} />
+                      <MoreHorizIcon sx={{ color: '#fff', bgcolor: '#000', opacity: '0.5', borderRadius: '100%' }} />
                     </IconButton>
-
                     <CardContent>
-                      <Box display="flex" justifyContent="center" alignItems="center">
-                        <Typography variant="h5" sx={{ textTransform: 'uppercase', fontWeight: 'bold' }}>
-                          {product.productnm}
-                        </Typography>
-                      </Box>
-
-                      <Box display="flex" justifyContent="center" alignItems="center">
-                        <Typography variant="body2" color="textSecondary">
-                          {product.categoryName}
-                        </Typography>
-                      </Box>
-
-                      <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
-                        <Typography variant="body2">
-                          Selling Price: &nbsp; {currencySymbol} {product.sellingPrice}
-                        </Typography>
-                      </Box>
-                      <Box display="flex" justifyContent="center" alignItems="center" mt={1}>
-                        <Box
-                          sx={{
-                            border: '1px solid',
-                            borderColor: product.quantity > 5 ? 'green' : 'red',
-                            padding: '2px 5px',
-                            borderRadius: '5px'
-                          }}
-                        >
+                      <Grid container>
+                        <Grid item xs={6}>
+                          <Typography variant="h5" sx={{ textTransform: 'uppercase', fontWeight: 'bold' }}>{product.productnm}</Typography>
+                          <Typography variant="body2" color="textSecondary">category: {product?.categoryName}</Typography>
+                          <Typography variant="body2" color="textSecondary">quantity: {product?.quantity}</Typography>
+                        </Grid>
+                        <Grid item xs={6} sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', flexDirection: 'column' }}>
+                          <Typography variant="body2" sx={{ fontSize: '17px', fontWeight: '500' }}>{currencySymbol} {product?.sellingPrice}</Typography>
+                          <Typography sx={{ opacity: '0.5', fontSize: '10px' }}>(selling price)</Typography>
+                        </Grid>
+                        <Grid item xs={12}>
                           <Typography
                             variant="body2"
                             sx={{
+                              marginTop: 1,
                               color: product.quantity > 5 ? 'green' : 'red',
-                              textAlign: 'right'
+                              border: '1px solid',
+                              borderColor: product.quantity > 5 ? 'green' : 'red',
+                              borderRadius: '5px',
+                              textAlign: 'center'
                             }}
                           >
-                            {product.quantity > 5 ? 'In Stock' : 'Out of Stock'} ({product.quantity})
+                            {product.quantity > 5 ? 'In Stock' : 'Out of Stock'}
                           </Typography>
-                        </Box>
-                      </Box>
+                        </Grid>
+                      </Grid>
                     </CardContent>
 
                     <Popover
@@ -434,10 +421,11 @@ const Product = () => {
     font-weight: bold;
     color: #5e35b1;
   }
+
 `}
           </style>
         </Card>
-      </Grid>
+      </Grid >
     </>
   );
 };

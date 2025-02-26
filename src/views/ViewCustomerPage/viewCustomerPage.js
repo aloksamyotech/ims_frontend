@@ -50,27 +50,27 @@ const ViewCustomerPage = () => {
   const [customerData, setCustomerData] = useState(null);
   const [currencySymbol, setCurrencySymbol] = useState('');
 
+  const loadCustomer = async () => {
+    try {
+      const userId = getUserId();
+      const response = await fetchCustomerById(id);
+      setCustomerData(response?.data);
+      const result = await fetchOrders({ userId });
+      const allOrders = result?.data;
+      setOrderDetails(allOrders);
+    } catch (error) {
+      toast.error('Error fetching customer data');
+    }
+  };
   useEffect(() => {
-    const loadCustomer = async () => {
-      try {
-        const userId = getUserId();
-        const response = await fetchCustomerById(id);
-        setCustomerData(response?.data);
-        const result = await fetchOrders({userId});
-        const allOrders = result?.data;
-        setOrderDetails(allOrders);
-      } catch (error) {
-        toast.error('Error fetching customer data');
-      }
-    };
     loadCustomer();
   }, [id]);
 
+  const getCurrency = async () => {
+    const symbol = await fetchCurrencySymbol();
+    setCurrencySymbol(symbol);
+  };
   useEffect(() => {
-    const getCurrency = async () => {
-      const symbol = await fetchCurrencySymbol();
-      setCurrencySymbol(symbol);
-    };
     getCurrency();
   }, []);
 
@@ -223,83 +223,84 @@ const ViewCustomerPage = () => {
       </Box>
 
       <Card sx={{ marginTop: '20px' }}>
-            <Card style={{ margin: '20px' }}>
-              <CardContent>
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="h4">
-                        <strong>{customerData?.customernm || 'NA'}</strong>
-                      </Typography>
-                    </Box>
-                  </Grid>
+        <Card style={{ margin: '20px' }}>
+          <CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="h4">
+                    <strong>{customerData?.customernm || 'NA'}</strong>
+                  </Typography>
+                </Box>
+              </Grid>
 
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Email:</strong> {customerData?.email || 'NA'}
-                      </Typography>
-                    </Box>
-                  </Grid>
+              <Grid item xs={6}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body1">
+                    <strong>Email:</strong> {customerData?.email || 'NA'}
+                  </Typography>
+                </Box>
+              </Grid>
 
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Phone:</strong> {customerData?.phone || 'NA'}
-                      </Typography>
-                    </Box>
-                  </Grid>
+              <Grid item xs={6}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body1">
+                    <strong>Phone:</strong> {customerData?.phone || 'NA'}
+                  </Typography>
+                </Box>
+              </Grid>
 
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Address:</strong> {customerData?.address || 'NA'}
-                      </Typography>
-                    </Box>
-                  </Grid>
+              <Grid item xs={6}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body1">
+                    <strong>Address:</strong> {customerData?.address || 'NA'}
+                  </Typography>
+                </Box>
+              </Grid>
 
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex' }}>
-                      <Typography variant="body1">
-                        <strong>Type of Customer:</strong> &nbsp;&nbsp;
-                      </Typography>
-                      <Box
-                        sx={{
-                          backgroundColor: '#e3f2fd',
-                          color: '#2196f3',
-                          '&:hover': {
-                            backgroundColor: '#2196f3',
-                            color: 'white'
-                          },
-                          padding: '1px',
-                          borderRadius: '4px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontWeight: 'bold',
-                          width: '90px',
-                          height: '20px',
-                          textTransform: 'uppercase',
-                          boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-                          gap: '0.5rem',
-                          fontSize: '12px'
-                        }}
-                      >
-                        {customerData?.isWholesale ? 'Wholesale' : 'Walk-in'}
-                      </Box>
-                    </Box>
-                  </Grid>
+              <Grid item xs={6}>
+                <Box sx={{ display: 'flex' }}>
+                  <Typography variant="body1">
+                    <strong>Type of Customer:</strong> &nbsp;&nbsp;
+                  </Typography>
+                  <Box
+                    sx={{
+                      backgroundColor: '#e3f2fd',
+                      color: '#2196f3',
+                      // '&:hover': {
+                      //   backgroundColor: '#2196f3',
+                      //   color: 'white'
+                      // },
+                      cursor: 'pointer',
+                      padding: '1px',
+                      borderRadius: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 'bold',
+                      width: '90px',
+                      height: '20px',
+                      textTransform: 'uppercase',
+                      boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+                      gap: '0.5rem',
+                      fontSize: '12px'
+                    }}
+                  >
+                    {customerData?.isWholesale ? 'Wholesale' : 'Walk-in'}
+                  </Box>
+                </Box>
+              </Grid>
 
-                  <Grid item xs={6}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="body1">
-                        <strong>Created At:</strong> {moment(customerData?.createdAt).format('DD-MM-YYYY')}
-                      </Typography>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
+              <Grid item xs={6}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body1">
+                    <strong>Created At:</strong> {moment(customerData?.createdAt).format('DD-MM-YYYY')}
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
 
         <Grid item xs={12}>
           <Box style={{ height: '600px', margin: '12px' }}>
@@ -325,7 +326,10 @@ const ViewCustomerPage = () => {
                 },
                 '& .MuiDataGrid-columnHeaderTitle': {
                   fontWeight: 'bold'
-                }
+                },
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: '#eeeeee',
+                },
               }}
             />
           </Box>

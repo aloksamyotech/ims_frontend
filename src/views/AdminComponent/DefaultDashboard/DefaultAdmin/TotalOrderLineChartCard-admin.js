@@ -114,7 +114,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                     color: '#ffff'
                   }}
                 >
-                  Total Companys
+                  Total Company
                 </Typography>
               </Grid>
             </Grid>

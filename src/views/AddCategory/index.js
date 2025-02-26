@@ -33,8 +33,8 @@ const Category = () => {
         return;
       }
       const response = await fetchCategories({ userId });
-
-      setCategories(response?.data);
+      const rows = response?.data?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+      setCategories(rows);
     } catch (error) {
       toast.error('Failed to fetch categories');
     }
@@ -96,6 +96,11 @@ const Category = () => {
 
   const columns = [
     {
+      field: 'index',
+      headerName: '#',
+      flex: 0.3
+    },
+    {
       field: 'catnm',
       headerName: 'Category Name',
       flex: 1,
@@ -109,7 +114,7 @@ const Category = () => {
     {
       field: 'desc',
       headerName: 'Description',
-      flex: 1,
+      flex: 2,
       renderCell: (params) => {
         return params.value ? params.value : 'No description added';
       },
@@ -117,90 +122,95 @@ const Category = () => {
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 1,
+      headerAlign: 'center',
+      flex: 2,
       renderCell: (params) => (
-        <Stack direction="row">
-          <Box
-            sx={{
-              borderRadius: '8px',
-              padding: '8px',
-              paddingTop: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '40px',
-              height: '40px'
-            }}
-          >
-            <IconButton
-              size="small"
-              onClick={() => handleView(params.row)}
-              color="primary"
+        <Grid container sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Grid item>
+            <Box
               sx={{
-                '&:hover': {
-                  backgroundColor: '#9abfdd',
-                  color: '#1976d2'
-                }
+                borderRadius: '8px',
+                padding: '8px',
+                paddingTop: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '40px',
+                height: '40px'
               }}
             >
-              <VisibilityIcon />
-            </IconButton>
-          </Box>
-
-          <Box
-            sx={{
-              borderRadius: '8px',
-              padding: '8px',
-              paddingTop: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '40px',
-              height: '40px'
-            }}
-          >
-            <IconButton
-              size="small"
-              onClick={() => handleEdit(params.row)}
-              color="secondary"
+              <IconButton
+                size="small"
+                onClick={() => handleView(params.row)}
+                color="primary"
+                sx={{
+                  '&:hover': {
+                    backgroundColor: '#9abfdd',
+                    color: '#1976d2'
+                  }
+                }}
+              >
+                <VisibilityIcon />
+              </IconButton>
+            </Box>
+          </Grid>
+          <Grid item>
+            <Box
               sx={{
-                '&:hover': {
-                  backgroundColor: '#d7cde6',
-                  color: '#512995'
-                }
+                borderRadius: '8px',
+                padding: '8px',
+                paddingTop: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '40px',
+                height: '40px'
               }}
             >
-              <EditIcon />
-            </IconButton>
-          </Box>
-
-          <Box
-            sx={{
-              borderRadius: '8px',
-              padding: '8px',
-              paddingTop: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '40px',
-              height: '40px'
-            }}
-          >
-            <IconButton
-              size="small"
-              onClick={() => handleDelete(params.row?._id)}
-              color="error"
+              <IconButton
+                size="small"
+                onClick={() => handleEdit(params.row)}
+                color="secondary"
+                sx={{
+                  '&:hover': {
+                    backgroundColor: '#d7cde6',
+                    color: '#512995'
+                  }
+                }}
+              >
+                <EditIcon />
+              </IconButton>
+            </Box>
+          </Grid>
+          <Grid item>
+            <Box
               sx={{
-                '&:hover': {
-                  backgroundColor: '#ffcccc',
-                  color: '#d32f2f'
-                }
+                borderRadius: '8px',
+                padding: '8px',
+                paddingTop: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '40px',
+                height: '40px'
               }}
             >
-              <DeleteIcon />
-            </IconButton>
-          </Box>
-        </Stack>
+              <IconButton
+                size="small"
+                onClick={() => handleDelete(params.row?._id)}
+                color="error"
+                sx={{
+                  '&:hover': {
+                    backgroundColor: '#ffcccc',
+                    color: '#d32f2f'
+                  }
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+          </Grid>
+        </Grid>
       )
     }
   ];
@@ -317,7 +327,10 @@ const Category = () => {
                   },
                   '& .MuiDataGrid-columnHeaderTitle': {
                     fontWeight: 'bold'
-                  }
+                  },
+                  '& .MuiDataGrid-columnHeaders': {
+                    backgroundColor: '#eeeeee',
+                  },
                 }}
               />
             </Card>

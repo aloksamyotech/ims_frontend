@@ -91,34 +91,34 @@ const InvoicePage = () => {
     setTabIndex(newIndex);
   };
 
+  const loadInvoice = async () => {
+    try {
+      const response = await fetchOrderById(id);
+      setInvoiceData(response?.data);
+    } catch (error) {
+      setError('Failed to fetch invoice data');
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const loadInvoice = async () => {
-      try {
-        const response = await fetchOrderById(id);
-        setInvoiceData(response?.data);
-      } catch (error) {
-        setError('Failed to fetch invoice data');
-      } finally {
-        setLoading(false);
-      }
-    };
     loadInvoice();
   }, [id]);
 
+  const getCurrency = async () => {
+    const symbol = await fetchCurrencySymbol();
+    setCurrencySymbol(symbol);
+  };
   useEffect(() => {
-    const getCurrency = async () => {
-      const symbol = await fetchCurrencySymbol();
-      setCurrencySymbol(symbol);
-    };
     getCurrency();
   }, []);
 
   const updateOrderStatus = async (id, action) => {
     const updatedOrder = {
-      _id: id,       
-      action: action 
+      _id: id,
+      action: action
     };
-  
+
     try {
       const response = await updateApi('/order/update-status/:id', updatedOrder);
       if (response.status === 200) {
@@ -336,36 +336,36 @@ const InvoicePage = () => {
                       order_status === 'completed'
                         ? '#d5fadf'
                         : order_status === 'pending'
-                        ? '#f8e1a1'
-                        : order_status === 'cancelled'
-                        ? '#fbe9e7'
-                        : '',
+                          ? '#f8e1a1'
+                          : order_status === 'cancelled'
+                            ? '#fbe9e7'
+                            : '',
                     color:
                       order_status === 'completed'
                         ? '#19ab53'
                         : order_status === 'pending'
-                        ? '#ff9800'
-                        : order_status === 'cancelled'
-                        ? '#f44336'
-                        : '',
-                    '&:hover': {
-                      backgroundColor:
-                        order_status === 'completed'
-                          ? '#19ab53'
-                          : order_status === 'pending'
                           ? '#ff9800'
                           : order_status === 'cancelled'
-                          ? '#f44336'
-                          : '',
-                      color:
-                        order_status === 'completed'
-                          ? '#ffff'
-                          : order_status === 'pending'
-                          ? '#ffff'
-                          : order_status === 'cancelled'
-                          ? '#ffff'
-                          : ''
-                    },
+                            ? '#f44336'
+                            : '',
+                    // '&:hover': {
+                    //   backgroundColor:
+                    //     order_status === 'completed'
+                    //       ? '#19ab53'
+                    //       : order_status === 'pending'
+                    //         ? '#ff9800'
+                    //         : order_status === 'cancelled'
+                    //           ? '#f44336'
+                    //           : '',
+                    //   color:
+                    //     order_status === 'completed'
+                    //       ? '#ffff'
+                    //       : order_status === 'pending'
+                    //         ? '#ffff'
+                    //         : order_status === 'cancelled'
+                    //           ? '#ffff'
+                    //           : ''
+                    // },
                     padding: '1px',
                     borderRadius: '4px',
                     display: 'flex',
@@ -446,7 +446,7 @@ const InvoicePage = () => {
                         </Typography>
                       </Grid>
 
-                      <Grid container spacing={2} sx={{mb:1}}>
+                      <Grid container spacing={2} sx={{ mb: 1 }}>
                         <Grid item xs={4}>
                           <Typography variant="body1">
                             <strong>Category:</strong> {product.categoryName}
@@ -470,7 +470,7 @@ const InvoicePage = () => {
                 );
               })}
 
-              <Grid container spacing={2} sx={{m:2}}>
+              <Grid container spacing={2} sx={{ m: 2 }}>
                 <Grid item xs={12} sm={6}>
                   <Typography variant="body1">
                     <strong>Subtotal+Tax:</strong> {currencySymbol} ({subtotal.toFixed(2)} + {tax.toFixed(2)})

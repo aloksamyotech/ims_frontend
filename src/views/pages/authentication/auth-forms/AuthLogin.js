@@ -76,6 +76,8 @@ const AuthLogin = ({ ...others }) => {
           try {
             setIsSubmitting(true);
             const res = await addApi('/user/login/', values);
+            console.log(res);
+            
 
             if (res?.data && res?.data?.jwtToken && res?.data?.user) {
               const storageMethod = rememberMe ? localStorage : sessionStorage;

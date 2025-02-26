@@ -10,7 +10,8 @@ import {
   Container,
   Typography,
   Box,
-  Avatar
+  Avatar,
+  Button
 } from '@mui/material';
 import {
   DataGrid,
@@ -28,7 +29,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import moment from 'moment';
 import { getUserId } from 'apis/constant.js';
-import { deleteEmployee ,fetchEmployees } from 'apis/api.js';
+import { deleteEmployee, fetchEmployees } from 'apis/api.js';
 import AddEmployee from './addEmployee.js';
 import UpdateEmployee from './updateEmployee.js';
 import TableStyle from '../../ui-component/TableStyle';
@@ -43,13 +44,28 @@ const User = () => {
   const loadEmployees = async () => {
     try {
       const userId = getUserId();
-      const response = await fetchEmployees({userId});
-      setUsers(response?.data || []);
+      const response = await fetchEmployees({ userId });
+      const column = response?.data.map((item, index) => {
+        const date = moment.utc(item?.createdAt).local().format('ll');
+        let data = {
+          _id: item?._id,
+          index: index + 1,
+          name: item?.name,
+          email: item?.email,
+          role: item?.role,
+          phone: item?.phone,
+          status: (item?.isActive) ? 'active' : 'inActive',
+          isActive: item?.isActive,
+          createdAt: date,
+          address: item?.address,
+        }
+        return data
+      })
+      setUsers(column);
     } catch (error) {
       console.error('Error fetching employees:', error);
     }
   };
-
   useEffect(() => {
     loadEmployees();
   }, []);
@@ -106,50 +122,92 @@ const User = () => {
 
   const columns = [
     {
-      field: 'avatar',
+      field: 'index',
       headerName: '#',
       flex: 0.2,
-      sortable: false,
-      renderCell: (params) => (
-        <Avatar
-          sx={{
-            bgcolor: '#673ab7',
-            color: '#ffff',
-            width: 40,
-            height: 40,
-            fontSize: 14
-          }}
-        >
-          {generateRandomAvatar(params.row.name)}
-        </Avatar>
-      )
     },
     {
       field: 'name',
-      headerName: 'Employee Name',
+      headerName: 'Employee Profile',
       flex: 1.5,
-      renderCell: (params) => (
-        <Box ml={1}>
-          <Typography variant="h5">{params.row?.name || 'N/A'}</Typography>
-          <Typography variant="body2" color="textSecondary">
-            {params.row?.email || 'No Email'}
-          </Typography>
-        </Box>
-      )
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={3}>
+            <Avatar src={params?.row?.name} alt={params?.row?.name} />
+          </Grid>
+          <Grid item container xs={8} >
+            <Grid item xs={12}>
+              <Typography color='primary'>{(params?.row?.name?.length > 14) ? params?.row?.name?.substr(0, 14) + "..." : params?.row?.name}</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography sx={{ fontSize: '10px' }}>{params?.row?.email}</Typography>
+            </Grid>
+          </Grid >
+        </Grid>
     },
-    { field: 'phone', headerName: 'Phone', flex: 1 },
-    { field: 'address', headerName: 'Address', flex: 1 },
     {
-      field: 'date',
-      headerName: 'Date',
-      flex: 0.7,
-      valueGetter: (params) => moment(params.row?.createdAt).format('DD-MM-YYYY')
+      field: 'phone',
+      headerName: 'Number',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'address',
+      headerName: 'Address',
+      headerAlign: 'center',
+      flex: 1.2,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{(params?.value.length > 15) ? params?.value.substr(0, 15) + "..." : params?.value}</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Date of Joining',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button size='small' variant='contained'
+              sx={{
+                color: params?.row?.isActive ? '#00c853' : '#d84315',
+                backgroundColor: params?.row?.isActive ? '#b9f6ca' : '#fbe9e7',
+                boxShadow: 'none', borderRadius: '10px', padding: '0px', fontWeight: '400',
+                '&:hover': {
+                  color: params?.row?.isActive ? '#00c853' : '#d84315',
+                  backgroundColor: params?.row?.isActive ? '#b9f6ca' : '#fbe9e7',
+                  boxShadow: 'none'
+                }
+              }}>{params?.value}</Button>
+          </Grid>
+        </Grid>
     },
     {
       field: 'actions',
       headerName: 'Actions',
       flex: 1,
-      minWidth: 250,
+      headerAlign: 'center',
       renderCell: (params) => (
         <Stack direction="row">
           <Box
@@ -326,7 +384,7 @@ const User = () => {
 
         <TableStyle>
           <Box width="100%">
-            <Paper style={{ height: '600px', marginTop: '20px' }}>
+            <Paper style={{ height: '600px', marginTop: '20px', padding: '5px' }}>
               <DataGrid
                 rows={users}
                 columns={columns}
@@ -348,7 +406,10 @@ const User = () => {
                   },
                   '& .MuiDataGrid-columnHeaderTitle': {
                     fontWeight: 'bold'
-                  }
+                  },
+                  '& .MuiDataGrid-columnHeaders': {
+                    backgroundColor: '#eeeeee',
+                  },
                 }}
               />
             </Paper>

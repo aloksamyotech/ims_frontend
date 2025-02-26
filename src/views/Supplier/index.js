@@ -34,7 +34,8 @@ const Supplier = () => {
         return;
       }
       const response = await fetchSuppliers({ userId });
-      setSupplierData(response?.data);
+      const rows = response?.data?.map((row, index) => ({ ...row, id: row._id, index: index + 1 }));
+      setSupplierData(rows);
     } catch (error) {
       console.error('Failed to fetch or no data found');
     }
@@ -66,7 +67,7 @@ const Supplier = () => {
           }}
         />
         <Stack direction="row" spacing={2} alignItems="center">
-        <GridToolbarExport style={{ fontSize: 14 }} />
+          <GridToolbarExport style={{ fontSize: 14 }} />
           <Tooltip title="Add Supplier" arrow>
             <IconButton
               onClick={handleOpenAdd}
@@ -90,7 +91,7 @@ const Supplier = () => {
               <AddIcon />
             </IconButton>
           </Tooltip>
-         
+
         </Stack>
       </GridToolbarContainer>
     );
@@ -98,10 +99,14 @@ const Supplier = () => {
 
   const columns = [
     {
-      field: 'suppliernm', 
+      field: 'index',
+      headerName: '#',
+      flex: 0.3
+    },
+    {
+      field: 'suppliernm',
       headerName: 'Name',
-      flex: 2.5,
-      minWidth:220,
+      flex: 1,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row.suppliernm}</Typography>
@@ -109,56 +114,62 @@ const Supplier = () => {
         </Box>
       )
     },
-    { field: 'phone', headerName: 'Phone', flex: 1.5, minWidth: 120 },
-    { field: 'shopName', headerName: 'Shop Name', flex: 1.5, minWidth: 180 },
     {
-      field: 'typeOfSupplier',
-      headerName: 'Type Of Supplier',
-      flex: 1.5,
-      minWidth: 150,
-      renderCell: (params) => {
-        return (
-          <Box
-            sx={{
-              backgroundColor: '#e3f2fd',
-              color: '#2196f3',
-              '&:hover': {
-                backgroundColor: '#2196f3',
-                color: 'white'
-              },
-              padding: '1px',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              width: '93px',
-              height: '20px',
-              textTransform: 'uppercase',
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              gap: '0.5rem',
-              fontSize: '12px'
-            }}
-          >
-            {params.value}
-          </Box>
-        );
-      }
+      field: 'phone',
+      headerName: 'Number',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>
+    },
+    {
+      field: 'shopName',
+      headerName: 'Shop Name',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.value}</Typography>
+          </Grid>
+        </Grid>,
     },
     {
       field: 'createdAt',
       headerName: 'Created At',
+      headerAlign: 'center',
       flex: 1,
-      minWidth: 110,
       valueGetter: (params) => {
         return moment(params.row.createdAt).format('DD-MM-YYYY');
-      }
+      },
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12}>
+            <Typography textAlign='center'>{params?.formattedValue}</Typography>
+          </Grid>
+        </Grid>,
+    },
+    {
+      field: 'typeOfSupplier',
+      headerName: 'Type Of Supplier',
+      headerAlign: 'center',
+      flex: 1,
+      renderCell: (params) =>
+        <Grid container>
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant='contained' size='small' sx={{ borderRadius: '20px', color: '#2194f3', bgcolor: '#e3f2fd', boxShadow: 'none', '&:hover': { color: '#2194f3', bgcolor: '#e3f2fd', boxShadow: 'none' } }}>{params?.value}</Button>
+          </Grid>
+        </Grid>
     },
     {
       field: 'actions',
       headerName: 'Actions',
+      headerAlign: 'center',
       flex: 1,
-      minWidth: 200,
       renderCell: (params) => (
         <Stack direction="row">
           <Box
@@ -179,8 +190,8 @@ const Supplier = () => {
               color="primary"
               sx={{
                 '&:hover': {
-                  backgroundColor: '#9abfdd', 
-                  color: '#1976d2' 
+                  backgroundColor: '#9abfdd',
+                  color: '#1976d2'
                 }
               }}
             >
@@ -207,7 +218,7 @@ const Supplier = () => {
               sx={{
                 '&:hover': {
                   backgroundColor: '#d7cde6',
-                  color: '#512995' 
+                  color: '#512995'
                 }
               }}
             >
@@ -330,7 +341,7 @@ const Supplier = () => {
         </Box>
         <TableStyle>
           <Box width="100%" >
-            <Card style={{ height: '600px', marginTop: '20px',padding:'0 5px'}}>
+            <Card style={{ height: '600px', marginTop: '20px', padding: '0 5px' }}>
               <DataGrid
                 rows={supplierData}
                 columns={columns}
@@ -355,7 +366,10 @@ const Supplier = () => {
                   },
                   '& .MuiDataGrid-columnHeaderTitle': {
                     fontWeight: 'bold'
-                  }
+                  },
+                  '& .MuiDataGrid-columnHeaders': {
+                    backgroundColor: '#eeeeee',
+                  },
                 }}
               />
             </Card>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, CircularProgress, Grid, Paper, Divider, Button } from '@mui/material';
+import { Box, Typography, CircularProgress, Grid, Paper, Divider, Button, TextField } from '@mui/material';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
@@ -39,11 +39,11 @@ const SoldQuantityDisplay = () => {
   const [error, setError] = useState(null);
   const [currencySymbol, setCurrencySymbol] = useState('');
 
+  const getCurrency = async () => {
+    const symbol = await fetchCurrencySymbol();
+    setCurrencySymbol(symbol);
+  };
   useEffect(() => {
-    const getCurrency = async () => {
-      const symbol = await fetchCurrencySymbol();
-      setCurrencySymbol(symbol);
-    };
     getCurrency();
   }, []);
 
@@ -51,13 +51,15 @@ const SoldQuantityDisplay = () => {
     if (fromDate && toDate) {
       setLoading(true);
       setError(null);
-  
+
       try {
         const userId = getUserId();
 
-        const formattedFromDate = new Date(fromDate.setHours(0, 0, 0, 0)).toISOString();
-        const formattedToDate = new Date(toDate.setHours(23, 59, 59, 999)).toISOString();
-  
+        const FromDate = new Date(fromDate)
+        const ToDate = new Date(toDate)
+        const formattedFromDate = new Date(FromDate.setHours(0, 0, 0, 0)).toISOString();
+        const formattedToDate = new Date(ToDate.setHours(23, 59, 59, 999)).toISOString();
+
         const response = await soldQuantityByDate({
           fromDate: formattedFromDate,
           toDate: formattedToDate,
@@ -68,7 +70,7 @@ const SoldQuantityDisplay = () => {
         } else {
           setSoldQuantity(0);
         }
-  
+
         const result = await soldSalesByDate({
           fromDate: formattedFromDate,
           toDate: formattedToDate,
@@ -79,7 +81,7 @@ const SoldQuantityDisplay = () => {
         } else {
           setSoldSales(0);
         }
-  
+
         const countOrder = await countOrders({
           fromDate: formattedFromDate,
           toDate: formattedToDate,
@@ -90,7 +92,7 @@ const SoldQuantityDisplay = () => {
         } else {
           setOrdersCount(0);
         }
-  
+
         const countPurchase = await countPurchases({
           fromDate: formattedFromDate,
           toDate: formattedToDate,
@@ -101,7 +103,7 @@ const SoldQuantityDisplay = () => {
         } else {
           setPurchasesCount(0);
         }
-  
+
         const topCategory = await getTopSellingCatgeory({
           fromDate: formattedFromDate,
           toDate: formattedToDate,
@@ -121,104 +123,26 @@ const SoldQuantityDisplay = () => {
       setError('Please select both from and to dates');
     }
   };
-  
+
   return (
     <Box>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          backgroundColor: '#fff',
-          borderRadius: 2,
-          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-          padding: 2
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            width: '100%',
-            maxWidth: '300px',
-            border: '1px solid #673ab7',
-            borderRadius: 2,
-            padding: '4px 8px'
-          }}
-        >
-          <CalendarMonthIcon sx={{ color: '#673ab7' }} />
-          <Box sx={{ flexShrink: 0 }}>
-            <span>From Date</span>
-          </Box>
-
-          <Box sx={{ flexGrow: 1, mx: 2 }}>
-            <DatePicker
-              selected={fromDate}
-              onChange={(date) => setFromDate(date)}
-              dateFormat="yyyy/MM/dd"
-              placeholderText="Select Date"
-              isClearable
-              maxDate={toDate}
-              style={{
-                border: 'none',
-                outline: 'none',
-                width: '100%',
-                fontSize: '14px'
-              }}
-            />
-          </Box>
-        </Box>
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            width: '100%',
-            maxWidth: '280px',
-            border: '1px solid #673ab7',
-            borderRadius: 2,
-            padding: '4px 8px'
-          }}
-        >
-          <CalendarMonthIcon sx={{ color: '#673ab7' }} />
-          <Box sx={{ flexShrink: 0 }}>
-            <span>To Date</span>
-          </Box>
-
-          <Box sx={{ flexGrow: 1, mx: 2 }}>
-            <DatePicker
-              selected={toDate}
-              onChange={(date) => setToDate(date)}
-              dateFormat="yyyy/MM/dd"
-              placeholderText="Select Date"
-              isClearable
-              minDate={fromDate}
-              style={{
-                border: 'none',
-                outline: 'none',
-                width: '100%',
-                fontSize: '14px'
-              }}
-            />
-          </Box>
-        </Box>
-
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleApplyClick}
-          sx={{
-            px: 2,
-            py: 0.7,
-            fontWeight: 600,
-            borderRadius: 2,
-            width: '100%',
-            maxWidth: '250px'
-          }}
-        >
-          Apply Filter
-        </Button>
+      <Box sx={{ padding: '10px', paddingTop: '20px', bgcolor: '#fff', borderRadius: '10px' }}>
+        <Typography variant='h4' fontSize='20px'>Choose Date Range</Typography>
+        <Grid container xs={12} sx={{ paddingY: '20px' }} spacing={2}>
+          <Grid item xs={4}>
+            <Typography>Start Date</Typography>
+            <TextField type='date' size='small' name='startDate'
+              onChange={(event) => setFromDate(event.target.value)} fullWidth />
+          </Grid>
+          <Grid item xs={4}>
+            <Typography>End Date</Typography>
+            <TextField type='date' size='small' name='endDate'
+              onChange={(event) => setToDate(event.target.value)} fullWidth />
+          </Grid>
+          <Grid item xs={1.5} sx={{ alignContent: 'center', marginTop: '15px', marginLeft: '15px' }}>
+            <Button fullWidth variant='contained' size='medium' onClick={handleApplyClick}>Submit</Button>
+          </Grid>
+        </Grid>
       </Box>
 
       {loading && <CircularProgress sx={{ display: 'block', margin: 'auto', mt: 1 }} />}
@@ -233,7 +157,7 @@ const SoldQuantityDisplay = () => {
         <Grid container spacing={2}>
           {soldQuantity !== null && !loading && !error && (
             <Grid item xs={6} sm={3} md={3}>
-              <Paper sx={{ p: 2, textAlign: 'center',boxShadow: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Paper sx={{ p: 2, textAlign: 'center', boxShadow: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Inventory2Icon sx={{ mr: 2, fontSize: 40, color: 'primary.main' }} />
                 <div>
                   <Typography variant="h6">Sold Quantity</Typography>
@@ -259,7 +183,7 @@ const SoldQuantityDisplay = () => {
 
           {orderCount !== null && !loading && !error && (
             <Grid item xs={6} sm={3} md={3}>
-              <Paper sx={{ p: 2, textAlign: 'center',boxShadow: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Paper sx={{ p: 2, textAlign: 'center', boxShadow: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ShoppingCartIcon sx={{ mr: 2, fontSize: 40, color: '#4caf50' }} />
                 <div>
                   <Typography variant="h6">Orders</Typography>
@@ -271,7 +195,7 @@ const SoldQuantityDisplay = () => {
 
           {purchaseCount !== null && !loading && !error && (
             <Grid item xs={6} sm={3} md={3}>
-              <Paper sx={{ p: 2, textAlign: 'center',boxShadow: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Paper sx={{ p: 2, textAlign: 'center', boxShadow: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <StoreIcon sx={{ mr: 2, fontSize: 40, color: '#ffa726' }} />
                 <div>
                   <Typography variant="h6">Purchases </Typography>

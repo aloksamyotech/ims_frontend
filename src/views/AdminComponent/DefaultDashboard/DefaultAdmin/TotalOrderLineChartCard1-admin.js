@@ -129,7 +129,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                     color: 'white',
                   }}
                 >
-                  Total Purchases
+                  Total Purchase
                 </Typography>
               </Grid>
             </Grid>
