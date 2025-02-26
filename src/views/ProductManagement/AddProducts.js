@@ -23,7 +23,7 @@ import { addApi } from 'apis/common.js';
 import { fetchCategories } from 'apis/api.js';
 import { getUserId } from 'apis/constant.js';
 
-const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
+const AddProductPage = ({ open, handleClose, product, onProductAdded, loadProducts }) => {
   const [image, setImage] = useState('');
   const [products, setProducts] = useState([]);
   const [clist, setCatList] = useState([]);
@@ -83,8 +83,8 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         if (onProductAdded) {
-          
           onProductAdded(response.data);
+          loadProducts();
           toast.success('Product added successfully');
         }
         resetForm();
@@ -103,9 +103,9 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
       try {
         const categoryResult = await fetchCategories();
         const allCategories = categoryResult?.data;
-        const userId = getUserId(); 
-        const filteredCategories = allCategories.filter(category => category.userId === userId); 
-        setCatList(filteredCategories); 
+        const userId = getUserId();
+        const filteredCategories = allCategories.filter((category) => category.userId === userId);
+        setCatList(filteredCategories);
       } catch (error) {
         console.error(error);
       }
@@ -147,7 +147,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 required
                 id="productnm"
                 name="productnm"
-                size='small'
+                size="small"
                 fullWidth
                 value={formik.values.productnm}
                 onChange={formik.handleChange}
@@ -159,7 +159,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <FormLabel>Product Category</FormLabel>
-                <Select required id="catnm" name="catnm"  size='small' value={formik.values.catnm} onChange={formik.handleChange}>
+                <Select required id="catnm" name="catnm" size="small" value={formik.values.catnm} onChange={formik.handleChange}>
                   {clist.map((category) => (
                     <MenuItem key={category._id} value={category._id}>
                       {category.catnm}
@@ -177,7 +177,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 id="buyingPrice"
                 name="buyingPrice"
                 type="number"
-                 size='small'
+                size="small"
                 fullWidth
                 value={formik.values.buyingPrice}
                 onChange={formik.handleChange}
@@ -193,7 +193,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 id="sellingPrice"
                 name="sellingPrice"
                 type="number"
-                 size='small'
+                size="small"
                 fullWidth
                 value={formik.values.sellingPrice}
                 onChange={formik.handleChange}
@@ -209,7 +209,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 id="quantityAlert"
                 name="quantityAlert"
                 type="number"
-                 size='small'
+                size="small"
                 fullWidth
                 value={formik.values.quantityAlert}
                 onChange={formik.handleChange}
@@ -225,7 +225,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 id="tax"
                 name="tax"
                 type="number"
-                 size='small'
+                size="small"
                 fullWidth
                 value={formik.values.tax}
                 onChange={formik.handleChange}
@@ -241,7 +241,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 id="margin"
                 name="margin"
                 type="number"
-                 size='small'
+                size="small"
                 fullWidth
                 value={formik.values.margin}
                 onChange={formik.handleChange}
@@ -256,7 +256,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
               <TextField
                 id="notes"
                 name="notes"
-                 size='small'
+                size="small"
                 fullWidth
                 value={formik.values.notes}
                 onChange={formik.handleChange}
