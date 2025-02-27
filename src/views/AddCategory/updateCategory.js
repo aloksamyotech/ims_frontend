@@ -15,7 +15,7 @@ const UpdateCategory = ({ open, handleClose, category, onUpdateCategory }) => {
     enableReinitialize: true,
     validationSchema: yup.object({
       catnm: yup.string().max(30, 'Max 30 characters are allowed').required('Category name is required'),
-      desc: yup.string().max(100, 'Max 100 characters are allowed').required('Description is required')
+      desc: yup.string().max(100, 'Max 100 characters are allowed')
     }),
     onSubmit: async (values) => {
       try {

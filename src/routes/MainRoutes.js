@@ -34,6 +34,7 @@ const LowStock = Loadable(lazy(()=> import('views/LowStock')));
 const FinancialSummary = Loadable(lazy(() => import('views/Financial Summary')));
 const Statistics = Loadable(lazy(() => import('views/Statistics')));
 const ViewEmployee= Loadable(lazy(() => import('views/ViewEmployeePermissions')));
+const AiChatbot = Loadable(lazy(() => import('views/AiChatbot')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 const role = (localStorage.getItem('role'));
@@ -180,6 +181,10 @@ const MainRoutes = {
           path: 'user-subscription',
           element: <UserSubscription />
         },
+        {
+          path: 'ai',
+          element: <AiChatbot />
+        },
       ]
     }
   ]
@@ -230,5 +235,5 @@ const AdminRoutes = {
   ]
 };
 
-const render = (role === 'user') ? MainRoutes : AdminRoutes;
+const render = (role === 'admin') ? AdminRoutes : MainRoutes;
 export default render;

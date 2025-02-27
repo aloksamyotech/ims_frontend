@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { countSuppliers } from 'apis/api.js';
 import { getUserId} from 'apis/constant.js';
-import axios from 'axios';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -49,9 +48,9 @@ const EarningCard = ({ isLoading }) => {
           setLoading(false);
           return;
         }
-        const response = await axios.get(`http://localhost:4200/supplier/count?userId=${userId}`);
+        const response = await countSuppliers({userId});
         if (response?.data?.count !== undefined) {
-          setSupplierCount(response.data.count);
+          setSupplierCount(response.data.count || 0);
         } else {
           setSupplierCount(0);
         }

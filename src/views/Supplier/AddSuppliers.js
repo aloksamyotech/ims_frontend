@@ -41,7 +41,11 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
       .min(5, 'Too Short!')
       .max(50, 'Too Long!')
       .required('Shop name is required'),
-    address: yup.string().min(10, 'Address must be at least 10 characters').max(50, 'Max 50 characters are allowed').required('Address is required'),
+    address: yup
+      .string()
+      .min(10, 'Address must be at least 10 characters')
+      .max(50, 'Max 50 characters are allowed')
+      .required('Address is required'),
     typeOfSupplier: yup.string().required('Type of supplier is required')
   });
 
@@ -51,7 +55,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
     email: '',
     shopName: '',
     address: '',
-    typeOfSupplier: '',
+    typeOfSupplier: ''
   };
 
   const formik = useFormik({
@@ -65,29 +69,41 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
       try {
         const payload = { ...values, userId };
         const response = await addSupplier(payload);
-        onSupplierAdded(response?.data);
-        toast.success('Supplier added successfully');
-        resetForm();
+
+        if (response?.data && response?.data?.message) {
+          toast.error(response.data.message);
+        } else {
+          onSupplierAdded(response?.data);
+          toast.success('Supplier added successfully');
+          resetForm();
+          handleClose();
+        }
       } catch (error) {
-        toast.error('Failed to add supplier');
+        if (error.response && error.response.data && error.response.data.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Failed to add supplier');
+        }
       } finally {
         setIsSubmitting(false);
-        handleClose();
       }
     }
   });
 
-  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 20000), [formik.handleSubmit]);
+  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 3000), [formik.handleSubmit]);
 
   return (
-    <Dialog open={open} onClose={handleClose}
-    PaperProps={{
-      style: {
-        width: '600px', 
-        height: 'auto', 
-        maxWidth: 'none', 
-      },
-    }}>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      PaperProps={{
+        style: {
+          width: '600px',
+          height: 'auto',
+          maxWidth: 'none'
+        }
+      }}
+    >
       <DialogTitle
         id="scroll-dialog-title"
         style={{
@@ -100,7 +116,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
       </DialogTitle>
 
       <DialogContent dividers>
-      <form onSubmit={throttledSubmit}>
+        <form onSubmit={throttledSubmit}>
           <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={6}>
               <FormLabel>Name</FormLabel>
@@ -202,10 +218,10 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
       </DialogContent>
       <DialogActions>
         <Button type="submit" disabled={isSubmitting} variant="contained" color="secondary" onClick={formik.handleSubmit}>
-          {isSubmitting ? 'Submitting...' :  'Add'}
+          {isSubmitting ? 'Submitting...' : 'Add'}
         </Button>
         <Button
-         variant="contained"
+          variant="contained"
           color="error"
           onClick={() => {
             formik.resetForm();

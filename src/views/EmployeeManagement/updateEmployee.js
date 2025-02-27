@@ -13,7 +13,6 @@ const Employee = ({ open, handleClose, employee, onUpdateEmployee }) => {
       email: employee?.email || '',
       phone: employee?.phone || '',
       address: employee?.address || '',
-      password: employee?.password || ''
     },
     enableReinitialize: true,
     validationSchema: yup.object({
@@ -24,15 +23,6 @@ const Employee = ({ open, handleClose, employee, onUpdateEmployee }) => {
         .max(30, 'Max 30 character are allowed')
         .required('Employee Name is required'),
       email: yup.string().email('Invalid email format').required('Email is required'),
-      password: yup
-        .string()
-        .required('Password is required')
-        .min(8, 'Password must be at least 8 characters long')
-        .max(20, 'Password cannot be longer than 20 characters')
-        .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-        .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-        .matches(/[0-9]/, 'Password must contain at least one number')
-        .matches(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least one special character'),
       phone: yup
         .string()
         .matches(/^[1-9][0-9]{9}$/, 'Phone number must be 12 digits and cannot start with 0')
@@ -90,20 +80,6 @@ const Employee = ({ open, handleClose, employee, onUpdateEmployee }) => {
                 onChange={formik.handleChange}
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <FormLabel>Password</FormLabel>
-              <TextField
-                required
-                id="password"
-                name="password"
-                size="small"
-                fullWidth
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                error={formik.touched.password && Boolean(formik.errors.password)}
-                helperText={formik.touched.password && formik.errors.password}
               />
             </Grid>
             <Grid item xs={12} sm={6}>

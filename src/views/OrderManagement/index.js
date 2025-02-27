@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Stack,
-  Container,
+  Grid,
   Typography,
   Box,
   Card,
@@ -211,13 +211,8 @@ const Order = () => {
               backgroundColor:
                 status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
               color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-              '&:hover': {
-                backgroundColor:
-                  status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-                color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-              },
               padding: '1px',
-              borderRadius: '4px',
+              borderRadius: '30px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -361,7 +356,7 @@ const Order = () => {
   return (
     <>
       <AddOrders open={openAdd} handleClose={handleCloseAdd} />
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -426,7 +421,7 @@ const Order = () => {
             </Card>
           </Box>
         </TableStyle>
-      </Container>
+      </Grid>
     </>
   );
 };

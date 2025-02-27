@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import {
   Stack,
   Button,
-  IconButton,
-  Container,
   Typography,
   Card,
   Box,
@@ -52,36 +50,36 @@ const Product = () => {
     getCurrency();
   }, []);
 
-  const subscriptionStyles = {
-    Standard: {
+  const subscriptionStyles = [
+    {
       icon: <StarOutlineIcon sx={{ color: '#FFA726', fontSize: 30 }} />,
       borderColor: '#FFA726',
       buttonColor: '#FFA726',
       hoverColor: '#FB8C00'
     },
-    Professional: {
+    {
       icon: <TrendingUpIcon sx={{ color: '#29B6F6', fontSize: 30 }} />,
       borderColor: '#29B6F6',
       buttonColor: '#29B6F6',
       hoverColor: '#0288D1'
     },
-    Premium: {
+    {
       icon: <EmojiEventsIcon sx={{ color: '#7E57C2', fontSize: 30 }} />,
       borderColor: '#7E57C2',
       buttonColor: '#7E57C2',
       hoverColor: '#5E35B1'
     },
-    Elite: {
+    {
       icon: <WorkspacePremiumIcon sx={{ color: '#4CAF50', fontSize: 30 }} />,
       borderColor: '#4CAF50',
       buttonColor: '#4CAF50',
       hoverColor: '#388E3C'
     }
-  };
+  ];
 
   return (
     <>
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -112,13 +110,14 @@ const Product = () => {
             Subscription Plans
           </Typography>
           <Typography variant="body1" sx={{ textAlign: 'center', margin: '5px' }}>
-          &quot;Take a subscription to use the inventory system and enhance your business operations.&quot;
+            &quot;Take a subscription to use the inventory system and enhance your business operations.&quot;
           </Typography>
 
           <Box sx={{ padding: '20px' }}>
             <Grid container spacing={3}>
               {subscription.map((sub, index) => {
-                const styles = subscriptionStyles[sub.title] || {};
+                const styleIndex = index % subscriptionStyles.length; 
+                const styles = subscriptionStyles[styleIndex];
                 const discountedPrice = sub.amount - (sub.amount * sub.discount) / 100;
                 const savedAmount = sub.amount - discountedPrice;
                 const descriptionPoints = sub.desc?.split('.') || [];
@@ -131,7 +130,7 @@ const Product = () => {
                         boxShadow: 4,
                         padding: 2,
                         position: 'relative',
-                        height: 'auto',
+                        height: '350px',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-between',
@@ -190,7 +189,7 @@ const Product = () => {
                         >
                           Purchase
                         </Button>
-                      </Box> 
+                      </Box>
                     </Card>
                   </Grid>
                 );
@@ -198,7 +197,7 @@ const Product = () => {
             </Grid>
           </Box>
         </Card>
-      </Container>
+      </Grid>
     </>
   );
 };

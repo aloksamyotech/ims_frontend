@@ -12,11 +12,20 @@ export const fetchCurrencySymbol = async () => {
 };
 
 export const getUserId = () => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
-      console.error('User ID is missing. Please log in again.');
-      return null;
-    }
-    return userId;
-  };
+  const userId = localStorage.getItem('userId');
+  const role = localStorage.getItem('role');
+
+  if (!userId || !role) {
+    console.error('User ID & role are missing. Please log in again.');
+    return null;
+  }
+
+  if (role === 'employee') {
+    const user = JSON.parse(localStorage.getItem('user'));
+    return user?.userId || null; 
+  }
+
+  return userId;
+};
+
   

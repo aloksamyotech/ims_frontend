@@ -76,7 +76,7 @@ const EarningCard = ({ isLoading }) => {
     const getCustomerCount = async () => {
       try {
         const response = await countCustomers();
-        setCustomerCount(response.data.count);
+        setCustomerCount(response?.data?.count || 0);
       } catch (err) {
         console.log(err);
       }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchLowStock, fetchQuantityAlert } from 'apis/api.js';
 import {
-  CardMedia,
+  Grid,
   Box,
   Card,
   Tabs,
@@ -23,8 +23,8 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { toast } from 'react-toastify';
 import { Container } from '@mui/system';
 import { getUserId } from 'apis/constant.js';
@@ -49,9 +49,9 @@ const CompanyReport = () => {
     const loadData = async () => {
       try {
         const userId = getUserId();
-        const response = await fetchLowStock({userId});
-        setLowStockProducts(response?.data?.data || []);
-        const result = await fetchQuantityAlert({userId});
+        const response = await fetchLowStock({ userId });
+        setLowStockProducts(response?.data?.data?.filter((product) => product.quantity == 0) || []);
+        const result = await fetchQuantityAlert({ userId });
         const filteredStockAlert = result?.data?.data?.filter((product) => product.quantity !== 0) || [];
         setStockAlert(filteredStockAlert);
       } catch (error) {
@@ -62,7 +62,7 @@ const CompanyReport = () => {
   }, []);
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -91,7 +91,7 @@ const CompanyReport = () => {
       <TabContentCard>
         <Tabs value={selectedTab} onChange={handleTabChange} aria-label="product report tabs">
           <Tab
-          icon={<WarningAmberIcon />}
+            icon={<WarningAmberIcon />}
             iconPosition="start"
             label="Low Stock"
             sx={{
@@ -103,7 +103,7 @@ const CompanyReport = () => {
             }}
           />
           <Tab
-          icon={<ErrorOutlineIcon />}
+            icon={<ErrorOutlineIcon />}
             iconPosition="start"
             label="Out of Stock"
             sx={{
@@ -119,15 +119,15 @@ const CompanyReport = () => {
         <Divider sx={{ opacity: 1 }} />
 
         {selectedTab === 0 && (
-          <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{ height: '400px', overflowY: 'auto' }}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Created At</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Product No</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Category</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Quantity</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Created At</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Product No</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Quantity</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -137,7 +137,7 @@ const CompanyReport = () => {
                     <TableCell>{stock.product_no}</TableCell>
                     <TableCell>{stock.productnm}</TableCell>
                     <TableCell>{stock.categoryName}</TableCell>
-                    <TableCell>{stock.quantity}</TableCell>
+                    <TableCell sx={{ color: stock.quantity < 10 ? 'red' : 'blue', fontWeight : 'bold' }}>{stock.quantity}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -146,15 +146,15 @@ const CompanyReport = () => {
         )}
 
         {selectedTab === 1 && (
-          <TableContainer component={Paper}>
+         <TableContainer component={Paper} sx={{ height: '400px', overflowY: 'auto' }}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Created At</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Product No</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Category</TableCell>
-                  <TableCell  sx={{ fontWeight: 'bold' }}>Quantity</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Created At</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Product No</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Quantity</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -164,7 +164,7 @@ const CompanyReport = () => {
                     <TableCell>{product.product_no}</TableCell>
                     <TableCell>{product.productnm}</TableCell>
                     <TableCell>{product.categoryName}</TableCell>
-                    <TableCell>{product.quantity}</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', color : 'red' }}>{product.quantity}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -172,7 +172,7 @@ const CompanyReport = () => {
           </TableContainer>
         )}
       </TabContentCard>
-    </Container>
+    </Grid>
   );
 };
 

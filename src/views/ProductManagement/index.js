@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Stack,
-  Button,
   IconButton,
-  Container,
   Typography,
   Card,
   Box,
@@ -129,7 +127,6 @@ const Product = () => {
   const handleProductAdded = (newproduct) => {
     setProducts((prev) => [...prev, newproduct]);
     setOpenAdd(false);
-    loadProducts();
   };
 
   const handleSearchChange = (e) => {
@@ -140,20 +137,33 @@ const Product = () => {
   const paginatedProducts = filteredProducts.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE);
 
   const handleProductUpdated = (updatedProduct) => {
-    setProducts((prev) => prev.map((prod) => (prod._id === updatedProduct._id ? updatedProduct : prod)));
+    if (!updatedProduct || !updatedProduct._id) {
+      console.error('Updated product is missing or invalid', updatedProduct);
+      return;
+    }
+
+    setProducts((prev = []) => prev.map((prod) => (prod._id === updatedProduct._id ? updatedProduct : prod)));
+
+    loadProducts();
     setOpenUpdate(false);
   };
 
   return (
     <>
-      <AddProductPage open={openAdd} handleClose={() => setOpenAdd(false)} onProductAdded={handleProductAdded} />
+      <AddProductPage
+        open={openAdd}
+        handleClose={() => setOpenAdd(false)}
+        onProductAdded={handleProductAdded}
+        loadProducts={loadProducts}
+      />
       <UpdateProduct
         open={openUpdate}
         handleClose={() => setOpenUpdate(false)}
         product={selectedProduct}
         onProductUpdated={handleProductUpdated}
+        loadProducts={loadProducts}
       />
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -179,7 +189,7 @@ const Product = () => {
           </Breadcrumbs>
         </Box>
 
-        <Card sx={{ marginTop: '20px' }}>
+        <Card sx={{ marginTop: '20px', height:'600px' }}>
           <Box
             sx={{
               display: 'flex',
@@ -205,7 +215,7 @@ const Product = () => {
             </Box>
 
             <Stack direction="row" spacing={2} alignItems="center">
-              <BulkUpload />
+              <BulkUpload loadProducts={loadProducts} />
 
               <Tooltip title="Add Product" arrow>
                 <IconButton
@@ -393,8 +403,8 @@ const Product = () => {
             />
           </Box>
 
-<style>
-   {`
+          <style>
+            {`
   .pagination {
     display: flex;
     list-style: none;
@@ -424,10 +434,10 @@ const Product = () => {
     font-weight: bold;
     color: #5e35b1;
   }
-`   }
-  </style>
+`}
+          </style>
         </Card>
-      </Container>
+      </Grid>
     </>
   );
 };

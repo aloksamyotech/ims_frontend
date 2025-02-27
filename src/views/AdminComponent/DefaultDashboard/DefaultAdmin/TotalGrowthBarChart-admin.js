@@ -26,7 +26,7 @@ const TotalGrowthBarChart = ({ isLoading }) => {
     const fetchSalesData = async () => {
       try {
         const amount = await getTotalSales();
-        if (amount.data.success && Array.isArray(amount.data.data)) {
+        if (amount?.data?.success && Array.isArray(amount?.data?.data)) {
           setSalesData(amount.data.data);
         }
       } catch (error) {

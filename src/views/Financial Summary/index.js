@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { fetchProducts } from 'apis/api.js';
+import { fetchProducts, totalSoldProfit } from 'apis/api.js';
 import {
-  CardMedia,
+  Grid,
   Box,
   Card,
   Tabs,
@@ -51,11 +51,7 @@ const CompanyReport = () => {
         const response = await fetchProducts({ userId });
         setProducts(response?.data || []);
 
-        const result = await axios.get(`http://139.59.25.198:4200/order/total-profit`, {
-          params: {
-            userId
-          }
-        });
+        const result = await totalSoldProfit({ userId });
         setProfitLoss(result?.data?.data || {});
       } catch (error) {
         console.error('Failed to fetch data');
@@ -65,7 +61,7 @@ const CompanyReport = () => {
   }, []);
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -94,7 +90,7 @@ const CompanyReport = () => {
       <TabContentCard>
         <Tabs value={selectedTab} onChange={handleTabChange} aria-label="product report tabs">
           <Tab
-            label="Tax"
+            label="Tax/Margin"
             sx={{
               fontSize: '14px',
               minWidth: 120,
@@ -104,7 +100,7 @@ const CompanyReport = () => {
             }}
           />
           <Tab
-            label="Margin"
+            label="Profit/Loss"
             sx={{
               fontSize: '14px',
               minWidth: 120,
@@ -113,22 +109,12 @@ const CompanyReport = () => {
               color: selectedTab === 1 ? '#1976d2' : '#757070'
             }}
           />
-          <Tab
-            label="Profit/Loss"
-            sx={{
-              fontSize: '14px',
-              minWidth: 120,
-              fontWeight: 'bold',
-              textTransform: 'none',
-              color: selectedTab === 2 ? '#1976d2' : '#757070'
-            }}
-          />
         </Tabs>
 
         <Divider sx={{ opacity: 1 }} />
 
         {selectedTab === 0 && (
-          <TableContainer component={Paper}>
+         <TableContainer component={Paper} sx={{ height: '400px', overflowY: 'auto' }}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -136,43 +122,8 @@ const CompanyReport = () => {
                   <TableCell sx={{ fontWeight: 'bold' }}>Image</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
                   <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Tax(%)</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {products.map((stock) => (
-                  <TableRow key={stock._id}>
-                    <TableCell>{moment(stock.createdAt).format('DD-MM-YYYY')}</TableCell>
-                    <TableCell>
-                      <img
-                        src={
-                          stock.imageUrl ||
-                          'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
-                        }
-                        alt={stock.productnm}
-                        style={{ width: 30, height: 30, borderRadius: 8, objectFit: 'cover' }}
-                      />
-                    </TableCell>
-                    <TableCell>{stock.productnm}</TableCell>
-                    <TableCell>{stock.categoryName}</TableCell>
-                    <TableCell>{stock.tax}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-
-        {selectedTab === 1 && (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Created At</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Image</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Product Name</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Category</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Margin(%)</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Tax (%)</TableCell>
+                  <TableCell sx={{ fontWeight: 'bold' }}>Margin (%)</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -195,6 +146,7 @@ const CompanyReport = () => {
                       </TableCell>
                       <TableCell>{product.productnm}</TableCell>
                       <TableCell>{product.categoryName}</TableCell>
+                      <TableCell>{product.tax}</TableCell>
                       <TableCell sx={{ color: marginColor }}>{product.margin >= 0 ? `+${profitLossText}` : `${profitLossText}`}</TableCell>
                     </TableRow>
                   );
@@ -204,8 +156,8 @@ const CompanyReport = () => {
           </TableContainer>
         )}
 
-        {selectedTab === 2 && (
-          <TableContainer component={Paper}>
+        {selectedTab === 1 && (
+         <TableContainer component={Paper} sx={{ height: '400px', overflowY: 'auto' }}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -217,6 +169,7 @@ const CompanyReport = () => {
               </TableHead>
               <TableBody>
                 {Object.values(profitLoss).map((product) => {
+                  const marginColor = product.totalProfitOrLoss >= 0 ? 'green' : 'red';
                   const profitLossText =
                     product.totalProfitOrLoss >= 0 ? `+${product.totalProfitOrLoss.toFixed(2)}` : `${product.totalProfitOrLoss.toFixed(2)}`;
 
@@ -225,7 +178,9 @@ const CompanyReport = () => {
                       <TableCell>{product.productName}</TableCell>
                       <TableCell>{product.soldQuantity}</TableCell>
                       <TableCell>{product.soldAmount}</TableCell>
-                      <TableCell>{profitLossText}</TableCell>
+                      <TableCell sx={{ color: marginColor }}>
+                        {product.totalProfitOrLoss >= 0 ? `${profitLossText}` : `${profitLossText}`}
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -234,7 +189,7 @@ const CompanyReport = () => {
           </TableContainer>
         )}
       </TabContentCard>
-    </Container>
+    </Grid>
   );
 };
 

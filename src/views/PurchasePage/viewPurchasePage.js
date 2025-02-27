@@ -23,7 +23,6 @@ import {
 } from '@mui/material';
 import Swal from 'sweetalert2';
 import moment from 'moment';
-import axios from 'axios';
 import jsPDF from 'jspdf';
 import Logo from '../../assets/images/images.png';
 import autoTable from 'jspdf-autotable';
@@ -37,6 +36,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
+import { fetchPurchaseById } from 'apis/api.js';
+import { updateApi } from 'apis/common.js';
 
 const user = localStorage.getItem('user');
 const userObj = JSON.parse(user);
@@ -93,7 +94,7 @@ const PurchasePage = () => {
   useEffect(() => {
     const loadPurchase = async () => {
       try {
-        const response = await axios.get(`http://139.59.25.198:4200/purchase/fetchById/${id}`);
+        const response = await fetchPurchaseById(id);
         setPurchaseData(response?.data);
       } catch (error) {
         setError('Failed to fetch purchase data');
@@ -114,8 +115,13 @@ const PurchasePage = () => {
   }, []);
 
   const updatePurchaseStatus = async (id, action) => {
+    const updatedPurchase = {
+      _id: id,
+      action: action
+    };
+
     try {
-      const response = await axios.patch(`http://:4200/purchase/update-status/${id}`, { action });
+      const response = await updateApi('/purchase/update-status/:id', updatedPurchase);
       if (response.status === 200) {
         setPurchaseData((prev) => ({
           ...prev,
@@ -188,7 +194,7 @@ const PurchasePage = () => {
 
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('Company Details:',  120, 56);
+    doc.text('Company Details:', 120, 56);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
     doc.text(`Name: ${userObj.name}`, 120, 62);
@@ -257,7 +263,7 @@ const PurchasePage = () => {
   } = purchaseData || {};
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -330,13 +336,8 @@ const PurchasePage = () => {
                     backgroundColor:
                       status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
                     color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-                    '&:hover': {
-                      backgroundColor:
-                        status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-                      color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-                    },
                     padding: '1px',
-                    borderRadius: '4px',
+                    borderRadius: '30px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -433,21 +434,23 @@ const PurchasePage = () => {
                             <strong>Subtotal:</strong> {currencySymbol} {subtotalProduct.toFixed(2)}
                           </Typography>
                         </Grid>
-                        <Grid item xs={6}>
-                          <Typography variant="body1">
-                            <strong>Tax:</strong> {currencySymbol} {tax.toFixed(2)}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Typography variant="body1">
-                            <strong>Total:</strong> {currencySymbol} {total.toFixed(2)}
-                          </Typography>
-                        </Grid>
                       </Grid>
                     </Grid>
                   </Box>
                 );
               })}
+              <Grid container spacing={2} sx={{ m: 2 }}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="body1">
+                    <strong>Subtotal+Tax:</strong> {currencySymbol} ({subtotal.toFixed(2)} + {tax.toFixed(2)})
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="body1">
+                    <strong>Total:</strong> {currencySymbol} {total.toFixed(2)}
+                  </Typography>
+                </Grid>
+              </Grid>
             </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', padding: '5px' }}>
@@ -570,7 +573,7 @@ const PurchasePage = () => {
           </Box>
         )}
       </TabContentCard>
-    </Container>
+    </Grid>
   );
 };
 

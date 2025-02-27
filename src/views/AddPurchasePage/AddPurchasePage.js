@@ -24,6 +24,7 @@ import {
   IconButton,
   Breadcrumbs,
   Tooltip,
+  Autocomplete,
   Link as MuiLink,
   Container
 } from '@mui/material';
@@ -35,6 +36,7 @@ import { makeStyles } from '@mui/styles';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import { fetchCurrencySymbol, getUserId } from 'apis/constant.js';
+import { throttle } from 'lodash';
 
 const useStyles = makeStyles({
   input: {
@@ -190,8 +192,10 @@ const PurchaseForm = () => {
   const purchaseTaxes = purchaseSubtotal * TAX_RATE;
   const purchaseTotal = purchaseSubtotal + purchaseTaxes;
 
+  const throttledHandleAddPurchase = throttle(handleAddPurchase, 3000);
+
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -243,29 +247,33 @@ const PurchaseForm = () => {
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <FormLabel>Supplier *</FormLabel>
-                <Select
+                <Autocomplete
                   id="supplierId"
-                  name="supplierId"
-                  size="small"
-                  value={formik.values.supplierId}
-                  onChange={formik.handleChange}
-                  sx={{
-                    bgcolor: '#ffff',
-                    '& .MuiSelect-select': {
-                      bgcolor: '#ffff'
+                  options={supplierList || []}
+                  getOptionLabel={(option) => option.suppliernm}
+                  value={supplierList.find((sup) => sup._id === formik.values.supplierId) || null}
+                  onChange={(event, newValue) => {
+                    formik.setFieldValue('supplierId', newValue ? newValue._id : '');
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      variant="outlined"
+                      error={formik.touched.supplierId && Boolean(formik.errors.supplierId)}
+                      helperText={formik.touched.supplierId && formik.errors.supplierId}
+                      sx={{ 
+                        '& .MuiInputBase-root': { height: 40 } 
+                      }}
+                    />
+                  )}
+                  ListboxProps={{
+                    style: {
+                      maxHeight: 200,
+                      overflow: 'auto'
                     }
                   }}
-                >
-                  <MenuItem value="">Select a supplier</MenuItem>
-                  {supplierList?.map((supplier) => (
-                    <MenuItem key={supplier._id} value={supplier._id}>
-                      {supplier.suppliernm}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText error={formik.touched.supplierId && Boolean(formik.errors.supplierId)}>
-                  {formik.touched.supplierId && formik.errors.supplierId}
-                </FormHelperText>
+                />
               </FormControl>
             </Grid>
 
@@ -286,22 +294,27 @@ const PurchaseForm = () => {
                     {rows?.map((row, index) => (
                       <TableRow key={index}>
                         <TableCell>
-                          <Select
+                          <Autocomplete
                             fullWidth
-                            value={row.product}
                             size="small"
-                            onChange={(event) => handleProductChange(index, event)}
-                            displayEmpty
-                          >
-                            <MenuItem value="">Select a product</MenuItem>
-                            {productList
-                              ?.filter((product) => !rows?.some((r) => r.product === product._id) || row.product === product._id)
-                              ?.map((product) => (
-                                <MenuItem key={product._id} value={product._id}>
-                                  {product.productnm}
-                                </MenuItem>
-                              ))}
-                          </Select>
+                            options={productList.filter(
+                              (product) => !rows.some((r) => r.product === product._id) || row.product === product._id
+                            )}
+                            getOptionLabel={(option) => option.productnm}
+                            value={productList.find((product) => product._id === row.product) || null}
+                            onChange={(event, newValue) => {
+                              handleProductChange(index, { target: { value: newValue ? newValue._id : '' } });
+                            }}
+                            renderInput={(params) => (
+                              <TextField {...params} placeholder="Select a product" variant="outlined" fullWidth sx={{ width: '200px' }} />
+                            )}
+                            ListboxProps={{
+                              style: {
+                                maxHeight: 200,
+                                overflow: 'auto'
+                              }
+                            }}
+                          />
                         </TableCell>
                         <TableCell>
                           <TextField type="string" size="small" value={row?.categoryName} inputProps={{ readOnly: true }} />
@@ -319,15 +332,15 @@ const PurchaseForm = () => {
                           />
                         </TableCell>
                         <TableCell>
-                          <TextField 
-                          type="number" 
-                          size="small" 
-                          value={(row?.price || 0).toFixed(2)} 
-                          inputProps={{ readOnly: true }}
+                          <TextField
+                            type="number"
+                            size="small"
+                            value={(row?.price || 0).toFixed(2)}
+                            inputProps={{ readOnly: true }}
                             InputProps={{
                               startAdornment: <span>{currencySymbol}</span>
                             }}
-                            />
+                          />
                         </TableCell>
                         <TableCell>
                           <TextField
@@ -335,7 +348,7 @@ const PurchaseForm = () => {
                             size="small"
                             value={(row?.subtotal || 0).toFixed(2)}
                             inputProps={{
-                              readOnly: true,
+                              readOnly: true
                             }}
                             InputProps={{
                               startAdornment: <span>{currencySymbol}</span>
@@ -362,7 +375,8 @@ const PurchaseForm = () => {
                         Subtotal
                       </TableCell>
                       <TableCell align="right">
-                        {currencySymbol}{purchaseSubtotal.toFixed(2)}
+                        {currencySymbol}
+                        {purchaseSubtotal.toFixed(2)}
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -370,7 +384,8 @@ const PurchaseForm = () => {
                         Tax
                       </TableCell>
                       <TableCell align="right">
-                        {currencySymbol}{purchaseTaxes.toFixed(2)}
+                        {currencySymbol}
+                        {purchaseTaxes.toFixed(2)}
                       </TableCell>
                     </TableRow>
                     <TableRow>
@@ -378,7 +393,8 @@ const PurchaseForm = () => {
                         Total
                       </TableCell>
                       <TableCell align="right">
-                        {currencySymbol}{purchaseTotal.toFixed(2)}
+                        {currencySymbol}
+                        {purchaseTotal.toFixed(2)}
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -387,7 +403,7 @@ const PurchaseForm = () => {
             </Grid>
             <Grid item xs={12}>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginRight: '5px' }}>
-                <Button variant="contained" color="secondary" type="submit" onClick={handleAddPurchase}>
+                <Button variant="contained" color="secondary" type="submit" onClick={throttledHandleAddPurchase}>
                   Add Purchase
                 </Button>
               </Box>
@@ -395,7 +411,7 @@ const PurchaseForm = () => {
           </Grid>
         </form>
       </Card>
-    </Container>
+    </Grid>
   );
 };
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Container, Typography, Card, Box } from '@mui/material';
+import { Stack, Button, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Grid, Typography, Card, Box } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import AddCustomer from './AddCustomers.js';
@@ -35,7 +35,7 @@ const Customer = () => {
       const response = await fetchCustomers({ userId });
       setCustomerData(response?.data);
     } catch (error) {
-      toast.error('Failed to fetch customers');
+      console.error('Failed to fetch or no customers');
     }
   };
 
@@ -122,12 +122,8 @@ const Customer = () => {
             sx={{
               backgroundColor: '#e3f2fd',
               color: '#2196f3',
-              '&:hover': {
-                backgroundColor: '#2196f3',
-                color: 'white'
-              },
               padding: '1px',
-              borderRadius: '4px',
+              borderRadius: '30px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -304,7 +300,7 @@ const Customer = () => {
         onCustomerUpdated={handleCustomerUpdated}
       />
 
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -363,7 +359,7 @@ const Customer = () => {
             </Card>
           </Box>
         </TableStyle>
-      </Container>
+      </Grid>
     </>
   );
 };

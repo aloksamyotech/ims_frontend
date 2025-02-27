@@ -34,14 +34,14 @@ const AddCompany = ({ open, handleClose, company, onCompanyAdded }) => {
     phone: yup
       .string()
       .matches(/^[1-9][0-9]{9}$/, 'Phone number must be 10 digits and cannot start with 0')
-      .required('Phone number is required'),
+      .required('Phone number is required')
   });
 
   const initialValues = {
     name: '',
     phone: '',
     email: '',
-    password: '',
+    password: ''
   };
 
   const formik = useFormik({
@@ -53,33 +53,41 @@ const AddCompany = ({ open, handleClose, company, onCompanyAdded }) => {
 
       try {
         const response = await addUser(values);
-        onCompanyAdded(response?.data); 
-        toast.success('Company added successfully');
-        resetForm();
+        if (response?.data && response?.data?.message) {
+          toast.error('Company already registered');
+        } else {
+          onCompanyAdded(response?.data);
+          toast.success('Company added successfully');
+          resetForm();
+          handleClose();
+        }
       } catch (error) {
-        toast.error('Failed to add company');
+        if (error.response && error.response.data && error.response.data.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Failed to add company');
+        }
       } finally {
         setIsSubmitting(false);
-        handleClose();
       }
-    },
+    }
   });
 
-  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 20000), [formik.handleSubmit]);
+  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 3000), [formik.handleSubmit]);
 
   return (
-    <Dialog open={open} onClose={handleClose}
+    <Dialog
+      open={open}
+      onClose={handleClose}
       PaperProps={{
         style: {
           width: '450px',
           height: '420px',
-          maxWidth: 'none',
-        },
-      }}>
-      <DialogTitle
-        id="scroll-dialog-title"
-        style={{ display: 'flex', justifyContent: 'space-between' }}
-      >
+          maxWidth: 'none'
+        }
+      }}
+    >
+      <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h3">Add Company</Typography>
         <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
       </DialogTitle>
@@ -95,10 +103,10 @@ const AddCompany = ({ open, handleClose, company, onCompanyAdded }) => {
                 name="name"
                 size="small"
                 fullWidth
-                value={formik.values.name} 
+                value={formik.values.name}
                 onChange={formik.handleChange}
                 error={formik.touched.name && Boolean(formik.errors.name)}
-                helperText={formik.touched.name && formik.errors.name} 
+                helperText={formik.touched.name && formik.errors.name}
               />
             </Grid>
             <Grid item xs={12} md={12}>
@@ -109,7 +117,7 @@ const AddCompany = ({ open, handleClose, company, onCompanyAdded }) => {
                 name="email"
                 size="small"
                 fullWidth
-                value={formik.values.email} 
+                value={formik.values.email}
                 onChange={formik.handleChange}
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
@@ -123,7 +131,7 @@ const AddCompany = ({ open, handleClose, company, onCompanyAdded }) => {
                 name="phone"
                 size="small"
                 fullWidth
-                value={formik.values.phone} 
+                value={formik.values.phone}
                 onChange={formik.handleChange}
                 error={formik.touched.phone && Boolean(formik.errors.phone)}
                 helperText={formik.touched.phone && formik.errors.phone}
@@ -138,10 +146,10 @@ const AddCompany = ({ open, handleClose, company, onCompanyAdded }) => {
                 size="small"
                 type="password"
                 fullWidth
-                value={formik.values.password} 
+                value={formik.values.password}
                 onChange={formik.handleChange}
-                error={formik.touched.password && Boolean(formik.errors.password)} 
-                helperText={formik.touched.password && formik.errors.password} 
+                error={formik.touched.password && Boolean(formik.errors.password)}
+                helperText={formik.touched.password && formik.errors.password}
               />
             </Grid>
           </Grid>

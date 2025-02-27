@@ -1,4 +1,4 @@
-import React, { useState, useEffect , useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Badge, IconButton, Menu, Card, Box, MenuItem, List, ListItem, Typography } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { fetchQuantityAlert } from 'apis/api.js';
@@ -9,41 +9,36 @@ const NotificationDropdown = () => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [role, setRole] = useState('');
-
+  
   useEffect(() => {
     const userRole = localStorage.getItem('role');
     setRole(userRole);
-  }, []); 
+  }, []);
 
+  const quantityAlert = 50;
+   
   const fetchNotifications = useCallback(async () => {
     if (role === 'user') {
       try {
         const userId = getUserId();
-        const response = await fetchQuantityAlert({ userId });
-        const lowStockProducts = response?.data?.data;
+        const response = await fetchQuantityAlert({ userId , quantityAlert });
+        const lowStockProducts = response?.data?.data || [];
 
         const notificationMessages = lowStockProducts.map(
-          (product) =>
-            `Quantity Alert Restock for ${product.productnm}, current quantity ${product.quantity}.`
+          (product) => `Quantity Alert Restock for ${product.productnm}, current quantity ${product.quantity}.`
         );
 
         setNotifications(notificationMessages);
         setUnreadCount(notificationMessages.length);
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        console.error('Error fetching notifications:');
       }
     }
-  }, [role, fetchQuantityAlert]);
+  }, [role]);
 
   useEffect(() => {
-    if (role === 'user') {
-      const interval = setInterval(() => {
-        fetchNotifications();
-      }, 5000);
-
-      return () => clearInterval(interval);
-    }
-  }, [role, fetchNotifications]); 
+    fetchNotifications();
+  }, [fetchNotifications]);  
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -51,7 +46,11 @@ const NotificationDropdown = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleMenuOpen = () => {
     setUnreadCount(0);
+    setAnchorEl(null);
   };
 
   if (role !== 'user') return null;
@@ -96,7 +95,7 @@ const NotificationDropdown = () => {
               notifications.map((notification, index) => (
                 <ListItem
                   key={index}
-                  onClick={handleClose}
+                  onClick={handleMenuOpen}
                   sx={{
                     borderRadius: '8px',
                     cursor: 'pointer',

@@ -20,6 +20,7 @@ import SkeletonTotalOrderCard from 'ui-component/cards/Skeleton/EarningCard';
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { IconUser } from '@tabler/icons';
+import { countOrders } from 'apis/api.js';
 
 const TopRightIcon = styled(Box)(({ theme }) => ({
   position: 'absolute',
@@ -70,9 +71,9 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
           setLoading(false);
           return;
         }
-        const response = await axios.get(`http://139.59.25.198:4200/order/count?userId=${userId}`);
+        const response = await countOrders({userId});
         if (response?.data?.count !== undefined) {
-          setOrderCount(response.data.count);
+          setOrderCount(response.data.count || 0);
         } else {
           setOrderCount(0);
         }

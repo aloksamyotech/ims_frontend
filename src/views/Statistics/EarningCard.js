@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-import { countCustomers } from 'apis/api.js';
+import { getTotalPurchase } from 'apis/api.js';
 import { getUserId } from 'apis/constant.js';
+import { fetchCurrencySymbol } from 'apis/constant.js'; 
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
@@ -11,7 +12,6 @@ import { Box, Grid, Typography } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import { IconCurrencyDollar } from '@tabler/icons';
 import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
-import axios from 'axios';
 
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.primary.dark,
@@ -42,35 +42,41 @@ const TopRightIcon = styled(Box)(({ theme }) => ({
 
 const EarningCard = ({ isLoading }) => {
   const theme = useTheme();
-
-  const [customerCount, setCustomerCount] = useState(0);
+  const [currencySymbol, setCurrencySymbol] = useState('');
+  const [purchaseData, setPurchaseData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getCustomerCount = async () => {
+    const fetchPurchaseData = async () => {
       try {
         const userId = getUserId();
-        if (!userId) {
-          console.log('User ID is missing');
-          setLoading(false);
-          return;
-        }
-        const response = await axios.get(`http://139.59.25.198:4200/customer/count?userId=${userId}`);
-        if (response?.data?.count !== undefined) {
-          setCustomerCount(response.data.count);
+        const amount = await getTotalPurchase({ userId });
+        console.log(amount);
+        if (amount?.data?.success && Array.isArray(amount?.data?.data)) {
+          const filteredPurchaseData = amount.data.data.filter(item => item.companyId === userId);
+          if (filteredPurchaseData.length > 0) {
+            setPurchaseData(filteredPurchaseData[0]);
+          } else {
+            setPurchaseData([]);
+          }
         } else {
-          setCustomerCount(0);
+          setPurchaseData([]); 
         }
-      } catch (err) {
-        console.error('Error fetching customer count:', err);
-        setError('Failed to fetch customer count');
-      } finally {
-        setLoading(false);
+      } catch (error) {
+        setPurchaseData([]);
       }
     };
-
-    getCustomerCount();
+  
+    fetchPurchaseData();
+  }, []);
+  
+  useEffect(() => {
+    const getCurrency = async () => {
+      const symbol = await fetchCurrencySymbol();
+      setCurrencySymbol(symbol);
+    };
+    getCurrency();
   }, []);
 
   return (
@@ -89,7 +95,7 @@ const EarningCard = ({ isLoading }) => {
                     color: '#ffff'
                   }}
                 >
-                  Revenue
+                  Expenditure
                 </Typography>
               </Grid>
               <Grid item>
@@ -102,7 +108,7 @@ const EarningCard = ({ isLoading }) => {
                     mb: 0.75
                   }}
                 >
-                  {customerCount}
+                   {currencySymbol} {purchaseData.total_purchase_amount}
                 </Typography>
               </Grid>
             </Grid>

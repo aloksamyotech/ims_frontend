@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Stack,
+  Grid,
   IconButton,
   Breadcrumbs,
   Link as MuiLink,
@@ -43,7 +44,6 @@ const User = () => {
     try {
       const userId = getUserId();
       const response = await fetchEmployees({userId});
-      
       setUsers(response?.data || []);
     } catch (error) {
       console.error('Error fetching employees:', error);
@@ -120,14 +120,14 @@ const User = () => {
             fontSize: 14
           }}
         >
-          {generateRandomAvatar(params.row.employeenm)}
+          {generateRandomAvatar(params.row.name)}
         </Avatar>
       )
     },
     {
       field: 'name',
       headerName: 'Employee Name',
-      flex: 0.8,
+      flex: 1.5,
       renderCell: (params) => (
         <Box ml={1}>
           <Typography variant="h5">{params.row?.name || 'N/A'}</Typography>
@@ -137,8 +137,8 @@ const User = () => {
         </Box>
       )
     },
-    { field: 'phone', headerName: 'Phone', flex: 0.8 },
-    { field: 'address', headerName: 'Address', flex: 0.8 },
+    { field: 'phone', headerName: 'Phone', flex: 1 },
+    { field: 'address', headerName: 'Address', flex: 1 },
     {
       field: 'date',
       headerName: 'Date',
@@ -254,6 +254,7 @@ const User = () => {
   const handleEmployeeAdded = (newEmployee) => {
     setUsers((prev) => [...prev, newEmployee]);
     setOpenAdd(false);
+    loadEmployees();
   };
 
   const handleEmployeeUpdated = (updatedEmployee) => {
@@ -263,6 +264,7 @@ const User = () => {
       )
     );
     setOpenUpdate(false);
+    loadEmployees();
   };
 
   const handleDelete = async (_id) => {
@@ -300,7 +302,7 @@ const User = () => {
         employee={currentEmployee}
         onUpdateEmployee={handleEmployeeUpdated}
       />
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -352,7 +354,7 @@ const User = () => {
             </Paper>
           </Box>
         </TableStyle>
-      </Container>
+      </Grid>
     </>
   );
 };

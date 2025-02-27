@@ -16,12 +16,12 @@ import {
 import moment from 'moment';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import { styled } from '@mui/system';
 import Logo from '../../assets/images/images.png';
 import { fetchCurrencySymbol } from 'apis/constant.js';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { fetchOrderById } from 'apis/api.js';
 
 const user = localStorage.getItem('user');
 const userObj = JSON.parse(user);
@@ -62,7 +62,7 @@ const DownloadInvoicePage = () => {
   useEffect(() => {
     const loadInvoice = async () => {
       try {
-        const response = await axios.get(`http://139.59.25.198:4200/order/fetchById/${id}`);
+        const response = await fetchOrderById(id);
         setInvoiceData(response.data);
       } catch (error) {
         setError('Failed to fetch invoice data');

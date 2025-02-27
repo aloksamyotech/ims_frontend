@@ -2,27 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import {
-  Box,
-  AppBar,
-  Button,
-  Paper,
-  Popper,
-  ClickAwayListener,
-  Stack,
-  Typography,
-  Divider,
-  List,
-  Toolbar,
-  ListItemIcon,
-  ListItemText
-} from '@mui/material';
-import { IconLogout, IconSettings } from '@tabler/icons';
+import { Box, Button, Stack, Tooltip } from '@mui/material';
+import { IconLogout } from '@tabler/icons';
 import Notification from './notification.js';
-import MainCard from 'ui-component/cards/MainCard';
-import Transitions from 'ui-component/extended/Transitions';
-import User1 from 'assets/images/profile.png';
 import { toast } from 'react-toastify';
+import AIIcon from 'assets/images/ai-icon.png';
 
 // ==============================|| PROFILE MENU ||============================== //
 
@@ -34,6 +18,12 @@ const ProfileSection = () => {
   const [user, setUser] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
+  const [role, setRole] = useState('');
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem('role');
+    setRole(storedRole);
+  }, []);
 
   const anchorRef = useRef(null);
 
@@ -45,8 +35,9 @@ const ProfileSection = () => {
   const handleLogout = () => {
     // Step 1: Clear localStorage
     localStorage.removeItem('imstoken');
-    localStorage.removeItem('user._id');
-    localStorage.removeItem('user.email');
+    localStorage.removeItem('user');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('email');
     localStorage.removeItem('role');
     localStorage.removeItem('permissions');
 
@@ -72,6 +63,10 @@ const ProfileSection = () => {
     setOpen((prevOpen) => !prevOpen);
   };
 
+  const handleAiButtonClick = () => {
+    navigate('/dashboard/ai');
+  };
+
   const prevOpen = useRef(open);
   useEffect(() => {
     if (prevOpen.current === true && open === false) {
@@ -83,17 +78,39 @@ const ProfileSection = () => {
   return (
     <>
       <Stack direction="row" spacing={3} alignItems="center">
-        <Box >
+        {role === 'user' && (
+          <Box>
+            <Tooltip title="Chat with AI expert" arrow>
+              <button
+                onClick={handleAiButtonClick}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer'
+                }}
+              >
+                <img alt="Bot" src={AIIcon} style={{ width: 36, height: 36 }} />
+              </button>
+            </Tooltip>
+          </Box>
+        )}
+
+        <Box>
           <Notification />
         </Box>
-          
+
         <Box>
           <Button
             variant="contained"
-            color="primary"
             onClick={handleLogout}
             sx={{
-              borderRadius: '4px',
+              background: 'linear-gradient(to right, #4b6cb7, #1a78c5)',
+              '&:hover': {
+                background: 'linear-gradient(45deg, #441572, #7c4bad)',
+                boxShadow: '2'
+              },
+              borderRadius: '10px',
               textTransform: 'none',
               padding: '6px 10px',
               display: 'flex',
@@ -101,7 +118,7 @@ const ProfileSection = () => {
               gap: 1
             }}
           >
-            <IconLogout stroke={1.5} size="1.5rem" />
+            <IconLogout size="1.5rem" />
             Logout
           </Button>
         </Box>

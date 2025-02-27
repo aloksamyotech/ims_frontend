@@ -1,4 +1,4 @@
-import { deleteApi, addApi, fetchApi, updateEntity } from './common.js';
+import { deleteApi, addApi, fetchApi, updateEntity, updateMultipartApi } from './common.js';
 import { urls } from './urls.js';
 
 // unit
@@ -23,10 +23,6 @@ export const deleteCategory = async (_id) => {
   return deleteApi(urls.category.delete, _id);
 };
 
-// export const fetchCategories = async () => {
-//     return fetchApi(urls.category.fetch);
-// };
-
 export const fetchCategories = async (queryParams = {}) => {
   const queryString = new URLSearchParams(queryParams).toString();
   return fetchApi(`${urls.category.fetch}?${queryString}`);
@@ -45,10 +41,6 @@ export const deleteSupplier = async (_id) => {
   return deleteApi(urls.supplier.delete, _id);
 };
 
-// export const fetchSuppliers = async () => {
-//     return fetchApi(urls.supplier.fetch);
-// };
-
 export const fetchSuppliers = async (queryParams = {}) => {
   const queryString = new URLSearchParams(queryParams).toString();
   return fetchApi(`${urls.supplier.fetch}?${queryString}`);
@@ -62,8 +54,13 @@ export const updateSupplier = async (updatedSupplier) => {
   return updateEntity('supplier', updatedSupplier);
 };
 
-export const countSuppliers = async () => {
-  return fetchApi(urls.supplier.count);
+export const countSuppliers = async (queryParams = {}) => {
+  const queryString = new URLSearchParams(queryParams).toString();
+  return fetchApi(`${urls.supplier.count}?${queryString}`);
+};
+
+export const fetchSupplierById = async (id) => {
+  return fetchApi(`${urls.supplier.fetchbyid.replace(':id', id)}`);
 };
 
 // customer
@@ -76,6 +73,11 @@ export const fetchCustomers = async (queryParams = {}) => {
   return fetchApi(`${urls.customer.fetch}?${queryString}`);
 };
 
+export const fetchCustomerById = async (id) => {
+  return fetchApi(`${urls.customer.fetchbyid.replace(':id', id)}`);
+};
+
+
 export const addCustomer = async (newCustomer) => {
   return addApi(urls.customer.add, newCustomer);
 };
@@ -84,8 +86,9 @@ export const updateCustomer = async (updatedCustomer) => {
   return updateEntity('customer', updatedCustomer);
 };
 
-export const countCustomers = async () => {
-  return fetchApi(urls.customer.count);
+export const countCustomers = async (queryParams = {}) => {
+  const queryString = new URLSearchParams(queryParams).toString();
+  return fetchApi(`${urls.customer.count}?${queryString}`);
 };
 
 //employee
@@ -96,6 +99,10 @@ export const deleteEmployee = async (_id) => {
 export const fetchEmployees = async (queryParams = {}) => {
   const queryString = new URLSearchParams(queryParams).toString();
   return fetchApi(`${urls.employee.fetch}?${queryString}`);
+};
+
+export const fetchEmployeeById = async (id) => {
+  return fetchApi(`${urls.employee.fetchbyid.replace(':id', id)}`);
 };
 
 export const addEmployee = async (newEmployee) => {
@@ -115,21 +122,22 @@ export const deleteProduct = async (_id) => {
   return deleteApi(urls.product.delete, _id);
 };
 
-// export const fetchProducts = async () => {
-//     return fetchApi(urls.product.fetch);
-// };
-
 export const fetchProducts = async (queryParams = {}) => {
   const queryString = new URLSearchParams(queryParams).toString();
   return fetchApi(`${urls.product.fetch}?${queryString}`);
+};
+
+export const fetchProductById = async (id) => {
+  return fetchApi(`${urls.product.fetchbyid.replace(':id', id)}`);
 };
 
 export const addProduct = async (newProduct) => {
   return addApi(urls.product.add, newProduct);
 };
 
-export const updateProduct = async (updatedProduct) => {
-  return updateEntity('product', updatedProduct);
+export const updateProduct = async (id, updatedData) => {
+  const url = urls.product.update.replace(':id', id); 
+  return await updateMultipartApi(url, updatedData);
 };
 
 export const fetchLowStock = async (queryParams = {}) => {
@@ -173,12 +181,17 @@ export const fetchOrders = async (queryParams = {}) => {
   return fetchApi(`${urls.order.fetch}?${queryString}`);
 };
 
+export const fetchOrderById = async (id) => {
+  return fetchApi(`${urls.order.fetchbyid.replace(':id', id)}`);
+};
+
 export const addOrder = async (newOrder) => {
   return addApi(urls.order.add, newOrder);
 };
 
-export const countOrders = async () => {
-  return fetchApi(urls.order.count);
+export const countOrders = async (queryParams = {}) => {
+  const queryString = new URLSearchParams(queryParams).toString();
+  return fetchApi(`${urls.order.count}?${queryString}`);
 };
 
 export const totalSalesAmount = async (queryParams = {}) => {
@@ -191,9 +204,30 @@ export const totalSoldQuantity = async (queryParams = {}) => {
   return fetchApi(`${urls.order.totalquantity}?${queryString}`);
 };
 
+export const totalSoldProfit = async (queryParams = {}) => {
+  const queryString = new URLSearchParams(queryParams).toString();
+  return fetchApi(`${urls.order.totalprofit}?${queryString}`);
+};
+
 export const getTotalSales = async () => {
   return fetchApi(urls.order.totalsales);
 };
+
+export const soldQuantityByDate = async (queryParams = {}) => {
+  const queryString = new URLSearchParams(queryParams).toString();
+  return fetchApi(`${urls.order.soldquantitybydate}?${queryString}`);
+};
+
+export const soldSalesByDate = async (queryParams = {}) => {
+  const queryString = new URLSearchParams(queryParams).toString();
+  return fetchApi(`${urls.order.soldsalesbydate}?${queryString}`);
+};
+
+export const getTopSellingCatgeory = async (queryParams = {}) => {
+  const queryString = new URLSearchParams(queryParams).toString();
+  return fetchApi(`${urls.order.topcategory}?${queryString}`);
+};
+
 
 // purchase
 export const deletePurchase = async (_id) => {
@@ -205,21 +239,21 @@ export const fetchPurchases = async (queryParams = {}) => {
   return fetchApi(`${urls.purchase.fetch}?${queryString}`);
 };
 
+export const fetchPurchaseById = async (id) => {
+  return fetchApi(`${urls.purchase.fetchbyid.replace(':id', id)}`);
+};
+
 export const addPurchase = async (newPurchase) => {
   return addApi(urls.purchase.add, newPurchase);
 };
 
-export const countPurchases = async () => {
-  return fetchApi(urls.purchase.count);
+export const countPurchases = async (queryParams = {}) => {
+  const queryString = new URLSearchParams(queryParams).toString();
+  return fetchApi(`${urls.purchase.count}?${queryString}`);
 };
 
-//report
-export const getSupplierProductReport = async () => {
-  return fetchApi(urls.report.getSupplierProductReport);
-};
-
-export const getCustomerProductReport = async () => {
-  return fetchApi(urls.report.getCustomerProductReport);
+export const getTotalPurchase = async () => {
+  return fetchApi(urls.purchase.totalpurchase);
 };
 
 //admin

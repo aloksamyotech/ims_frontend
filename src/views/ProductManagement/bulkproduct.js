@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
-import axios from 'axios';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Input } from '@mui/material';
-import { getUserId } from 'apis/constant.js';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Input ,Box} from '@mui/material';
 import { toast } from 'react-toastify';
+import { getUserId } from 'apis/constant.js';
+import {addApi} from 'apis/common.js'; 
 
-function FileInput() {
+const FileInput = ({loadProducts}) => {
   const userId = getUserId();
   const [data, setData] = useState(null);
   const [open, setOpen] = useState(false);
@@ -31,13 +31,13 @@ function FileInput() {
         const formattedData = sheetData.map((product) => ({
           ...product,
           categoryId: product.categoryId || null,
-          categoryName: product.categoryName || null
+          categoryName: product.categoryName || null,
         }));
 
         setData(formattedData);
       } catch (error) {
         console.error('Error reading file:', error);
-        alert('Failed to read the Excel file. Please ensure it is a valid file.');
+        toast.alert('Failed to read the Excel file. Please ensure it is a valid file.');
       }
     };
 
@@ -46,20 +46,20 @@ function FileInput() {
 
   const sendToBackend = async () => {
     try {
-      const response = await axios.post('http://139.59.25.198:4200/product/bulkUpload', {
-        productsData: data.map(product => ({
+      const response = await addApi('/product/bulkUpload', {
+        productsData: data.map((product) => ({
           ...product,
-          userId : userId
-        }))
+          userId: userId,
+        })),
       });
+      loadProducts();
       toast.success('Bulk upload successfully');
       setOpen(false);
-      window.location.reload();
     } catch (error) {
       toast.error('Failed to upload data to the backend.');
     }
   };
-  
+
   return (
     <div>
       <Button variant="contained" color="primary" onClick={handleOpen}>
@@ -70,6 +70,12 @@ function FileInput() {
         <DialogTitle variant="h4">Upload Excel File</DialogTitle>
         <Divider />
         <DialogContent>
+        <Box>
+            <Button variant="contained" color="secondary" href="/sampleFile.xlsx" download sx={{ mb: 2 }}>
+              Download Sample File
+            </Button>
+          </Box>
+
           <Input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} fullWidth sx={{ mb: 2 }} />
           {data && (
             <div>

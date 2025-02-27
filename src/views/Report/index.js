@@ -4,6 +4,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import {
   Box,
   Tabs,
+  Grid,
   Stack,
   Breadcrumbs,
   Link as MuiLink,
@@ -23,10 +24,9 @@ import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { Link } from 'react-router-dom';
-import { Container } from '@mui/system';
 
 const TabContentCard = styled(Card)(({ theme }) => ({
-  boxShadow: theme.shadows[3],
+  boxShadow: theme.shadows[1],
   borderRadius: 8,
   marginBottom: theme.spacing(1),
   marginTop: theme.spacing(2.4)
@@ -72,21 +72,28 @@ const ProductReport = () => {
     loadReport();
   }, []);
 
-  const filterDataByDate = (data) => {
-    const now = moment();
-    const last7Days = moment().subtract(7, 'days');
+  const filterDataByDate = (data, filter) => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(now.getDate() - 7);
+
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(now.getMonth() - 1);
+
     return data.filter((report) => {
-      const reportDate = moment(report?.date);
-      switch (selectedDateRange) {
-        case 'Daily':
-          return reportDate.isSame(now, 'day');
-        case 'Weekly':
-          return reportDate.isBetween(last7Days, now, null, '[]');
-        case 'Monthly':
-          return reportDate.isSame(now, 'month');
-        case 'All':
-        default:
-          return true;
+      const reportDate = new Date(report?.date);
+      reportDate.setHours(0, 0, 0, 0);
+
+      if (filter === 'Daily') {
+        return reportDate.getTime() === now.getTime();
+      } else if (filter === 'Last 7 Days') {
+        return reportDate >= oneWeekAgo && reportDate <= now;
+      } else if (filter === 'Monthly') {
+        return reportDate >= oneMonthAgo && reportDate <= now;
+      } else {
+        return true;
       }
     });
   };
@@ -101,7 +108,7 @@ const ProductReport = () => {
     {
       field: 'supplierName',
       headerName: 'Supplier',
-      flex: 2.5,
+      flex: 1,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row?.supplierName}</Typography>
@@ -111,13 +118,13 @@ const ProductReport = () => {
         </Box>
       )
     },
-    { field: 'supplierPhone', headerName: 'Phone', width: 110 },
+    { field: 'supplierPhone', headerName: 'Phone', width: 120 },
     { field: 'productName', headerName: 'Product Name', width: 150 },
-    { field: 'quantity', headerName: 'Quantity', width: 90 },
+    { field: 'quantity', headerName: 'Quantity', width: 100 },
     {
       field: 'price',
       headerName: 'Price/unit',
-      width: 110,
+      width: 100,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -128,7 +135,7 @@ const ProductReport = () => {
     {
       field: 'total',
       headerName: 'Total Amount',
-      width: 120,
+      width: 100,
       valueFormatter: ({ value }) => {
         if (value != null) {
           return ` ${currencySymbol} ${value.toLocaleString()}`;
@@ -148,7 +155,7 @@ const ProductReport = () => {
     {
       field: 'customerName',
       headerName: 'Customer',
-      flex: 1.5,
+      flex: 1,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row?.customerName}</Typography>
@@ -222,10 +229,10 @@ const ProductReport = () => {
   };
 
   const flattenedOrderData = flattenOrderData(orderDetails);
-  const filteredOrderData = filterDataByDate(flattenedOrderData);
+  const filteredOrderData = filterDataByDate(flattenedOrderData, selectedDateRange);
 
   const flattenedPurchaseData = flattenPurchaseData(purchaseDetails);
-  const filteredPurchaseData = filterDataByDate(flattenedPurchaseData);
+  const filteredPurchaseData = filterDataByDate(flattenedPurchaseData, selectedDateRange);
 
   const CustomToolbar = () => {
     return (
@@ -278,7 +285,7 @@ const ProductReport = () => {
   };
 
   return (
-    <Container>
+    <Grid>
       <Box
         sx={{
           backgroundColor: '#ffff',
@@ -380,7 +387,7 @@ const ProductReport = () => {
           </Box>
         )}
       </TabContentCard>
-    </Container>
+    </Grid>
   );
 };
 

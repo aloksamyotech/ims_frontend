@@ -35,12 +35,21 @@ const AddSubscription = ({ open, handleClose, onSubscriptionAdded }) => {
       setIsSubmitting(true);
       try {
         const response = await addSubscription(values);
-        onSubscriptionAdded(response?.data);
-        handleClose();
-        toast.success('Subscription added successfully');
-        resetForm();
+
+        if (response?.data && response?.data?.message) {
+          toast.error(response.data.message);
+        } else {
+          onSubscriptionAdded(response?.data);
+          toast.success('Subscription added successfully');
+          resetForm();
+          handleClose();
+        }
       } catch (error) {
-        toast.error('Failed to add subscription');
+        if (error.response && error.response.data && error.response.data.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Failed to add subscription');
+        }
       } finally {
         setIsSubmitting(false);
       }
@@ -115,7 +124,7 @@ const AddSubscription = ({ open, handleClose, onSubscriptionAdded }) => {
                 fullWidth
                 value={formik.values.discount}
                 onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
+                onBlur={formik.handleBlur}
                 error={formik.touched.discount && Boolean(formik.errors.discount)}
                 helperText={formik.touched.discount && formik.errors.discount}
               />

@@ -77,7 +77,7 @@ const EarningCard = ({ isLoading }) => {
     const getSupplierCount = async () => {
       try {
         const response = await countSuppliers();
-        setSupplierCount(response.data.count);
+        setSupplierCount(response?.data?.count || 0);
       } catch (err) {
         console.log(err);
       }

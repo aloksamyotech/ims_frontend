@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Grid, Typography, Card, CardContent, Breadcrumbs,Container,
-  Link as MuiLink,Button } from '@mui/material';
+import { Container, Box, Grid, Typography, Avatar, Breadcrumbs, Button, Divider, TextField, Stack, Link as MuiLink } from '@mui/material';
 import { fetchAdmin } from 'apis/api.js';
 import logo from 'assets/images/profile.png';
-import { toast } from 'react-toastify';
 import UpdateProfile from './updateProfile.js';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
@@ -21,7 +19,6 @@ const ProfileSection = () => {
         setProfile(adminData);
       } catch (error) {
         console.error('Error fetching details:', error);
-        toast.error('Failed to fetch profile');
       }
     };
     load();
@@ -40,96 +37,92 @@ const ProfileSection = () => {
   }
 
   return (
-   <Container>
-       <Box
-        sx={{
-          backgroundColor: '#ffff',
-          padding: '10px',
-          borderRadius: '8px',
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}
-      >
-        <Typography variant="h4">Profile Details</Typography>
+    <Grid>
+          <Box
+            sx={{
+              backgroundColor: '#ffff',
+              padding: '10px',
+              borderRadius: '8px',
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <Typography variant="h4">Profile Details</Typography>
+            <Breadcrumbs
+              separator={<NavigateNextIcon fontSize="small" />}
+              aria-label="breadcrumb"
+              sx={{ display: 'flex', alignItems: 'center' }}
+            >
+              <MuiLink component={Link} to="/dashboard/admin" color="inherit">
+                <HomeIcon sx={{ color: '#5e35b1' }} />
+              </MuiLink>
+              <Typography color="text.primary">Profile</Typography>
+            </Breadcrumbs>
+          </Box>
 
-        <Breadcrumbs
-          separator={<NavigateNextIcon fontSize="small" />}
-          aria-label="breadcrumb"
-          sx={{ display: 'flex', alignItems: 'center' }}
-        >
-          <MuiLink component={Link} to="/dashboard/default" color="inherit">
-            <HomeIcon sx={{ color: '#5e35b1' }} />
-          </MuiLink>
-          <Typography color="text.primary">Profile</Typography>
-        </Breadcrumbs>
-      </Box>
+      <Grid item xs={12} mt={2.5}>
+        <Box sx={{ width: '100%', backgroundColor: 'white', padding: '20px', borderRadius: '10px' }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={4} display="flex">
+              <Box
+                sx={{
+                  backgroundColor: 'white',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+                  textAlign: 'center',
+                  width: '100%'
+                }}
+              >
+                <Typography sx={{ fontWeight: 'bold', paddingBottom: '10px' }}>Profile</Typography>
+                <Divider />
+                <Box sx={{ display: 'flex', justifyContent: 'center', padding: '10px',mt: '5px' }}>
+                  <Avatar
+                    alt="Profile Image"
+                    src={logo}
+                    sx={{ width: 200, height: 200, borderRadius: '50%' }}
+                  />
+                </Box>
+              </Box>
+            </Grid>
 
-       <Card sx={{ marginTop: '20px' }}>
-      <Grid container spacing={1}>
-        <Grid item xs={12} md={4}>
-          <Card sx={{ marginBottom: 2 ,padding:'10px' , margin:'12px'}} >
-            <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
-              <img src={logo} alt="profile" style={{ width: '200px', height: 'auto', borderRadius: '8px' }} />
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} md={8}>
-          <Card sx={{ marginBottom: 3 , margin:'12px' , padding:'10px'}}>
-            <CardContent>
-              <Grid container spacing={2}>
-              <Grid item xs={12}>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    Company:
-                  </Typography>
-                  <Typography variant="h5">Inventory Management</Typography>
+            <Grid item xs={12} sm={8}>
+              <Box
+                sx={{
+                  backgroundColor: 'white',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+                  width: '100%',
+                  height: '100%'
+                }}
+              >
+                <Typography sx={{ fontWeight: 'bold', marginBottom: 1 }}>Account Details</Typography>
+                <Divider />
+                <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                  <Grid item xs={12} sm={12}>
+                    <TextField fullWidth label="Company" variant="outlined" defaultValue="Inventory Management System" />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField fullWidth label="Name" variant="outlined" defaultValue={profile?.name || 'NA'} />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField fullWidth label="Email Address" variant="outlined" defaultValue={profile?.email || 'NA'} />
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <TextField fullWidth label="Phone Number" variant="outlined" defaultValue={profile?.phone || 'NA'} />
+                  </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    Name:
-                  </Typography>
-                  <Typography variant="h5">{profile?.name || 'NA'}</Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    Contact on:
-                  </Typography>
-                  <Typography variant="h5">{profile?.phone || 'NA'}</Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    Email:
-                  </Typography>
-                  <Typography variant="h5">{profile?.email || 'NA'}</Typography>
-                </Grid>
-                {/* <Grid item xs={12}>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    Currency Code:
-                  </Typography>
-                  <Typography variant="h5">{profile?.currencyCode || 'NA'}</Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    Currency Symbol:
-                  </Typography>
-                  <Typography variant="h5">{profile?.currencySymbol || 'NA'}</Typography>
-                </Grid> */}
-                {/* <Grid item xs={12}>
-                    <Button  variant="contained" size="small" color="secondary" onClick={handleEditClick}>
-                     Edit Profile
-                    </Button>
-                </Grid> */}
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
       </Grid>
 
       <UpdateProfile open={openDialog} onClose={handleDialogClose} profile={profile} setProfile={setProfile} />
-    </Card>
-    </Container>
+    </Grid>
   );
 };
 

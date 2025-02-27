@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, Avatar, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Switch, Container, Typography, Card, Box } from '@mui/material';
+import { Stack, Avatar, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Switch, Grid, Typography, Card, Box } from '@mui/material';
 import TableStyle from 'ui-component/TableStyle.js';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import AddCompany from './addCompany.js';
@@ -15,7 +15,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
 import { toast } from 'react-toastify';
 import { fetchUsers } from 'apis/api.js';
-import axios from 'axios';
+import { updateApi } from 'apis/common.js';
 
 const Company = () => {
   const navigate = useNavigate();
@@ -90,10 +90,15 @@ const Company = () => {
 
   const handleToggleStatus = async (userId, newStatus) => {
     try {
-      setLoading(true); 
+      setLoading(true);
       setCompanyData((prevData) => prevData.map((user) => (user._id === userId ? { ...user, isActive: newStatus } : user)));
 
-      const response = await axios.patch(`http://139.59.25.198:4200/user/change-status/${userId}`, { isActive: newStatus });
+      const updatedUser = {
+        _id: userId,
+        isActive: newStatus
+      };
+
+      const response = await updateApi('/user/change-status/:id', updatedUser);
       if (response?.data.success) {
         toast.success(`Company status updated to ${newStatus ? 'Active' : 'Inactive'}`);
       } else {
@@ -161,45 +166,34 @@ const Company = () => {
       field: 'status',
       headerName: 'Status',
       flex: 1,
-      renderCell: (params) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Switch
-          checked={params.row?.isActive}
-          onChange={() => handleToggleStatus(params.row?._id, !params.row?.isActive)}
-          inputProps={{ 'aria-label': 'toggle active/inactive' }}
-          sx={{
-            width: 40,
-            height: 16,
-            padding: 0,
-            '& .MuiSwitch-switchBase': {
-              padding: 0,
-              margin: 0,
-              transition: 'transform 300ms ease',
-              transform: params.row?.isActive ? 'translateX(28px)' : 'translateX(2px)',
-              '&.Mui-checked': {
-                color: '#fff',
-                '& + .MuiSwitch-track': {
-                  backgroundColor: '#4caf50', 
-                  opacity: 1,
+      renderCell: (params) => {
+        const label = { inputProps: { 'aria-label': 'toggle active/inactive' } };
+
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Switch
+              {...label}
+              checked={params.row?.isActive}
+              onChange={() => handleToggleStatus(params.row?._id, !params.row?.isActive)}
+              defaultChecked
+              sx={{
+                '& .MuiSwitch-switchBase.Mui-checked': {
+                  color: '#4caf50'
                 },
-              },
-            },
-            '& .MuiSwitch-thumb': {
-              width: 14,
-              height: 14,
-              borderRadius: '50%',
-              backgroundColor: '#fff',
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)', 
-            },
-            '& .MuiSwitch-track': {
-              borderRadius: 18,
-              backgroundColor: params.row?.isActive ? '#4caf50' : '#f44336',
-              opacity: 1,
-            },
-          }}
-        />
-      </Box>
-      )
+                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                  backgroundColor: '#4caf50' 
+                },
+                '& .MuiSwitch-switchBase': {
+                  color: '#dd132e' 
+                },
+                '& .MuiSwitch-switchBase + .MuiSwitch-track': {
+                  backgroundColor: '#dd132e' 
+                }
+              }}
+            />
+          </Box>
+        );
+      }
     },
     {
       field: 'actions',
@@ -225,8 +219,8 @@ const Company = () => {
               color="primary"
               sx={{
                 '&:hover': {
-                  backgroundColor: '#9abfdd', 
-                  color: '#1976d2' 
+                  backgroundColor: '#9abfdd',
+                  color: '#1976d2'
                 }
               }}
             >
@@ -249,15 +243,14 @@ const Company = () => {
   };
 
   const handleView = (_id) => {
-    navigate(`/dashboard/view-company/${_id}`);
+    navigate(`/dashboard/company/view-company/${_id}`);
   };
-
 
   return (
     <>
       <AddCompany open={openAdd} handleClose={() => setOpenAdd(false)} onCompanyAdded={handleCompanyAdded} />
 
-      <Container>
+      <Grid>
         <Box
           sx={{
             backgroundColor: '#ffff',
@@ -315,7 +308,7 @@ const Company = () => {
             </Card>
           </Box>
         </TableStyle>
-      </Container>
+      </Grid>
     </>
   );
 };
