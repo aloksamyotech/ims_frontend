@@ -71,7 +71,7 @@ const NavCollapse = ({ menu, level }) => {
       default:
         return (
           <Typography key={item.id} variant="h6" color="error" align="center">
-            Menu Items Error
+       
           </Typography>
         );
     }
@@ -104,10 +104,10 @@ const NavCollapse = ({ menu, level }) => {
         selected={selected === menu.id}
         onClick={handleClick}
       >
-        <ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>{menuIcon}</ListItemIcon>
+        <ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 32 }}>{menuIcon}</ListItemIcon>
         <ListItemText
           primary={
-            <Typography variant={selected === menu.id ? 'h4' : 'body1'} color="inherit" sx={{ my: 'auto' }}>
+            <Typography variant={selected === menu.id ? 'h5' : 'body1'} color="inherit" sx={{ my: 'auto' }}>
               {menu.title}
             </Typography>
           }

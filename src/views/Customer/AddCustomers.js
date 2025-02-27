@@ -18,8 +18,9 @@ import { toast } from 'react-toastify';
 import { useState, useCallback } from 'react';
 import { throttle } from 'lodash';
 import { addCustomer } from 'apis/api.js';
+import { getUserId } from 'apis/constant.js';
 
-const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
+const AddCustomer = ({ open, handleClose, customer, onCustomerAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = yup.object({
@@ -34,24 +35,18 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
       .string()
       .matches(/^[1-9][0-9]{9}$/, 'Phone number must be 12 digits and cannot start with 0')
       .required('Phone number is required'),
-    address: yup.string().min(10, 'Address must be at least 10 characters').max(50, 'Max 50 characters are allowed').required('Address is required'),
-    accountHolder: yup
+    address: yup
       .string()
-      .matches(/^[a-zA-Z\s]*$/, 'Only letters and spaces are allowed')
-      .max(30, 'Max 30 characters are allowed')
-      .required('Account holder name is required'),
-    accountNumber: yup.string().max(12, 'Max 12 numbers are allowed').matches(/^[0-9]+$/, 'Account number must be numeric'),
-    bankName: yup.string().required('Bank name is required'),
+      .min(10, 'Address must be at least 10 characters')
+      .max(50, 'Max 50 characters are allowed')
+      .required('Address is required')
   });
 
   const initialValues = {
     customernm: '',
     phone: '',
     email: '',
-    address: '',
-    accountHolder: '',
-    accountNumber: '',
-    bankName: '',
+    address: ''
   };
 
   const formik = useFormik({
@@ -60,51 +55,61 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
     enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
       setIsSubmitting(true);
+      const userId = getUserId();
+
       try {
-        const response = await addCustomer(values);
-        console.log(response);
-        onCustomerAdded(response.data);
-        toast.success('Customer added successfully');
-        resetForm();
+        const payload = { ...values, userId };
+        const response = await addCustomer(payload);
+
+        if (response?.data && response?.data?.message) {
+          toast.error(response.data.message);
+        } else {
+          onCustomerAdded(response?.data);
+          toast.success('Customer added successfully');
+          resetForm();
+          handleClose();
+        }
       } catch (error) {
-        console.error(error);
-        toast.error('Failed to add customer');
+        if (error.response && error.response.data && error.response.data.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Failed to add customer');
+        }
       } finally {
         setIsSubmitting(false);
-        handleClose();
       }
-    },
+    }
   });
 
-  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 20000), [formik.handleSubmit]);
+  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 3000), [formik.handleSubmit]);
 
   return (
-    <Dialog open={open} onClose={handleClose}
-    PaperProps={{
-      style: {
-        width: '900px', 
-        height: '900px', 
-        maxWidth: 'none', 
-      },
-    }}>
-      <DialogTitle
-        id="scroll-dialog-title"
-        style={{ display: 'flex', justifyContent: 'space-between' }}
-      >
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      PaperProps={{
+        style: {
+          width: '600px',
+          height: 'auto',
+          maxWidth: 'none'
+        }
+      }}
+    >
+      <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h3">Add Customer</Typography>
         <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
       </DialogTitle>
 
       <DialogContent dividers>
         <form onSubmit={throttledSubmit}>
-          <Typography style={{ marginBottom: '15px' }} variant="h4">Customer Details</Typography>
-          <Grid container rowSpacing={2} columnSpacing={{ xs: 0, sm: 5, md: 2 }} >
-            <Grid item xs={12} sm={6}>
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={6}>
               <FormLabel>Name</FormLabel>
               <TextField
                 required
                 id="customernm"
                 name="customernm"
+                size="small"
                 fullWidth
                 value={formik.values.customernm}
                 onChange={formik.handleChange}
@@ -112,12 +117,13 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 helperText={formik.touched.customernm && formik.errors.customernm}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormLabel>Email</FormLabel>
               <TextField
                 required
                 id="email"
                 name="email"
+                size="small"
                 fullWidth
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -125,12 +131,13 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormLabel>Phone number</FormLabel>
               <TextField
                 required
                 id="phone"
                 name="phone"
+                size="small"
                 fullWidth
                 value={formik.values.phone}
                 onChange={formik.handleChange}
@@ -138,13 +145,14 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 helperText={formik.touched.phone && formik.errors.phone}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={6}>
               <FormControl fullWidth>
                 <FormLabel>Bank Name</FormLabel>
                 <Select
                   required
                   id="bankName"
                   name="bankName"
+                  size='small'
                   value={formik.values.bankName}
                   onChange={formik.handleChange}
                   error={formik.touched.bankName && Boolean(formik.errors.bankName)}
@@ -159,11 +167,12 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 </FormHelperText>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormLabel>Account Holder</FormLabel>
               <TextField
                 id="accountHolder"
                 name="accountHolder"
+                size='small'
                 fullWidth
                 value={formik.values.accountHolder}
                 onChange={formik.handleChange}
@@ -171,11 +180,12 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 helperText={formik.touched.accountHolder && formik.errors.accountHolder}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormLabel>Account Number</FormLabel>
               <TextField
                 id="accountNumber"
                 name="accountNumber"
+                size='small'
                 type="text"
                 fullWidth
                 value={formik.values.accountNumber}
@@ -183,16 +193,17 @@ const AddCustomer = ({ open, handleClose,customer, onCustomerAdded }) => {
                 error={formik.touched.accountNumber && Boolean(formik.errors.accountNumber)}
                 helperText={formik.touched.accountNumber && formik.errors.accountNumber}
               />
-            </Grid>
-            <Grid item xs={12}>
+            </Grid> */}
+            <Grid item xs={6}>
               <FormLabel>Address</FormLabel>
               <TextField
                 required
                 id="address"
                 name="address"
+                size="small"
                 multiline
                 fullWidth
-                rows={3}
+                rows={2}
                 value={formik.values.address}
                 onChange={formik.handleChange}
                 error={formik.touched.address && Boolean(formik.errors.address)}

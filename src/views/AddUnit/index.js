@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, IconButton ,Container, Typography, Card, Box } from '@mui/material';
+import { Stack, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Container, Typography, Card, Box, Dialog } from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import AddUnit from './addUnit.js';
-import UpdateUnit from './updateUnit.js';
-import Iconify from '../../ui-component/iconify';
-import { toast } from 'react-toastify';
-import { deleteUnit, fetchUnits } from 'apis/api.js';
+import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddUnit from './addUnit.js';
+import UpdateUnit from './updateUnit.js';
 import ViewUnit from './viewUnit.js';
+import { deleteUnit, fetchUnits } from 'apis/api.js';
+import Swal from 'sweetalert2';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
+import AddIcon from '@mui/icons-material/Add';
+import { Link } from 'react-router-dom';
 
 const Unit = () => {
   const [openAdd, setOpenAdd] = useState(false);
@@ -22,10 +25,60 @@ const Unit = () => {
   useEffect(() => {
     const loadUnits = async () => {
       const response = await fetchUnits();
-      setUnitData(response.data);
+      setUnitData(response?.data);
     };
     loadUnits();
   }, []);
+
+  const CustomToolbar = ({ handleOpenAdd }) => {
+    return (
+      <GridToolbarContainer
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '10px'
+        }}
+      >
+        <GridToolbarQuickFilter
+          placeholder="Search..."
+          style={{
+            width: '250px',
+            backgroundColor: '#ffff',
+            borderRadius: '8px',
+            padding: '5px 10px',
+            border: '1px solid beige',
+          }}
+        />
+        <Stack direction="row" spacing={2} alignItems="center">
+        <GridToolbarExport sx={{ fontSize: 25 }} />
+          <Tooltip title="Add Unit" arrow>
+            <IconButton
+              onClick={handleOpenAdd}
+              sx={{
+                backgroundColor: '#1e88e5',
+                borderRadius: '50%',
+                width: '35px',
+                height: '35px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                boxShadow: 3,
+                color: 'white',
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: '#1565c0',
+                  color: '#ffffff'
+                }
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+      </GridToolbarContainer>
+    );
+  };
 
   const columns = [
     { field: 'unitnm', headerName: 'Unit Name', flex: 1 },
@@ -33,30 +86,93 @@ const Unit = () => {
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 2,
+      flex: 1,
+      minWidth: 250,
       renderCell: (params) => (
-        <Stack direction="row" spacing={1}>
-         <Box
-          sx={{backgroundColor: '#e3f2fd', borderRadius: '8px',padding: '8px', paddingTop:'8 px','&:hover': { backgroundColor: '#bbdefb' },
-               display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-           <IconButton size="small" onClick={() => handleView(params.row)} color="primary" sx={{ padding: 0 }}>
-           <VisibilityIcon />  </IconButton>
-          </Box>
-          <Box sx={{ backgroundColor: '#fff3e0', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ffe0b2' },
-           display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-            <IconButton size="small" onClick={() => handleEdit(params.row)}>
-              <EditIcon sx={{ color: '#ff9800' }} />
+        <Stack direction="row">
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton
+              size="small"
+              onClick={() => handleView(params.row._id)}
+              color="primary"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#9abfdd', 
+                  color: '#1976d2' 
+                }
+              }}
+            >
+              <VisibilityIcon />
             </IconButton>
           </Box>
-          <Box sx={{ backgroundColor: '#ffebee', borderRadius: '8px', padding: '8px',paddingTop:'8 px', '&:hover': { backgroundColor: '#ef9a9a' } ,
-           display: 'flex',alignItems: 'center',justifyContent: 'center', width: '40px',height: '40px',  }}>
-            <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
+
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton
+              size="small"
+              onClick={() => handleEdit(params.row)}
+              color="secondary"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#d7cde6',
+                  color: '#512995' 
+                }
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Box>
+
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton
+              size="small"
+              onClick={() => handleDelete(params.row?._id)}
+              color="error"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#ffcccc',
+                  color: '#d32f2f'
+                }
+              }}
+            >
               <DeleteIcon />
             </IconButton>
           </Box>
         </Stack>
-      ),
-    },
+      )
+    }
   ];
 
   const handleOpenAdd = () => {
@@ -75,10 +191,27 @@ const Unit = () => {
   };
 
   const handleDelete = async (_id) => {
-    if (window.confirm('Are you sure you want to delete this unit?')) {
-      await deleteUnit(_id);
-      setUnitData((prev) => prev.filter((unit) => unit._id !== _id));
-      toast.success('Unit deleted successfully');
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+      if (result.isConfirmed) {
+        await deleteUnit(_id);
+        setUnitData((prev) => prev.filter((unit) => unit?._id !== _id));
+        Swal.fire(
+          "Deleted!", 
+          "Your unit has been deleted.", 
+          "success"  
+        );
+      }
+    } catch (error) {
+      console.error('Error deleting unit:', error);
     }
   };
 
@@ -98,31 +231,63 @@ const Unit = () => {
       <UpdateUnit open={openUpdate} handleClose={() => setOpenUpdate(false)} unit={currentUnit} onUnitUpdated={handleUnitUpdated} />
       <ViewUnit  open={openView} handleClose={() => setOpenView(false)} unit={currentUnit} />
       <Container>
-    
-        <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
-          <Typography variant="h4"  paddingTop={5}>Unit Lists</Typography>
-          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2} marginTop={3}>
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-              Add Unit
-            </Button>
-          </Stack>
-        </Stack>
-        <TableStyle>
-        <Box width="100%" overflow="hidden">
-              <Card style={{ height: '600px', paddingTop: '15px', overflow: 'hidden' }}> 
-                <div style={{ height: '100%', width: '100%', overflow: 'auto' }}> 
-            <DataGrid
-              rows={unitData}
-              columns={columns}
-              checkboxSelection
-              getRowId={(row) => row._id}
-              slots={{ toolbar: GridToolbar }}
-              slotProps={{ toolbar: { showQuickFilter: true } }}
-              stickyHeader
-              style={{ minWidth: '800px'}} 
-            />
-            </div>
-          </Card>
+      <Box
+          sx={{
+            marginTop: '20px',
+            backgroundColor: '#ffff',
+            padding: '12px',          
+            borderRadius: '8px', 
+            width: '100%',          
+            display: 'flex',         
+            alignItems: 'center',  
+            justifyContent: 'space-between'
+          }}
+        >
+          <Typography variant="h3">Unit Lists</Typography>
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="breadcrumb"
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+              <HomeIcon sx={{ color: '#5e35b1' }} />
+            </MuiLink>
+            <Typography color="text.primary">Classifications</Typography>
+            <Typography color="text.primary">Unit</Typography>
+          </Breadcrumbs>
+          </Box>
+
+         <TableStyle>
+          <Box width="100%" overflow="hidden">
+            <Card style={{ height: '600pxs', paddingTop: '5px', marginTop: '25px', overflow: 'auto' }}>
+              <DataGrid
+                rows={unitData}
+                columns={columns}
+                checkboxSelection
+                getRowId={(row) => row._id}
+                components={{
+                  Toolbar: () => <CustomToolbar handleOpenAdd={handleOpenAdd} />
+                }}
+                pageSizeOptions={[5, 10, 25]}
+                initialState={{
+                  pagination: {
+                    paginationModel: { pageSize: 10, page: 0 }
+                  }
+                }}
+                pagination
+                sx={{
+                  '& .MuiDataGrid-root': {
+                    border: 'none'
+                  },
+                  '& .MuiDataGrid-row': {
+                    borderBottom: '1px solid #ccc'
+                  },
+                  '& .MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold'
+                  }
+                }}
+              />
+            </Card>
           </Box>
         </TableStyle>
       </Container>

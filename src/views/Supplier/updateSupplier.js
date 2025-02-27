@@ -40,11 +40,6 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
       .required('Shop name is required'),
     address: yup.string().min(10, 'Address must be at least 10 characters').max(50, 'Max 50 characters are allowed').required('Address is required'),
     typeOfSupplier: yup.string().required('Type of supplier is required'),
-    accountHolder: yup
-      .string()
-      .matches(/^[a-zA-Z\s]*$/, 'Only letters and spaces are allowed')
-      .max(30, 'Too Long!'),
-    accountNumber: yup.string().max(12, 'Max 12 numbers are allowed').matches(/^[0-9]+$/, 'Account number must be numeric'),
   });
 
   const initialValues = {
@@ -53,10 +48,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
     email: supplier?.email || '',
     shopName: supplier?.shopName || '',
     address: supplier?.address || '',
-    accountHolder: supplier?.accountHolder || '',
-    accountNumber: supplier?.accountNumber || '',
     typeOfSupplier: supplier?.typeOfSupplier || '',
-    bankName: supplier?.bankName || '',
   };
 
   const formik = useFormik({
@@ -72,7 +64,7 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
         }
 
         const response = await updateSupplier({ ...values, _id: supplier._id });
-        onSupplierUpdated(response.data);
+        onSupplierUpdated(response?.data);
         toast.success('Supplier updated successfully');
         resetForm();
       } catch (error) {
@@ -101,14 +93,14 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
       <DialogContent dividers>
         <form onSubmit={formik.handleSubmit}>
           <Typography style={{ marginBottom: '15px' }} variant="h4">Supplier Details</Typography>
-          <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-            <Grid item xs={12}>
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={6}>
               <FormLabel>Name</FormLabel>
               <TextField
                 required
                 id="suppliernm"
                 name="suppliernm"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.suppliernm}
                 onChange={formik.handleChange}
@@ -116,13 +108,13 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
                 helperText={formik.touched.suppliernm && formik.errors.suppliernm}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormLabel>Email</FormLabel>
               <TextField
                 required
                 id="email"
                 name="email"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -130,13 +122,13 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormLabel>Phone Number</FormLabel>
               <TextField
                 required
                 id="phone"
                 name="phone"
-                size="large"
+                size="small"
                 type="text"
                 fullWidth
                 value={formik.values.phone}
@@ -145,13 +137,13 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
                 helperText={formik.touched.phone && formik.errors.phone}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormLabel>Shop Name</FormLabel>
               <TextField
                 required
                 id="shopName"
                 name="shopName"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.shopName}
                 onChange={formik.handleChange}
@@ -159,14 +151,14 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
                 helperText={formik.touched.shopName && formik.errors.shopName}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormControl fullWidth>
                 <FormLabel>Type of Supplier</FormLabel>
                 <Select
                   required
                   id="typeOfSupplier"
                   name="typeOfSupplier"
-                  size="large"
+                  size="small"
                   value={formik.values.typeOfSupplier}
                   onChange={formik.handleChange}
                   error={formik.touched.typeOfSupplier && Boolean(formik.errors.typeOfSupplier)}
@@ -181,63 +173,16 @@ const UpdateSupplier = ({ open, handleClose, supplier, onSupplierUpdated }) => {
                 </FormHelperText>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormLabel>Bank Name</FormLabel>
-              <Select
-                required
-                id="bankName"
-                name="bankName"
-                fullWidth
-                size="large"
-                value={formik.values.bankName}
-                onChange={formik.handleChange}
-              >
-                <MenuItem value="">Select a bank</MenuItem>
-                <MenuItem value="BRI">BRI</MenuItem>
-                <MenuItem value="BNI">BNI</MenuItem>
-                <MenuItem value="BSI">BSI</MenuItem>
-              </Select>
-              <FormHelperText error={formik.touched.bankName && Boolean(formik.errors.bankName)}>
-                {formik.touched.bankName && formik.errors.bankName}
-              </FormHelperText>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormLabel>Account Holder</FormLabel>
-              <TextField
-                id="accountHolder"
-                name="accountHolder"
-                size="large"
-                fullWidth
-                value={formik.values.accountHolder}
-                onChange={formik.handleChange}
-                error={formik.touched.accountHolder && Boolean(formik.errors.accountHolder)}
-                helperText={formik.touched.accountHolder && formik.errors.accountHolder}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormLabel>Account Number</FormLabel>
-              <TextField
-                id="accountNumber"
-                name="accountNumber"
-                size="large"
-                type="text"
-                fullWidth
-                value={formik.values.accountNumber}
-                onChange={formik.handleChange}
-                error={formik.touched.accountNumber && Boolean(formik.errors.accountNumber)}
-                helperText={formik.touched.accountNumber && formik.errors.accountNumber}
-              />
-            </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormLabel>Address</FormLabel>
               <TextField
                 required
                 id="address"
                 name="address"
-                size="large"
+                size="small"
                 multiline
                 fullWidth
-                rows={3}
+                rows={2}
                 value={formik.values.address}
                 onChange={formik.handleChange}
                 error={formik.touched.address && Boolean(formik.errors.address)}

@@ -20,7 +20,7 @@ const UpdateUnit = ({ open, handleClose, unit, onUnitUpdated }) => {
     onSubmit: async (values) => {
       try {
         const response = await updateUnits({ ...unit, ...values });
-        onUnitUpdated(response.data);
+        onUnitUpdated(response?.data);
         toast.success('Unit updated successfully');
       } catch (error) {
         toast.error('Failed to update unit');

@@ -36,17 +36,6 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
       .required('Phone number is required'),
 
     address: yup.string().min(10, 'Address must be at least 10 characters').max(50, 'Max 50 characters are allowed').required('Address is required'),
-
-    typeOfCustomer: yup.string().required('Type of customer is required'),
-
-    accountHolder: yup
-      .string()
-      .matches(/^[a-zA-Z\s]*$/, 'Only letters and spaces are allowed')
-      .max(30, 'Too Long!'),
-
-    accountNumber: yup.string().max(12, 'Max 12 numbers are allowed').matches(/^[0-9]+$/, 'Account number must be numeric'),
-
-    bankName: yup.string(),
   });
 
   const initialValues = {
@@ -54,10 +43,6 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
     phone: '',
     email: '',
     address: '',
-    typeOfCustomer: '',
-    accountHolder: '',
-    accountNumber: '',
-    bankName: '',
   };
 
   const formik = useFormik({
@@ -71,35 +56,32 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
           toast.error('No customer data available for update');
           return;
         }
-
-        const response = await updateCustomer({ ...values, _id: customer._id });
-        onCustomerUpdated(response.data);
+  
+        const response = await updateCustomer({ ...values, _id: customer?._id }); 
+        onCustomerUpdated(response?.data); 
         toast.success('Customer updated successfully');
         resetForm();
       } catch (error) {
-        console.error(error);
-        toast.error(error.response?.data?.message || 'Failed to update customer');
+        toast.error(error?.response?.data?.message || 'Failed to update customer'); 
       } finally {
         setIsSubmitting(false);
         handleClose();
       }
     },
   });
-
+  
   useEffect(() => {
     if (customer) {
       formik.setValues({
-        customernm: customer.customernm || '',
-        phone: customer.phone || '',
-        email: customer.email || '',
-        address: customer.address || '',
-        typeOfCustomer: customer.typeOfCustomer || '',
-        accountHolder: customer.accountHolder || '',
-        accountNumber: customer.accountNumber || '',
-        bankName: customer.bankName || '',
+        customernm: customer?.customernm || '', 
+        phone: customer?.phone || '', 
+        email: customer?.email || '', 
+        address: customer?.address || '', 
+        typeOfCustomer: customer?.typeOfCustomer || '', 
       });
     }
   }, [customer]);
+  
 
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -111,13 +93,14 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
       <DialogContent dividers>
         <form onSubmit={formik.handleSubmit}>
           <Typography style={{ marginBottom: '15px' }} variant="h4">Customer Details</Typography>
-          <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-            <Grid item xs={12}>
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={6}>
               <FormLabel>Name</FormLabel>
               <TextField
                 required
                 id="customernm"
                 name="customernm"
+                size='small'
                 fullWidth
                 value={formik.values.customernm}
                 onChange={formik.handleChange}
@@ -125,12 +108,13 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                 helperText={formik.touched.customernm && formik.errors.customernm}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormLabel>Email</FormLabel>
               <TextField
                 required
                 id="email"
                 name="email"
+                size='small'
                 fullWidth
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -138,12 +122,13 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormLabel>Phone number</FormLabel>
               <TextField
                 required
                 id="phone"
                 name="phone"
+                size='small'
                 fullWidth
                 value={formik.values.phone}
                 onChange={formik.handleChange}
@@ -151,81 +136,16 @@ const UpdateCustomer = ({ open, handleClose, customer, onCustomerUpdated }) => {
                 helperText={formik.touched.phone && formik.errors.phone}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <FormLabel>Type of Customer</FormLabel>
-                <Select
-                  required
-                  id="typeOfCustomer"
-                  name="typeOfCustomer"
-                  value={formik.values.typeOfCustomer}
-                  onChange={formik.handleChange}
-                  error={formik.touched.typeOfCustomer && Boolean(formik.errors.typeOfCustomer)}
-                >
-                  <MenuItem value="">Select a type</MenuItem>
-                  <MenuItem value="Walk-in">Walk-in</MenuItem>
-                  <MenuItem value="Wholesaler">Wholesale</MenuItem>
-                </Select>
-                <FormHelperText error={formik.touched.typeOfCustomer && Boolean(formik.errors.typeOfCustomer)}>
-                  {formik.touched.typeOfCustomer && formik.errors.typeOfCustomer}
-                </FormHelperText>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <FormLabel>Bank Name</FormLabel>
-                <Select
-                  required
-                  id="bankName"
-                  name="bankName"
-                  value={formik.values.bankName}
-                  onChange={formik.handleChange}
-                  error={formik.touched.bankName && Boolean(formik.errors.bankName)}
-                >
-                  <MenuItem value="">Select a bank</MenuItem>
-                  <MenuItem value="BRI">BRI</MenuItem>
-                  <MenuItem value="BNI">BNI</MenuItem>
-                  <MenuItem value="BSI">BSI</MenuItem>
-                </Select>
-                <FormHelperText error={formik.touched.bankName && Boolean(formik.errors.bankName)}>
-                  {formik.touched.bankName && formik.errors.bankName}
-                </FormHelperText>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormLabel>Account Holder</FormLabel>
-              <TextField
-                id="accountHolder"
-                name="accountHolder"
-                fullWidth
-                value={formik.values.accountHolder}
-                onChange={formik.handleChange}
-                error={formik.touched.accountHolder && Boolean(formik.errors.accountHolder)}
-                helperText={formik.touched.accountHolder && formik.errors.accountHolder}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormLabel>Account Number</FormLabel>
-              <TextField
-                id="accountNumber"
-                name="accountNumber"
-                type="text"
-                fullWidth
-                value={formik.values.accountNumber}
-                onChange={formik.handleChange}
-                error={formik.touched.accountNumber && Boolean(formik.errors.accountNumber)}
-                helperText={formik.touched.accountNumber && formik.errors.accountNumber}
-              />
-            </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormLabel>Address</FormLabel>
               <TextField
                 required
                 id="address"
                 name="address"
+                size='small'
                 multiline
                 fullWidth
-                rows={3}
+                rows={2}
                 value={formik.values.address}
                 onChange={formik.handleChange}
                 error={formik.touched.address && Boolean(formik.errors.address)}

@@ -1,42 +1,47 @@
 import { useEffect, useState } from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  TextField,
+  FormControl,
+  FormLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
+  Typography,
+  Box
+} from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { updateProduct } from 'apis/api.js';
+import { updateProduct, fetchCategories } from 'apis/api.js';
 import ClearIcon from '@mui/icons-material/Clear';
+import { getUserId } from 'apis/constant.js';
 
-const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
+const UpdateProduct = ({ open, handleClose, product, onProductUpdated, loadProducts }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [clist, setCatList] = useState([]);
 
   const validationSchema = yup.object({
     productnm: yup.string().max(20, 'Max 20 characters are allowed').required('Product name is required'),
-    buyingPrice: yup.number()
+    buyingPrice: yup
+      .number()
       .required('Buying Price is required')
       .positive('Must be a positive number')
       .max(1000000, 'Price cannot exceed Rs.1000000'),
-    sellingPrice: yup.number()
+    sellingPrice: yup
+      .number()
       .required('Selling price is required')
       .positive('Must be a positive number')
-      .moreThan(yup.ref('buyingPrice'), 'Selling price must be greater than buying price'),
-    // quantity: yup.number()
-    //   .max(100, 'Max 100 quantity are allowed')
-    //   .required('Quantity is required'),
-    tax: yup.number()
-      .max(20, 'Max 20% tax is allowed')
-      .required('Tax is required'),
-    margin: yup.number()
-      .max(10000, 'Max 10000 margin is allowed')
-      .required('Margin is required'),
-    notes: yup.string()
-      .max(400, 'Max 400 words are allowed'),
+      .max(1500000, 'Price cannot exceed Rs.1500000'),
+    tax: yup.number().max(50, 'Max 50% tax is allowed').required('Tax is required'),
+    margin: yup.number().max(10000, 'Max 10000 margin is allowed').required('Margin is required'),
+    notes: yup.string().max(400, 'Max 400 words are allowed'),
+    catnm: yup.string().required('Category is required')
   });
 
   const formik = useFormik({
@@ -48,19 +53,41 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
       tax: product?.tax || '',
       margin: product?.margin || '',
       notes: product?.notes || '',
+      catnm: product?.categoryId || '',
+      image: product?.imageUrl ? product.imageUrl : null
     },
     validationSchema,
     enableReinitialize: true,
     onSubmit: async (values) => {
       setIsSubmitting(true);
       try {
-        if (!product) {
+        if (!product || !product._id) {
           toast.error('No product data available for update');
           return;
         }
 
-        const response = await updateProduct({ ...values, _id: product._id });
-        onProductUpdated(response.data);
+        const formData = new FormData();
+        formData.append('productnm', values.productnm);
+        formData.append('buyingPrice', values.buyingPrice);
+        formData.append('sellingPrice', values.sellingPrice);
+        formData.append('quantity', values.quantity);
+        formData.append('tax', values.tax);
+        formData.append('margin', values.margin);
+        formData.append('notes', values.notes);
+        formData.append('categoryId', values.catnm);
+        formData.append('_id', product._id);
+
+        if (values.image && values.image instanceof File) {
+          formData.append('image', values.image);
+        }
+
+        const response = await updateProduct(product._id, formData);
+        if (response?.data) {
+          onProductUpdated(response.data);
+        } else {
+          console.error('Update API response is missing product data.');
+        }
+        loadProducts();
         toast.success('Product updated successfully');
         handleClose();
       } catch (error) {
@@ -68,12 +95,35 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
       } finally {
         setIsSubmitting(false);
       }
-    },
+    }
   });
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const categoryResult = await fetchCategories();
+        const allCategories = categoryResult?.data;
+        const userId = getUserId();
+        const filteredCategories = allCategories.filter((category) => category.userId === userId);
+        setCatList(filteredCategories);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const { buyingPrice, sellingPrice } = formik.values;
+    if (buyingPrice && sellingPrice && sellingPrice > 0) {
+      const margin = ((sellingPrice - buyingPrice) / sellingPrice) * 100;
+      formik.setFieldValue('margin', margin.toFixed(2));
+    }
+  }, [formik.values.buyingPrice, formik.values.sellingPrice]);
+
+  useEffect(() => {
     if (!open) {
-      formik.resetForm(); 
+      formik.resetForm();
     }
   }, [open]);
 
@@ -86,28 +136,46 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
 
       <DialogContent dividers>
         <form onSubmit={formik.handleSubmit}>
-          <Typography style={{ marginBottom: '15px' }} variant="h4">Product Details</Typography>
-          <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-            <Grid item xs={12}>
+          <Typography style={{ marginBottom: '15px' }} variant="h4">
+            Product Details
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <FormLabel>Product Name</FormLabel>
               <TextField
                 required
                 id="productnm"
                 name="productnm"
-                label="Product Name"
                 fullWidth
+                size="small"
                 value={formik.values.productnm}
                 onChange={formik.handleChange}
                 error={formik.touched.productnm && Boolean(formik.errors.productnm)}
                 helperText={formik.touched.productnm && formik.errors.productnm}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
+              <FormControl fullWidth>
+                <FormLabel>Product Category</FormLabel>
+                <Select required id="catnm" name="catnm" size="small" value={formik.values.catnm} onChange={formik.handleChange}>
+                  {clist.map((category) => (
+                    <MenuItem key={category._id} value={category._id}>
+                      {category.catnm}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText error>{formik.touched.catnm && formik.errors.catnm}</FormHelperText>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={6}>
+              <FormLabel>Buying Price</FormLabel>
               <TextField
                 required
                 id="buyingPrice"
                 name="buyingPrice"
-                label="Buying Price"
                 type="number"
+                size="small"
                 fullWidth
                 value={formik.values.buyingPrice}
                 onChange={formik.handleChange}
@@ -115,13 +183,15 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
                 helperText={formik.touched.buyingPrice && formik.errors.buyingPrice}
               />
             </Grid>
-            <Grid item xs={12}>
+
+            <Grid item xs={6}>
+              <FormLabel>Selling Price</FormLabel>
               <TextField
                 required
                 id="sellingPrice"
                 name="sellingPrice"
-                label="Selling Price"
                 type="number"
+                size="small"
                 fullWidth
                 value={formik.values.sellingPrice}
                 onChange={formik.handleChange}
@@ -129,82 +199,49 @@ const UpdateProduct = ({ open, handleClose, product, onProductUpdated }) => {
                 helperText={formik.touched.sellingPrice && formik.errors.sellingPrice}
               />
             </Grid>
-            {/* <Grid item xs={12}>
-              <TextField
-                required
-                id="quantity"
-                name="quantity"
-                label="Quantity"
-                type="number"
-                fullWidth
-                value={formik.values.quantity}
-                onChange={formik.handleChange}
-                error={formik.touched.quantity && Boolean(formik.errors.quantity)}
-                helperText={formik.touched.quantity && formik.errors.quantity}
-              />
-            </Grid> */}
-            <Grid item xs={12}>
+
+            <Grid item xs={6}>
+              <FormLabel>Tax(%)</FormLabel>
               <TextField
                 required
                 id="tax"
                 name="tax"
-                label="Tax(%)"
                 type="number"
+                size="small"
                 fullWidth
                 value={formik.values.tax}
                 onChange={formik.handleChange}
-                error={formik.touched.tax && Boolean(formik.errors.tax)}
-                helperText={formik.touched.tax && formik.errors.tax}
               />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                id="margin"
-                name="margin"
-                label="Margin(%)"
-                type="number"
-                fullWidth
-                value={formik.values.margin}
-                onChange={formik.handleChange}
-                error={formik.touched.margin && Boolean(formik.errors.margin)}
-                helperText={formik.touched.margin && formik.errors.margin}
-              />
+
+            <Grid item xs={6}>
+              <FormLabel>Margin(%)</FormLabel>
+              <TextField id="margin" name="margin" size="small" fullWidth value={formik.values.margin} disabled />
             </Grid>
+
             <Grid item xs={12}>
-              <TextField
-                id="notes"
-                name="notes"
-                label="Notes"
-                fullWidth
-                multiline
-                rows={3}
-                value={formik.values.notes}
-                onChange={formik.handleChange}
-                error={formik.touched.notes && Boolean(formik.errors.notes)}
-                helperText={formik.touched.notes && formik.errors.notes}
-              />
+              <FormLabel>Upload Image</FormLabel>
+              {formik.values.image ? (
+                <Box mt={1}>
+                  <img
+                    src={typeof formik.values.image === 'string' ? formik.values.image : URL.createObjectURL(formik.values.image)}
+                    alt="Product Preview"
+                    style={{ width: '200px', height: '150px', objectFit: 'cover', borderRadius: '8px' }}
+                  />
+                </Box>
+              ) : null}
+
+              <input type="file" accept="image/*" onChange={(e) => formik.setFieldValue('image', e.target.files[0])} />
             </Grid>
           </Grid>
         </form>
       </DialogContent>
+
       <DialogActions>
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          variant="contained"
-          color="secondary"
-          onClick={formik.handleSubmit}
-        >
+        <Button type="submit" disabled={isSubmitting} variant="contained" color="secondary" onClick={formik.handleSubmit}>
           {isSubmitting ? 'Submitting...' : 'Update'}
         </Button>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => {
-            formik.resetForm();
-            handleClose();
-          }}
-        >
+        <Button variant="contained" color="error" onClick={handleClose}>
           Cancel
         </Button>
       </DialogActions>

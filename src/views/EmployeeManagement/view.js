@@ -1,75 +1,64 @@
 import { useEffect, useState } from 'react';
 import { fetchUsers } from 'apis/api.js';
-import { Dialog, DialogTitle, DialogContent,IconButton, Typography, Box } from '@mui/material';
-import { AccessTime } from '@mui/icons-material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Dialog, DialogTitle, DialogContent, TextField, Typography, Grid, FormLabel } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
 import moment from 'moment';
 
-const ViewUser = ({ open, handleClose, user}) => {
-    const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(true);
-  
-    useEffect(() => {
-        
-      const loadUser = async () => {
-        if (user) {
-          try {
-            const response = await fetchUsers(user);
-            setUserData(response.data); 
-            setLoading(false);
-          } catch (error) {
-            console.error('Error fetching user details:', error);
-            setLoading(false);
-          }
+const ViewUser = ({ open, handleClose, user }) => {
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      if (user) {
+        try {
+          const response = await fetchUsers(user);
+          setUserData(response?.data);
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
         }
-      };
-  
-      loadUser();
-    }, [user]);
-  
-    if (loading) return null; 
-  
-    if (!user) return <div>User not found.</div>;
- 
+      }
+    };
+    loadUser();
+  }, [user]);
+
+  if (loading) return null;
+  if (!user) return <div>User not found.</div>;
 
   return (
     <>
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-          <DialogTitle variant="h3" sx={{ backgroundColor: 'primary.main', color: 'white' }}>
-            User Details
-            <IconButton
-          edge="end"
-          color="inherit"
-          onClick={handleClose}
-          sx={{ position: 'absolute', right: 8, top: 8 }}
-        >
-          <CloseIcon />
-        </IconButton>
-          </DialogTitle>
-          <DialogContent sx={{ padding: 2 }}>
-            <Box mb={2} sx={{ paddingTop : 3}}>
-              <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: '1.2rem', mb: 1 }}>
-                User name:  {user.name}
-              </Typography>
-            </Box>
-            <Box mb={2}>
-              <Typography variant="body1">Email : {user.email}</Typography>
-            </Box>
-            <Box mb={2}>
-              <Typography variant="body1">Phone : {user.phone}</Typography>
-            </Box>
-            <Box mb={2}>
-              <Typography variant="body1">Role : {user.role}</Typography>
-            </Box>
-            <Box mb={2} sx={{ display: 'flex', alignItems: 'center' }}>
-            <AccessTime sx={{ marginRight: 1 }} />
-            <Typography variant="body2">Created At: {moment(user.createdAt).format('DD-MM-YYYY')}</Typography>
-          </Box>
-          </DialogContent>
-        </Dialog>
-      </>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between', marginLeft: 10 }}>
+          <Typography variant="h3">View User</Typography>
+          <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
+        </DialogTitle>
+        <DialogContent dividers>
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <FormLabel>User Name</FormLabel>
+              <TextField variant="outlined" size="small" fullWidth value={user?.name || 'NA'} />
+            </Grid>
+
+            <Grid item xs={12} >
+              <FormLabel>Email</FormLabel>
+              <TextField variant="outlined" size="small" fullWidth value={user?.email || 'NA'} />
+            </Grid>
+
+            <Grid item xs={12}>
+              <FormLabel>Phone</FormLabel>
+              <TextField variant="outlined" size="small" fullWidth value={user?.phone || 'NA'} />
+            </Grid>
+
+            <Grid item xs={12}>
+              <FormLabel>Role</FormLabel>
+              <TextField variant="outlined" size="small" fullWidth value={user?.role || 'NA'} />
+            </Grid>
+          </Grid>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
 export default ViewUser;
-

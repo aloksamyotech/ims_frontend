@@ -4,7 +4,9 @@ import { useFormik } from 'formik';
 import ClearIcon from '@mui/icons-material/Clear';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
+import { getUserId } from 'apis/constant.js';
 import { addCategory } from 'apis/api.js';
+import { throttle } from 'lodash';
 
 const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,36 +24,50 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
       setIsSubmitting(true);
+
+      const userId = getUserId();
+      if (!userId) {
+        toast.error('User ID is missing. Please log in again.');
+        setIsSubmitting(false);
+        return;
+      }
       try {
-        const response = await addCategory(values);
-        onCategoryAdded(response.data);
-        console.log(response.data);
-        handleClose();
-        toast.success('Category added successfully');
-        resetForm();
+        const payload = { ...values, userId };
+        const response = await addCategory(payload);
+
+        if (response?.data && response?.data?.message) {
+          toast.error(response.data.message);
+        } else {
+          onCategoryAdded(response?.data);
+          toast.success('Category added successfully');
+          handleClose();
+          resetForm();
+        }
       } catch (error) {
-        console.error(error);
-        toast.error('Failed to add category');
+        if (error.response && error.response.data && error.response.data.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Failed to add category');
+        }
       } finally {
         setIsSubmitting(false);
       }
     }
   });
 
+  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 3000), [formik.handleSubmit]);
+
   return (
     <Dialog open={open} onClose={handleClose}>
-    <DialogTitle
-    id="scroll-dialog-title"
-    style={{ display: 'flex', justifyContent: 'space-between' }}
-  >
-    <Typography variant="h3">Add Product Category</Typography>
-    <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
-  </DialogTitle>
+      <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant="h3">Add Product Category</Typography>
+        <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
+      </DialogTitle>
 
       <DialogContent>
-        <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={throttledSubmit}>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid item xs={12} md={12}>
               <FormLabel>Name</FormLabel>
               <TextField
                 autoFocus
@@ -59,6 +75,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
                 required
                 id="catnm"
                 name="catnm"
+                size="small"
                 fullWidth
                 type="text"
                 value={formik.values.catnm}
@@ -68,7 +85,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
                 helperText={formik.touched.catnm && formik.errors.catnm}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} md={12}>
               <FormLabel>Description</FormLabel>
               <TextField
                 required
@@ -77,6 +94,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
                 name="desc"
                 fullWidth
                 type="text"
+                size="small"
                 value={formik.values.desc}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -88,7 +106,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
 
           <DialogActions>
             <Button type="submit" disabled={isSubmitting} variant="contained" color="secondary">
-              {isSubmitting ? 'Submitting...' : 'Add Product Category'}{' '}
+              {isSubmitting ? 'Submitting...' : 'Add'}{' '}
             </Button>
             <Button onClick={handleClose} variant="contained" color="error">
               Cancel

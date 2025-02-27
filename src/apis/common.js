@@ -36,9 +36,51 @@ export const updateEntity = async (entityType, updatedEntity) => {
     case 'product':
       url = urls.product.update;
       break;
+    case 'admin':
+      url = urls.admin.update;
+      break;
+    case 'subscription':
+      url = urls.subscription.update;
+      break;
+    case 'employee':
+      url = urls.employee.update;
+      break;
     default:
       throw new Error('Unsupported entity type');
   }
 
   return updateApi(url, updatedEntity);
+};
+
+export const chatbotApi = async (url, options = {}) => {
+  const { method = 'GET', data = null, params = {}, headers = {} } = options;
+
+    const response = await axios({
+      url: `${baseUrl}${url}`,
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      params,
+      data: method !== 'GET' ? data : undefined, 
+    });
+    return response.data;
+};
+
+export const updateMultipartApi = async (url, formData, method = 'PUT') => {
+  try {
+    const response = await axios({
+      url: `${baseUrl}${url}`,
+      method,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      data: formData
+    });
+
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Something went wrong');
+  }
 };

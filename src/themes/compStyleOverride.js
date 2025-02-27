@@ -26,7 +26,7 @@ export default function componentStyleOverrides(theme) {
       styleOverrides: {
         root: {
           color: theme.colors?.textDark,
-          padding: '24px'
+          // padding: '12px'
         },
         title: {
           fontSize: '1.125rem'
@@ -36,14 +36,14 @@ export default function componentStyleOverrides(theme) {
     MuiCardContent: {
       styleOverrides: {
         root: {
-          padding: '24px'
+          padding: '8px'
         }
       }
     },
     MuiCardActions: {
       styleOverrides: {
         root: {
-          padding: '24px'
+          padding: '12px'
         }
       }
     },
@@ -51,8 +51,8 @@ export default function componentStyleOverrides(theme) {
       styleOverrides: {
         root: {
           color: theme.darkTextPrimary,
-          paddingTop: '10px',
-          paddingBottom: '10px',
+          paddingTop: '5px',
+          paddingBottom: '5px',
           '&.Mui-selected': {
             color: theme.menuSelected,
             backgroundColor: theme.menuSelectedBack,
@@ -77,7 +77,7 @@ export default function componentStyleOverrides(theme) {
       styleOverrides: {
         root: {
           color: theme.darkTextPrimary,
-          minWidth: '36px'
+          minWidth: '12px'
         }
       }
     },

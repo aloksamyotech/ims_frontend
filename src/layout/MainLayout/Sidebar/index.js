@@ -31,9 +31,9 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
         <PerfectScrollbar
           component="div"
           style={{
-            height: !matchUpMd ? 'calc(100vh - 56px)' : 'calc(100vh - 88px)',
-            paddingLeft: '16px',
-            paddingRight: '16px',
+            height: !matchUpMd ? 'calc(100vh - 50px)' : 'calc(100vh - 60px)',
+            paddingLeft: '8px',
+            paddingRight: '8px',
           }}
         >
           <MenuList />
@@ -84,7 +84,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
             color: 'black', 
             borderRight: 'none',
             [theme.breakpoints.up('md')]: {
-              top: '88px',
+              top: '84px',
             },
             '& .MuiTypography-root': {
               color: 'secondary', 

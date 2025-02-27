@@ -25,6 +25,7 @@ import useScriptRef from 'hooks/useScriptRef';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { addUser } from 'apis/api.js';
 
 const AuthRegister = ({ ...others }) => {
   const theme = useTheme();
@@ -60,7 +61,7 @@ const AuthRegister = ({ ...others }) => {
         console.log('Attempting to register user:', values);
         try {
           if (scriptedRef.current) {
-            const res = await axios.post('http://localhost:4200/user/save/', values);
+            const res = await addUser(values);
             console.log('User registered successfully:', res.data);
             setStatus({ success: true });
             toast.success('Customer added successfully');
@@ -102,58 +103,80 @@ const AuthRegister = ({ ...others }) => {
               value={values.name}
               onBlur={handleBlur}
               onChange={handleChange}
-              sx={{ ...theme.typography.customInput }}
+              sx={{
+                '& .MuiFormLabel-root': {
+                  color: '#000066'
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: errors.name ? '#000066' : ''
+                  }
+                }
+              }}
             />
             {touched.name && errors.name && <FormHelperText error>{errors.name}</FormHelperText>}
           </Grid>
 
-          <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-            <InputLabel htmlFor="outlined-adornment-email-register">Email Address</InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-email-register"
-              type="email"
-              value={values.email}
-              name="email"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              inputProps={{}}
-            />
-            {touched.email && errors.email && (
-              <FormHelperText error id="standard-weight-helper-text--register">
-                {errors.email}
-              </FormHelperText>
-            )}
-          </FormControl>
+          <TextField
+            fullWidth
+            label="Email Address"
+            margin="normal"
+            name="email"
+            type="email"
+            value={values.email}
+            onBlur={handleBlur}
+            onChange={handleChange}
+            error={Boolean(touched.email && errors.email)}
+            helperText={touched.email && errors.email}
+            sx={{
+              '& .MuiFormLabel-root': {
+                color: '#000066'
+              },
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: errors.email ? '#000066' : ''
+                }
+              }
+            }}
+          />
 
-          <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-            <InputLabel htmlFor="outlined-adornment-password-register">Password</InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-password-register"
-              type={showPassword ? 'text' : 'password'}
-              value={values.password}
-              name="password"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              endAdornment={
+          <TextField
+            fullWidth
+            label="Password"
+            margin="normal"
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            value={values.password}
+            onBlur={handleBlur}
+            onChange={handleChange}
+            error={Boolean(touched.password && errors.password)}
+            helperText={touched.password && errors.password}
+            InputProps={{
+              endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
                     aria-label="toggle password visibility"
                     onClick={handleClickShowPassword}
                     onMouseDown={handleMouseDownPassword}
                     edge="end"
-                    size="large"
+                    size="small"
                   >
                     {showPassword ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
                 </InputAdornment>
+              )
+            }}
+            sx={{
+              '& .MuiFormLabel-root': {
+                color: '#000066'
+              },
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: errors.password ? '#000066' : ''
+                }
               }
-            />
-            {touched.password && errors.password && (
-              <FormHelperText error id="standard-weight-helper-text-password-register">
-                {errors.password}
-              </FormHelperText>
-            )}
-          </FormControl>
+            }}
+          />
 
           <Grid item xs={12}>
             <TextField
@@ -165,12 +188,21 @@ const AuthRegister = ({ ...others }) => {
               value={values.phone}
               onBlur={handleBlur}
               onChange={handleChange}
-              sx={{ ...theme.typography.customInput }}
+              sx={{
+                '& .MuiFormLabel-root': {
+                  color: '#000066'
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: errors.phone ? '#000066' : ''
+                  }
+                }
+              }}
             />
             {touched.phone && errors.phone && <FormHelperText error>{errors.phone}</FormHelperText>}
           </Grid>
 
-          <Grid container alignItems="center" justifyContent="space-between">
+          {/* <Grid container alignItems="center" justifyContent="space-between">
             <Grid item>
               <FormControlLabel
                 control={
@@ -186,18 +218,33 @@ const AuthRegister = ({ ...others }) => {
                 }
               />
             </Grid>
-          </Grid>
+          </Grid> */}
 
           {errors.submit && (
-            <Box sx={{ mt: 3 }}>
+            <Box sx={{ mt: 1 }}>
               <FormHelperText error>{errors.submit}</FormHelperText>
             </Box>
           )}
 
-          <Box sx={{ mt: 2 }}>
+          <Box sx={{ mt: 1, display: 'flex', justifyContent: 'center' }}>
             <AnimateButton>
-              <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="secondary">
-                Sign up
+              <Button
+                disableElevation
+                disabled={isSubmitting}
+                size="large"
+                type="submit"
+                variant="contained"
+                color="secondary"
+                sx={{
+                  background: 'linear-gradient(45deg, #441572, #7c4bad)',
+                  borderRadius: '50px',
+                  '&:hover': {
+                    background: 'linear-gradient(to right, #4b6cb7, #182848)',
+                    boxShadow: '2'
+                  }
+                }}
+              >
+                Register
               </Button>
             </AnimateButton>
           </Box>

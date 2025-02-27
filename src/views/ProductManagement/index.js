@@ -1,190 +1,126 @@
 import { useState, useEffect } from 'react';
-import { Stack, Button, IconButton, Container, Typography, Card, Box } from '@mui/material';
-import TableStyle from '../../ui-component/TableStyle';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import Iconify from '../../ui-component/iconify';
-import { Link } from 'react-router-dom';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import {
+  Stack,
+  IconButton,
+  Typography,
+  Card,
+  Box,
+  Grid,
+  Tooltip,
+  CardMedia,
+  Popover,
+  CardContent,
+  TextField,
+  Breadcrumbs,
+  Link as MuiLink
+} from '@mui/material';
+import ReactPaginate from 'react-paginate';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import AddIcon from '@mui/icons-material/Add';
+import { Link, useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import UpdateProduct from './updateProduct.js';
 import AddProductPage from './AddProducts';
+import { fetchCurrencySymbol, getUserId } from 'apis/constant.js';
 import { deleteProduct, fetchProducts } from 'apis/api.js';
-import ViewProduct from './viewProduct.js';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
+import SearchIcon from '@mui/icons-material/Search';
+import BulkUpload from './bulkproduct.js';
+
+const items = Array.from({ length: 50 }, (_, index) => ({
+  id: index + 1,
+  name: `Item ${index + 1}`
+}));
+
+const ITEMS_PER_PAGE = 8;
 
 const Product = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [openAdd, setOpenAdd] = useState(false);
-  const [openView, setOpenView] = useState(false);
-  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currencySymbol, setCurrencySymbol] = useState('');
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [popoverState, setPopoverState] = useState({ anchorEl: null, productId: null });
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const handlePageClick = (data) => {
+    setCurrentPage(data.selected);
+  };
+
+  const loadProducts = async () => {
+    try {
+      const userId = getUserId();
+      const response = await fetchProducts({ userId });
+      setProducts(response?.data || []);
+    } catch (error) {
+      console.error('Failed to fetch products');
+    }
+  };
 
   useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const response = await fetchProducts();
-        setProducts(response.data);
-      } catch (error) {
-        console.error('Failed to fetch products:', error);
-        toast.error('Failed to fetch products');
-      }
-    };
     loadProducts();
   }, []);
 
-  const columns = [
-    {
-      field: 'product_no',
-      headerName: 'Code',
-      flex: 1.5
-    },
-    { field: 'productnm', headerName: 'Name', flex: 2 },
-    {
-      field: 'imageUrl',
-      headerName: 'Image',
-      flex: 1,
-      minWidth: 150,
-      renderCell: (params) => {
-        const imageUrl = params.row.imageUrl; 
-        return (
-          <Box
-            component="img"
-            src={imageUrl || 'https://via.placeholder.com/150'} 
-            alt={params.row.productnm}
-            sx={{
-              width: '40px',
-              height: '40px',
-              objectFit: 'cover',
-              borderRadius: '8px',
-            }}
-          />
-        );
-      }
-    },
-    {
-      field: 'quantity',
-      headerName: 'Quantity',
-      flex: 1,
-      minWidth: 120,
-      renderCell: (params) => {
-        const quantity = params.row.quantity;
-        const isLowQuantity = quantity <= 5;
-    
-        return (
-          <div
-            style={{
-              backgroundColor: isLowQuantity ? '#f44336' : '', 
-              color: isLowQuantity ? 'white' : '',  
-              padding: '0.5rem 1rem',
-              borderRadius: '5px',
-              textAlign: 'center',
-              fontWeight: 'bold',
-              fontSize: '14px',
-              width: '60px', 
-            }}
-          >
-            {quantity} 
-          </div>
-        );
-      }
-    },      
-    {
-      field: 'categoryName',
-      headerName: 'Category',
-      flex: 1,
-      minWidth: 200,
-      valueGetter: (params) => params.row.categoryName || 'N/A'
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 2,
-      renderCell: (params) => (
-        <Stack direction="row" spacing={1}>
-          <Box
-            sx={{
-              backgroundColor: '#e3f2fd',
-              borderRadius: '8px',
-              padding: '8px',
-              paddingTop: '8px',
-              '&:hover': { backgroundColor: '#bbdefb' },
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '40px',
-              height: '40px'
-            }}
-          >
-            <IconButton size="small" onClick={() => handleView(params.row)} color="primary" sx={{ padding: 0 }}>
-              <VisibilityIcon />
-            </IconButton>
-          </Box>
-          <Box
-            sx={{
-              backgroundColor: '#fff3e0',
-              borderRadius: '8px',
-              padding: '8px',
-              paddingTop: '8px',
-              '&:hover': { backgroundColor: '#ffe0b2' },
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '40px',
-              height: '40px'
-            }}
-          >
-            <IconButton size="small" onClick={() => handleEdit(params.row)}>
-              <EditIcon sx={{ color: '#ff9800' }} />
-            </IconButton>
-          </Box>
-          <Box
-            sx={{
-              backgroundColor: '#ffebee',
-              borderRadius: '8px',
-              padding: '8px',
-              paddingTop: '8px',
-              '&:hover': { backgroundColor: '#ef9a9a' },
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '40px',
-              height: '40px'
-            }}
-          >
-            <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
-              <DeleteIcon />
-            </IconButton>
-          </Box>
-        </Stack>
-      )
-    }
-  ];
+  useEffect(() => {
+    const getCurrency = async () => {
+      const symbol = await fetchCurrencySymbol();
+      setCurrencySymbol(symbol);
+    };
+    getCurrency();
+  }, []);
+
+  const handlePopoverOpen = (event, productId) => {
+    setPopoverState({ anchorEl: event.currentTarget, productId });
+  };
+
+  const handlePopoverClose = () => {
+    setPopoverState({ anchorEl: null, productId: null });
+  };
+
+  const open = Boolean(popoverState.anchorEl);
 
   const handleOpenAdd = () => {
     setSelectedProduct(null);
     setOpenAdd(true);
   };
 
-  const handleView = (product) => {
-    setSelectedProduct(product);
-    setOpenView(true);
+  const handleView = (_id) => {
+    navigate(`/dashboard/products/view-product/${_id}`);
   };
-
-  const handleEdit = (product) => {
-    setSelectedProduct(product);
-    setOpenUpdateDialog(true);
+  const handleEdit = () => {
+    const product = products.find((prod) => prod._id === popoverState.productId);
+    if (product) {
+      setSelectedProduct(product);
+      setOpenUpdate(true);
+    }
+    handlePopoverClose();
   };
 
   const handleDelete = async (_id) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      try {
-        await deleteProduct(_id);
-        setProducts((prev) => prev.filter((product) => product._id !== _id));
-        toast.success('Product deleted successfully');
-      } catch (error) {
-        toast.error('Failed to delete product');
+    try {
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      });
+      if (result.isConfirmed) {
+        await deleteProduct(popoverState.productId);
+        setProducts((prev) => prev.filter((product) => product._id !== popoverState.productId));
+        Swal.fire('Deleted!', 'Your product has been deleted.', 'success');
       }
+    } catch (error) {
+      console.error('Error deleting product:', error);
     }
   };
 
@@ -193,45 +129,315 @@ const Product = () => {
     setOpenAdd(false);
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value.toLowerCase());
+  };
+
+  const filteredProducts = products.filter((product) => product.productnm.toLowerCase().includes(searchTerm));
+  const paginatedProducts = filteredProducts.slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE);
+
+  const handleProductUpdated = (updatedProduct) => {
+    if (!updatedProduct || !updatedProduct._id) {
+      console.error('Updated product is missing or invalid', updatedProduct);
+      return;
+    }
+
+    setProducts((prev = []) => prev.map((prod) => (prod._id === updatedProduct._id ? updatedProduct : prod)));
+
+    loadProducts();
+    setOpenUpdate(false);
+  };
+
   return (
     <>
-      <AddProductPage open={openAdd} handleClose={() => setOpenAdd(false)} onProductAdded={handleProductAdded} />
-      <ViewProduct open={openView} handleClose={() => setOpenView(false)} product={selectedProduct} />
-      <Container>
-        <Stack direction="row" alignItems="center" mb={5} justifyContent="space-between">
-          <Typography variant="h4" paddingTop={5}>
-            Products List
-          </Typography>
-          <Stack direction="row" alignItems="center" justifyContent={'flex-end'} spacing={2} marginTop={3}>
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleOpenAdd}>
-              Add Product
-            </Button>
-          </Stack>
-        </Stack>
-        <TableStyle>
-          <Box width="100%">
-            <Card style={{ height: '600px', paddingTop: '5px',  overflow: 'auto' }}>
-              <DataGrid
-                rows={products}
-                columns={columns}
-                checkboxSelection
-                getRowId={(row) => row._id}
-                components={{ Toolbar: GridToolbar }}
-                componentsProps={{ toolbar: { showQuickFilter: true } }}
-              />
-            </Card>
-          </Box>
-        </TableStyle>
-
-        <UpdateProduct
-          open={openUpdateDialog}
-          handleClose={() => setOpenUpdateDialog(false)}
-          product={selectedProduct}
-          onProductUpdated={(updatedProduct) => {
-            setProducts((prev) => prev.map((prod) => (prod._id === updatedProduct._id ? updatedProduct : prod)));
+      <AddProductPage
+        open={openAdd}
+        handleClose={() => setOpenAdd(false)}
+        onProductAdded={handleProductAdded}
+        loadProducts={loadProducts}
+      />
+      <UpdateProduct
+        open={openUpdate}
+        handleClose={() => setOpenUpdate(false)}
+        product={selectedProduct}
+        onProductUpdated={handleProductUpdated}
+        loadProducts={loadProducts}
+      />
+      <Grid>
+        <Box
+          sx={{
+            backgroundColor: '#ffff',
+            padding: '10px',
+            borderRadius: '8px',
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
           }}
-        />
-      </Container>
+        >
+          <Typography variant="h4">Product List</Typography>
+
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="breadcrumb"
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+              <HomeIcon sx={{ color: '#5e35b1' }} />
+            </MuiLink>
+            <Typography color="text.primary">Products</Typography>
+          </Breadcrumbs>
+        </Box>
+
+        <Card sx={{ marginTop: '20px', height:'600px' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              backgroundColor: '#fff',
+              padding: '10px',
+              borderRadius: '8px'
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '5px',
+                borderRadius: '8px',
+                border: '1px solid beige',
+                width: '250px'
+              }}
+            >
+              <SearchIcon sx={{ fontSize: '20px', marginRight: 1 }} />
+              <TextField value={searchTerm} onChange={handleSearchChange} placeholder="Search..." variant="standard" fullWidth />
+            </Box>
+
+            <Stack direction="row" spacing={2} alignItems="center">
+              <BulkUpload loadProducts={loadProducts} />
+
+              <Tooltip title="Add Product" arrow>
+                <IconButton
+                  onClick={handleOpenAdd}
+                  sx={{
+                    backgroundColor: '#1e88e5',
+                    color: '#fff',
+                    width: '35px',
+                    height: '35px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    boxShadow: 3,
+                    justifyContent: 'center',
+                    borderRadius: '50%',
+                    '&:hover': {
+                      backgroundColor: '#1565c0',
+                      color: '#ffffff'
+                    }
+                  }}
+                >
+                  <AddIcon />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+          </Box>
+
+          <Box sx={{ padding: '8px 20px' }}>
+            <Grid container spacing={3}>
+              {paginatedProducts.map((product) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
+                  <Card
+                    sx={{
+                      borderRadius: 2,
+                      boxShadow: 3,
+                      position: 'relative',
+                      height: '300px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      transition: 'transform 0.3s, box-shadow 0.3s',
+                      '&:hover': {
+                        transform: 'translateY(-5px)',
+                        boxShadow: 6
+                      }
+                    }}
+                  >
+                    <CardMedia
+                      component="img"
+                      image={
+                        product.imageUrl ||
+                        'https://images.pexels.com/photos/4483773/pexels-photo-4483773.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load'
+                      }
+                      alt={product.productnm}
+                      sx={{ height: 150, objectFit: 'fill' }}
+                      onClick={() => handleView(product._id)}
+                    />
+
+                    <IconButton
+                      size="small"
+                      onClick={(event) => handlePopoverOpen(event, product._id)}
+                      sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8
+                      }}
+                    >
+                      <MoreHorizIcon sx={{ color: 'black' }} />
+                    </IconButton>
+
+                    <CardContent>
+                      <Box display="flex" justifyContent="center" alignItems="center">
+                        <Typography variant="h5" sx={{ textTransform: 'uppercase', fontWeight: 'bold' }}>
+                          {product.productnm}
+                        </Typography>
+                      </Box>
+
+                      <Box display="flex" justifyContent="center" alignItems="center">
+                        <Typography variant="body2" color="textSecondary">
+                          {product.categoryName}
+                        </Typography>
+                      </Box>
+
+                      <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
+                        <Typography variant="body2">
+                          Selling Price: &nbsp; {currencySymbol} {product.sellingPrice}
+                        </Typography>
+                      </Box>
+                      <Box display="flex" justifyContent="center" alignItems="center" mt={1}>
+                        <Box
+                          sx={{
+                            border: '1px solid',
+                            borderColor: product.quantity > 5 ? 'green' : 'red',
+                            padding: '2px 5px',
+                            borderRadius: '5px'
+                          }}
+                        >
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: product.quantity > 5 ? 'green' : 'red',
+                              textAlign: 'right'
+                            }}
+                          >
+                            {product.quantity > 5 ? 'In Stock' : 'Out of Stock'} ({product.quantity})
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </CardContent>
+
+                    <Popover
+                      open={open}
+                      anchorEl={popoverState.anchorEl}
+                      onClose={handlePopoverClose}
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left'
+                      }}
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'left'
+                      }}
+                    >
+                      <Box sx={{ padding: 2, width: '150px' }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            marginBottom: 1,
+                            cursor: 'pointer',
+                            '&:hover': { backgroundColor: '#b7a5d7' },
+                            padding: '8px',
+                            borderRadius: '4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: '#5e35b1'
+                          }}
+                          onClick={() => {
+                            handleEdit(product);
+                            handlePopoverClose();
+                          }}
+                        >
+                          <EditIcon sx={{ color: '#5e35b1', marginRight: 1 }} />
+                          Edit
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            cursor: 'pointer',
+                            '&:hover': { backgroundColor: '#ffebee' },
+                            padding: '8px',
+                            borderRadius: '4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: '#d32f2f'
+                          }}
+                          onClick={() => {
+                            handleDelete(product._id);
+                            handlePopoverClose();
+                          }}
+                        >
+                          <DeleteIcon sx={{ marginRight: 1 }} />
+                          Delete
+                        </Typography>
+                      </Box>
+                    </Popover>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              m: 2
+            }}
+          >
+            <ReactPaginate
+              previousLabel="<"
+              nextLabel=">"
+              pageCount={Math.ceil(filteredProducts.length / ITEMS_PER_PAGE)}
+              onPageChange={handlePageClick}
+              containerClassName="pagination"
+              activeClassName="active"
+              previousClassName="prev-button"
+              nextClassName="next-button"
+            />
+          </Box>
+
+          <style>
+            {`
+  .pagination {
+    display: flex;
+    list-style: none;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+  }
+  .pagination li {
+    display: inline-block;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+  .pagination li:hover {
+    background-color: #f0f0f0;
+  }
+  .pagination .active {
+    background-color: #5e35b1;
+    color: #fff;
+    border-color: #5e35b1;
+  }
+  .prev-button,
+  .next-button {
+    font-weight: bold;
+    color: #5e35b1;
+  }
+`}
+          </style>
+        </Card>
+      </Grid>
     </>
   );
 };

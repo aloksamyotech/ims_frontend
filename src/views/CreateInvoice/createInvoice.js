@@ -1,22 +1,33 @@
 import React, { useState } from 'react';
 import {
-  Container,
+  Card,
   Grid,
+  Box,
   Typography,
   Button,
+  Breadcrumbs,
+  Link as MuiLink,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper
+  Paper,
+  CircularProgress
 } from '@mui/material';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { addOrder } from 'apis/api.js';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
+import { getUserId } from 'apis/constant.js';
+
+const user = localStorage.getItem('user');
+const userObj = JSON.parse(user);
 
 const CreateInvoice = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const { orderData, products } = location.state || {};
   const customer = orderData.customer;
@@ -29,6 +40,7 @@ const CreateInvoice = () => {
     try {
       const invoiceData = {
         date: orderData.date,
+        userId: getUserId(),
         customerId: customer._id,
         customerName: customer.customernm,
         products: products.map((product) => ({
@@ -43,12 +55,14 @@ const CreateInvoice = () => {
 
       const response = await addOrder(invoiceData);
       if (response) {
+        navigate('/dashboard/orders');
         toast.success('Invoice saved successfully! A confirmation email has been sent.');
         setIsSubmitted(true);
       } else {
         toast.error('Error saving invoice');
       }
     } catch (error) {
+      console.log(error);
       toast.error('An error occurred while saving the invoice. Please try again.');
     } finally {
       setLoading(false);
@@ -56,42 +70,75 @@ const CreateInvoice = () => {
   };
 
   return (
-    <Container>
-      <Grid container spacing={3}>
-        <Grid container spacing={2} sx={{ marginBottom: 3, marginLeft: 35, paddingTop: 10 }}>
-          <Grid item xs={6} style={{ textAlign: 'center' }}>
-            <Typography variant="h3" fontWeight="bold">
-              Invoice Details
-            </Typography>
-          </Grid>
-        </Grid>
-        <Grid container spacing={2} sx={{ marginBottom: 3, marginLeft: 5 }}>
-          <Grid item xs={6}>
-            <Typography variant="body1" fontWeight="bold">
-              Invoice date: {orderData?.date}
-            </Typography>
-          </Grid>
+    <Grid>
+      <Box
+        sx={{
+          marginTop: '20px',
+          backgroundColor: '#ffff',
+          padding: '14px',
+          borderRadius: '8px',
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}
+      >
+        <Typography variant="h4">Invoice Details</Typography>
+
+        <Breadcrumbs
+          separator={<NavigateNextIcon fontSize="small" />}
+          aria-label="breadcrumb"
+          sx={{ display: 'flex', alignItems: 'center' }}
+        >
+          <MuiLink component={Link} to="/dashboard/default" color="inherit">
+            <HomeIcon sx={{ color: '#5e35b1' }} />
+          </MuiLink>
+          <MuiLink component={Link} to="/dashboard/orders" color="inherit">
+            <Typography color="text.primary">Orders</Typography>
+          </MuiLink>
+          <MuiLink component={Link} to="/dashboard/orders/add-order" color="inherit">
+            <Typography color="text.primary">Add Orders</Typography>
+          </MuiLink>
+          <Typography color="text.primary">CreateInvoice</Typography>
+        </Breadcrumbs>
+      </Box>
+
+      <Card sx={{ marginTop: '20px' }}>
+        <Grid container sx={{ marginBottom: 3, margin: '10px 32px' }}>
+          <Typography variant="h4" fontWeight="bold" sx={{ paddingTop: '10px' }}>
+            Date: {orderData?.date}
+          </Typography>
         </Grid>
 
-        <Grid container spacing={2} sx={{ marginBottom: 3, marginLeft: 5 }}>
-          <Grid item xs={12}>
+        <Box display="flex" justifyContent="space-between" alignItems="flex" mt={2} mb={2}>
+          <Box sx={{ marginLeft: '40px' }}>
             <Typography variant="body1" fontWeight="bold">
-              Customer
+              Customer Details
             </Typography>
             <Typography>{customer?.customernm}</Typography>
             <Typography>Email: {customer?.email}</Typography>
             <Typography>Phone: {customer?.phone}</Typography>
             <Typography>Address: {customer?.address}</Typography>
-          </Grid>
-        </Grid>
+          </Box>
+
+          <Box sx={{ marginRight: '40px' }}>
+            <Typography variant="body1" fontWeight="bold">
+              Company Details
+            </Typography>
+            <Typography>{userObj?.name}</Typography>
+            <Typography>Email: {userObj?.email}</Typography>
+            <Typography>Phone: +91 56732</Typography>
+            <Typography>Address: India</Typography>
+          </Box>
+        </Box>
 
         <Grid item xs={12}>
-          <TableContainer component={Paper}>
+          <TableContainer component={Paper} elevation={2} sx={{ margin: '30px', width: '850px' }}>
             <Table>
               <TableHead sx={{ backgroundColor: '#1976d2' }}>
                 <TableRow>
                   <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Item</TableCell>
-                  <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Price</TableCell>
+                  <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Price/unit</TableCell>
                   <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Quantity</TableCell>
                   <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Subtotal</TableCell>
                 </TableRow>
@@ -102,18 +149,18 @@ const CreateInvoice = () => {
                     <TableCell>{product?.productnm}</TableCell>
                     <TableCell>{product?.sellingPrice.toFixed(2)}</TableCell>
                     <TableCell>{product?.quantity}</TableCell>
-                    <TableCell>{product?.subtotal.toFixed(2)}</TableCell>
+                    <TableCell>{product.quantity * product.sellingPrice}</TableCell>
                   </TableRow>
                 ))}
                 <TableRow>
                   <TableCell colSpan={3} align="right">
-                    Subtotal
+                    After Discount
                   </TableCell>
                   <TableCell>{orderData?.subtotal.toFixed(2)}</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell colSpan={3} align="right">
-                    Tax (7%)
+                    Tax%
                   </TableCell>
                   <TableCell>{orderData?.tax.toFixed(2)}</TableCell>
                 </TableRow>
@@ -126,27 +173,21 @@ const CreateInvoice = () => {
               </TableBody>
             </Table>
           </TableContainer>
-        </Grid>
 
-        <Grid item xs={12} sx={{ textAlign: 'center', marginTop: 3 }}>
-          <Link to="/dashboard/orders/add-order">
+          <Grid item xs={12} sx={{ textAlign: 'right', margin: 5 }}>
             <Button
               variant="contained"
-              sx={{
-                backgroundColor: '#f1c40f',
-                marginRight: 2,
-                '&:hover': { backgroundColor: '#f39c12' }
-              }}
+              color="secondary"
+              onClick={handleSubmit}
+              disabled={loading || isSubmitted}
+              startIcon={loading && <CircularProgress size={20} color="inherit" />}
             >
-              Back to previous
+              {isSubmitted ? 'Submitted' : loading ? 'Submitting...' : 'Submit'}
             </Button>
-          </Link>
-          <Button variant="contained" color="secondary" onClick={handleSubmit} disabled={loading || isSubmitted}>
-            {isSubmitted ? 'Submitted' : loading ? 'Submitting...' : 'Submit'}
-          </Button>
+          </Grid>
         </Grid>
-      </Grid>
-    </Container>
+      </Card>
+    </Grid>
   );
 };
 

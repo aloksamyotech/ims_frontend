@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import Swal from 'sweetalert2';
 import {
   Container,
   Grid,
@@ -12,6 +13,7 @@ import {
   FormLabel,
   FormControl,
   Checkbox,
+  Autocomplete,
   FormControlLabel,
   Box,
   Paper,
@@ -23,16 +25,18 @@ import {
   TableHead,
   TableRow,
   InputAdornment,
-  IconButton
+  IconButton,
+  Breadcrumbs,
+  Link as MuiLink
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { IconTrash, IconShoppingCart, IconSearch } from '@tabler/icons';
 import { Link } from 'react-router-dom';
 import { fetchProducts, fetchCustomers, addCustomer } from 'apis/api.js';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-
-const TAX_RATE = 0.07;
+import { fetchCurrencySymbol, getUserId } from 'apis/constant.js';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
 
 const OrderForm = (props) => {
   const navigate = useNavigate();
@@ -40,6 +44,7 @@ const OrderForm = (props) => {
   const [productList, setProductList] = useState([]);
   const [customerList, setCustomerList] = useState([]);
   const [quantity, setQuantity] = useState({});
+  const [discounts, setDiscounts] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -53,6 +58,7 @@ const OrderForm = (props) => {
   });
   const today = new Date();
   const formattedDate = today.toISOString().split('T')[0];
+  const [currencySymbol, setCurrencySymbol] = useState('');
 
   const validationSchema = yup.object({
     date: yup.date().required('Date is required'),
@@ -62,9 +68,8 @@ const OrderForm = (props) => {
       .string()
       .matches(/^[1-9][0-9]{9}$/, 'Phone number must be 12 digits and cannot start with 0')
       .required('Phone number is required'),
-    address: yup.string().max(50, 'Max 50 characters are allowed').required('Address is required'),
-    quantity: yup.number().min(1, 'Quantity must be at least 1').required('Quantity is required'),
-    tax: yup.number().min(5, 'Min 5% is allowed').max(12, 'Max 12% is allowed').required('Tax is required')
+    address: yup.string().max(50, 'Max 50 characters are allowed'),
+    quantity: yup.number().min(1, 'Quantity must be at least 1')
   });
 
   const formik = useFormik({
@@ -74,6 +79,7 @@ const OrderForm = (props) => {
       phone: '',
       email: '',
       address: '',
+      discount: 0,
       quantity: 1,
       productnm: '',
       sellingPrice: 0
@@ -83,20 +89,31 @@ const OrderForm = (props) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      const userId = getUserId();
       try {
         const productResult = await fetchProducts();
-        setProductList(productResult.data);
+        const filteredProducts = productResult?.data.filter((product) => product.userId === userId);
+        setProductList(filteredProducts);
         const customerResult = await fetchCustomers();
-        setCustomerList(customerResult.data);
+        const filteredCustomers = customerResult?.data.filter((customer) => customer.userId === userId);
+        setCustomerList(filteredCustomers);
       } catch (error) {
-        console.error(error);
+        toast.error('Failed to fetch data');
       }
     };
 
     fetchData();
   }, []);
 
-  const filteredProducts = productList?.filter((product) => product.productnm.toLowerCase().includes(searchTerm.toLowerCase()));
+  useEffect(() => {
+    const getCurrency = async () => {
+      const symbol = await fetchCurrencySymbol();
+      setCurrencySymbol(symbol);
+    };
+    getCurrency();
+  }, []);
+
+  const filteredProducts = productList?.filter((product) => product?.productnm.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -106,14 +123,14 @@ const OrderForm = (props) => {
     const selectedQuantity = quantity[product._id] || 1;
 
     if (product.quantity <= 0) {
-      toast.error("This product is out of stock.");
-      return; 
+      toast.error('This product is out of stock.');
+      return;
     }
 
     if (selectedQuantity > product.quantity) {
       return;
     }
-  
+
     const productInCart = products?.find((item) => item._id === product._id);
     if (productInCart) {
       toast.info('Product is already added to the cart');
@@ -125,13 +142,14 @@ const OrderForm = (props) => {
       {
         ...product,
         quantity: selectedQuantity,
-        subtotal: selectedQuantity * product.sellingPrice
+        subtotal: selectedQuantity * product.sellingPrice,
+        tax: product.tax
       }
     ]);
-  
+
     const isAlreadySelected = selectedProductIds.includes(product._id);
     if (isAlreadySelected) {
-      setSelectedProductIds(selectedProductIds?.filter(id => id !== product._id));
+      setSelectedProductIds(selectedProductIds?.filter((id) => id !== product._id));
     } else {
       setSelectedProductIds([...selectedProductIds, product._id]);
     }
@@ -143,14 +161,14 @@ const OrderForm = (props) => {
 
   const handleQuantityChange = (productId, newQuantity) => {
     const product = products?.find((prod) => prod._id === productId);
-    
+
     if (!product) {
       console.error('Product not found');
       return;
     }
 
     const availableStock = productList?.find((prod) => prod._id === productId)?.quantity;
-    if (newQuantity < 1) return; 
+    if (newQuantity < 1) return;
     if (newQuantity > availableStock) {
       toast.info(`Quantity exceeds available stock (: ${availableStock})`);
       return;
@@ -170,47 +188,96 @@ const OrderForm = (props) => {
       [productId]: newQuantity
     }));
   };
-  
-  const handleRemoveProduct = (productId) => {
-    const updatedProducts = products?.filter((product) => product._id !== productId);
-    window.confirm('Are you sure you want to delete?');
-    setProducts(updatedProducts);
+
+  const handleRemoveProduct = async (productId) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, remove it!'
+    });
+
+    if (result.isConfirmed) {
+      const updatedProducts = products?.filter((product) => product?._id !== productId);
+      setProducts(updatedProducts);
+    }
   };
 
+  // Handle discount change for each product
+  const handleDiscountChange = (productId, value) => {
+    const maxDiscount = products.find((product) => product._id === productId).subtotal; // Ensure discount doesn't exceed subtotal
+    const discountValue = Math.max(0, Math.min(value, maxDiscount)); // Validate the discount
+    setDiscounts((prev) => ({ ...prev, [productId]: discountValue }));
+  };
+
+  // Calculate subtotal after discount
   const calculateSubtotal = () => {
-    return products.reduce((acc, product) => acc + product.subtotal, 0);
+    return products.reduce((acc, product) => {
+      const discount = discounts[product._id] || 0;
+      const discountedSubtotal = product.subtotal - discount; // Apply discount to subtotal
+      return acc + discountedSubtotal;
+    }, 0);
   };
 
+  // Calculate taxes based on discounted subtotal
+  const calculateTaxes = () => {
+    return products.reduce((totalTax, product) => {
+      const discount = discounts[product._id] || 0;
+      const discountedSubtotal = product.subtotal - discount; // Apply discount to subtotal
+      const productTax = discountedSubtotal * (product.tax / 100);
+      return totalTax + productTax;
+    }, 0);
+  };
+
+  // Calculate the final total after discount and taxes
+  const invoiceTaxes = calculateTaxes();
   const invoiceSubtotal = calculateSubtotal();
-  const invoiceTaxes = invoiceSubtotal * TAX_RATE;
   const invoiceTotal = invoiceTaxes + invoiceSubtotal;
 
-  const handleCustomerChange = (event) => {
-    const customerName = event.target.value;
+  const handleCustomerChange = (event, newValue) => {
+    const customerName = newValue ? newValue.customernm : '';
     const customer = customerList?.find((c) => c.customernm === customerName);
+
     setSelectedCustomer(customer);
     formik.setFieldValue('customernm', customerName);
   };
 
-  const handleCreateInvoice = async () => {
+  const isCreateInvoiceDisabled =
+    products.length === 0 || (isWholesale && !selectedCustomer) || (isWalkIn && (!walkInData.phone || walkInData.phone.trim() === ''));
 
-    if (!isWalkIn && !isWholesale && !selectedCustomer) {
-      toast.error("Please select a customer before creating the invoice.");
-      return; 
+  const handleCreateInvoice = async () => {
+    if (!isWalkIn && !isWholesale && !selectedCustomer && !products) {
+      toast.error('Please select a customer before creating the invoice.');
+      return;
     }
 
     let customerData = {};
     if (isWalkIn) {
       customerData = {
-        customernm: walkInData.customernm,
+        customernm: walkInData.customernm || 'N/A',
         email: walkInData.email,
         phone: walkInData.phone,
-        address: walkInData.address,
-        isWholesale: false
+        address: walkInData.address || 'N/A',
+        isWholesale: false,
+        userId: getUserId()
       };
 
-      const savedCustomer = await addCustomer(customerData);
-      customerData._id = savedCustomer?.data?._id;
+      try {
+        const savedCustomer = await addCustomer(customerData);
+        if (savedCustomer && savedCustomer.data) {
+          customerData._id = savedCustomer.data._id;
+          toast.success('Walk-in customer is created');
+        } else {
+          toast.error('Failed to create walk-in customer');
+          return;
+        }
+      } catch (error) {
+        toast.error('Error creating walk-in customer');
+        return;
+      }
     } else if (isWholesale && selectedCustomer) {
       customerData = {
         ...selectedCustomer,
@@ -230,31 +297,50 @@ const OrderForm = (props) => {
       subtotal: invoiceSubtotal,
       total: invoiceTotal
     };
-
     navigate('/dashboard/orders/add-order/create-invoice', { state: { orderData, products } });
   };
 
   return (
-    <Container>
-      <Link to="/dashboard/orders">
-        <Button sx={{ marginTop: '5px' }} variant="contained" color="primary" startIcon={<ArrowBackIcon />}>
-        </Button>
-      </Link>
+    <Grid>
+      <Box
+        sx={{
+          backgroundColor: '#ffff',
+          padding: '10px',
+          borderRadius: '8px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
+        <Typography variant="h4">Add Order</Typography>
+        <Breadcrumbs
+          separator={<NavigateNextIcon fontSize="small" />}
+          aria-label="breadcrumb"
+          sx={{ display: 'flex', alignItems: 'center' }}
+        >
+          <MuiLink component={Link} to="/dashboard/default" color="inherit">
+            <HomeIcon sx={{ color: '#5e35b1' }} />
+          </MuiLink>
+          <MuiLink component={Link} to="/dashboard/orders" color="inherit">
+            <Typography color="text.primary">Orders</Typography>
+          </MuiLink>
+          <Typography color="text.primary">AddOrder</Typography>
+        </Breadcrumbs>
+      </Box>
+
       <form onSubmit={formik.handleSubmit}>
-        <Typography marginTop={5} variant="h3" gutterBottom>
-          Add Order
-        </Typography>
-        <Grid container spacing={2} sx={{ marginTop: '8px' }}>
+        <Grid container spacing={2} sx={{ marginTop: '4px' }}>
           <Grid item xs={12}>
-            <Paper style={{ padding: '10px', borderRadius: '8px', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}>
-              <Grid container spacing={3} sx={{ margin: '1px' }}>
-                <Grid item xs={12} sm={6}>
+            <Paper style={{ padding: '5px', borderRadius: '8px', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}>
+              <Grid container spacing={2} sx={{ padding: '10px' }}>
+                <Grid item xs={4}>
                   <FormLabel>Date *</FormLabel>
                   <TextField
                     fullWidth
                     id="date"
                     name="date"
                     type="date"
+                    size="small"
                     InputLabelProps={{ shrink: true }}
                     value={formik.values.date}
                     onChange={formik.handleChange}
@@ -262,7 +348,7 @@ const OrderForm = (props) => {
                     helperText={formik.touched.date && formik.errors.date}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={4}>
                   <FormLabel>Customer Type *</FormLabel>
                   <FormControl component="fieldset" sx={{ width: '100%' }}>
                     <FormGroup row>
@@ -298,42 +384,46 @@ const OrderForm = (props) => {
                 </Grid>
                 {isWalkIn && (
                   <>
-                    <Grid item xs={12} sm={5}>
-                      <FormLabel>Name *</FormLabel>
+                    <Grid item xs={4}>
+                      <FormLabel>Name</FormLabel>
                       <TextField
                         fullWidth
                         id="customernm"
                         name="customernm"
+                        size="small"
                         value={walkInData.customernm}
                         onChange={(e) => setWalkInData({ ...walkInData, customernm: e.target.value })}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={5}>
+                    <Grid item xs={4}>
                       <FormLabel>Phone *</FormLabel>
                       <TextField
                         fullWidth
                         id="phone"
                         name="phone"
+                        size="small"
                         value={walkInData.phone}
                         onChange={(e) => setWalkInData({ ...walkInData, phone: e.target.value })}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={5}>
+                    <Grid item xs={4}>
                       <FormLabel>Email *</FormLabel>
                       <TextField
                         fullWidth
                         id="email"
                         name="email"
+                        size="small"
                         value={walkInData.email}
                         onChange={(e) => setWalkInData({ ...walkInData, email: e.target.value })}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={5}>
-                      <FormLabel>Address *</FormLabel>
+                    <Grid item xs={4}>
+                      <FormLabel>Address</FormLabel>
                       <TextField
                         fullWidth
                         id="address"
                         name="address"
+                        size="small"
                         value={walkInData.address}
                         onChange={(e) => setWalkInData({ ...walkInData, address: e.target.value })}
                       />
@@ -342,35 +432,46 @@ const OrderForm = (props) => {
                 )}
 
                 {isWholesale && (
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={4}>
                     <FormLabel>Wholesale Customer</FormLabel>
-                    <Select
-                      value={formik.values.customernm}
+                    <Autocomplete
+                      options={customerList.filter((customer) => customer.isWholesale)}
+                      getOptionLabel={(option) => option.customernm}
+                      value={customerList.find((cust) => cust.customernm === formik.values.customernm) || null}
                       onChange={handleCustomerChange}
-                      error={formik.touched.customernm && Boolean(formik.errors.customernm)}
-                      fullWidth
-                    >
-                      <MenuItem value="">Select a customer</MenuItem>
-                      {customerList
-                        .filter((customer) => customer.isWholesale === true)
-                        .map((customer) => (
-                          <MenuItem key={customer._id} value={customer.customernm}>
-                            {customer.customernm}
-                          </MenuItem>
-                        ))}
-                    </Select>
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          size="small"
+                          variant="outlined"
+                          fullWidth
+                          error={formik.touched.customernm && Boolean(formik.errors.customernm)}
+                          helperText={formik.touched.customernm && formik.errors.customernm}
+                          sx={{ 
+                            '& .MuiInputBase-root': { height: 40 } 
+                          }}
+                        />
+                      )}
+                      ListboxProps={{
+                        style: {
+                          maxHeight: 200,
+                          overflow: 'auto'
+                        }
+                      }}
+                    />
                   </Grid>
                 )}
               </Grid>
 
-              <Grid item xs={12} margin={2}>
-                <TableContainer component={Paper} elevation={3} style={{ maxWidth: '1000px' }}>
+              <Grid item xs={12} margin={1}>
+                <TableContainer component={Paper} elevation={1} style={{ maxWidth: '1000px' }}>
                   <Table>
                     <TableHead sx={{ backgroundColor: '#1976d2' }}>
                       <TableRow>
                         <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Product</TableCell>
                         <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Quantity</TableCell>
-                        <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Price</TableCell>
+                        <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Discount</TableCell>
+                        <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Price/unit</TableCell>
                         <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Subtotal</TableCell>
                         <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Action</TableCell>
                       </TableRow>
@@ -383,16 +484,33 @@ const OrderForm = (props) => {
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                               <TextField
                                 type="number"
-                                value={quantity[product._id] || 1}
+                                value={quantity[product._id]}
                                 onChange={(e) => handleQuantityChange(product._id, parseInt(e.target.value))}
                                 inputProps={{ min: 1 }}
-                                size="large"
+                                size="small"
                                 sx={{ width: '80px', textAlign: 'center' }}
                               />
                             </Box>
                           </TableCell>
-                          <TableCell>{product.sellingPrice.toFixed(2)}</TableCell>
-                          <TableCell>{product.subtotal.toFixed(2)}</TableCell>
+                          <TableCell>
+                            <TextField
+                              type="number"
+                              value={discounts[product._id] || ''}
+                              onChange={(e) => handleDiscountChange(product._id, parseFloat(e.target.value))}
+                              inputProps={{
+                                min: 0,
+                                max: product.subtotal
+                              }}
+                              size="small"
+                              sx={{ width: '80px', textAlign: 'center' }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            {currencySymbol} {product.sellingPrice.toFixed(2)}
+                          </TableCell>
+                          <TableCell>
+                            {currencySymbol} {(product.subtotal - (discounts[product._id] || 0)).toFixed(2)}
+                          </TableCell>
                           <TableCell>
                             <IconButton
                               onClick={() => handleRemoveProduct(product._id)}
@@ -412,22 +530,29 @@ const OrderForm = (props) => {
                         </TableRow>
                       ))}
                       <TableRow>
-                        <TableCell colSpan={4} align="right">
+                        <TableCell colSpan={5} align="right">
                           Subtotal
                         </TableCell>
-                        <TableCell align="center">{invoiceSubtotal.toFixed(2)}</TableCell>
+                        <TableCell align="center">
+                          {currencySymbol} {invoiceSubtotal.toFixed(2)}
+                        </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell colSpan={4} align="right">
+                        <TableCell colSpan={5} align="right">
                           Tax
                         </TableCell>
-                        <TableCell align="center">{invoiceTaxes.toFixed(2)}</TableCell>
+                        <TableCell align="center">
+                          {' '}
+                          {currencySymbol} {invoiceTaxes.toFixed(2)}
+                        </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell colSpan={4} align="right" sx={{ fontWeight: 'bold', color: 'black' }}>
+                        <TableCell colSpan={5} align="right" sx={{ fontWeight: 'bold', color: 'black' }}>
                           Total
                         </TableCell>
-                        <TableCell align="center">{invoiceTotal.toFixed(2)}</TableCell>
+                        <TableCell align="center">
+                          {currencySymbol} {invoiceTotal.toFixed(2)}
+                        </TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
@@ -435,7 +560,7 @@ const OrderForm = (props) => {
               </Grid>
 
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1, marginRight: '12px' }}>
-                <Button variant="contained" color="secondary" onClick={handleCreateInvoice}>
+                <Button variant="contained" color="secondary" onClick={handleCreateInvoice} disabled={isCreateInvoiceDisabled}>
                   Create Invoice
                 </Button>
               </Box>
@@ -446,7 +571,6 @@ const OrderForm = (props) => {
             <Paper style={{ padding: '20px', borderRadius: '8px', boxShadow: '0px 4px 10px rgba(0,0,0,0.1)' }}>
               <Box
                 sx={{
-                  marginTop: '10px',
                   marginRight: '10px',
                   marginLeft: '8px',
                   display: 'flex',
@@ -462,6 +586,7 @@ const OrderForm = (props) => {
                   label="Search Products"
                   variant="outlined"
                   value={searchTerm}
+                  size="small"
                   onChange={handleSearchChange}
                   margin="normal"
                   InputProps={{
@@ -475,19 +600,13 @@ const OrderForm = (props) => {
                 />
               </Box>
 
-              <TableContainer
-                component={Paper}
-                elevation={3}
-                sx={{ marginLeft: '8px', alignContent: 'center' }}
-                style={{ maxWidth: '975px' }}
-              >
+              <TableContainer component={Paper} elevation={3} sx={{ maxHeight: '400px', overflow: 'auto', alignContent: 'center' }}>
                 <Table>
                   <TableHead sx={{ backgroundColor: '#1976d2' }}>
                     <TableRow>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Name</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Available Quantity</TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Unit</TableCell>
-                      <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Price</TableCell>
+                      <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Price/unit</TableCell>
                       <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Action</TableCell>
                     </TableRow>
                   </TableHead>
@@ -498,7 +617,7 @@ const OrderForm = (props) => {
                         hover
                         sx={{
                           borderBottom: '1px solid #e0e0e0',
-                          backgroundColor: selectedProductIds.includes(product._id) ? '#e3f2fd' : 'transparent',  // Highlight selected rows
+                          backgroundColor: selectedProductIds.includes(product._id) ? '#e3f2fd' : 'transparent',
                           '&:hover': {
                             backgroundColor: selectedProductIds.includes(product._id) ? '#c1e1fc' : 'transparent'
                           }
@@ -506,19 +625,19 @@ const OrderForm = (props) => {
                       >
                         <TableCell>{product.productnm}</TableCell>
                         <TableCell>{product.quantity}</TableCell>
-                        <TableCell>{product.unitName}</TableCell>
-                        <TableCell>{product.sellingPrice.toFixed(2)}</TableCell>
                         <TableCell>
-                              <Button
-                                onClick={() => handleSelectProduct(product)}
-                                variant="contained"
-                                color="primary"
-                                startIcon={<IconShoppingCart />}
-                              >
-                                Add
-                              </Button>
-                            </TableCell>
-
+                          {currencySymbol} {product.sellingPrice.toFixed(2)}
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            onClick={() => handleSelectProduct(product)}
+                            variant="contained"
+                            color="primary"
+                            startIcon={<IconShoppingCart />}
+                          >
+                            Add
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -529,7 +648,7 @@ const OrderForm = (props) => {
         </Grid>
       </form>
       <ToastContainer />
-    </Container>
+    </Grid>
   );
 };
 

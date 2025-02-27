@@ -1,57 +1,66 @@
 import React from 'react';
-import { Dialog, DialogTitle, DialogContent,Typography, DialogActions, Button, Grid , FormLabel,
-     TextField } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, Typography, DialogActions, Button, Grid, FormLabel, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { updateUser } from 'apis/api.js';
+import { updateEmployee } from 'apis/api.js';
+import ClearIcon from '@mui/icons-material/Clear';
 
-const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
+const Employee = ({ open, handleClose, employee, onUpdateEmployee }) => {
   const formik = useFormik({
     initialValues: {
-      name: user?.name || '',
-      email: user?.email || '',
-      phone: user?.phone || ''
+      name: employee?.name || '',
+      email: employee?.email || '',
+      phone: employee?.phone || '',
+      address: employee?.address || '',
     },
     enableReinitialize: true,
     validationSchema: yup.object({
-        name: yup
+      name: yup
         .string()
         .matches(/^[a-zA-Z\s]*$/, 'Only letters and spaces are allowed')
         .min(2, 'Min 2 character are allowed')
         .max(30, 'Max 30 character are allowed')
-        .required('User Name is required'),
+        .required('Employee Name is required'),
       email: yup.string().email('Invalid email format').required('Email is required'),
       phone: yup
         .string()
         .matches(/^[1-9][0-9]{9}$/, 'Phone number must be 12 digits and cannot start with 0')
         .required('Phone number is required'),
+      address: yup
+        .string()
+        .min(10, 'Address must be at least 10 characters')
+        .max(50, 'Max 50 characters are allowed')
+        .required('Address is required')
     }),
     onSubmit: async (values) => {
       try {
-        const response = await updateUser({ ...user, ...values });
-        onUpdateUser(response.data);
-        toast.success('User updated successfully');
+        const response = await updateEmployee({ ...employee, ...values });
+        onUpdateEmployee(response.data);
+        toast.success('Employee updated successfully');
       } catch (error) {
-        console.error('Error updating user:', error);
-        toast.error('Failed to update user');
+        console.log(error);
+        toast.error('Failed to update employee');
       }
     }
   });
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>  <Typography variant="h4">Update User</Typography></DialogTitle>
-      <DialogContent>
-          <form onSubmit={formik.handleSubmit}>
-          <Grid container rowSpacing={3} columnSpacing={{ xs: 0, sm: 5, md: 4 }}>
-            <Grid item xs={12}>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+      <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant="h3">Update Employee</Typography>
+        <ClearIcon onClick={handleClose} style={{ cursor: 'pointer' }} />
+      </DialogTitle>
+      <DialogContent dividers>
+        <form onSubmit={formik.handleSubmit}>
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={12} sm={6}>
               <FormLabel>Name</FormLabel>
               <TextField
                 required
                 id="name"
                 name="name"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.name}
                 onChange={formik.handleChange}
@@ -59,13 +68,13 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
                 helperText={formik.touched.name && formik.errors.name}
               />
             </Grid>
-       <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <FormLabel>Email</FormLabel>
               <TextField
                 required
                 id="email"
                 name="email"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -73,13 +82,13 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-          <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <FormLabel>Phone Number</FormLabel>
               <TextField
                 required
                 id="phone"
                 name="phone"
-                size="large"
+                size="small"
                 type="text"
                 fullWidth
                 value={formik.values.phone}
@@ -88,18 +97,35 @@ const UpdateUser = ({ open, handleClose, user, onUpdateUser }) => {
                 helperText={formik.touched.phone && formik.errors.phone}
               />
             </Grid>
+            <Grid item xs={6}>
+              <FormLabel>Address</FormLabel>
+              <TextField
+                required
+                id="address"
+                name="address"
+                size="small"
+                multiline
+                fullWidth
+                rows={2}
+                value={formik.values.address}
+                onChange={formik.handleChange}
+                error={formik.touched.address && Boolean(formik.errors.address)}
+                helperText={formik.touched.address && formik.errors.address}
+              />
             </Grid>
-            </form>
+          </Grid>
+        </form>
       </DialogContent>
       <DialogActions>
-        <Button type="submit"  variant="contained" color="secondary" onClick={formik.handleSubmit}>
-          Update</Button>
-            <Button onClick={handleClose} variant="contained" color="error">
-              Cancel
-            </Button>
+        <Button type="submit" variant="contained" color="secondary" onClick={formik.handleSubmit}>
+          Update
+        </Button>
+        <Button onClick={handleClose} variant="contained" color="error">
+          Cancel
+        </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default UpdateUser;
+export default Employee;

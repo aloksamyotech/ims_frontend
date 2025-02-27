@@ -15,8 +15,10 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { FormHelperText, FormLabel } from '@mui/material';
 import { toast } from 'react-toastify';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { throttle } from 'lodash';
 import { addSupplier } from 'apis/api.js';
+import { getUserId } from 'apis/constant.js';
 
 const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,13 +41,12 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
       .min(5, 'Too Short!')
       .max(50, 'Too Long!')
       .required('Shop name is required'),
-    address: yup.string().min(10, 'Address must be at least 10 characters').max(50, 'Max 50 characters are allowed').required('Address is required'),
-    typeOfSupplier: yup.string().required('Type of supplier is required'),
-    accountHolder: yup
+    address: yup
       .string()
-      .matches(/^[a-zA-Z\s]*$/, 'Only letters and spaces are allowed')
-      .max(30, 'Too Long!'),
-    accountNumber: yup.string().max(12, 'Max 12 numbers are allowed').matches(/^[0-9]+$/, 'Account number must be numeric'),
+      .min(10, 'Address must be at least 10 characters')
+      .max(50, 'Max 50 characters are allowed')
+      .required('Address is required'),
+    typeOfSupplier: yup.string().required('Type of supplier is required')
   });
 
   const initialValues = {
@@ -54,10 +55,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
     email: '',
     shopName: '',
     address: '',
-    accountHolder: '',
-    accountNumber: '',
-    typeOfSupplier: '',
-    bankName: '',
+    typeOfSupplier: ''
   };
 
   const formik = useFormik({
@@ -66,30 +64,46 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
     enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
       setIsSubmitting(true);
+      const userId = getUserId();
+
       try {
-        const response = await addSupplier(values);
-        onSupplierAdded(response.data);
-        toast.success('Supplier added successfully');
-        resetForm();
+        const payload = { ...values, userId };
+        const response = await addSupplier(payload);
+
+        if (response?.data && response?.data?.message) {
+          toast.error(response.data.message);
+        } else {
+          onSupplierAdded(response?.data);
+          toast.success('Supplier added successfully');
+          resetForm();
+          handleClose();
+        }
       } catch (error) {
-        console.error(error);
-        toast.error('Failed to add supplier');
+        if (error.response && error.response.data && error.response.data.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Failed to add supplier');
+        }
       } finally {
         setIsSubmitting(false);
-        handleClose();
       }
     }
   });
 
+  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 3000), [formik.handleSubmit]);
+
   return (
-    <Dialog open={open} onClose={handleClose}
-    PaperProps={{
-      style: {
-        width: '900px', 
-        height: '900px', 
-        maxWidth: 'none', 
-      },
-    }}>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      PaperProps={{
+        style: {
+          width: '600px',
+          height: 'auto',
+          maxWidth: 'none'
+        }
+      }}
+    >
       <DialogTitle
         id="scroll-dialog-title"
         style={{
@@ -102,18 +116,15 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
       </DialogTitle>
 
       <DialogContent dividers>
-        <form onSubmit={formik.handleSubmit}>
-          <Typography style={{ marginBottom: '15px' }} variant="h4">
-            Supplier Details
-          </Typography>
-          <Grid container rowSpacing={2} columnSpacing={{ xs: 0, sm: 5, md: 2 }}>
-            <Grid item xs={12} sm={6}>
+        <form onSubmit={throttledSubmit}>
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={6}>
               <FormLabel>Name</FormLabel>
               <TextField
                 required
                 id="suppliernm"
                 name="suppliernm"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.suppliernm}
                 onChange={formik.handleChange}
@@ -121,13 +132,13 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
                 helperText={formik.touched.suppliernm && formik.errors.suppliernm}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormLabel>Email</FormLabel>
               <TextField
                 required
                 id="email"
                 name="email"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -135,13 +146,13 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
                 helperText={formik.touched.email && formik.errors.email}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormLabel>Phone Number</FormLabel>
               <TextField
                 required
                 id="phone"
                 name="phone"
-                size="large"
+                size="small"
                 type="number"
                 fullWidth
                 value={formik.values.phone}
@@ -150,13 +161,13 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
                 helperText={formik.touched.phone && formik.errors.phone}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormLabel>Shop Name</FormLabel>
               <TextField
                 required
                 id="shopName"
                 name="shopName"
-                size="large"
+                size="small"
                 fullWidth
                 value={formik.values.shopName}
                 onChange={formik.handleChange}
@@ -164,14 +175,14 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
                 helperText={formik.touched.shopName && formik.errors.shopName}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={6}>
               <FormControl fullWidth>
                 <FormLabel>Type of Supplier</FormLabel>
                 <Select
                   required
                   id="typeOfSupplier"
                   name="typeOfSupplier"
-                  size="large"
+                  size="small"
                   value={formik.values.typeOfSupplier}
                   onChange={formik.handleChange}
                   error={formik.touched.typeOfSupplier && Boolean(formik.errors.typeOfSupplier)}
@@ -186,57 +197,16 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
                 </FormHelperText>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <FormLabel>Bank Name</FormLabel>
-              <Select required id="bankName" name="bankName" size="large" value={formik.values.bankName} onChange={formik.handleChange}>
-                <MenuItem value="">Select a bank</MenuItem>
-                <MenuItem value="BRI">BRI</MenuItem>
-                <MenuItem value="BNI">BNI</MenuItem>
-                <MenuItem value="BSI">BSI</MenuItem>
-              </Select>
-              <FormHelperText error={formik.touched.bankName && Boolean(formik.errors.bankName)}>
-                {formik.touched.bankName && formik.errors.bankName}
-              </FormHelperText>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormLabel>Account Holder</FormLabel>
-              <TextField
-                id="accountHolder"
-                name="accountHolder"
-                size="large"
-                fullWidth
-                value={formik.values.accountHolder}
-                onChange={formik.handleChange}
-                error={formik.touched.accountHolder && Boolean(formik.errors.accountHolder)}
-                helperText={formik.touched.accountHolder && formik.errors.accountHolder}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <FormLabel>Account Number</FormLabel>
-              <TextField
-                id="accountNumber"
-                name="accountNumber"
-                size="large"
-                type="number"
-                fullWidth
-                value={formik.values.accountNumber}
-                onChange={formik.handleChange}
-                error={formik.touched.accountNumber && Boolean(formik.errors.accountNumber)}
-                helperText={formik.touched.accountNumber && formik.errors.accountNumber}
-              />
-            </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormLabel>Address</FormLabel>
               <TextField
                 required
                 id="address"
                 name="address"
-                size="large"
+                size="small"
                 multiline
+                rows={2}
                 fullWidth
-                rows={3}
                 value={formik.values.address}
                 onChange={formik.handleChange}
                 error={formik.touched.address && Boolean(formik.errors.address)}
@@ -248,10 +218,10 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
       </DialogContent>
       <DialogActions>
         <Button type="submit" disabled={isSubmitting} variant="contained" color="secondary" onClick={formik.handleSubmit}>
-          {isSubmitting ? 'Submitting...' :  'Add'}
+          {isSubmitting ? 'Submitting...' : 'Add'}
         </Button>
         <Button
-         variant="contained"
+          variant="contained"
           color="error"
           onClick={() => {
             formik.resetForm();

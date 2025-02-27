@@ -15,12 +15,12 @@ const UpdateCategory = ({ open, handleClose, category, onUpdateCategory }) => {
     enableReinitialize: true,
     validationSchema: yup.object({
       catnm: yup.string().max(30, 'Max 30 characters are allowed').required('Category name is required'),
-      desc: yup.string().max(100, 'Max 100 characters are allowed').required('Description is required')
+      desc: yup.string().max(100, 'Max 100 characters are allowed')
     }),
     onSubmit: async (values) => {
       try {
         const response = await updateCategory({ ...category, ...values });
-        onUpdateCategory(response.data);
+        onUpdateCategory(response?.data);
         toast.success('Category updated successfully');
       } catch (error) {
         toast.error('Failed to update category');
@@ -40,6 +40,7 @@ const UpdateCategory = ({ open, handleClose, category, onUpdateCategory }) => {
           margin="dense"
           label="Category Name"
           fullWidth
+          size='small'
           value={formik.values.catnm}
           onChange={formik.handleChange('catnm')}
           error={formik.touched.catnm && Boolean(formik.errors.catnm)}
@@ -49,6 +50,7 @@ const UpdateCategory = ({ open, handleClose, category, onUpdateCategory }) => {
           margin="dense"
           label="Description"
           fullWidth
+           size='small'
           value={formik.values.desc}
           onChange={formik.handleChange('desc')}
           error={formik.touched.desc && Boolean(formik.errors.desc)}

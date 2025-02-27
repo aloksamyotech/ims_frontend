@@ -1,73 +1,69 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { countCustomers } from 'apis/api.js';
+import { getUserId } from 'apis/constant.js';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
-import { Avatar, Box, Grid, Menu, MenuItem, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
+import { IconUser } from '@tabler/icons';
 import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
 
-// assets
-import EarningIcon from 'assets/images/icons/earning.svg';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import GetAppTwoToneIcon from '@mui/icons-material/GetAppOutlined';
-import FileCopyTwoToneIcon from '@mui/icons-material/FileCopyOutlined';
-import PictureAsPdfTwoToneIcon from '@mui/icons-material/PictureAsPdfOutlined';
-import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveOutlined';
-
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-  backgroundColor: theme.palette.secondary.dark,
+  backgroundColor: theme.palette.primary.dark,
   color: '#fff',
   overflow: 'hidden',
-  position: 'relative',
-  '&:after': {
-    content: '""',
-    position: 'absolute',
-    width: 210,
-    height: 210,
-    background: theme.palette.secondary[800],
-    borderRadius: '50%',
-    top: -85,
-    right: -95,
-    [theme.breakpoints.down('sm')]: {
-      top: -105,
-      right: -140
-    }
-  },
-  '&:before': {
-    content: '""',
-    position: 'absolute',
-    width: 210,
-    height: 210,
-    background: theme.palette.secondary[800],
-    borderRadius: '50%',
-    top: -125,
-    right: -15,
-    opacity: 0.5,
-    [theme.breakpoints.down('sm')]: {
-      top: -155,
-      right: -70
-    }
-  }
+  position: 'relative'
 }));
 
-// ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
+const TopRightIcon = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  top: '20px',
+  right: '10px',
+  color: theme.palette.primary[100],
+  backgroundColor: '#ffff',
+  borderRadius: '50%',
+  padding: '12px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
+}));
 
 const EarningCard = ({ isLoading }) => {
   const theme = useTheme();
 
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [customerCount, setCustomerCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  useEffect(() => {
+    const getCustomerCount = async () => {
+      try {
+        const userId = getUserId();
+        if (!userId) {
+          console.log('User ID is missing');
+          setLoading(false);
+          return;
+        }
+        const response = await countCustomers({userId});
+        if (response?.data?.count !== undefined) {
+          setCustomerCount(response.data.count || 0);
+        } else {
+          setCustomerCount(0);
+        }
+      } catch (err) {
+        console.error('Error fetching customer count:', err);
+        setError('Failed to fetch customer count');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+    getCustomerCount();
+  }, []);
 
   return (
     <>
@@ -75,102 +71,36 @@ const EarningCard = ({ isLoading }) => {
         <SkeletonEarningCard />
       ) : (
         <CardWrapper border={false} content={false}>
-          <Box sx={{ p: 2.25 }}>
+          <Box sx={{ p: 3.25 }}>
             <Grid container direction="column">
               <Grid item>
-                <Grid container justifyContent="space-between">
-                  <Grid item>
-                    <Avatar
-                      variant="rounded"
-                      sx={{
-                        ...theme.typography.commonAvatar,
-                        ...theme.typography.largeAvatar,
-                        backgroundColor: theme.palette.secondary[800],
-                        mt: 1
-                      }}
-                    >
-                      <img src={EarningIcon} alt="Notification" />
-                    </Avatar>
-                  </Grid>
-                  <Grid item>
-                    <Avatar
-                      variant="rounded"
-                      sx={{
-                        ...theme.typography.commonAvatar,
-                        ...theme.typography.mediumAvatar,
-                        backgroundColor: theme.palette.secondary.dark,
-                        color: theme.palette.secondary[200],
-                        zIndex: 1
-                      }}
-                      aria-controls="menu-earning-card"
-                      aria-haspopup="true"
-                      onClick={handleClick}
-                    >
-                      <MoreHorizIcon fontSize="inherit" />
-                    </Avatar>
-                    <Menu
-                      id="menu-earning-card"
-                      anchorEl={anchorEl}
-                      keepMounted
-                      open={Boolean(anchorEl)}
-                      onClose={handleClose}
-                      variant="selectedMenu"
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right'
-                      }}
-                      transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right'
-                      }}
-                    >
-                      <MenuItem onClick={handleClose}>
-                        <GetAppTwoToneIcon sx={{ mr: 1.75 }} /> Import Card
-                      </MenuItem>
-                      <MenuItem onClick={handleClose}>
-                        <FileCopyTwoToneIcon sx={{ mr: 1.75 }} /> Copy Data
-                      </MenuItem>
-                      <MenuItem onClick={handleClose}>
-                        <PictureAsPdfTwoToneIcon sx={{ mr: 1.75 }} /> Export
-                      </MenuItem>
-                      <MenuItem onClick={handleClose}>
-                        <ArchiveTwoToneIcon sx={{ mr: 1.75 }} /> Archive File
-                      </MenuItem>
-                    </Menu>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item>
-                <Grid container alignItems="center">
-                  <Grid item>
-                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>$50.0</Typography>
-                  </Grid>
-                  <Grid item>
-                    <Avatar
-                      sx={{
-                        cursor: 'pointer',
-                        ...theme.typography.smallAvatar,
-                        backgroundColor: theme.palette.secondary[200],
-                        color: theme.palette.secondary.dark
-                      }}
-                    >
-                      <ArrowUpwardIcon fontSize="inherit" sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }} />
-                    </Avatar>
-                  </Grid>
-                </Grid>
+                <Typography
+                  sx={{
+                    fontSize: '2rem',
+                    fontWeight: 500,
+                    mr: 1,
+                    mt: 1.75,
+                    mb: 0.75
+                  }}
+                >
+                  {customerCount}
+                </Typography>
               </Grid>
               <Grid item sx={{ mb: 1.25 }}>
                 <Typography
                   sx={{
-                    fontSize: '1rem',
-                    fontWeight: 500,
-                    color: theme.palette.secondary[200]
+                    fontSize: '1.2rem',
+                    fontWeight: 600,
+                    color: '#ffff'
                   }}
                 >
-                  Total Contact
+                  Active Customers
                 </Typography>
               </Grid>
             </Grid>
+            <TopRightIcon>
+              <IconUser size={30} color="#1e88e5" />
+            </TopRightIcon>
           </Box>
         </CardWrapper>
       )}

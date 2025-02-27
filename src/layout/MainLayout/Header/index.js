@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -16,12 +17,19 @@ import { IconMenu2 } from '@tabler/icons';
 const Header = ({ handleLeftDrawerToggle }) => {
   const theme = useTheme();
 
+  const [user, setUser] = useState('');
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem('email');
+    setUser(storedUsername || 'Guest');
+  }, []);
+
   return (
     <>
       {/* logo & toggler button */}
       <Box
         sx={{
-          width: 228,
+          width: 208,
           display: 'flex',
           [theme.breakpoints.down('md')]: {
             width: 'auto'
@@ -52,29 +60,20 @@ const Header = ({ handleLeftDrawerToggle }) => {
           </Avatar>
         </ButtonBase>
       </Box>
-      &nbsp;&nbsp;  &nbsp;&nbsp;  &nbsp;&nbsp;
-      
-{/* heading */}
-<Box
-  sx={{
-    flexGrow: 1,
-    fontSize: '20px',
-    fontWeight: 600,
-    fontFamily: 'Playfair Display, serif', 
-    textAlign: 'left',
-    color: '#0054a6',
-    backgroundImage: 'linear-gradient(90deg, #2b2d42, #3a3d5e)', 
-    textShadow: '2px 2px 8px rgba(43, 45, 66, 0.3)', 
-    backgroundClip: 'text',
-    WebkitBackgroundClip: 'text',
-    padding: '10px 0',
-    transition: 'all 0.3s ease',
-  }}
->
-  Inventory - Efficient Tracking and Management
-</Box>
-
-
+      &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+      {/* heading */}
+      <Box
+        sx={{
+          flexGrow: 1,
+          fontSize: '18px',
+          fontWeight: 500,
+          fontFamily: 'Playfair Display, serif',
+          textAlign: 'left',
+          paddingTop: '7px'
+        }}
+      >
+        Welcome , {user}
+      </Box>
       <ProfileSection />
     </>
   );

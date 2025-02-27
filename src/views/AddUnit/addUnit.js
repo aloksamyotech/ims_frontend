@@ -22,12 +22,11 @@ const AddUnit = ({ open, handleClose, onUnitAdded }) => {
       setIsSubmitting(true);
       try {
         const response = await addUnit(values);
-        onUnitAdded(response.data);
+        onUnitAdded(response?.data);
         handleClose();
         toast.success('Unit added successfully');
         resetForm();
       } catch (error) {
-        console.error(error);
         toast.error('Failed to add unit');
       } finally {
         setIsSubmitting(false);

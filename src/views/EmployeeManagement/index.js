@@ -1,58 +1,162 @@
-import { useState, useEffect } from 'react';
-import { Stack, Button, Container, IconButton, Typography, Card, Box, Dialog } from '@mui/material';
-import TableStyle from '../../ui-component/TableStyle';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import React, { useState, useEffect } from 'react';
+import {
+  Stack,
+  Grid,
+  IconButton,
+  Breadcrumbs,
+  Link as MuiLink,
+  Paper,
+  Tooltip,
+  Container,
+  Typography,
+  Box,
+  Avatar
+} from '@mui/material';
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarExport,
+  GridToolbarQuickFilter
+} from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { fetchUsers, deleteUser } from 'apis/api.js';
-import { toast } from 'react-toastify';
-import ViewUser from './view.js';
-import UpdateUser from './updateEmployee.js';
+import AddIcon from '@mui/icons-material/Add';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import HomeIcon from '@mui/icons-material/Home';
+import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import moment from 'moment';
-import ChangePassword from './changePassword.js';
+import { getUserId } from 'apis/constant.js';
+import { deleteEmployee ,fetchEmployees } from 'apis/api.js';
+import AddEmployee from './addEmployee.js';
+import UpdateEmployee from './updateEmployee.js';
+import TableStyle from '../../ui-component/TableStyle';
 
 const User = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
-  const [openView, setOpenView] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
-  const [openChangePassword, setOpenChangePassword] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentEmployee, setCurrentEmployee] = useState(null);
+
+  const loadEmployees = async () => {
+    try {
+      const userId = getUserId();
+      const response = await fetchEmployees({userId});
+      setUsers(response?.data || []);
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
 
   useEffect(() => {
-    const loadUsers = async () => {
-      try {
-        const response = await fetchUsers();
-        setUsers(response.data);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
-    loadUsers();
+    loadEmployees();
   }, []);
 
+  const generateRandomAvatar = (name) => {
+    if (!name) return '';
+    return name
+      .split(' ')
+      .map((word) => word[0])
+      .join('');
+  };
+
+  const CustomToolbar = () => (
+    <GridToolbarContainer
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '5px'
+      }}
+    >
+      <GridToolbarQuickFilter
+        placeholder="Search..."
+        style={{
+          width: '250px',
+          backgroundColor: '#ffff',
+          borderRadius: '8px',
+          padding: '5px 10px',
+          border: '1px solid beige'
+        }}
+      />
+      <Stack direction="row" spacing={2} alignItems="center">
+        <GridToolbarExport style={{ fontSize: 14 }} />
+        <Tooltip title="Add Employee" arrow>
+          <IconButton
+            onClick={() => setOpenAdd(true)}
+            sx={{
+              backgroundColor: '#1e88e5',
+              borderRadius: '50%',
+              width: '35px',
+              height: '35px',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: '#1565c0'
+              }
+            }}
+          >
+            <AddIcon />
+          </IconButton>
+        </Tooltip>
+      </Stack>
+    </GridToolbarContainer>
+  );
+
   const columns = [
-    { field: 'name', headerName: 'Name', flex: 0.8},
-    { field: 'email', headerName: 'Email', flex: 1},
-    { field: 'phone', headerName: 'Phone', flex: 0.8},
+    {
+      field: 'avatar',
+      headerName: '#',
+      flex: 0.2,
+      sortable: false,
+      renderCell: (params) => (
+        <Avatar
+          sx={{
+            bgcolor: '#673ab7',
+            color: '#ffff',
+            width: 40,
+            height: 40,
+            fontSize: 14
+          }}
+        >
+          {generateRandomAvatar(params.row.name)}
+        </Avatar>
+      )
+    },
+    {
+      field: 'name',
+      headerName: 'Employee Name',
+      flex: 1.5,
+      renderCell: (params) => (
+        <Box ml={1}>
+          <Typography variant="h5">{params.row?.name || 'N/A'}</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {params.row?.email || 'No Email'}
+          </Typography>
+        </Box>
+      )
+    },
+    { field: 'phone', headerName: 'Phone', flex: 1 },
+    { field: 'address', headerName: 'Address', flex: 1 },
     {
       field: 'date',
       headerName: 'Date',
       flex: 0.7,
-      valueGetter: (params) => moment(params.row.createdAt).format('DD-MM-YYYY')
+      valueGetter: (params) => moment(params.row?.createdAt).format('DD-MM-YYYY')
     },
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 2,
+      flex: 1,
+      minWidth: 250,
       renderCell: (params) => (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row">
           <Box
             sx={{
-              backgroundColor: '#e3f2fd',
               borderRadius: '8px',
               padding: '8px',
-              '&:hover': { backgroundColor: '#bbdefb' },
+              paddingTop: '8px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -60,16 +164,26 @@ const User = () => {
               height: '40px'
             }}
           >
-            <IconButton size="small" onClick={() => handleView(params.row)} color="primary" sx={{ padding: 0 }}>
+            <IconButton
+              size="small"
+              onClick={() => handleView(params.row?._id)}
+              color="primary"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#9abfdd',
+                  color: '#1976d2'
+                }
+              }}
+            >
               <VisibilityIcon />
             </IconButton>
           </Box>
+
           <Box
             sx={{
-              backgroundColor: '#fff3e0',
               borderRadius: '8px',
               padding: '8px',
-              '&:hover': { backgroundColor: '#ffe0b2' },
+              paddingTop: '8px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -77,127 +191,170 @@ const User = () => {
               height: '40px'
             }}
           >
-            <IconButton size="small" onClick={() => handleEdit(params.row)}>
-              <EditIcon sx={{ color: '#ff9800' }} />
-            </IconButton>
-          </Box>
-          <Box
-            sx={{
-              backgroundColor: '#ffebee',
-              borderRadius: '8px',
-              padding: '8px',
-              '&:hover': { backgroundColor: '#ef9a9a' },
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '40px',
-              height: '40px'
-            }}
-          >
-            <IconButton size="small" onClick={() => handleDelete(params.row._id)} color="error">
-              <DeleteIcon />
-            </IconButton>
-          </Box>
-          <Box
-            sx={{
-              backgroundColor: '#34a853',
-              borderRadius: '5px',
-              padding: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '160px',
-              height: '25px', 
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              cursor: 'pointer',
-              fontSize : '12px',
-            }}
-            onClick={() => handleChangePassword(params.row)}
-          >
-            <Typography
-              variant="body2"
+            <IconButton
+              size="small"
+              onClick={() => handleEdit(params.row)}
+              color="secondary"
               sx={{
-                color: 'white',
-                textTransform: 'uppercase',
-                fontWeight: 'bold'
+                '&:hover': {
+                  backgroundColor: '#d7cde6',
+                  color: '#512995'
+                }
               }}
             >
-              Change Password
-            </Typography>
+              <EditIcon />
+            </IconButton>
+          </Box>
+
+          <Box
+            sx={{
+              borderRadius: '8px',
+              padding: '8px',
+              paddingTop: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px'
+            }}
+          >
+            <IconButton
+              size="small"
+              onClick={() => handleDelete(params.row?._id)}
+              color="error"
+              sx={{
+                '&:hover': {
+                  backgroundColor: '#ffcccc',
+                  color: '#d32f2f'
+                }
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
           </Box>
         </Stack>
       )
     }
   ];
 
-  const handleView = (user) => {
-    console.log('Viewing user:', user);
-    setCurrentUser(user);
-    setOpenView(true);
+  const handleView = (_id) => {
+    navigate(`/dashboard/employee/view-employee/${_id}`);
   };
 
-  const handleEdit = (user) => {
-    setCurrentUser(user);
+  const handleOpenAdd = () => {
+    setCurrentEmployee(null);
+    setOpenAdd(true);
+  };
+
+  const handleEdit = (employee) => {
+    setCurrentEmployee(employee);
     setOpenUpdate(true);
   };
 
-  const handleDelete = async (_id) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      try {
-        await deleteUser(_id);
-        setUsers((prev) => prev.filter((user) => user._id !== _id));
-        toast.success('User deleted successfully');
-      } catch (error) {
-        console.error('Error deleting user:', error);
-        toast.error('Error deleting user');
-      }
-    }
+  const handleEmployeeAdded = (newEmployee) => {
+    setUsers((prev) => [...prev, newEmployee]);
+    setOpenAdd(false);
+    loadEmployees();
   };
 
-  const handleUserUpdated = (updatedUser) => {
-    setUsers((prev) => prev.map((user) => (user._id === updatedUser._id ? updatedUser : user)));
+  const handleEmployeeUpdated = (updatedEmployee) => {
+    setUsers((prev) =>
+      prev.map((employee) =>
+        employee._id === updatedEmployee._id ? updatedEmployee : employee
+      )
+    );
     setOpenUpdate(false);
+    loadEmployees();
   };
 
-  const handleChangePassword = (user) => {
-    setCurrentUser(user);
-    setOpenChangePassword(true);
+  const handleDelete = async (_id) => {
+    try {
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      });
+
+      if (result.isConfirmed) {
+        await deleteEmployee(_id);
+        setUsers((prev) => prev.filter((employee) => employee?._id !== _id));
+        Swal.fire('Deleted!', 'Your employee has been deleted.', 'success');
+      }
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+    }
   };
 
   return (
     <>
-      <UpdateUser open={openUpdate} handleClose={() => setOpenUpdate(false)} user={currentUser} onUpdateUser={handleUserUpdated} />
-      <ViewUser open={openView} handleClose={() => setOpenView(false)} user={currentUser} />
-      <ChangePassword
-        open={openChangePassword}
-        handleClose={() => setOpenChangePassword(false)}
-        user={currentUser}
-        onchangePassword={handleChangePassword}
+      <AddEmployee
+        open={openAdd}
+        handleClose={() => setOpenAdd(false)}
+        onEmployeeAdded={handleEmployeeAdded}
       />
+      <UpdateEmployee
+        open={openUpdate}
+        handleClose={() => setOpenUpdate(false)}
+        employee={currentEmployee}
+        onUpdateEmployee={handleEmployeeUpdated}
+      />
+      <Grid>
+        <Box
+          sx={{
+            backgroundColor: '#ffff',
+            padding: '10px',
+            borderRadius: '8px',
+            display: 'flex',
+            justifyContent: 'space-between'
+          }}
+        >
+          <Typography variant="h4">Employees</Typography>
+          <Breadcrumbs
+            separator={<NavigateNextIcon fontSize="small" />}
+            aria-label="breadcrumb"
+          >
+            <MuiLink component={Link} to="/dashboard/default" color="inherit">
+              <HomeIcon sx={{ color: '#5e35b1' }} />
+            </MuiLink>
+            <Typography color="text.primary">Employees</Typography>
+          </Breadcrumbs>
+        </Box>
 
-      <Container>
-        <Stack direction="row" alignItems="center" mb={5} justifyContent={'space-between'}>
-          <Typography variant="h4" paddingTop={5}>
-            Users List
-          </Typography>
-        </Stack>
         <TableStyle>
-          <Box width="100%" overflow="hidden">
-            <Card style={{ height: '600px', paddingTop: '5px', overflow: 'auto' }}>
-                <DataGrid
-                  rows={users}
-                  columns={columns}
-                  checkboxSelection
-                  getRowId={(row) => row._id}
-                  slots={{ toolbar: GridToolbar }}
-                  slotProps={{ toolbar: { showQuickFilter: true } }}
-                  stickyHeader
-                  style={{ minWidth: '800px', overflow: 'auto' }}
-                />
-            </Card>
+          <Box width="100%">
+            <Paper style={{ height: '600px', marginTop: '20px' }}>
+              <DataGrid
+                rows={users}
+                columns={columns}
+                getRowId={(row) => row._id}
+                rowHeight={55}
+                components={{
+                  Toolbar: () => <CustomToolbar handleOpenAdd={handleOpenAdd} />
+                }}
+                pageSizeOptions={[5, 10, 25]}
+                initialState={{
+                  pagination: {
+                    paginationModel: { pageSize: 10, page: 0 }
+                  }
+                }}
+                pagination
+                sx={{
+                  '& .MuiDataGrid-row': {
+                    borderBottom: '1px solid #ccc'
+                  },
+                  '& .MuiDataGrid-columnHeaderTitle': {
+                    fontWeight: 'bold'
+                  }
+                }}
+              />
+            </Paper>
           </Box>
         </TableStyle>
-      </Container>
+      </Grid>
     </>
   );
 };

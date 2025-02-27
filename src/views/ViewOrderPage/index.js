@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ViewInvoice from './viewInvoicePage.js';
+import ViewInvoice from './viewOrderPage.js';
 
 const ShowInvoice = () => {
   return (

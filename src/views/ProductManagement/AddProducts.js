@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Button,
   Dialog,
@@ -9,6 +9,7 @@ import {
   TextField,
   FormControl,
   FormLabel,
+  Autocomplete,
   Select,
   MenuItem,
   FormHelperText,
@@ -19,27 +20,32 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import ClearIcon from '@mui/icons-material/Clear';
-import axios from 'axios';
-import { addProduct, fetchCategories, fetchUnits } from 'apis/api.js';
+import { addApi } from 'apis/common.js';
+import { fetchCategories } from 'apis/api.js';
+import { getUserId } from 'apis/constant.js';
+import { throttle } from 'lodash';
 
-const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
+const AddProductPage = ({ open, handleClose, product, onProductAdded, loadProducts }) => {
   const [image, setImage] = useState('');
+  const [products, setProducts] = useState([]);
   const [clist, setCatList] = useState([]);
-  const [ulist, setUnitList] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationSchema = yup.object({
-    productnm: yup.string().max(50, 'Max 50 characters are allowed').required('Product name is required'),
-    catnm: yup.string().required('Product Category is required'),
-    unitnm: yup.string().required('Unit is required'),
+    productnm: yup.string().max(50, 'Max 30 characters are allowed').required('Product name is required'),
     buyingPrice: yup
       .number()
       .required('Buying Price is required')
       .positive('Must be a positive number')
       .max(1000000, 'Price cannot exceed Rs.1000000'),
-    sellingPrice: yup.number().required('Selling price is required').max(1500000, 'Price cannot exceed Rs.1500000'),
-    tax: yup.number().max(20, 'Max 20% tax is allowed').required('Tax is required'),
-    notes: yup.string().max(400, 'Max 400 words are allowed')
+    sellingPrice: yup
+      .number()
+      .required('Selling price is required')
+      .positive('Must be a positive number')
+      .max(1500000, 'Price cannot exceed Rs.1500000'),
+    tax: yup.number().max(50, 'Max 50% tax is allowed').required('Tax is required'),
+    notes: yup.string().max(400, 'Max 400 words are allowed'),
+    quantityAlert: yup.number().required('Quantity alert is required').max(50, 'Max 50 quantity is allowed')
   });
 
   const initialValues = {
@@ -48,6 +54,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
     unitnm: 'pieces',
     buyingPrice: '',
     sellingPrice: '',
+    quantityAlert: '',
     tax: '',
     notes: '',
     image: null
@@ -56,41 +63,39 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
   const formik = useFormik({
     initialValues,
     validationSchema,
+    enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
-      console.log('values : ', values);
-
       setIsSubmitting(true);
+      const userId = getUserId();
       try {
         const formData = new FormData();
         formData.append('productnm', values.productnm);
         formData.append('categoryId', values.catnm);
-        formData.append('unitId', values.unitnm);
         formData.append('buyingPrice', values.buyingPrice);
         formData.append('sellingPrice', values.sellingPrice);
+        formData.append('quantityAlert', values.quantityAlert);
         formData.append('tax', values.tax);
         formData.append('margin', values.margin);
         formData.append('notes', values.notes);
+        formData.append('userId', userId);
         if (values.image) {
           formData.append('image', values.image);
         }
-        formData.forEach((value, key) => {
-          console.log(`${key}: ${value}`);
+        const response = await addApi('/product/save', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
         });
-        const response = await axios.post('http://localhost:4200/product/save', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        console.log('Product added successfully:', response.data);
-        toast.success('Product added successfully');
+        if (onProductAdded) {
+          onProductAdded(response.data);
+          loadProducts();
+          toast.success('Product added successfully');
+        }
         resetForm();
         setImage(null);
-        handleClose();
       } catch (error) {
-        console.error('Error:', error);
         toast.error('Failed to add product');
       } finally {
         setIsSubmitting(false);
+        handleClose();
       }
     }
   });
@@ -99,9 +104,10 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
     const fetchData = async () => {
       try {
         const categoryResult = await fetchCategories();
-        setCatList(categoryResult.data);
-        const unitResult = await fetchUnits();
-        setUnitList(unitResult.data);
+        const allCategories = categoryResult?.data;
+        const userId = getUserId();
+        const filteredCategories = allCategories.filter((category) => category.userId === userId);
+        setCatList(filteredCategories);
       } catch (error) {
         console.error(error);
       }
@@ -117,14 +123,16 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
     }
   }, [formik.values.buyingPrice, formik.values.sellingPrice]);
 
+  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 3000), [formik.handleSubmit]);
+
   return (
     <Dialog
       open={open}
       onClose={handleClose}
       PaperProps={{
         style: {
-          width: '900px',
-          height: '900px',
+          width: '600px',
+          height: '600px',
           maxWidth: 'none'
         }
       }}
@@ -135,10 +143,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
       </DialogTitle>
 
       <DialogContent dividers>
-        <form onSubmit={formik.handleSubmit}>
-          <Typography style={{ marginBottom: '15px' }} variant="h4">
-            Product Details
-          </Typography>
+        <form onSubmit={throttledSubmit}>
           <Grid container rowSpacing={2} columnSpacing={{ xs: 0, sm: 5, md: 2 }}>
             <Grid item xs={12} sm={6}>
               <FormLabel>Product Name</FormLabel>
@@ -146,6 +151,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 required
                 id="productnm"
                 name="productnm"
+                size="small"
                 fullWidth
                 value={formik.values.productnm}
                 onChange={formik.handleChange}
@@ -157,38 +163,40 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <FormLabel>Product Category</FormLabel>
-                <Select required id="catnm" name="catnm" value={formik.values.catnm} onChange={formik.handleChange}>
-                  {clist.map((category) => (
-                    <MenuItem key={category._id} value={category._id}>
-                      {category.catnm}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText error>{formik.touched.catnm && formik.errors.catnm}</FormHelperText>
+                <Autocomplete
+                  id="catnm"
+                  options={clist}
+                  getOptionLabel={(option) => option.catnm}
+                  value={clist.find((cat) => cat._id === formik.values.catnm) || null}
+                  onChange={(event, newValue) => {
+                    formik.setFieldValue('catnm', newValue ? newValue._id : '');
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      variant="outlined"
+                      error={formik.touched.catnm && Boolean(formik.errors.catnm)}
+                      helperText={formik.touched.catnm && formik.errors.catnm}
+                    />
+                  )}
+                  ListboxProps={{
+                    style: {
+                      maxHeight: 200,
+                      overflow: 'auto'
+                    }
+                  }}
+                />
               </FormControl>
             </Grid>
-
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <FormLabel>Unit</FormLabel>
-                <Select required id="unitnm" name="unitnm" value={formik.values.unitnm} onChange={formik.handleChange}>
-                  {ulist.map((unit) => (
-                    <MenuItem key={unit._id} value={unit._id}>
-                      {unit.unitnm}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText error>{formik.touched.unitnm && formik.errors.unitnm}</FormHelperText>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <FormLabel>Buying Price</FormLabel>
+              <FormLabel>Buying Price / unit</FormLabel>
               <TextField
                 required
                 id="buyingPrice"
                 name="buyingPrice"
                 type="number"
+                size="small"
                 fullWidth
                 value={formik.values.buyingPrice}
                 onChange={formik.handleChange}
@@ -198,17 +206,34 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
             </Grid>
 
             <Grid item xs={12} sm={6}>
-              <FormLabel>Selling Price</FormLabel>
+              <FormLabel>Selling Price / unit</FormLabel>
               <TextField
                 required
                 id="sellingPrice"
                 name="sellingPrice"
                 type="number"
+                size="small"
                 fullWidth
                 value={formik.values.sellingPrice}
                 onChange={formik.handleChange}
                 error={formik.touched.sellingPrice && Boolean(formik.errors.sellingPrice)}
                 helperText={formik.touched.sellingPrice && formik.errors.sellingPrice}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <FormLabel>Quantity Alert</FormLabel>
+              <TextField
+                required
+                id="quantityAlert"
+                name="quantityAlert"
+                type="number"
+                size="small"
+                fullWidth
+                value={formik.values.quantityAlert}
+                onChange={formik.handleChange}
+                error={formik.touched.quantityAlert && Boolean(formik.errors.quantityAlert)}
+                helperText={formik.touched.quantityAlert && formik.errors.quantityAlert}
               />
             </Grid>
 
@@ -219,6 +244,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 id="tax"
                 name="tax"
                 type="number"
+                size="small"
                 fullWidth
                 value={formik.values.tax}
                 onChange={formik.handleChange}
@@ -234,6 +260,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
                 id="margin"
                 name="margin"
                 type="number"
+                size="small"
                 fullWidth
                 value={formik.values.margin}
                 onChange={formik.handleChange}
@@ -248,6 +275,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded }) => {
               <TextField
                 id="notes"
                 name="notes"
+                size="small"
                 fullWidth
                 value={formik.values.notes}
                 onChange={formik.handleChange}
