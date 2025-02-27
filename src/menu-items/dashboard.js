@@ -17,7 +17,7 @@ import {
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import SmartToyIcon  from '@mui/icons-material/SmartToy';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 
 const icons = {
   IconHome,
@@ -37,7 +37,7 @@ const icons = {
   TrendingDownIcon,
   MonetizationOnIcon,
   SmartToyIcon,
-  AssessmentIcon,
+  AssessmentIcon
 };
 import AdminDashboard from 'views/dashboard/Default';
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
@@ -66,18 +66,18 @@ export const dashboard = {
     },
     {
       id: '01',
-      title: 'Employee Management',
-      type: 'item',
-      url: '/dashboard/employee',
-      icon: icons.IconAccessible,
-      breadcrumbs: false
-    },
-    {
-      id: '02',
       title: 'Statistics',
       type: 'item',
       url: '/dashboard/statistics',
       icon: icons.AssessmentIcon,
+      breadcrumbs: false
+    },
+    {
+      id: '02',
+      title: 'Category',
+      type: 'item',
+      url: '/dashboard/category',
+      icon: icons.IconCategory,
       breadcrumbs: false
     },
     {
@@ -90,44 +90,12 @@ export const dashboard = {
     },
     {
       id: '04',
-      title: 'Low-Stocks',
-      type: 'item',
-      url: '/dashboard/product-report',
-      icon: icons.TrendingDownIcon,
-      breadcrumbs: false
-    },
-    {
-      id: '05',
-      title: 'Financial Summary',
-      type: 'item',
-      url: '/dashboard/financial',
-      icon: icons.MonetizationOnIcon,
-      breadcrumbs: false
-    },
-    {
-      id: '06',
-      title: 'Orders',
-      type: 'item',
-      url: '/dashboard/orders',
-      icon: icons.IconBriefcase,
-      breadcrumbs: false
-    },
-    {
-      id: '07',
-      title: 'Purchases',
-      type: 'item',
-      url: '/dashboard/purchases',
-      icon: icons.IconShoppingCart,
-      breadcrumbs: false
-    },
-    {
-      id: '08',
       title: 'Clients',
       type: 'collapse',
       icon: icons.IconUsers,
       children: [
         {
-          id: '09',
+          id: '05',
           title: 'Suppliers',
           type: 'item',
           url: '/dashboard/suppliers',
@@ -135,7 +103,7 @@ export const dashboard = {
           breadcrumbs: false
         },
         {
-          id: '10',
+          id: '06',
           title: 'Customers',
           type: 'item',
           url: '/dashboard/customers',
@@ -145,11 +113,43 @@ export const dashboard = {
       ]
     },
     {
-      id: '11',
-      title: 'Category',
+      id: '07',
+      title: 'Orders',
       type: 'item',
-      url: '/dashboard/category',
-      icon: icons.IconCategory,
+      url: '/dashboard/orders',
+      icon: icons.IconBriefcase,
+      breadcrumbs: false
+    },
+    {
+      id: '08',
+      title: 'Purchases',
+      type: 'item',
+      url: '/dashboard/purchases',
+      icon: icons.IconShoppingCart,
+      breadcrumbs: false
+    },
+    {
+      id: '09',
+      title: 'Low-Stocks',
+      type: 'item',
+      url: '/dashboard/product-report',
+      icon: icons.TrendingDownIcon,
+      breadcrumbs: false
+    },
+    {
+      id: '10',
+      title: 'Financial Summary',
+      type: 'item',
+      url: '/dashboard/financial',
+      icon: icons.MonetizationOnIcon,
+      breadcrumbs: false
+    },
+    {
+      id: '11',
+      title: 'Employee Management',
+      type: 'item',
+      url: '/dashboard/employee',
+      icon: icons.IconAccessible,
       breadcrumbs: false
     },
     {
@@ -175,7 +175,7 @@ export const dashboard = {
       url: '/dashboard/profile',
       icon: icons.IconUser,
       breadcrumbs: false
-    },
+    }
   ]
 };
 

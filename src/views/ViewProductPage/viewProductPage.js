@@ -139,23 +139,28 @@ const ViewProductPage = () => {
     );
   };
 
-  const filterDataByDate = (data) => {
-    const now = moment();
-    const last7Days = moment().subtract(7, 'days');
+  const filterDataByDate = (data, filter) => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(now.getDate() - 7);
+
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(now.getMonth() - 1);
 
     return data.filter((report) => {
-      const reportDate = moment(report.createdAt);
+      const reportDate = new Date(report?.createdAt);
+      reportDate.setHours(0, 0, 0, 0);
 
-      switch (selectedDateRange) {
-        case 'Daily':
-          return reportDate.isSame(now, 'day');
-        case 'Weekly':
-          return reportDate.isBetween(last7Days, now, null, '[]');
-        case 'Monthly':
-          return reportDate.isSame(now, 'month');
-        case 'All':
-        default:
-          return true;
+      if (filter === 'Daily') {
+        return reportDate.getTime() === now.getTime();
+      } else if (filter === 'Last 7 Days') {
+        return reportDate >= oneWeekAgo && reportDate <= now;
+      } else if (filter === 'Monthly') {
+        return reportDate >= oneMonthAgo && reportDate <= now;
+      } else {
+        return true;
       }
     });
   };
@@ -181,11 +186,6 @@ const ViewProductPage = () => {
               backgroundColor:
                 status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
               color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-              '&:hover': {
-                backgroundColor:
-                  status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-                color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-              },
               padding: '1px',
               borderRadius: '30px',
               display: 'flex',
@@ -257,28 +257,23 @@ const ViewProductPage = () => {
         const status = params.row?.order_status;
         return (
           <Box
-            sx={{
-              backgroundColor:
-                status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
-              color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-              '&:hover': {
-                backgroundColor:
-                  status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-                color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-              },
-              padding: '1px',
-              borderRadius: '4px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              width: '90px',
-              height: '20px',
-              textTransform: 'uppercase',
-              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              gap: '0.5rem',
-              fontSize: '12px'
-            }}
+          sx={{
+            backgroundColor:
+              status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
+            color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
+            padding: '1px',
+            borderRadius: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 'bold',
+            width: '90px',
+            height: '20px',
+            textTransform: 'uppercase',
+            boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+            gap: '0.5rem',
+            fontSize: '12px'
+          }}
           >
             {status}
           </Box>
@@ -349,8 +344,8 @@ const ViewProductPage = () => {
     };
   });
 
-  const filteredOrderData = filterDataByDate(formattedOrderData);
-  const filteredPurchaseData = filterDataByDate(formattedPurchaseData);
+  const filteredOrderData = filterDataByDate(formattedOrderData , selectedDateRange);
+  const filteredPurchaseData = filterDataByDate(formattedPurchaseData, selectedDateRange);
 
   return (
     <Grid>

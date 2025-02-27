@@ -122,12 +122,8 @@ const Supplier = () => {
             sx={{
               backgroundColor: '#e3f2fd',
               color: '#2196f3',
-              '&:hover': {
-                backgroundColor: '#2196f3',
-                color: 'white'
-              },
               padding: '1px',
-              borderRadius: '4px',
+              borderRadius: '30px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

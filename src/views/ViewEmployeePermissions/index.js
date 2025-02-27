@@ -3,6 +3,7 @@ import {
   Box,
   styled,
   Card,
+  TextField,
   CardContent,
   Grid,
   Breadcrumbs,
@@ -13,17 +14,21 @@ import {
   Typography,
   Paper,
   Tabs,
-  Tab
+  Tab,
+  Avatar,
+  Divider
 } from '@mui/material';
 import { toast } from 'react-toastify';
 import { useParams, Link } from 'react-router-dom';
 import moment from 'moment';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import SecurityIcon from '@mui/icons-material/Security';
 import { fetchEmployeeById } from 'apis/api.js';
 import { fetchApi, addApi } from 'apis/common.js';
+import EmailIcon from '@mui/icons-material/Email';
+import PhoneIcon from '@mui/icons-material/Phone';
+import HomeIcon from '@mui/icons-material/Home';
 
 const TabContentCard = styled(Card)(({ theme }) => ({
   boxShadow: theme.shadows[3],
@@ -33,20 +38,18 @@ const TabContentCard = styled(Card)(({ theme }) => ({
 
 const permissionsList = [
   { id: 'default', label: 'Dashboard' },
-  { id: '01', label: 'Employee Management' },
-  { id: '02', label: 'Statistics' },
+  { id: '01', label: 'Statistics' },
+  { id: '02', label: 'Category' },
   { id: '03', label: 'Products' },
-  { id: '04', label: 'Low-Stocks' },
-  { id: '05', label: 'Financial Summary' },
-  { id: '06', label: 'Orders' },
-  { id: '07', label: 'Purchases' },
-  { id: '08', label: 'Clients' },
-  { id: '08', label: 'Suppliers' },
-  { id: '08', label: 'Customers' },
-  { id: '09', label: 'Category' },
-  { id: '10', label: 'Reports' },
-  { id: '11', label: 'Subscription' },
-  { id: '12', label: 'Profile' },
+  { id: '04', label: 'Clients' },
+  { id: '05', label: 'Suppliers' },
+  { id: '06', label: 'Customers' },
+  { id: '07', label: 'Orders' },
+  { id: '08', label: 'Purchases' },
+  { id: '09', label: 'Low-Stocks' },
+  { id: '10', label: 'Financial Summary' },
+  { id: '12', label: 'Reports' },
+  { id: '14', label: 'Profile' }
 ];
 
 const ViewEmployeePage = () => {
@@ -82,11 +85,23 @@ const ViewEmployeePage = () => {
   }, [id]);
 
   const handleCheckboxChange = (permissionId) => {
-    if (selectedPermissions.includes(permissionId)) {
-      setSelectedPermissions(selectedPermissions.filter((id) => id !== permissionId));
+    let updatedPermissions = [...selectedPermissions];
+
+    if (updatedPermissions.includes(permissionId)) {
+      if (permissionId === '04') {
+        updatedPermissions = updatedPermissions.filter((id) => id !== '04' && id !== '05' && id !== '06');
+      } else {
+        updatedPermissions = updatedPermissions.filter((id) => id !== permissionId);
+      }
     } else {
-      setSelectedPermissions([...selectedPermissions, permissionId]);
+      updatedPermissions.push(permissionId);
+
+      if (permissionId === '04') {
+        updatedPermissions.push('05', '06');
+      }
     }
+
+    setSelectedPermissions(updatedPermissions);
   };
 
   const savePermissions = async () => {
@@ -157,43 +172,78 @@ const ViewEmployeePage = () => {
         </Tabs>
 
         {activeTab === 0 && (
-          <CardContent sx={{ m: 1 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    textTransform: 'uppercase',
-                    fontWeight: 'bold',
-                    fontSize: '1rem'
-                  }}
-                >
-                  {empData?.name || 'NA'}
-                </Typography>
-              </Grid>
+          <Grid container spacing={3} p={2}>
+            <Grid item xs={12} md={6}>
+              <Box p={2} boxShadow={3} borderRadius={2} bgcolor="background.paper">
+                <Card>
+                  <CardContent>
+                    <Box display="flex" alignItems="center" mb={2}>
+                      <Avatar sx={{ width: 56, height: 56, bgcolor: 'primary', mr: 2 }}>
+                        {empData?.name ? empData.name.charAt(0).toUpperCase() : 'N'}
+                      </Avatar>
+                      <Typography variant="h6" fontWeight="bold">
+                        Personal Information
+                      </Typography>
+                    </Box>
+                    <Divider sx={{ mb: 2 }} />
 
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Email:</strong> {empData?.email || 'NA'}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Phone:</strong> {empData?.phone || 'NA'}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Address:</strong> {empData?.address || 'NA'}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="body1">
-                  <strong>Date:</strong> {moment(empData?.createdAt).format('DD-MM-YYYY')}
-                </Typography>
-              </Grid>
+                    <TextField fullWidth label="Full Name" value={empData?.name || 'NA'} InputProps={{ readOnly: true }} margin="normal" />
+                    <TextField
+                      fullWidth
+                      label="Joining Date"
+                      value={moment(empData?.createdAt).format('DD-MM-YYYY')}
+                      InputProps={{ readOnly: true }}
+                      margin="normal"
+                    />
+                  </CardContent>
+                </Card>
+              </Box>
             </Grid>
-          </CardContent>
+
+            <Grid item xs={12} md={6}>
+              <Box p={2} boxShadow={3} borderRadius={2} bgcolor="background.paper">
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" fontWeight="bold" gutterBottom>
+                      Contact Information
+                    </Typography>
+                    <Divider sx={{ mb: 2 }} />
+
+                    <TextField
+                      fullWidth
+                      label="Email"
+                      value={empData?.email || 'NA'}
+                      InputProps={{
+                        readOnly: true,
+                        startAdornment: <EmailIcon color="#caced4" sx={{ mr: 1 }} />
+                      }}
+                      margin="normal"
+                    />
+                    <TextField
+                      fullWidth
+                      label="Phone"
+                      value={empData?.phone || 'NA'}
+                      InputProps={{
+                        readOnly: true,
+                        startAdornment: <PhoneIcon color="#caced4" sx={{ mr: 1 }} />
+                      }}
+                      margin="normal"
+                    />
+                    <TextField
+                      fullWidth
+                      label="Address"
+                      value={empData?.address || 'NA'}
+                      InputProps={{
+                        readOnly: true,
+                        startAdornment: <HomeIcon color="#caced4" sx={{ mr: 1 }} />
+                      }}
+                      margin="normal"
+                    />
+                  </CardContent>
+                </Card>
+              </Box>
+            </Grid>
+          </Grid>
         )}
 
         {activeTab === 1 && (
@@ -216,7 +266,7 @@ const ViewEmployeePage = () => {
                   </Grid>
                 ))}
               </Grid>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button variant="contained" color="primary" onClick={savePermissions}>
                   Save Permissions
                 </Button>

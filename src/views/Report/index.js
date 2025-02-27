@@ -72,21 +72,28 @@ const ProductReport = () => {
     loadReport();
   }, []);
 
-  const filterDataByDate = (data) => {
-    const now = moment();
-    const last7Days = moment().subtract(7, 'days');
+  const filterDataByDate = (data, filter) => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(now.getDate() - 7);
+
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(now.getMonth() - 1);
+
     return data.filter((report) => {
-      const reportDate = moment(report?.date);
-      switch (selectedDateRange) {
-        case 'Daily':
-          return reportDate.isSame(now, 'day');
-        case 'Weekly':
-          return reportDate.isBetween(last7Days, now, null, '[]');
-        case 'Monthly':
-          return reportDate.isSame(now, 'month');
-        case 'All':
-        default:
-          return true;
+      const reportDate = new Date(report?.date);
+      reportDate.setHours(0, 0, 0, 0);
+
+      if (filter === 'Daily') {
+        return reportDate.getTime() === now.getTime();
+      } else if (filter === 'Last 7 Days') {
+        return reportDate >= oneWeekAgo && reportDate <= now;
+      } else if (filter === 'Monthly') {
+        return reportDate >= oneMonthAgo && reportDate <= now;
+      } else {
+        return true;
       }
     });
   };
@@ -222,10 +229,10 @@ const ProductReport = () => {
   };
 
   const flattenedOrderData = flattenOrderData(orderDetails);
-  const filteredOrderData = filterDataByDate(flattenedOrderData);
+  const filteredOrderData = filterDataByDate(flattenedOrderData, selectedDateRange);
 
   const flattenedPurchaseData = flattenPurchaseData(purchaseDetails);
-  const filteredPurchaseData = filterDataByDate(flattenedPurchaseData);
+  const filteredPurchaseData = filterDataByDate(flattenedPurchaseData, selectedDateRange);
 
   const CustomToolbar = () => {
     return (

@@ -66,7 +66,7 @@ const ProductReport = () => {
     const loadUsers = async () => {
       try {
         const response = await fetchUsers();
-        const nonAdminUsers = response?.data.filter(user => user.role !== 'admin') || [];
+        const nonAdminUsers = response?.data.filter((user) => user.role !== 'admin') || [];
         setUsers(nonAdminUsers);
       } catch (error) {
         toast.error('Error fetching users');
@@ -94,21 +94,28 @@ const ProductReport = () => {
     }
   }, [selectedUser]);
 
-  const filterDataByDate = (data) => {
-    const now = moment();
-    const last7Days = moment().subtract(7, 'days');
+  const filterDataByDate = (data, filter) => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(now.getDate() - 7);
+
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(now.getMonth() - 1);
+
     return data.filter((report) => {
-      const reportDate = moment(report?.date);
-      switch (selectedDateRange) {
-        case 'Daily':
-          return reportDate.isSame(now, 'day');
-        case 'Weekly':
-          return reportDate.isBetween(last7Days, now, null, '[]');
-        case 'Monthly':
-          return reportDate.isSame(now, 'month');
-        case 'All':
-        default:
-          return true;
+      const reportDate = new Date(report?.date);
+      reportDate.setHours(0, 0, 0, 0);
+
+      if (filter === 'Daily') {
+        return reportDate.getTime() === now.getTime();
+      } else if (filter === 'Last 7 Days') {
+        return reportDate >= oneWeekAgo && reportDate <= now;
+      } else if (filter === 'Monthly') {
+        return reportDate >= oneMonthAgo && reportDate <= now;
+      } else {
+        return true;
       }
     });
   };
@@ -163,39 +170,6 @@ const ProductReport = () => {
     { field: 'supplierPhone', headerName: 'Phone', width: 150 },
     { field: 'productName', headerName: 'Product Name', width: 180 },
     { field: 'quantity', headerName: 'Quantity', width: 110 },
-    // {
-    //   field: 'price',
-    //   headerName: 'Amount',
-    //   width: 120,
-    //   valueFormatter: ({ value }) => {
-    //     if (value != null) {
-    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
-    //     }
-    //     return '$0';
-    //   }
-    // },
-    // {
-    //   field: 'subtotal',
-    //   headerName: 'Subtotal',
-    //   width: 120,
-    //   valueFormatter: ({ value }) => {
-    //     if (value != null) {
-    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
-    //     }
-    //     return '$0';
-    //   }
-    // },
-    // {
-    //   field: 'tax',
-    //   headerName: 'Tax',
-    //   width: 100,
-    //   valueFormatter: ({ value }) => {
-    //     if (value != null) {
-    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
-    //     }
-    //     return '$0';
-    //   }
-    // },
     {
       field: 'total',
       headerName: 'Total Amount',
@@ -233,39 +207,6 @@ const ProductReport = () => {
     { field: 'customerPhone', headerName: 'Phone', width: 150 },
     { field: 'productName', headerName: 'Product Name', width: 180 },
     { field: 'quantity', headerName: 'Quantity', width: 110 },
-    // {
-    //   field: 'price',
-    //   headerName: 'Amount',
-    //   width: 120,
-    //   valueFormatter: ({ value }) => {
-    //     if (value != null) {
-    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
-    //     }
-    //     return '$0';
-    //   }
-    // },
-    // {
-    //   field: 'subtotal',
-    //   headerName: 'Subtotal',
-    //   width: 120,
-    //   valueFormatter: ({ value }) => {
-    //     if (value != null) {
-    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
-    //     }
-    //     return '$0';
-    //   }
-    // },
-    // {
-    //   field: 'tax',
-    //   headerName: 'Tax',
-    //   width: 100,
-    //   valueFormatter: ({ value }) => {
-    //     if (value != null) {
-    //       return ` ${currencySymbol} ${value.toLocaleString()}`;
-    //     }
-    //     return '$0';
-    //   }
-    // },
     {
       field: 'total',
       headerName: 'Total Amount',
@@ -316,10 +257,10 @@ const ProductReport = () => {
   };
 
   const flattenedOrderData = flattenOrderData(orderDetails);
-  const filteredOrderData = filterDataByDate(flattenedOrderData);
+  const filteredOrderData = filterDataByDate(flattenedOrderData ,selectedDateRange);
 
   const flattenedPurchaseData = flattenPurchaseData(purchaseDetails);
-  const filteredPurchaseData = filterDataByDate(flattenedPurchaseData);
+  const filteredPurchaseData = filterDataByDate(flattenedPurchaseData , selectedDateRange);
 
   const CustomToolbar = () => (
     <GridToolbarContainer
@@ -347,7 +288,7 @@ const ProductReport = () => {
               onChange={handleDateRangeChange}
               sx={{
                 borderRadius: '2px',
-                backgroundColor: '#ffffff',
+                backgroundColor: '#ffffff'
               }}
             >
               <MenuItem value="All">All</MenuItem>
@@ -397,32 +338,32 @@ const ProductReport = () => {
       </Box>
 
       <TabContentCard>
-          <Tabs value={selectedTab} onChange={handleTabChange} aria-label="product report tabs" sx={{ alignContent: 'center' }}>
-            <Tab
-              icon={<ShoppingCartIcon />}
-              iconPosition="start"
-              label="Sales"
-              sx={{
-                fontSize: '14px',
-                minWidth: 200,
-                fontWeight: 'bold',
-                textTransform: 'none',
-                color: selectedTab === 0 ? '#1976d2' : '#757070'
-              }}
-            />
-            <Tab
-              icon={<Inventory2Icon />}
-              iconPosition="start"
-              label="Purchases"
-              sx={{
-                fontSize: '14px',
-                minWidth: 200,
-                fontWeight: 'bold',
-                textTransform: 'none',
-                color: selectedTab === 1 ? '#1976d2' : '#757070'
-              }}
-            />
-          </Tabs>
+        <Tabs value={selectedTab} onChange={handleTabChange} aria-label="product report tabs" sx={{ alignContent: 'center' }}>
+          <Tab
+            icon={<ShoppingCartIcon />}
+            iconPosition="start"
+            label="Sales"
+            sx={{
+              fontSize: '14px',
+              minWidth: 200,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              color: selectedTab === 0 ? '#1976d2' : '#757070'
+            }}
+          />
+          <Tab
+            icon={<Inventory2Icon />}
+            iconPosition="start"
+            label="Purchases"
+            sx={{
+              fontSize: '14px',
+              minWidth: 200,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              color: selectedTab === 1 ? '#1976d2' : '#757070'
+            }}
+          />
+        </Tabs>
 
         {selectedTab === 0 && (
           <Box sx={{ height: '600px', padding: '5px' }}>

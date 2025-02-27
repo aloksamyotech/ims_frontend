@@ -83,42 +83,6 @@ const ViewCustomerPage = () => {
         return moment(params.row?.createdAt).format('DD-MM-YYYY');
       }
     },
-    // {
-    //   field: 'order_status',
-    //   headerName: 'Status',
-    //   width: 150,
-    //   renderCell: (params) => {
-    //     const status = params.row?.order_status;
-    //     return (
-    //       <Box
-    //         sx={{
-    //           backgroundColor:
-    //             status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
-    //           color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-    //           '&:hover': {
-    //             backgroundColor:
-    //               status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-    //             color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-    //           },
-    //           padding: '1px',
-    //           borderRadius: '4px',
-    //           display: 'flex',
-    //           alignItems: 'center',
-    //           justifyContent: 'center',
-    //           fontWeight: 'bold',
-    //           width: '90px',
-    //           height: '20px',
-    //           textTransform: 'uppercase',
-    //           boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-    //           gap: '0.5rem',
-    //           fontSize: '12px'
-    //         }}
-    //       >
-    //         {status}
-    //       </Box>
-    //     );
-    //   }
-    // },
     {
       field: 'productName',
       headerName: 'Product Name',
@@ -267,12 +231,8 @@ const ViewCustomerPage = () => {
                         sx={{
                           backgroundColor: '#e3f2fd',
                           color: '#2196f3',
-                          '&:hover': {
-                            backgroundColor: '#2196f3',
-                            color: 'white'
-                          },
                           padding: '1px',
-                          borderRadius: '4px',
+                          borderRadius: '30px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',

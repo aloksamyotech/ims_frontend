@@ -189,7 +189,7 @@ const Product = () => {
           </Breadcrumbs>
         </Box>
 
-        <Card sx={{ marginTop: '20px' }}>
+        <Card sx={{ marginTop: '20px', height:'600px' }}>
           <Box
             sx={{
               display: 'flex',

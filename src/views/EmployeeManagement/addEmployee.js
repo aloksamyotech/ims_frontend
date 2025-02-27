@@ -91,7 +91,7 @@ const AddEmployee = ({ open, handleClose, employee, onEmployeeAdded }) => {
     }
   });
 
-  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 20000), [formik.handleSubmit]);
+  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 3000), [formik.handleSubmit]);
 
   return (
     <Dialog

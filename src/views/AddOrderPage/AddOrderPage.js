@@ -13,6 +13,7 @@ import {
   FormLabel,
   FormControl,
   Checkbox,
+  Autocomplete,
   FormControlLabel,
   Box,
   Paper,
@@ -205,50 +206,47 @@ const OrderForm = (props) => {
     }
   };
 
- // Handle discount change for each product
- const handleDiscountChange = (productId, value) => {
-  const maxDiscount = products.find(product => product._id === productId).subtotal; // Ensure discount doesn't exceed subtotal
-  const discountValue = Math.max(0, Math.min(value, maxDiscount)); // Validate the discount
-  setDiscounts((prev) => ({ ...prev, [productId]: discountValue }));
-};
+  // Handle discount change for each product
+  const handleDiscountChange = (productId, value) => {
+    const maxDiscount = products.find((product) => product._id === productId).subtotal; // Ensure discount doesn't exceed subtotal
+    const discountValue = Math.max(0, Math.min(value, maxDiscount)); // Validate the discount
+    setDiscounts((prev) => ({ ...prev, [productId]: discountValue }));
+  };
 
-// Calculate subtotal after discount
-const calculateSubtotal = () => {
-  return products.reduce((acc, product) => {
-    const discount = discounts[product._id] || 0;
-    const discountedSubtotal = product.subtotal - discount; // Apply discount to subtotal
-    return acc + discountedSubtotal;
-  }, 0);
-};
+  // Calculate subtotal after discount
+  const calculateSubtotal = () => {
+    return products.reduce((acc, product) => {
+      const discount = discounts[product._id] || 0;
+      const discountedSubtotal = product.subtotal - discount; // Apply discount to subtotal
+      return acc + discountedSubtotal;
+    }, 0);
+  };
 
-// Calculate taxes based on discounted subtotal
-const calculateTaxes = () => {
-  return products.reduce((totalTax, product) => {
-    const discount = discounts[product._id] || 0;
-    const discountedSubtotal = product.subtotal - discount; // Apply discount to subtotal
-    const productTax = discountedSubtotal * (product.tax / 100);
-    return totalTax + productTax;
-  }, 0);
-};
+  // Calculate taxes based on discounted subtotal
+  const calculateTaxes = () => {
+    return products.reduce((totalTax, product) => {
+      const discount = discounts[product._id] || 0;
+      const discountedSubtotal = product.subtotal - discount; // Apply discount to subtotal
+      const productTax = discountedSubtotal * (product.tax / 100);
+      return totalTax + productTax;
+    }, 0);
+  };
 
-// Calculate the final total after discount and taxes
-const invoiceTaxes = calculateTaxes();
-const invoiceSubtotal = calculateSubtotal();
-const invoiceTotal = invoiceTaxes + invoiceSubtotal;
+  // Calculate the final total after discount and taxes
+  const invoiceTaxes = calculateTaxes();
+  const invoiceSubtotal = calculateSubtotal();
+  const invoiceTotal = invoiceTaxes + invoiceSubtotal;
 
-  const handleCustomerChange = (event) => {
-    const customerName = event.target.value;
+  const handleCustomerChange = (event, newValue) => {
+    const customerName = newValue ? newValue.customernm : '';
     const customer = customerList?.find((c) => c.customernm === customerName);
+
     setSelectedCustomer(customer);
     formik.setFieldValue('customernm', customerName);
   };
 
-  
-  const isCreateInvoiceDisabled = 
-  products.length === 0 || 
-  (isWholesale && !selectedCustomer) || 
-  (isWalkIn && (!walkInData.phone || walkInData.phone.trim() === ""));
-
+  const isCreateInvoiceDisabled =
+    products.length === 0 || (isWholesale && !selectedCustomer) || (isWalkIn && (!walkInData.phone || walkInData.phone.trim() === ''));
 
   const handleCreateInvoice = async () => {
     if (!isWalkIn && !isWholesale && !selectedCustomer && !products) {
@@ -436,22 +434,31 @@ const invoiceTotal = invoiceTaxes + invoiceSubtotal;
                 {isWholesale && (
                   <Grid item xs={4}>
                     <FormLabel>Wholesale Customer</FormLabel>
-                    <Select
-                      value={formik.values.customernm}
+                    <Autocomplete
+                      options={customerList.filter((customer) => customer.isWholesale)}
+                      getOptionLabel={(option) => option.customernm}
+                      value={customerList.find((cust) => cust.customernm === formik.values.customernm) || null}
                       onChange={handleCustomerChange}
-                      size="small"
-                      error={formik.touched.customernm && Boolean(formik.errors.customernm)}
-                      fullWidth
-                    >
-                      <MenuItem value="">Select a customer</MenuItem>
-                      {customerList
-                        .filter((customer) => customer.isWholesale === true)
-                        .map((customer) => (
-                          <MenuItem key={customer._id} value={customer.customernm}>
-                            {customer.customernm}
-                          </MenuItem>
-                        ))}
-                    </Select>
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          size="small"
+                          variant="outlined"
+                          fullWidth
+                          error={formik.touched.customernm && Boolean(formik.errors.customernm)}
+                          helperText={formik.touched.customernm && formik.errors.customernm}
+                          sx={{ 
+                            '& .MuiInputBase-root': { height: 40 } 
+                          }}
+                        />
+                      )}
+                      ListboxProps={{
+                        style: {
+                          maxHeight: 200,
+                          overflow: 'auto'
+                        }
+                      }}
+                    />
                   </Grid>
                 )}
               </Grid>
@@ -502,7 +509,7 @@ const invoiceTotal = invoiceTaxes + invoiceSubtotal;
                             {currencySymbol} {product.sellingPrice.toFixed(2)}
                           </TableCell>
                           <TableCell>
-                          {currencySymbol} {(product.subtotal - (discounts[product._id] || 0)).toFixed(2)}
+                            {currencySymbol} {(product.subtotal - (discounts[product._id] || 0)).toFixed(2)}
                           </TableCell>
                           <TableCell>
                             <IconButton
@@ -579,6 +586,7 @@ const invoiceTotal = invoiceTaxes + invoiceSubtotal;
                   label="Search Products"
                   variant="outlined"
                   value={searchTerm}
+                  size="small"
                   onChange={handleSearchChange}
                   margin="normal"
                   InputProps={{
@@ -592,7 +600,7 @@ const invoiceTotal = invoiceTaxes + invoiceSubtotal;
                 />
               </Box>
 
-              <TableContainer component={Paper} elevation={3} sx={{ alignContent: 'center' }}>
+              <TableContainer component={Paper} elevation={3} sx={{ maxHeight: '400px', overflow: 'auto', alignContent: 'center' }}>
                 <Table>
                   <TableHead sx={{ backgroundColor: '#1976d2' }}>
                     <TableRow>

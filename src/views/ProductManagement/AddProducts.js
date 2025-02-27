@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Button,
   Dialog,
@@ -9,6 +9,7 @@ import {
   TextField,
   FormControl,
   FormLabel,
+  Autocomplete,
   Select,
   MenuItem,
   FormHelperText,
@@ -22,6 +23,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { addApi } from 'apis/common.js';
 import { fetchCategories } from 'apis/api.js';
 import { getUserId } from 'apis/constant.js';
+import { throttle } from 'lodash';
 
 const AddProductPage = ({ open, handleClose, product, onProductAdded, loadProducts }) => {
   const [image, setImage] = useState('');
@@ -121,6 +123,8 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded, loadProduc
     }
   }, [formik.values.buyingPrice, formik.values.sellingPrice]);
 
+  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 3000), [formik.handleSubmit]);
+
   return (
     <Dialog
       open={open}
@@ -139,7 +143,7 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded, loadProduc
       </DialogTitle>
 
       <DialogContent dividers>
-        <form onSubmit={formik.handleSubmit}>
+        <form onSubmit={throttledSubmit}>
           <Grid container rowSpacing={2} columnSpacing={{ xs: 0, sm: 5, md: 2 }}>
             <Grid item xs={12} sm={6}>
               <FormLabel>Product Name</FormLabel>
@@ -159,17 +163,32 @@ const AddProductPage = ({ open, handleClose, product, onProductAdded, loadProduc
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <FormLabel>Product Category</FormLabel>
-                <Select required id="catnm" name="catnm" size="small" value={formik.values.catnm} onChange={formik.handleChange}>
-                  {clist.map((category) => (
-                    <MenuItem key={category._id} value={category._id}>
-                      {category.catnm}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText error>{formik.touched.catnm && formik.errors.catnm}</FormHelperText>
+                <Autocomplete
+                  id="catnm"
+                  options={clist}
+                  getOptionLabel={(option) => option.catnm}
+                  value={clist.find((cat) => cat._id === formik.values.catnm) || null}
+                  onChange={(event, newValue) => {
+                    formik.setFieldValue('catnm', newValue ? newValue._id : '');
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      size="small"
+                      variant="outlined"
+                      error={formik.touched.catnm && Boolean(formik.errors.catnm)}
+                      helperText={formik.touched.catnm && formik.errors.catnm}
+                    />
+                  )}
+                  ListboxProps={{
+                    style: {
+                      maxHeight: 200,
+                      overflow: 'auto'
+                    }
+                  }}
+                />
               </FormControl>
             </Grid>
-
             <Grid item xs={12} sm={6}>
               <FormLabel>Buying Price / unit</FormLabel>
               <TextField

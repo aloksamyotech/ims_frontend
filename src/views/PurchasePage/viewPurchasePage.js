@@ -336,13 +336,8 @@ const PurchasePage = () => {
                     backgroundColor:
                       status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
                     color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-                    '&:hover': {
-                      backgroundColor:
-                        status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-                      color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-                    },
                     padding: '1px',
-                    borderRadius: '4px',
+                    borderRadius: '30px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -447,7 +442,7 @@ const PurchasePage = () => {
               <Grid container spacing={2} sx={{ m: 2 }}>
                 <Grid item xs={12} sm={6}>
                   <Typography variant="body1">
-                  <strong>Subtotal+Tax:</strong> {currencySymbol} ({subtotal.toFixed(2)} + {tax.toFixed(2)})
+                    <strong>Subtotal+Tax:</strong> {currencySymbol} ({subtotal.toFixed(2)} + {tax.toFixed(2)})
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={6}>

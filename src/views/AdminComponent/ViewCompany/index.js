@@ -102,8 +102,8 @@ const CompanyReport = () => {
       flex: 1,
       renderCell: (params) => {
         return params.value ? params.value : 'No description added';
-      },
-    },
+      }
+    }
   ];
 
   const customerColumns = [
@@ -143,12 +143,8 @@ const CompanyReport = () => {
             sx={{
               backgroundColor: '#e3f2fd',
               color: '#2196f3',
-              '&:hover': {
-                backgroundColor: '#2196f3',
-                color: 'white'
-              },
               padding: '1px',
-              borderRadius: '4px',
+              borderRadius: '30px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -205,12 +201,8 @@ const CompanyReport = () => {
             sx={{
               backgroundColor: '#e3f2fd',
               color: '#2196f3',
-              '&:hover': {
-                backgroundColor: '#2196f3',
-                color: 'white'
-              },
               padding: '1px',
-              borderRadius: '4px',
+              borderRadius: '30px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -260,13 +252,12 @@ const CompanyReport = () => {
     {
       field: 'customerPhone',
       headerName: 'PhoneNo',
-      flex:2.5,
+      flex: 2.5
     },
     {
       field: 'productName',
       headerName: 'Item',
-      flex: 2
-      ,
+      flex: 2,
       valueGetter: (params) => {
         if (params.row?.products?.length > 0) {
           return params.row.products?.map((product) => `${product?.productName}(${product?.quantity})`).join(', ');
@@ -297,13 +288,8 @@ const CompanyReport = () => {
               backgroundColor:
                 status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
               color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-              '&:hover': {
-                backgroundColor:
-                  status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-                color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-              },
               padding: '1px',
-              borderRadius: '4px',
+              borderRadius: '30px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -353,7 +339,7 @@ const CompanyReport = () => {
     {
       field: 'supplierPhone',
       headerName: 'PhoneNo',
-      flex:2,
+      flex: 2
     },
     {
       field: 'productName',
@@ -389,13 +375,8 @@ const CompanyReport = () => {
               backgroundColor:
                 status === 'completed' ? '#d5fadf' : status === 'pending' ? '#f8e1a1' : status === 'cancelled' ? '#fbe9e7' : '',
               color: status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-              '&:hover': {
-                backgroundColor:
-                  status === 'completed' ? '#19ab53' : status === 'pending' ? '#ff9800' : status === 'cancelled' ? '#f44336' : '',
-                color: status === 'completed' ? '#ffff' : status === 'pending' ? '#ffff' : status === 'cancelled' ? '#ffff' : ''
-              },
               padding: '1px',
-              borderRadius: '4px',
+              borderRadius: '30px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -555,7 +536,7 @@ const CompanyReport = () => {
         )}
 
         {selectedTab === 1 && (
-          <Box sx={{ padding: '8px 20px',margin:'10px' }}>
+          <Box sx={{ padding: '8px 20px', margin: '10px', height: '600px' }}>
             <Grid container spacing={3}>
               {products.map((product) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
@@ -596,18 +577,16 @@ const CompanyReport = () => {
                       </Box>
 
                       <Box display="flex" justifyContent="center" alignItems="center" mt={1}>
-                      <Typography variant="body2">Quantity:  &nbsp; </Typography>
+                        <Typography variant="body2">Quantity: &nbsp; </Typography>
                         <Box
                           sx={{
                             border: '1px solid',
                             borderColor: product.quantity > 5 ? 'green' : 'red',
                             padding: '2px 5px',
-                            borderRadius: '5px',
+                            borderRadius: '5px'
                           }}
                         >
-                          <Typography sx={{fontWeight:'bold'}} >
-                          {product.quantity}
-                          </Typography>
+                          <Typography sx={{ fontWeight: 'bold' }}>{product.quantity}</Typography>
                         </Box>
                       </Box>
 

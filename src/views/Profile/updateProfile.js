@@ -50,23 +50,31 @@ const UpdateProfile = ({ open, onClose, profile, setProfile, load }) => {
 
   const handleCurrencyCodeChange = (event, setFieldValue) => {
     const selectedCode = event.target.value;
+    const symbol = currencySymbolMap(selectedCode) || '';
+
     setCurrencyCode(selectedCode);
-    setCurrencySymbol(currencySymbolMap(selectedCode));
+    setCurrencySymbol(symbol);
+
     setFieldValue('currencyCode', selectedCode);
+    setFieldValue('currencySymbol', symbol);
   };
 
-  const handleLogoChange = (event, setFieldValue) => {
+  const handleLogoChange = (event, setFieldValue, values) => {
     const file = event.target.files[0];
     if (file) {
       setImageFile(file);
       setFieldValue('logo', file);
+
+      setFieldValue('currencyCode', profile?.currencyCode || currencyCode);
+      setFieldValue('currencySymbol', profile?.currencySymbol || currencySymbol);
     }
   };
 
   const handleSaveProfile = async (values) => {
     const formData = new FormData();
-    formData.append('currencyCode', values.currencyCode);
-    formData.append('currencySymbol', values.currencySymbol);
+    formData.append('currencyCode', values.currencyCode || profile?.currencyCode);
+    formData.append('currencySymbol', values.currencySymbol || profile?.currencySymbol);
+
     if (values.logo) {
       formData.append('logo', values.logo);
     }
@@ -80,6 +88,13 @@ const UpdateProfile = ({ open, onClose, profile, setProfile, load }) => {
 
       if (response.status === 200) {
         toast.success('Profile Updated Successfully!');
+
+        setProfile((prevProfile) => ({
+          ...prevProfile,
+          currencyCode: values.currencyCode || prevProfile.currencyCode,
+          currencySymbol: values.currencySymbol || prevProfile.currencySymbol,
+          logo: response.data.logo || prevProfile.logo
+        }));
         load();
         onClose();
       } else {
@@ -99,8 +114,8 @@ const UpdateProfile = ({ open, onClose, profile, setProfile, load }) => {
       <DialogContent>
         <Formik
           initialValues={{
-            currencyCode: currencyCode || '',
-            currencySymbol: currencySymbol || '',
+            currencyCode: profile?.currencyCode || currencyCode,
+            currencySymbol: profile?.currencySymbol || currencySymbol,
             logo: null
           }}
           enableReinitialize={true}
@@ -136,7 +151,17 @@ const UpdateProfile = ({ open, onClose, profile, setProfile, load }) => {
                 <Grid item xs={12} sm={6}>
                   <Field
                     name="currencySymbol"
-                    render={({ field }) => <TextField {...field} label="Currency Symbol" variant="outlined" fullWidth margin="dense" />}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Currency Symbol"
+                        variant="outlined"
+                        fullWidth
+                        margin="dense"
+                        value={field.value}
+                        disabled
+                      />
+                    )}
                   />
                 </Grid>
 
@@ -163,7 +188,7 @@ const UpdateProfile = ({ open, onClose, profile, setProfile, load }) => {
                       <input
                         accept="image/*"
                         type="file"
-                        onChange={(event) => handleLogoChange(event, setFieldValue)}
+                        onChange={(event) => handleLogoChange(event, setFieldValue, values)}
                         style={{ display: 'block' }}
                       />
                     </Box>

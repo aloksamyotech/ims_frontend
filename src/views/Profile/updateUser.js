@@ -44,7 +44,7 @@ const UpdateProfileForm = ({ open, onClose, profile, setProfile }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="h3">Update Profile</Typography>
         <ClearIcon onClick={onClose} style={{ cursor: 'pointer' }} />

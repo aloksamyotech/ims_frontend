@@ -119,7 +119,7 @@ const CompanyReport = () => {
         <Divider sx={{ opacity: 1 }} />
 
         {selectedTab === 0 && (
-          <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{ height: '400px', overflowY: 'auto' }}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -146,7 +146,7 @@ const CompanyReport = () => {
         )}
 
         {selectedTab === 1 && (
-          <TableContainer component={Paper}>
+         <TableContainer component={Paper} sx={{ height: '400px', overflowY: 'auto' }}>
             <Table>
               <TableHead>
                 <TableRow>

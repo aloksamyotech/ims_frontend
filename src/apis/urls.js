@@ -73,6 +73,7 @@ export const urls = {
     fetch: '/purchase/fetch/',
     fetchbyid: '/purchase/fetchById/:id',
     count: '/purchase/count/',
+    totalpurchase: '/purchase/total-purchase'
   },
   report: {
     getSupplierProductReport: '/purchase/fetchSupplierProductReport',

@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { getUserId } from 'apis/constant.js';
 import { addCategory } from 'apis/api.js';
+import { throttle } from 'lodash';
 
 const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,6 +55,8 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
     }
   });
 
+  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 3000), [formik.handleSubmit]);
+
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle id="scroll-dialog-title" style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -62,7 +65,7 @@ const AddCategory = ({ open, handleClose, onCategoryAdded }) => {
       </DialogTitle>
 
       <DialogContent>
-        <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={throttledSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={12}>
               <FormLabel>Name</FormLabel>

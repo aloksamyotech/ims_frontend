@@ -90,7 +90,7 @@ const AddSupplier = ({ open, handleClose, supplier, onSupplierAdded }) => {
     }
   });
 
-  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 20000), [formik.handleSubmit]);
+  const throttledSubmit = useCallback(throttle(formik.handleSubmit, 3000), [formik.handleSubmit]);
 
   return (
     <Dialog
