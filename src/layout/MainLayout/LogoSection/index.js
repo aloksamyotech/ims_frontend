@@ -1,43 +1,33 @@
 import { useTheme } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
-import { fetchAdmin } from 'apis/api.js';
 import { ButtonBase } from '@mui/material';
+
+const user = localStorage.getItem('user');
+const userObj = user ? JSON.parse(user) : null;
+
+const BASE_URL = 'https://ims.samyotech.in/api/';
 
 const Logo = () => {
   const theme = useTheme();
-  const [logoUrl, setLogoUrl] = useState(localStorage.getItem('companyLogo') || null);
+  const [logoUrl, setLogoUrl] = useState('/StockSmart.png'); 
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const response = await fetchAdmin();
-        const adminData = Array.isArray(response.data) ? response.data[0] : response.data;
-
-        if (adminData?.logoUrl) {
-          setLogoUrl(adminData.logoUrl);
-          localStorage.setItem('companyLogo', adminData.logoUrl);
-        } else {
-          setLogoUrl(null); 
-        }
-      } catch (error) {
-        console.error('Error fetching details:', error);
-        setLogoUrl(null);
-      }
-    };
-    load();
-  }, []);
+    if (userObj?.logo) {
+      const fullUrl = userObj.logo.startsWith('http') ? userObj.logo : `${BASE_URL}${userObj.logo}`;
+      setLogoUrl(fullUrl);
+    }
+  }, [userObj]);
 
   return (
     <ButtonBase>
       <img
         alt="Company Logo"
-        src={logoUrl || '/inventory-logo.png'}
-        onError={(e) => { e.target.src = '/inventory-logo.png'; }} 
-        style={{ height: '70px', width: '160px' }}
+        src={logoUrl}
+        onError={(e) => { e.target.src = '/StockSmart.png'; }} 
+        style={{ height: '70px', width: '180px', objectFit: 'contain' }}
       />
     </ButtonBase>
   );
 };
 
 export default Logo;
-
