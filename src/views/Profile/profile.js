@@ -71,7 +71,7 @@ const ProfileSection = () => {
       }
 
       const response = await axios.put(
-        'http://localhost:4200/api/user/change-password',
+        'https://ims.samyotech.in/api/user/change-password',
         { currentPassword, newPassword ,userId},
         {
           headers: { Authorization: `Bearer ${token}` }
