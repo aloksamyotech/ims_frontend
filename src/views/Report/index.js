@@ -79,8 +79,9 @@ const ProductReport = () => {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(now.getDate() - 7);
 
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(now.getMonth() - 1);
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
     return data.filter((report) => {
       const reportDate = new Date(report?.date);
@@ -91,7 +92,7 @@ const ProductReport = () => {
       } else if (filter === 'Last 7 Days') {
         return reportDate >= oneWeekAgo && reportDate <= now;
       } else if (filter === 'Monthly') {
-        return reportDate >= oneMonthAgo && reportDate <= now;
+        return reportDate >= startOfMonth && reportDate <= endOfMonth;
       } else {
         return true;
       }
