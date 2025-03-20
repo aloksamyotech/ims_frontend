@@ -18,8 +18,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Iconify from '../../ui-component/iconify';
 import AddOrders from './AddOrder.js';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import Swal from 'sweetalert2';
+import ConfirmDialog from 'confirmDeletion/deletion';
 import { deleteOrder, fetchOrders } from 'apis/api.js';
 import moment from 'moment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -29,6 +28,7 @@ import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from 
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
+import { toast } from 'react-toastify';
 
 const Order = () => {
   const navigate = useNavigate();
@@ -37,11 +37,23 @@ const Order = () => {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [filterStatus, setFilterStatus] = useState('All');
   const [currencySymbol, setCurrencySymbol] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpenDialog = (_id) => {
+    setSelectedId(_id);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedId(null);
+  };
 
   const loadOrders = async () => {
     try {
       const userId = getUserId();
-      const response = await fetchOrders({userId});
+      const response = await fetchOrders({ userId });
       const allOrders = response?.data;
       setOrderDetails(allOrders);
       setFilteredOrders(allOrders);
@@ -175,7 +187,7 @@ const Order = () => {
     {
       field: 'customerPhone',
       headerName: 'PhoneNo',
-      flex:2.5,
+      flex: 2.5
     },
     {
       field: 'productName',
@@ -302,7 +314,7 @@ const Order = () => {
             >
               <IconButton
                 size="small"
-                onClick={() => handleDelete(params.row?._id)}
+                onClick={() => handleOpenDialog(params.row?._id)}
                 color="error"
                 sx={{
                   '&:hover': {
@@ -331,30 +343,22 @@ const Order = () => {
   const handleOpenAdd = () => setOpenAdd(true);
   const handleCloseAdd = () => setOpenAdd(false);
 
-  const handleDelete = async (_id) => {
+  const handleDelete = async () => {
     try {
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      });
-      if (result.isConfirmed) {
-        await deleteOrder(_id);
-        setOrderDetails((prev) => prev.filter((order) => order?._id !== _id));
-        Swal.fire('Deleted!', 'Your order has been deleted.', 'success');
-        window.location.reload();
-      }
+      await deleteOrder(selectedId);
+      setOrderDetails((prev) => prev.filter((order) => order?._id !== selectedId));
+      toast.success("Deleted successfully!");
+      loadOrders();
     } catch (error) {
-      console.error('Error deleting order:', error);
+      console.error('Error deleting subscription:', error);
+    } finally {
+      handleCloseDialog();
     }
   };
 
   return (
     <>
+     <ConfirmDialog open={openDialog} onClose={handleCloseDialog} onConfirm={handleDelete} />
       <AddOrders open={openAdd} handleClose={handleCloseAdd} />
       <Grid>
         <Box

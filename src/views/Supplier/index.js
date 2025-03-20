@@ -8,7 +8,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Link, useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import ConfirmDialog from 'confirmDeletion/deletion';
 import { toast } from 'react-toastify';
 import moment from 'moment';
 import { deleteSupplier, fetchSuppliers } from 'apis/api.js';
@@ -24,6 +24,19 @@ const Supplier = () => {
   const [openUpdate, setOpenUpdate] = useState(false);
   const [supplierData, setSupplierData] = useState([]);
   const [currentSupplier, setCurrentSupplier] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpenDialog = (_id) => {
+    setSelectedId(_id);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedId(null);
+  };
 
   const loadSuppliers = async () => {
     try {
@@ -43,7 +56,6 @@ const Supplier = () => {
   useEffect(() => {
     loadSuppliers();
   }, []);
-
 
   const CustomToolbar = ({ handleOpenAdd }) => {
     return (
@@ -66,7 +78,7 @@ const Supplier = () => {
           }}
         />
         <Stack direction="row" spacing={2} alignItems="center">
-        <GridToolbarExport style={{ fontSize: 14 }} />
+          <GridToolbarExport style={{ fontSize: 14 }} />
           <Tooltip title="Add Supplier" arrow>
             <IconButton
               onClick={handleOpenAdd}
@@ -90,7 +102,6 @@ const Supplier = () => {
               <AddIcon />
             </IconButton>
           </Tooltip>
-         
         </Stack>
       </GridToolbarContainer>
     );
@@ -98,14 +109,16 @@ const Supplier = () => {
 
   const columns = [
     {
-      field: 'suppliernm', 
+      field: 'suppliernm',
       headerName: 'Name',
       flex: 2.5,
-      minWidth:220,
+      minWidth: 220,
       renderCell: (params) => (
         <Box>
           <Typography variant="h5">{params.row.suppliernm}</Typography>
-          <Typography variant="body2" color="textSecondary">{params.row.email}</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {params.row.email}
+          </Typography>
         </Box>
       )
     },
@@ -175,8 +188,8 @@ const Supplier = () => {
               color="primary"
               sx={{
                 '&:hover': {
-                  backgroundColor: '#9abfdd', 
-                  color: '#1976d2' 
+                  backgroundColor: '#9abfdd',
+                  color: '#1976d2'
                 }
               }}
             >
@@ -203,7 +216,7 @@ const Supplier = () => {
               sx={{
                 '&:hover': {
                   backgroundColor: '#d7cde6',
-                  color: '#512995' 
+                  color: '#512995'
                 }
               }}
             >
@@ -225,7 +238,7 @@ const Supplier = () => {
           >
             <IconButton
               size="small"
-              onClick={() => handleDelete(params.row?._id)}
+              onClick={() => handleOpenDialog(params.row?._id)}
               color="error"
               sx={{
                 '&:hover': {
@@ -256,25 +269,16 @@ const Supplier = () => {
     setOpenUpdate(true);
   };
 
-  const handleDelete = async (_id) => {
+  const handleDelete = async () => {
     try {
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      });
-      if (result.isConfirmed) {
-        await deleteSupplier(_id);
-        setSupplierData((prev) => prev.filter((supplier) => supplier?._id !== _id));
-        loadSuppliers();
-        Swal.fire('Deleted!', 'Your supplier has been deleted.', 'success');
-      }
+      await deleteSupplier(selectedId);
+      setSupplierData((prev) => prev.filter((supplier) => supplier?._id !== selectedId));
+      toast.success('Deleted successfully!');
+      loadSuppliers();
     } catch (error) {
       console.error('Error deleting supplier:', error);
+    } finally {
+      handleCloseDialog();
     }
   };
 
@@ -292,6 +296,7 @@ const Supplier = () => {
 
   return (
     <>
+      <ConfirmDialog open={openDialog} onClose={handleCloseDialog} onConfirm={handleDelete} />
       <AddSupplier open={openAdd} handleClose={() => setOpenAdd(false)} onSupplierAdded={handleSupplierAdded} />
       <UpdateSupplier
         open={openUpdate}
@@ -325,8 +330,8 @@ const Supplier = () => {
           </Breadcrumbs>
         </Box>
         <TableStyle>
-          <Box width="100%" >
-            <Card style={{ height: '600px', marginTop: '20px',padding:'0 5px'}}>
+          <Box width="100%">
+            <Card style={{ height: '600px', marginTop: '20px', padding: '0 5px' }}>
               <DataGrid
                 rows={supplierData}
                 columns={columns}

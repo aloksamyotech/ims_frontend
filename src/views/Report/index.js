@@ -24,6 +24,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const TabContentCard = styled(Card)(({ theme }) => ({
   boxShadow: theme.shadows[1],

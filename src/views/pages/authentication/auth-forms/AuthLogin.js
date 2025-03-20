@@ -38,10 +38,6 @@ const AuthLogin = ({ ...others }) => {
   const [role, setRole] = useState(null);
   const [expanded, setExpanded] = useState(false);
 
-  const handleAccordian = (panel) => (event, newExpanded) => {
-    setExpanded(newExpanded ? panel : false);
-  };
-
   const handleClickShowPassword = () => {
     setShowPassword((prev) => !prev);
   };

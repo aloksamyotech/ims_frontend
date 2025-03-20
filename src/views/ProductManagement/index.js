@@ -20,7 +20,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { Link, useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Swal from 'sweetalert2';
+import ConfirmDialog from 'confirmDeletion/deletion.js';
 import { toast } from 'react-toastify';
 import UpdateProduct from './updateProduct.js';
 import AddProductPage from './AddProducts';
@@ -49,6 +49,13 @@ const Product = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [popoverState, setPopoverState] = useState({ anchorEl: null, productId: null });
   const [currentPage, setCurrentPage] = useState(0);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+
+  const handleDeleteClick = (productId) => {
+    setSelectedProductId(productId);
+    setOpenDeleteDialog(true);
+  };
 
   const handlePageClick = (data) => {
     setCurrentPage(data.selected);
@@ -103,22 +110,13 @@ const Product = () => {
     handlePopoverClose();
   };
 
-  const handleDelete = async (_id) => {
+  const handleDelete = async () => {
     try {
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      });
-      if (result.isConfirmed) {
-        await deleteProduct(popoverState.productId);
-        setProducts((prev) => prev.filter((product) => product._id !== popoverState.productId));
-        Swal.fire('Deleted!', 'Your product has been deleted.', 'success');
-      }
+      await deleteProduct(selectedProductId);
+      setProducts((prev) => prev.filter((product) => product._id !== selectedProductId));
+      setOpenDeleteDialog(false);
+      toast.success('Deleted successfully!');
+      handlePopoverClose();
     } catch (error) {
       console.error('Error deleting product:', error);
     }
@@ -150,6 +148,8 @@ const Product = () => {
 
   return (
     <>
+      <ConfirmDialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)} onConfirm={handleDelete} />
+
       <AddProductPage
         open={openAdd}
         handleClose={() => setOpenAdd(false)}
@@ -189,7 +189,7 @@ const Product = () => {
           </Breadcrumbs>
         </Box>
 
-        <Card sx={{ marginTop: '20px', height:'600px' }}>
+        <Card sx={{ marginTop: '20px', height: '600px' }}>
           <Box
             sx={{
               display: 'flex',
@@ -369,10 +369,7 @@ const Product = () => {
                             alignItems: 'center',
                             color: '#d32f2f'
                           }}
-                          onClick={() => {
-                            handleDelete(product._id);
-                            handlePopoverClose();
-                          }}
+                          onClick={() => handleDeleteClick(popoverState.productId)}
                         >
                           <DeleteIcon sx={{ marginRight: 1 }} />
                           Delete
