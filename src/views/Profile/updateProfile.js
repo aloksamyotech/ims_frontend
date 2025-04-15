@@ -63,7 +63,6 @@ const UpdateProfile = ({ open, onClose, profile, setProfile, load }) => {
 
     setFieldValue('currencyCode', selectedCode);
     setFieldValue('currencySymbol', symbol);
-
   };
 
   const handleLogoChange = (event, setFieldValue, values) => {
@@ -71,12 +70,12 @@ const UpdateProfile = ({ open, onClose, profile, setProfile, load }) => {
     if (file) {
       setImageFile(file);
       setFieldValue('logo', file);
-  
+
       setFieldValue('currencyCode', values.currencyCode || userObj?.currencyCode || currencyCode);
       setFieldValue('currencySymbol', values.currencySymbol || userObj?.currencySymbol || currencySymbol);
     }
   };
-  
+
   const handleSaveProfile = async (values) => {
     const formData = new FormData();
     formData.append('currencyCode', values.currencyCode || userObj?.currencyCode);
@@ -92,7 +91,7 @@ const UpdateProfile = ({ open, onClose, profile, setProfile, load }) => {
       if (response?.data) {
         setProfile((prevProfile) => ({ ...prevProfile, ...response.data }));
 
-        localStorage.setItem('user', JSON.stringify(response.data));
+        localStorage.setItem('user', JSON.stringify(response.data.data));
 
         toast.success('Data Updated Successfully!');
 

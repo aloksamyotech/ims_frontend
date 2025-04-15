@@ -31,14 +31,10 @@ const ChatBox = () => {
           method: 'POST',
           data: { text: userInput, userId : userId }
         });
-
-        console.log(response);
-
         setIsLoading(false);
 
-       
         if (response?.success && response?.message) {
-          setMessages((prevMessages) => [...prevMessages, { text: response.data.response, sender: 'bot' }]);
+          setMessages((prevMessages) => [...prevMessages, { text: response?.message, sender: 'bot' }]);
         } else {
           setMessages((prevMessages) => [...prevMessages, { text: response?.message || 'Unable to fetch product data.', sender: 'bot' }]);
         }

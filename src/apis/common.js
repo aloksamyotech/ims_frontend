@@ -1,15 +1,62 @@
 import axios from 'axios';
 import { urls } from './urls.js';
+import { decryptWithAESKey } from './drcrypt.js';
 
 const baseUrl = urls.base;
+const token = localStorage.getItem('imstoken');
 
-export const deleteApi = async (url, _id) => axios.delete(`${baseUrl}${url.replace(':id', _id)}`);
+export const deleteApi = async (url, _id) =>
+  axios.delete(`${baseUrl}${url.replace(':id', _id)}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 
-export const updateApi = async (url, updatedEntity) => axios.patch(`${baseUrl}${url.replace(':id', updatedEntity._id)}`, updatedEntity);
+export const updateApi = async (url, updatedEntity) => {
+  const response = await axios.patch(`${baseUrl}${url.replace(':id', updatedEntity._id)}`, updatedEntity, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  let responseData = await decryptWithAESKey(response.data);
+  return JSON.parse(responseData);
+};
 
-export const fetchApi = async (url) => axios.get(`${baseUrl}${url}`);
+export const fetchApi = async (url) => {
+  const response = await axios.get(`${baseUrl}${url}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 
-export const addApi = async (url, data) => axios.post(`${baseUrl}${url}`, data);
+  let responseData = await decryptWithAESKey(response.data);
+  return JSON.parse(responseData);
+};
+
+export const addApi = async (url, data) => {
+  try {
+    const response = await axios.post(`${baseUrl}${url}`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    const responseData = await decryptWithAESKey(response.data);
+    return JSON.parse(responseData);
+  } catch (error) {
+    let decryptedErrorMsg = 'Something went wrong';
+    if (error.response && error.response.data) {
+      try {
+        const decrypted = await decryptWithAESKey(error.response.data);
+        const parsed = JSON.parse(decrypted);
+        decryptedErrorMsg = parsed.message || parsed.error || decryptedErrorMsg;
+      } catch (decryptErr) {
+        console.error('Failed to decrypt error:', decryptErr);
+      }
+    }
+    throw new Error(decryptedErrorMsg);
+  }
+};
 
 export const updateEntity = async (entityType, updatedEntity) => {
   if (!updatedEntity._id) {
@@ -55,17 +102,19 @@ export const updateEntity = async (entityType, updatedEntity) => {
 export const chatbotApi = async (url, options = {}) => {
   const { method = 'GET', data = null, params = {}, headers = {} } = options;
 
-    const response = await axios({
-      url: `${baseUrl}${url}`,
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      params,
-      data: method !== 'GET' ? data : undefined, 
-    });
-    return response.data;
+  const response = await axios({
+    url: `${baseUrl}${url}`,
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      ...headers
+    },
+    params,
+    data: method !== 'GET' ? data : undefined
+  });
+  let responseData = await decryptWithAESKey(response.data);
+  return JSON.parse(responseData);
 };
 
 export const updateMultipartApi = async (url, formData, method = 'PUT') => {
@@ -75,11 +124,12 @@ export const updateMultipartApi = async (url, formData, method = 'PUT') => {
       method,
       headers: {
         'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`
       },
       data: formData
     });
-
-    return response.data;
+    let responseData = await decryptWithAESKey(response.data);
+    return JSON.parse(responseData);
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Something went wrong');
   }

@@ -130,7 +130,7 @@ const PurchasePage = () => {
 
     try {
       const response = await updateApi(`/purchase/update-status/${id}`, updatedPurchase);
-      if (response.status === 200) {
+      if (response.success == true) {
         setPurchaseData((prev) => ({
           ...prev,
           status: action === 'approve' ? 'completed' : 'cancelled'

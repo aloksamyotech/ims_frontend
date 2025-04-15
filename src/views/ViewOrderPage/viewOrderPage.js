@@ -126,7 +126,7 @@ const InvoicePage = () => {
 
     try {
       const response = await updateApi('/order/update-status/:id', updatedOrder);
-      if (response.status === 200) {
+      if (response.success === true) {
         setInvoiceData((prev) => ({
           ...prev,
           order_status: action === 'approve' ? 'completed' : 'cancelled'

@@ -16,7 +16,7 @@ const ConfirmDialog = ({ open, onClose, onConfirm }) => {
           Are you sure you want to delete?
           </Typography>
           <Typography variant="body1" sx={{ fontSize: "1.2rem" }}>
-          You won't be able to revert this.
+          You won&apos;t be able to revert this.
           </Typography>
         </DialogContentText>
       </DialogContent>

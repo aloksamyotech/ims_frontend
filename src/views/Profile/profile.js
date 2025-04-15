@@ -24,7 +24,9 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { Link } from 'react-router-dom';
 import KeyIcon from '@mui/icons-material/Key';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { urls } from 'apis/urls.js';
 import axios from 'axios';
+import { decryptWithAESKey } from 'apis/drcrypt.js';
 
 const user = localStorage.getItem('user');
 const userObj = JSON.parse(user);
@@ -65,20 +67,23 @@ const ProfileSection = () => {
     try {
       const token = localStorage.getItem('imstoken');
       const userId = localStorage.getItem('userId');
+
       if (!token) {
         toast.error('User is not authenticated.');
         return;
       }
 
       const response = await axios.put(
-        'https://ims.samyotech.in/api/user/change-password',
-        { currentPassword, newPassword ,userId},
+        `${urls.base}/user/change-password`,
+        { currentPassword, newPassword, userId },
         {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
+      const decryptedData = await decryptWithAESKey(response.data);
+      const parsedData = JSON.parse(decryptedData);
 
-      if (response?.data?.success) {
+      if (parsedData?.success) {
         toast.success('Password changed successfully!');
         setCurrentPassword('');
         setNewPassword('');
