@@ -20,7 +20,7 @@ import Iconify from '../../ui-component/iconify';
 import AddPurchases from './AddPurchase';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import Swal from 'sweetalert2';
+import ConfirmDialog from 'confirmDeletion/deletion';
 import { deletePurchase, fetchPurchases } from 'apis/api.js';
 import moment from 'moment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -38,11 +38,23 @@ const Purchase = () => {
   const [filteredPurchases, setFilteredPurchasers] = useState([]);
   const [filterStatus, setFilterStatus] = useState('All');
   const [currencySymbol, setCurrencySymbol] = useState('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpenDialog = (_id) => {
+    setSelectedId(_id);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedId(null);
+  };
 
   const loadPurchase = async () => {
     try {
       const userId = getUserId();
-      const response = await fetchPurchases({userId});
+      const response = await fetchPurchases({ userId });
       const allPurchases = response?.data;
       setPurchaseDetails(allPurchases);
       setFilteredPurchasers(allPurchases);
@@ -176,7 +188,7 @@ const Purchase = () => {
     {
       field: 'supplierPhone',
       headerName: 'PhoneNo',
-      flex:2.5,
+      flex: 2.5
     },
     {
       field: 'productName',
@@ -234,7 +246,7 @@ const Purchase = () => {
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 1.5,
+      flex: 2,
       renderCell: (params) => (
         <Stack direction="row">
           <Box
@@ -276,7 +288,7 @@ const Purchase = () => {
             >
               <IconButton
                 size="small"
-                onClick={() => handleDelete(params.row?._id)}
+                onClick={() => handleOpenDialog(params.row?._id)}
                 color="error"
                 sx={{
                   '&:hover': {
@@ -301,30 +313,22 @@ const Purchase = () => {
   const handleOpenAdd = () => setOpenAdd(true);
   const handleCloseAdd = () => setOpenAdd(false);
 
-  const handleDelete = async (_id) => {
+  const handleDelete = async () => {
     try {
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      });
-      if (result.isConfirmed) {
-        await deletePurchase(_id);
-        setPurchaseDetails((prev) => prev.filter((purchase) => purchase?._id !== _id));
-        Swal.fire('Deleted!', 'Your purchase has been deleted.', 'success');
-        window.location.reload();
-      }
+      await deletePurchase(selectedId);
+      setPurchaseDetails((prev) => prev.filter((purchase) => purchase?._id !== selectedId));
+      toast.success("Deleted successfully!");
+      loadPurchase();
     } catch (error) {
-      console.error('Error deleting purchase:', error);
+      console.error('Error deleting subscription:', error);
+    } finally {
+      handleCloseDialog();
     }
   };
 
   return (
     <>
+      <ConfirmDialog open={openDialog} onClose={handleCloseDialog} onConfirm={handleDelete} />
       <AddPurchases open={openAdd} handleClose={handleCloseAdd} />
       <Grid>
         <Box

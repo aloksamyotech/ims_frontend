@@ -1,23 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Stack,
-  Grid,
-  IconButton,
-  Breadcrumbs,
-  Link as MuiLink,
-  Paper,
-  Tooltip,
-  Container,
-  Typography,
-  Box,
-  Avatar
-} from '@mui/material';
-import {
-  DataGrid,
-  GridToolbarContainer,
-  GridToolbarExport,
-  GridToolbarQuickFilter
-} from '@mui/x-data-grid';
+import { Stack, Grid, IconButton, Breadcrumbs, Link as MuiLink, Paper, Tooltip, Container, Typography, Box, Avatar } from '@mui/material';
+import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -25,13 +8,14 @@ import AddIcon from '@mui/icons-material/Add';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import { Link, useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import ConfirmDialog from 'confirmDeletion/deletion.js';
 import moment from 'moment';
 import { getUserId } from 'apis/constant.js';
-import { deleteEmployee ,fetchEmployees } from 'apis/api.js';
+import { deleteEmployee, fetchEmployees } from 'apis/api.js';
 import AddEmployee from './addEmployee.js';
 import UpdateEmployee from './updateEmployee.js';
 import TableStyle from '../../ui-component/TableStyle';
+import { toast } from 'react-toastify';
 
 const User = () => {
   const navigate = useNavigate();
@@ -39,11 +23,23 @@ const User = () => {
   const [openAdd, setOpenAdd] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [currentEmployee, setCurrentEmployee] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpenDialog = (_id) => {
+    setSelectedId(_id);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedId(null);
+  };
 
   const loadEmployees = async () => {
     try {
       const userId = getUserId();
-      const response = await fetchEmployees({userId});
+      const response = await fetchEmployees({ userId });
       setUsers(response?.data || []);
     } catch (error) {
       console.error('Error fetching employees:', error);
@@ -220,7 +216,7 @@ const User = () => {
           >
             <IconButton
               size="small"
-              onClick={() => handleDelete(params.row?._id)}
+              onClick={() => handleOpenDialog(params.row?._id)}
               color="error"
               sx={{
                 '&:hover': {
@@ -258,44 +254,27 @@ const User = () => {
   };
 
   const handleEmployeeUpdated = (updatedEmployee) => {
-    setUsers((prev) =>
-      prev.map((employee) =>
-        employee._id === updatedEmployee._id ? updatedEmployee : employee
-      )
-    );
+    setUsers((prev) => prev.map((employee) => (employee._id === updatedEmployee._id ? updatedEmployee : employee)));
     setOpenUpdate(false);
     loadEmployees();
   };
 
-  const handleDelete = async (_id) => {
+  const handleDelete = async () => {
     try {
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      });
-
-      if (result.isConfirmed) {
-        await deleteEmployee(_id);
-        setUsers((prev) => prev.filter((employee) => employee?._id !== _id));
-        Swal.fire('Deleted!', 'Your employee has been deleted.', 'success');
-      }
+      await deleteEmployee(selectedId);
+      setUsers((prev) => prev.filter((employee) => employee?._id !== selectedId));
+      toast.success("Deleted successfully!");
     } catch (error) {
-      console.error('Error deleting employee:', error);
+      console.error('Error deleting subscription:', error);
+    } finally {
+      handleCloseDialog();
     }
   };
 
   return (
     <>
-      <AddEmployee
-        open={openAdd}
-        handleClose={() => setOpenAdd(false)}
-        onEmployeeAdded={handleEmployeeAdded}
-      />
+      <ConfirmDialog open={openDialog} onClose={handleCloseDialog} onConfirm={handleDelete} />
+      <AddEmployee open={openAdd} handleClose={() => setOpenAdd(false)} onEmployeeAdded={handleEmployeeAdded} />
       <UpdateEmployee
         open={openUpdate}
         handleClose={() => setOpenUpdate(false)}
@@ -313,10 +292,7 @@ const User = () => {
           }}
         >
           <Typography variant="h4">Employees</Typography>
-          <Breadcrumbs
-            separator={<NavigateNextIcon fontSize="small" />}
-            aria-label="breadcrumb"
-          >
+          <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
             <MuiLink component={Link} to="/dashboard/default" color="inherit">
               <HomeIcon sx={{ color: '#5e35b1' }} />
             </MuiLink>

@@ -4,9 +4,6 @@ import TableStyle from 'ui-component/TableStyle.js';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import AddCompany from './addCompany.js';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Swal from 'sweetalert2';
 import { Link, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
@@ -31,7 +28,6 @@ const Company = () => {
         const filteredUsers = response?.data.filter((user) => user.role === 'user');
         setCompanyData(filteredUsers);
       } catch (error) {
-        setError('Error fetching users');
         toast.error('Failed to fetch companies');
       }
     };
