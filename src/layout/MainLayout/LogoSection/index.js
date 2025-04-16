@@ -13,7 +13,6 @@ const Logo = () => {
   const [logoUrl, setLogoUrl] = useState(LogoInvento);
 
   useEffect(() => {
-    console.log("Logo URL updated:", logoUrl);
   }, [logoUrl]);
 
   useEffect(() => {

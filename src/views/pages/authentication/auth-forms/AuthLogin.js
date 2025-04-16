@@ -79,7 +79,6 @@ const AuthLogin = ({ ...others }) => {
               storageMethod.setItem('email', res.data.user.email);
               storageMethod.setItem('role', res.data.user.role);
               storageMethod.setItem('permissions', res.data.user.permissions || []);
-              console.log(res.data.jwtToken);
               if (res.data.user.role === 'user') {
                 navigate('/dashboard/default');
                 window.location.reload();
