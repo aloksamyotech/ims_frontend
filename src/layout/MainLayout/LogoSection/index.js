@@ -13,9 +13,6 @@ const Logo = () => {
   const [logoUrl, setLogoUrl] = useState(LogoInvento);
 
   useEffect(() => {
-  }, [logoUrl]);
-
-  useEffect(() => {
     if (userObj?.logo) {
       let formattedPath = userObj.logo;
       if (!formattedPath.startsWith('/')) {
