@@ -7,9 +7,10 @@ import UpdateCustomer from './updateCustomer.js';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Swal from 'sweetalert2';
+import ConfirmDialog from 'confirmDeletion/deletion';
 import { Link, useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import { toast } from 'react-toastify';
 import { deleteCustomer, fetchCustomers } from 'apis/api.js';
 import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -23,6 +24,19 @@ const Customer = () => {
   const [openUpdate, setOpenUpdate] = useState(false);
   const [customerData, setCustomerData] = useState([]);
   const [currentCustomer, setCurrentCustomer] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpenDialog = (_id) => {
+    setSelectedId(_id);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedId(null);
+  };
 
   const loadCustomers = async () => {
     try {
@@ -225,7 +239,7 @@ const Customer = () => {
           >
             <IconButton
               size="small"
-              onClick={() => handleDelete(params.row?._id)}
+              onClick={() => handleOpenDialog(params.row?._id)}
               color="error"
               sx={{
                 '&:hover': {
@@ -256,25 +270,16 @@ const Customer = () => {
     setOpenUpdate(true);
   };
 
-  const handleDelete = async (_id) => {
+  const handleDelete = async () => {
     try {
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      });
-      if (result.isConfirmed) {
-        await deleteCustomer(_id);
-        setCustomerData((prev) => prev.filter((customer) => customer?._id !== _id));
-        loadCustomers();
-        Swal.fire('Deleted!', 'Your customer has been deleted.', 'success');
-      }
+      await deleteCustomer(selectedId);
+      setCustomerData((prev) => prev.filter((customer) => customer?._id !== selectedId));
+      toast.success("Deleted successfully!");
+      loadCustomers();
     } catch (error) {
-      console.error('Error deleting customer:', error);
+      console.error('Error deleting subscription:', error);
+    } finally {
+      handleCloseDialog();
     }
   };
 
@@ -292,6 +297,7 @@ const Customer = () => {
 
   return (
     <>
+      <ConfirmDialog open={openDialog} onClose={handleCloseDialog} onConfirm={handleDelete} />
       <AddCustomer open={openAdd} handleClose={() => setOpenAdd(false)} onCustomerAdded={handleCustomerAdded} />
       <UpdateCustomer
         open={openUpdate}

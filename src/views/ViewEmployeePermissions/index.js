@@ -49,7 +49,6 @@ const permissionsList = [
   { id: '09', label: 'Low-Stocks' },
   { id: '10', label: 'Financial Summary' },
   { id: '12', label: 'Reports' },
-  { id: '14', label: 'Profile' }
 ];
 
 const ViewEmployeePage = () => {

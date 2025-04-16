@@ -25,6 +25,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { Link } from 'react-router-dom';
 import { Container } from '@mui/system';
+import { toast } from 'react-toastify';
 
 const TabContentCard = styled(Card)(({ theme }) => ({
   boxShadow: theme.shadows[3],
@@ -101,8 +102,9 @@ const ProductReport = () => {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(now.getDate() - 7);
 
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(now.getMonth() - 1);
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
     return data.filter((report) => {
       const reportDate = new Date(report?.date);
@@ -113,7 +115,7 @@ const ProductReport = () => {
       } else if (filter === 'Last 7 Days') {
         return reportDate >= oneWeekAgo && reportDate <= now;
       } else if (filter === 'Monthly') {
-        return reportDate >= oneMonthAgo && reportDate <= now;
+        return reportDate >= startOfMonth && reportDate <= endOfMonth;
       } else {
         return true;
       }
@@ -257,10 +259,10 @@ const ProductReport = () => {
   };
 
   const flattenedOrderData = flattenOrderData(orderDetails);
-  const filteredOrderData = filterDataByDate(flattenedOrderData ,selectedDateRange);
+  const filteredOrderData = filterDataByDate(flattenedOrderData, selectedDateRange);
 
   const flattenedPurchaseData = flattenPurchaseData(purchaseDetails);
-  const filteredPurchaseData = filterDataByDate(flattenedPurchaseData , selectedDateRange);
+  const filteredPurchaseData = filterDataByDate(flattenedPurchaseData, selectedDateRange);
 
   const CustomToolbar = () => (
     <GridToolbarContainer

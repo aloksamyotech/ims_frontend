@@ -1,5 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Stack, IconButton, Breadcrumbs, Tooltip, Link as MuiLink, Grid, Typography, Card, Box } from '@mui/material';
+import {
+  Stack,
+  IconButton,
+  Breadcrumbs,
+  Tooltip,
+  Link as MuiLink,
+  Grid,
+  Typography,
+  Card,
+  Box
+} from '@mui/material';
 import TableStyle from '../../ui-component/TableStyle';
 import { DataGrid, GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -9,13 +19,13 @@ import AddCategory from './addCategory.js';
 import UpdateCategory from './updateCategory.js';
 import ViewCategory from './viewCategory.js';
 import { deleteCategory, fetchCategories } from 'apis/api.js';
-import Swal from 'sweetalert2';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
 import { getUserId } from 'apis/constant.js';
 import { toast } from 'react-toastify';
+import ConfirmDialog from 'confirmDeletion/deletion';
 
 const Category = () => {
   const [openAdd, setOpenAdd] = useState(false);
@@ -23,6 +33,19 @@ const Category = () => {
   const [openView, setOpenView] = useState(false);
   const [categories, setCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpenDialog = (_id) => {
+    setSelectedId(_id);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedId(null);
+  };
 
   const loadCategories = async () => {
     try {
@@ -112,7 +135,7 @@ const Category = () => {
       flex: 1,
       renderCell: (params) => {
         return params.value ? params.value : 'No description added';
-      },
+      }
     },
     {
       field: 'actions',
@@ -188,7 +211,7 @@ const Category = () => {
           >
             <IconButton
               size="small"
-              onClick={() => handleDelete(params.row?._id)}
+              onClick={() => handleOpenDialog(params.row?._id)}
               color="error"
               sx={{
                 '&:hover': {
@@ -220,27 +243,19 @@ const Category = () => {
     setOpenUpdate(true);
   };
 
-  const handleDelete = async (_id) => {
+  const handleDelete = async () => {
+    if (!selectedId) return;
+
     try {
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      });
-      if (result.isConfirmed) {
-        await deleteCategory(_id);
-        loadCategories();
-        setCategories((prev) => prev.filter((category) => category._id !== _id));
-        loadCategories();
-        Swal.fire('Deleted!', 'Your category has been deleted.', 'success');
-      }
+      await deleteCategory(selectedId);
+      setCategories((prev) => prev.filter((category) => category._id !== selectedId));
+      toast.success("Deleted successfully!");
+      loadCategories();
     } catch (error) {
       console.error('Error deleting category:', error);
     }
+
+    handleCloseDialog();
   };
 
   const handleCategoryAdded = (newCategory) => {
@@ -257,6 +272,7 @@ const Category = () => {
 
   return (
     <>
+      <ConfirmDialog open={openDialog} onClose={handleCloseDialog} onConfirm={handleDelete} />
       <AddCategory open={openAdd} handleClose={() => setOpenAdd(false)} onCategoryAdded={handleCategoryAdded} />
       <UpdateCategory
         open={openUpdate}

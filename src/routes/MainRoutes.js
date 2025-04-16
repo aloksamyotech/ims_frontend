@@ -1,7 +1,7 @@
 import { lazy } from 'react';
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
-import { element } from 'prop-types';
+import ProtectedRoute from './protectedRoute';
 
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 const Employee = Loadable(lazy(() => import('views/EmployeeManagement')));
@@ -12,7 +12,6 @@ const Reports = Loadable(lazy(() => import('views/Report')));
 const Customers = Loadable(lazy(() => import('views/Customer')));
 const Suppliers = Loadable(lazy(() => import('views/Supplier')));
 const Category = Loadable(lazy(() => import('views/AddCategory')));
-const Unit = Loadable(lazy(() => import('views/AddUnit')));
 const Profile = Loadable(lazy(() => import('views/Profile')));
 const AddOrder = Loadable(lazy(() => import('views/AddOrderPage/AddOrderPage')));
 const CreateInvoice = Loadable(lazy(() => import('views/CreateInvoice/createInvoice')));
@@ -30,14 +29,14 @@ const Company = Loadable(lazy(() => import('views/AdminComponent/Company')));
 const UserSubscription = Loadable(lazy(() => import('views/UserSubscription')));
 const AdminProfile = Loadable(lazy(() => import('views/AdminComponent/AdminProfile')));
 const ViewCompany = Loadable(lazy(() => import('views/AdminComponent/ViewCompany')));
-const LowStock = Loadable(lazy(()=> import('views/LowStock')));
+const LowStock = Loadable(lazy(() => import('views/LowStock')));
 const FinancialSummary = Loadable(lazy(() => import('views/Financial Summary')));
 const Statistics = Loadable(lazy(() => import('views/Statistics')));
-const ViewEmployee= Loadable(lazy(() => import('views/ViewEmployeePermissions')));
+const ViewEmployee = Loadable(lazy(() => import('views/ViewEmployeePermissions')));
 const AiChatbot = Loadable(lazy(() => import('views/AiChatbot')));
 
 // ==============================|| MAIN ROUTING ||============================== //
-const role = (localStorage.getItem('role'));
+const role = localStorage.getItem('role');
 
 const MainRoutes = {
   path: '/',
@@ -45,29 +44,49 @@ const MainRoutes = {
   children: [
     {
       path: '/',
-      element: <DashboardDefault />
+      element: (
+        <ProtectedRoute requiredPermission="default">
+          <DashboardDefault />
+        </ProtectedRoute>
+      )
     },
     {
       path: 'dashboard',
       children: [
         {
           path: 'default',
-          element: <DashboardDefault />
+          element: (
+            <ProtectedRoute requiredPermission="default">
+              <DashboardDefault />
+            </ProtectedRoute>
+          )
         },
         {
           path: 'statistics',
-          element: <Statistics />
+          element: (
+            <ProtectedRoute requiredPermission="01">
+              <Statistics />
+            </ProtectedRoute>
+          )
         },
         {
           path: 'employee',
           children: [
             {
               path: '',
-              element: <Employee />
+              element: (
+                <ProtectedRoute>
+                  <Employee />
+                </ProtectedRoute>
+              )
             },
             {
               path: 'view-employee/:id',
-              element: <ViewEmployee />
+              element: (
+                <ProtectedRoute>
+                  <ViewEmployee />
+                </ProtectedRoute>
+              )
             }
           ]
         },
@@ -76,47 +95,83 @@ const MainRoutes = {
           children: [
             {
               path: '',
-              element: <Products />
+              element: (
+                <ProtectedRoute requiredPermission="03">
+                  <Products />
+                </ProtectedRoute>
+              )
             },
             {
               path: 'view-product/:id',
-              element: <ViewProduct />
+              element: (
+                <ProtectedRoute requiredPermission="03">
+                  <ViewProduct />
+                </ProtectedRoute>
+              )
             }
           ]
         },
         {
           path: 'product-report',
-          element: <LowStock/>
+          element: (
+            <ProtectedRoute requiredPermission="09">
+              <LowStock />
+            </ProtectedRoute>
+          )
         },
         {
           path: 'financial',
-          element: <FinancialSummary/>
+          element: (
+            <ProtectedRoute requiredPermission="10">
+              <FinancialSummary />
+            </ProtectedRoute>
+          )
         },
         {
           path: 'orders',
           children: [
             {
               path: '',
-              element: <Orders />
+              element: (
+                <ProtectedRoute requiredPermission="07">
+                  <Orders />
+                </ProtectedRoute>
+              )
             },
             {
               path: 'download-invoice/:id',
-              element: <DownloadInvoice />
+              element: (
+                <ProtectedRoute requiredPermission="07">
+                  <DownloadInvoice />
+                </ProtectedRoute>
+              )
             },
             {
               path: 'view-order/:id',
-              element: <ViewOrder />
+              element: (
+                <ProtectedRoute requiredPermission="07">
+                  <ViewOrder />
+                </ProtectedRoute>
+              )
             },
             {
               path: 'add-order',
               children: [
                 {
                   path: '',
-                  element: <AddOrder />
+                  element: (
+                    <ProtectedRoute requiredPermission="07">
+                      <AddOrder />
+                    </ProtectedRoute>
+                  )
                 },
                 {
                   path: 'create-invoice',
-                  element: <CreateInvoice />
+                  element: (
+                    <ProtectedRoute requiredPermission="07">
+                      <CreateInvoice />
+                    </ProtectedRoute>
+                  )
                 }
               ]
             }
@@ -127,36 +182,64 @@ const MainRoutes = {
           children: [
             {
               path: '',
-              element: <Purchase />
+              element: (
+                <ProtectedRoute requiredPermission="08">
+                  <Purchase />
+                </ProtectedRoute>
+              )
             },
             {
               path: 'view-purchase/:id',
-              element: <ViewPurchase />
+              element: (
+                <ProtectedRoute requiredPermission="08">
+                  <ViewPurchase />
+                </ProtectedRoute>
+              )
             },
             {
               path: 'add-purchase',
-              element: <AddPurchase />
+              element: (
+                <ProtectedRoute requiredPermission="08">
+                  <AddPurchase />
+                </ProtectedRoute>
+              )
             }
           ]
         },
         {
           path: 'reports',
-          element: <Reports />
+          element: (
+            <ProtectedRoute requiredPermission="12">
+              <Reports />
+            </ProtectedRoute>
+          )
         },
         {
           path: 'profile',
-          element: <Profile />
+          element: (
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          )
         },
         {
           path: 'suppliers',
           children: [
             {
               path: '',
-              element: <Suppliers />
+              element: (
+                <ProtectedRoute requiredPermission="05">
+                  <Suppliers />
+                </ProtectedRoute>
+              )
             },
             {
               path: 'view-supplier/:id',
-              element: <ViewSupplier />
+              element: (
+                <ProtectedRoute requiredPermission="05">
+                  <ViewSupplier />
+                </ProtectedRoute>
+              )
             }
           ]
         },
@@ -165,30 +248,51 @@ const MainRoutes = {
           children: [
             {
               path: '',
-              element: <Customers />
+              element: (
+                <ProtectedRoute requiredPermission="06">
+                  <Customers />
+                </ProtectedRoute>
+              )
             },
             {
               path: 'view-customer/:id',
-              element: <ViewCustomer />
+              element: (
+                <ProtectedRoute requiredPermission="06">
+                  <ViewCustomer />
+                </ProtectedRoute>
+              )
             }
           ]
         },
         {
           path: 'category',
-          element: <Category />
+          element: (
+            <ProtectedRoute requiredPermission="02">
+              <Category />
+            </ProtectedRoute>
+          )
         },
         {
           path: 'user-subscription',
-          element: <UserSubscription />
+          element: (
+            <ProtectedRoute>
+              <UserSubscription />
+            </ProtectedRoute>
+          )
         },
         {
           path: 'ai',
-          element: <AiChatbot />
-        },
+          element: (
+            <ProtectedRoute>
+              <AiChatbot />
+            </ProtectedRoute>
+          )
+        }
       ]
     }
   ]
 };
+
 
 const AdminRoutes = {
   path: '/',
@@ -205,7 +309,7 @@ const AdminRoutes = {
           path: 'admin',
           element: <AdminDashboard />
         },
-         {
+        {
           path: 'admin-report',
           element: <AdminReports />
         },
@@ -229,11 +333,11 @@ const AdminRoutes = {
               element: <ViewCompany />
             }
           ]
-        },
+        }
       ]
-    },
+    }
   ]
 };
 
-const render = (role === 'admin') ? AdminRoutes : MainRoutes;
+const render = role === 'admin' ? AdminRoutes : MainRoutes;
 export default render;

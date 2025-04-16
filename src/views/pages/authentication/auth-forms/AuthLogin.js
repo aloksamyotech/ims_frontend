@@ -12,9 +12,7 @@ import {
   InputLabel,
   OutlinedInput,
   Stack,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
+  Divider,
   Typography
 } from '@mui/material';
 import * as Yup from 'yup';
@@ -28,7 +26,6 @@ import { useNavigate } from 'react-router';
 import { addApi } from 'apis/common.js';
 import { filterMenuItems, dashboard } from '../../../../menu-items/dashboard.js';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy'; // Import the Copy Icon
 
 const AuthLogin = ({ ...others }) => {
   const theme = useTheme();
@@ -41,10 +38,6 @@ const AuthLogin = ({ ...others }) => {
   const [role, setRole] = useState(null);
   const [expanded, setExpanded] = useState(false);
 
-  const handleAccordian = (panel) => (event, newExpanded) => {
-    setExpanded(newExpanded ? panel : false);
-  };
-
   const handleClickShowPassword = () => {
     setShowPassword((prev) => !prev);
   };
@@ -53,12 +46,13 @@ const AuthLogin = ({ ...others }) => {
     event.preventDefault();
   };
 
-  const handleCopyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(() => {
-      toast.success('Copied to clipboard!');
-    }).catch(() => {
-      toast.error('Failed to copy!');
-    });
+  const handleCredentialClick = async (email, password, setFieldValue, handleSubmit) => {
+    setFieldValue('email', email);
+    setFieldValue('password', password);
+
+    setTimeout(() => {
+      handleSubmit();
+    }, 500);
   };
 
   return (
@@ -85,7 +79,6 @@ const AuthLogin = ({ ...others }) => {
               storageMethod.setItem('email', res.data.user.email);
               storageMethod.setItem('role', res.data.user.role);
               storageMethod.setItem('permissions', res.data.user.permissions || []);
-
               if (res.data.user.role === 'user') {
                 navigate('/dashboard/default');
                 window.location.reload();
@@ -105,8 +98,7 @@ const AuthLogin = ({ ...others }) => {
               throw new Error('Unexpected response structure');
             }
           } catch (error) {
-            console.log(error);
-            toast.error(error.response?.data?.message || 'Logged in failed');
+            toast.error(error.message || 'Login failed');
           } finally {
             setIsSubmitting(false);
           }
@@ -180,99 +172,30 @@ const AuthLogin = ({ ...others }) => {
               />
               {touched.password && errors.password && <FormHelperText error>{errors.password}</FormHelperText>}
             </FormControl>
-            {/* <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={rememberMe}
-                    onChange={(event) => setRememberMe(event.target.checked)}
-                    name="rememberMe"
-                    color="primary"
-                  />
-                }
-                label="Remember me"
-              />
-            </Stack> */}
 
             <Box sx={{ width: '100%' }}>
-              <Accordion expanded={expanded === 'panel1'} onChange={handleAccordian('panel1')}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1-content" id="panel1-header">
-                  <Typography variant="h5">Admin Credentials</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Box>
-                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                      Email: admin@gmail.com
-                      <IconButton
-                        aria-label="copy email"
-                        size="small"
-                        onClick={() => {
-                          handleCopyToClipboard('admin@gmail.com');
-                          setFieldValue('email', 'admin@gmail.com');
-                        }}
-                        sx={{ marginLeft: 1 }}
-                      >
-                        <ContentCopyIcon />
-                      </IconButton>
-                    </Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                      Password: admin123
-                      <IconButton
-                        aria-label="copy password"
-                        size="small"
-                        onClick={() => {
-                          handleCopyToClipboard('admin123');
-                          setFieldValue('password', 'admin123');
-                        }}
-                        sx={{ marginLeft: 1 }}
-                      >
-                        <ContentCopyIcon />
-                      </IconButton>
-                    </Typography>
-                  </Box>
-                </AccordionDetails>
-              </Accordion>
-
-              <Accordion expanded={expanded === 'panel2'} onChange={handleAccordian('panel2')}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2-content" id="panel2-header">
-                  <Typography variant="h5">User Credentials</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Box>
-                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                      Email: samyotech@gmail.com
-                      <IconButton
-                        aria-label="copy email"
-                        size="small"
-                        onClick={() => {
-                          handleCopyToClipboard('samyotech@gmail.com');
-                          setFieldValue('email', 'samyotech@gmail.com');
-                        }}
-                        sx={{ marginLeft: 1 }}
-                      >
-                        <ContentCopyIcon />
-                      </IconButton>
-                    </Typography>
-                    <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                      Password: 123456
-                      <IconButton
-                        aria-label="copy password"
-                        size="small"
-                        onClick={() => {
-                          handleCopyToClipboard('123456');
-                          setFieldValue('password', '123456');
-                        }}
-                        sx={{ marginLeft: 1 }}
-                      >
-                        <ContentCopyIcon />
-                      </IconButton>
-                    </Typography>
-                  </Box>
-                </AccordionDetails>
-              </Accordion>
+              <Box
+                sx={{
+                  cursor: 'pointer',
+                  p: 2
+                }}
+                onClick={() => handleCredentialClick('admin@gmail.com', 'admin123', setFieldValue, handleSubmit)}
+              >
+                <Typography variant="h5">Admin Credentials</Typography>
+              </Box>
+              <Divider />
+              <Box
+                sx={{
+                  cursor: 'pointer',
+                  p: 2
+                }}
+                onClick={() => handleCredentialClick('samyotech@gmail.com', '123456', setFieldValue, handleSubmit)}
+              >
+                <Typography variant="h5">User Credentials</Typography>
+              </Box>
             </Box>
 
-            <Box  sx={{display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <AnimateButton>
                 <Button
                   disableElevation
@@ -287,7 +210,7 @@ const AuthLogin = ({ ...others }) => {
                     '&:hover': {
                       background: 'linear-gradient(to right, #4b6cb7, #182848)',
                       boxShadow: '2'
-                    },
+                    }
                   }}
                 >
                   {isSubmitting ? 'Logging in...' : 'Sign in'}

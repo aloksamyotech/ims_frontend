@@ -10,7 +10,7 @@ import UpdateSubscription from './updateSubscription.js';
 import ViewSubscription from './viewSubscription.js';
 import { deleteSubscription, fetchSubscription } from 'apis/api.js';
 import { fetchCurrencySymbol } from 'apis/constant.js';
-import Swal from 'sweetalert2';
+import ConfirmDialog from 'confirmDeletion/deletion.js';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import HomeIcon from '@mui/icons-material/Home';
 import AddIcon from '@mui/icons-material/Add';
@@ -24,6 +24,18 @@ const Subscription = () => {
   const [subscription, setSubscription] = useState([]);
   const [currencySymbol, setCurrencySymbol] = useState('');
   const [currentSubscription, setCurrentSubscription] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleOpenDialog = (_id) => {
+    setSelectedId(_id);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedId(null);
+  };
 
   useEffect(() => {
     const loadSubscription = async () => {
@@ -197,7 +209,7 @@ const Subscription = () => {
           >
             <IconButton
               size="small"
-              onClick={() => handleDelete(params.row?._id)}
+              onClick={() => handleOpenDialog(params.row?._id)}
               color="error"
               sx={{
                 '&:hover': {
@@ -229,24 +241,14 @@ const Subscription = () => {
     setOpenUpdate(true);
   };
 
-  const handleDelete = async (_id) => {
+  const handleDelete = async () => {
     try {
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      });
-      if (result.isConfirmed) {
-        await deleteSubscription(_id);
-        setSubscription((prev) => prev.filter((subscription) => subscription._id !== _id));
-        Swal.fire('Deleted!', 'Your subscription has been deleted.', 'success');
-      }
+      await deleteSubscription(selectedId);
+      setSubscription((prev) => prev.filter((subscription) => subscription._id !== selectedId));
     } catch (error) {
       console.error('Error deleting subscription:', error);
+    } finally {
+      handleCloseDialog();
     }
   };
 
@@ -256,12 +258,15 @@ const Subscription = () => {
   };
 
   const handleSubscriptionUpdated = (updatedSubscription) => {
-    setSubscription((prev) => prev.map((subscription) => (subscription._id === updatedSubscription._id ? updatedSubscription : subscription)));
+    setSubscription((prev) =>
+      prev.map((subscription) => (subscription._id === updatedSubscription._id ? updatedSubscription : subscription))
+    );
     setOpenUpdate(false);
   };
 
   return (
     <>
+      <ConfirmDialog open={openDialog} onClose={handleCloseDialog} onConfirm={handleDelete} />
       <AddSubscription open={openAdd} handleClose={() => setOpenAdd(false)} onSubscriptionAdded={handleSubscriptionAdded} />
       <UpdateSubscription
         open={openUpdate}

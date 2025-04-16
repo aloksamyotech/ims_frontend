@@ -18,8 +18,8 @@ import currencySymbolMap from 'currency-symbol-map';
 import { toast } from 'react-toastify';
 import ClearIcon from '@mui/icons-material/Clear';
 import { Formik, Field, Form } from 'formik';
-import { addApi } from 'apis/common.js';
-import { style } from '@mui/system';
+import { updateMultipartApi } from 'apis/common.js';
+import { getUserId } from 'apis/constant.js';
 
 const currency = [
   'USD',
@@ -43,10 +43,16 @@ const currency = [
   'ZAR'
 ];
 
+const user = localStorage.getItem('user');
+const userObj = JSON.parse(user);
+
 const UpdateProfile = ({ open, onClose, profile, setProfile, load }) => {
-  const [currencyCode, setCurrencyCode] = useState(profile?.currencyCode || '');
-  const [currencySymbol, setCurrencySymbol] = useState(currencySymbolMap(profile?.currencyCode || '') || '');
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || {});
+  const [currencyCode, setCurrencyCode] = useState(userObj?.currencyCode || '');
+  const [currencySymbol, setCurrencySymbol] = useState(currencySymbolMap(userObj?.currencyCode || '') || '');
   const [imageFile, setImageFile] = useState(null);
+
+  const userId = getUserId();
 
   const handleCurrencyCodeChange = (event, setFieldValue) => {
     const selectedCode = event.target.value;
@@ -65,37 +71,39 @@ const UpdateProfile = ({ open, onClose, profile, setProfile, load }) => {
       setImageFile(file);
       setFieldValue('logo', file);
 
-      setFieldValue('currencyCode', profile?.currencyCode || currencyCode);
-      setFieldValue('currencySymbol', profile?.currencySymbol || currencySymbol);
+      setFieldValue('currencyCode', values.currencyCode || userObj?.currencyCode || currencyCode);
+      setFieldValue('currencySymbol', values.currencySymbol || userObj?.currencySymbol || currencySymbol);
     }
   };
 
   const handleSaveProfile = async (values) => {
     const formData = new FormData();
-    formData.append('currencyCode', values.currencyCode || profile?.currencyCode);
-    formData.append('currencySymbol', values.currencySymbol || profile?.currencySymbol);
-
+    formData.append('currencyCode', values.currencyCode || userObj?.currencyCode);
+    formData.append('currencySymbol', values.currencySymbol || userObj?.currencySymbol);
     if (values.logo) {
       formData.append('logo', values.logo);
     }
 
     try {
-      const response = await addApi('/admin/update', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      formData.append('_id', userId);
+      const response = await updateMultipartApi(`/user/currency-logo/${userId}`, formData);
+
+      if (response?.data) {
+        setProfile((prevProfile) => ({ ...prevProfile, ...response.data }));
+
+        localStorage.setItem('user', JSON.stringify(response.data.data));
+
+        toast.success('Data Updated Successfully!');
+
+        if (response?.data) {
+          setUser((prevProfile) => ({
+            ...prevProfile,
+            currencyCode: response.data.currencyCode || prevProfile.currencyCode,
+            currencySymbol: response.data.currencySymbol || prevProfile.currencySymbol,
+            logo: response.data.logo || prevProfile.logo
+          }));
         }
-      });
 
-      if (response.status === 200) {
-        toast.success('Profile Updated Successfully!');
-
-        setProfile((prevProfile) => ({
-          ...prevProfile,
-          currencyCode: values.currencyCode || prevProfile.currencyCode,
-          currencySymbol: values.currencySymbol || prevProfile.currencySymbol,
-          logo: response.data.logo || prevProfile.logo
-        }));
-        load();
         onClose();
       } else {
         console.error('Failed to update profile', response.data);
@@ -114,9 +122,8 @@ const UpdateProfile = ({ open, onClose, profile, setProfile, load }) => {
       <DialogContent>
         <Formik
           initialValues={{
-            currencyCode: profile?.currencyCode || currencyCode,
-            currencySymbol: profile?.currencySymbol || currencySymbol,
-            logo: null
+            currencyCode: userObj?.currencyCode || currencyCode,
+            currencySymbol: userObj?.currencySymbol || currencySymbol
           }}
           enableReinitialize={true}
           onSubmit={handleSaveProfile}

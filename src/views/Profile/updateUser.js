@@ -10,9 +10,9 @@ const userObj = JSON.parse(user);
 
 const UpdateProfileForm = ({ open, onClose, profile, setProfile }) => {
   const [formData, setFormData] = useState({
-    name: userObj?.name || '',
-    email: userObj?.email || '',
-    phone: userObj?.phone || ''
+    name: userObj?.data?.name || '',
+    email: userObj?.data?.email || '',
+    phone: userObj?.data?.phone || ''
   });
   const userId = getUserId();
 

@@ -1,3 +1,8 @@
+import AdminDashboard from 'views/dashboard/Default';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 import {
   IconHome,
   IconUsers,
@@ -14,10 +19,6 @@ import {
   IconAccessible,
   IconUserPlus
 } from '@tabler/icons';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import SmartToyIcon from '@mui/icons-material/SmartToy';
 
 const icons = {
   IconHome,
@@ -39,7 +40,7 @@ const icons = {
   SmartToyIcon,
   AssessmentIcon
 };
-import AdminDashboard from 'views/dashboard/Default';
+
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 const role = localStorage.getItem('role');
 const permissions = (localStorage.getItem('permissions') || '').split(',');
